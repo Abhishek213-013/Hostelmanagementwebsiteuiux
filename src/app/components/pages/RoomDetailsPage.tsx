@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Users, Maximize2, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Star, Sparkles, Building2, X } from 'lucide-react';
 
@@ -203,6 +204,13 @@ const rooms: Room[] = [
 export function RoomDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const room = rooms.find(r => r.id === Number(id));
+  const [currentImage, setCurrentImage] = useState(room?.image || '');
+
+  useEffect(() => {
+    if (room) {
+      setCurrentImage(room.image);
+    }
+  }, [id]);
 
   if (!room) {
     return (
@@ -249,7 +257,7 @@ export function RoomDetailsPage() {
                 <div className="absolute -inset-1 bg-gradient-to-r opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-3xl blur-2xl" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`}}></div>
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                   <img
-                    src={room.image}
+                    src={currentImage}
                     alt={room.title}
                     className="w-full h-[500px] object-cover"
                   />
@@ -280,14 +288,22 @@ export function RoomDetailsPage() {
                 </div>
               </div>
 
-              {/* Gallery Thumbnails */}
-              <div className="grid grid-cols-4 gap-4">
-                {room.gallery.map((img, i) => (
-                  <div key={i} className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600">
-                    <img src={img} alt={`${room.title} ${i + 1}`} className="w-full h-24 object-cover" />
-                  </div>
-                ))}
-              </div>
+               {/* Gallery Thumbnails */}
+               <div className="grid grid-cols-4 gap-4">
+                 {room.gallery.map((img, i) => (
+                   <div
+                     key={i}
+                     onClick={() => setCurrentImage(img)}
+                     className={`rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border-2 ${
+                       currentImage === img
+                         ? 'border-slate-900 dark:border-white shadow-xl scale-105'
+                         : 'border-transparent hover:border-slate-300 dark:hover:border-slate-600'
+                     }`}
+                   >
+                     <img src={img} alt={`${room.title} ${i + 1}`} className="w-full h-24 object-cover" />
+                   </div>
+                 ))}
+               </div>
             </div>
 
             {/* Right Side - Room Details Stacked */}
