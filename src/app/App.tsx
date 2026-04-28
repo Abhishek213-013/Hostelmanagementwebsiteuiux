@@ -7,6 +7,7 @@ import { GalleryPage } from './components/pages/GalleryPage';
 import { ContactPage } from './components/pages/ContactPage';
 import { AboutPage } from './components/pages/AboutPage';
 import { RoomsPage } from './components/pages/RoomsPage';
+import { RoomDetailsPage } from './components/pages/RoomDetailsPage';
 import { FacilitiesPage } from './components/pages/FacilitiesPage';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -602,6 +603,7 @@ export default function App() {
         <Route path="/contact" element={<><Header /><ContactPage /><Footer /></>} />
         <Route path="/about" element={<><Header /><AboutPage /><Footer /></>} />
         <Route path="/rooms" element={<><Header /><RoomsPage /><Footer /></>} />
+        <Route path="/rooms/:id" element={<><Header /><RoomDetailsPage /><Footer /></>} />
         <Route path="/facilities" element={<><Header /><FacilitiesPage /><Footer /></>} />
           <Route path="*" element={
            <div className="min-h-screen flex items-center justify-center dark:bg-slate-900" style={{background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'}}>

@@ -203,13 +203,22 @@ export function RoomsPage() {
                         {room.available > 0 ? `${room.available} available` : 'Fully booked'}
                       </span>
                     </div>
-                    <Link
-                      to="/booking"
-                      className="group/btn px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
-                    >
-                      Book Now
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        to={`/rooms/${room.id}`}
+                        className="group/btn px-6 py-3 bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 border border-slate-200 dark:border-slate-600"
+                      >
+                        See Details
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                      <Link
+                        to="/booking"
+                        className="group/btn px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+                      >
+                        Book Now
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
