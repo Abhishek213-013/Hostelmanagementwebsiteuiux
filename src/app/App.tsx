@@ -584,7 +584,7 @@ export default function App() {
 
 
       {/* Ultra-Modern Sticky Button */}
-       <Link to="/booking" className="group fixed bottom-8 right-8 px-10 py-5 bg-gradient-to-r from-sky-500 via-blue-500 to-emerald-500 text-white rounded-full font-black shadow-2xl hover:shadow-3xl hover:scale-110 transition-all z-50 flex items-center gap-3 animate-pulse dark:shadow-slate-900/50">
+       <Link to="/rooms" className="group fixed bottom-8 right-8 px-10 py-5 bg-gradient-to-r from-sky-500 via-blue-500 to-emerald-500 text-white rounded-full font-black shadow-2xl hover:shadow-3xl hover:scale-110 transition-all z-50 flex items-center gap-3 animate-pulse dark:shadow-slate-900/50">
          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-blue-500 to-sky-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
          <Home className="w-6 h-6 relative z-10" />
          <span className="relative z-10">Book Your Seat</span>
