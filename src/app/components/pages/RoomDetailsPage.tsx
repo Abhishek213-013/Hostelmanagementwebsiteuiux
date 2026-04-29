@@ -212,19 +212,19 @@ export function RoomDetailsPage() {
 
   if (!room) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-900 pt-24">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950 pt-24" style={{'--logo-primary': LOGO_PRIMARY, '--logo-secondary': LOGO_SECONDARY, '--logo-tertiary': LOGO_TERTIARY} as React.CSSProperties}>
         <div className="min-h-[60vh] flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-6xl font-black text-slate-900 dark:text-white mb-4">Room Not Found</h1>
-            <p className="text-xl text-slate-600 dark:text-slate-300 mb-8">The room you're looking for doesn't exist.</p>
-            <Link
+            <h1 className="text-6xl font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent mb-4">Room Not Found</h1>
+            <p className="text-xl text-emerald-700 dark:text-emerald-300 mb-8">The room you're looking for doesn't exist.</p>
+            {/* <Link
               to="/rooms"
               className="px-8 py-4 text-white rounded-2xl font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all inline-flex items-center gap-3"
               style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`}}
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Rooms
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -232,17 +232,46 @@ export function RoomDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 pt-24">
-      <div className="bg-[linear-gradient(135deg,#f8fafc_0%,#e2e8f0_50%,#f1f5f9_100%)] dark:bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_50%,#0f172a_100%)]">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950 overflow-x-hidden" style={{'--logo-primary': LOGO_PRIMARY, '--logo-secondary': LOGO_SECONDARY, '--logo-tertiary': LOGO_TERTIARY} as React.CSSProperties}>
+      {/* Animated Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900 animate-gradient-shift"></div>
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-emerald-400/40 via-teal-300/30 to-cyan-300/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-amber-400/40 via-orange-300/30 to-rose-300/20 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-to-r from-emerald-300/30 via-teal-200/20 to-cyan-300/30 dark:from-emerald-800/30 dark:via-teal-800/20 dark:to-cyan-800/30 rounded-full blur-3xl animate-spin-slow"></div>
+
+        {/* Floating Shapes */}
+        <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-xl animate-float shadow-lg shadow-emerald-400/50"></div>
+        <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur-xl animate-float-delayed shadow-lg shadow-amber-400/50"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-xl animate-float-slow shadow-lg shadow-cyan-400/50"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-12 h-12 bg-gradient-to-r from-rose-400 to-pink-400 rounded-full blur-lg animate-bounce-slow"></div>
+
+        {/* Animated Particles */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 rounded-full animate-particle-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              background: `linear-gradient(135deg, ${['#059669', '#06b6d4', '#f59e0b', '#ef4444', '#8b5cf6'][i % 5]}, ${['#10b981', '#0891b2', '#fbbf24', '#f87171', '#a78bfa'][i % 5]})`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          ></div>
+        ))}
+      </div>
+
+      <div className="relative" style={{background: 'transparent'}}>
         {/* Back Button */}
         <div className="max-w-7xl mx-auto px-6 pt-8">
-          <Link
+          {/* <Link
             to="/rooms"
-            className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-xl hover:scale-105 transition-all font-semibold text-slate-700 dark:text-slate-300"
+            className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 hover:shadow-2xl hover:shadow-emerald-500/30 hover:scale-105 transition-all font-bold text-emerald-700 dark:text-emerald-300"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Rooms
-          </Link>
+          </Link> */}
         </div>
 
         {/* Room Details Section */}
@@ -252,18 +281,18 @@ export function RoomDetailsPage() {
             <div className="space-y-6">
               {/* Main Image */}
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-3xl blur-2xl" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`}}></div>
+                <div className="absolute -inset-4 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                   <img
                     src={currentImage}
                     alt={room.title}
                     className="w-full h-[500px] object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/60 to-transparent"></div>
 
                   {/* Price Badge on Image */}
                   <div className="absolute top-6 left-6">
-                    <div className="px-5 py-3 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-xl font-black shadow-2xl text-lg">
+                    <div className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-black shadow-2xl text-lg">
                       ৳{room.price.toLocaleString()}<span className="text-sm font-normal">/mo</span>
                     </div>
                   </div>
@@ -294,8 +323,8 @@ export function RoomDetailsPage() {
                      onClick={() => setCurrentImage(img)}
                      className={`rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer border-2 ${
                        currentImage === img
-                         ? 'border-slate-900 dark:border-white shadow-xl scale-105'
-                         : 'border-transparent hover:border-slate-300 dark:hover:border-slate-600'
+                         ? 'border-emerald-500 shadow-xl scale-105'
+                         : 'border-transparent hover:border-emerald-300 dark:hover:border-emerald-600'
                      }`}
                    >
                      <img src={img} alt={`${room.title} ${i + 1}`} className="w-full h-24 object-cover" />
@@ -308,73 +337,75 @@ export function RoomDetailsPage() {
             <div className="flex flex-col justify-center space-y-6">
               {/* Room Type Badge */}
               <div>
-                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}1a, ${LOGO_SECONDARY}1a)`}}>
-                  <Sparkles className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
-                  <span className="text-sm font-bold tracking-wide" style={{color: LOGO_PRIMARY}}>{room.type.charAt(0).toUpperCase() + room.type.slice(1).replace('-', ' ')}</span>
+                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl border border-emerald-300/50 dark:border-emerald-600/50">
+                  <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400">{room.type.charAt(0).toUpperCase() + room.type.slice(1).replace('-', ' ')}</span>
                 </div>
               </div>
 
               {/* Title */}
-              <h1 className="text-5xl lg:text-6xl font-black text-slate-900 dark:text-white">{room.title}</h1>
+              <h1 className="text-5xl lg:text-6xl font-black">
+                <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">{room.title}</span>
+              </h1>
 
               {/* Price */}
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black text-slate-900 dark:text-white">৳{room.price.toLocaleString()}</span>
-                <span className="text-xl text-slate-500 dark:text-slate-400">/month</span>
+                <span className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">৳{room.price.toLocaleString()}</span>
+                <span className="text-xl text-emerald-600/70 dark:text-emerald-400/70">/month</span>
               </div>
 
               {/* Availability Status */}
               <div className="flex items-center gap-3">
                 <div className={`w-4 h-4 rounded-full ${room.available > 0 ? 'bg-emerald-500 shadow-lg shadow-emerald-500/50' : 'bg-red-500'}`}></div>
-                <span className="text-lg font-bold text-slate-700 dark:text-slate-300">
+                <span className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
                   {room.available > 0 ? `${room.available} rooms available` : 'Fully booked'}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">{room.description}</p>
+              <p className="text-xl text-emerald-700/80 dark:text-emerald-300/80 leading-relaxed">{room.description}</p>
 
               {/* Room Specifications - 2 Columns */}
-              <div className="grid grid-cols-2 gap-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50">
+              <div className="grid grid-cols-2 gap-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3">
-                  <Bed className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <Bed className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Bed Type</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">Bed Type</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.bedType}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Maximize2 className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <Maximize2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Room Size</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">Room Size</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.size}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Capacity</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">Capacity</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.capacity} Person{room.capacity > 1 ? 's' : ''}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Bathroom</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">Bathroom</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.bathroom}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Building2 className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">Floor</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">Floor</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.floor}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Sparkles className="w-5 h-5" style={{color: LOGO_PRIMARY}} />
+                  <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">View</div>
+                    <div className="text-sm text-emerald-600/70 dark:text-emerald-400/70">View</div>
                     <div className="font-bold text-slate-900 dark:text-white">{room.view}</div>
                   </div>
                 </div>
@@ -383,7 +414,7 @@ export function RoomDetailsPage() {
               {/* Book Now Button */}
               <Link
                 to="/booking"
-                className="group px-10 py-5 bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-2xl font-black shadow-2xl hover:shadow-3xl hover:scale-105 transition-all flex items-center justify-center gap-3 text-lg"
+                className="group px-10 py-5 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 text-white rounded-2xl font-black shadow-2xl shadow-emerald-500/25 hover:shadow-3xl hover:scale-105 transition-all flex items-center justify-center gap-3 text-lg"
               >
                 Book Now
                 <ArrowLeft className="w-5 h-5 rotate-180 group-hover:translate-x-1 transition-transform" />
@@ -393,8 +424,8 @@ export function RoomDetailsPage() {
 
           {/* Amenities Section */}
           <div className="mt-20 mb-12">
-            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-12 text-center">
-              Room <span className="bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Amenities</span>
+            <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center">
+              Room <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">Amenities</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -402,10 +433,10 @@ export function RoomDetailsPage() {
                   const iconColor = amenity.available ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400';
                   const bgColor = amenity.available ? 'bg-emerald-100 dark:bg-emerald-900/50' : 'bg-slate-100 dark:bg-slate-700';
                   const opacity = !amenity.available ? 'opacity-50' : '';
-                  
+
                   return (
                     <div key={i} className="group relative">
-                      <div className="absolute -inset-1 bg-gradient-to-r opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl blur-xl" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`}}></div>
+                      <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl blur-xl"></div>
                       <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex items-center gap-4 ${opacity}`}>
                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${bgColor}`}>
                           {amenity.icon === 'Wifi' && <Wifi className={`w-6 h-6 ${iconColor}`} />}
@@ -431,73 +462,73 @@ export function RoomDetailsPage() {
 
           {/* Room Policies Section */}
           <div className="mt-20 mb-12">
-            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-12 text-center">
-              Room <span className="bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Policies</span>
+            <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center">
+              Room <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">Policies</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <h3 className="font-bold text-slate-900 dark:text-white">Main Gate Opens</h3>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold text-lg">{room.policies.checkIn}</p>
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold text-lg">{room.policies.checkIn}</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <h3 className="font-bold text-slate-900 dark:text-white">Main Gate Closes</h3>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold text-lg">{room.policies.checkOut}</p>
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold text-lg">{room.policies.checkOut}</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
                     <CheckCircle2 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                   <h3 className="font-bold text-slate-900 dark:text-white">Meal Cancellation</h3>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold text-lg">{room.policies.cancellation}</p>
+                <p className="text-amber-700 dark:text-amber-300 font-semibold text-lg">{room.policies.cancellation}</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`w-10 h-10 rounded-xl ${room.policies.smoking ? 'bg-emerald-100 dark:bg-emerald-900/50' : 'bg-red-100 dark:bg-red-900/50'} flex items-center justify-center`}>
                     {room.policies.smoking ? <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <X className="w-5 h-5 text-red-600 dark:text-red-400" />}
                   </div>
                   <h3 className="font-bold text-slate-900 dark:text-white">Smoking</h3>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold text-lg">{room.policies.smoking ? 'Allowed' : 'Not Allowed'}</p>
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold text-lg">{room.policies.smoking ? 'Allowed' : 'Not Allowed'}</p>
               </div>
 
-              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50">
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`w-10 h-10 rounded-xl ${room.policies.pets ? 'bg-emerald-100 dark:bg-emerald-900/50' : 'bg-red-100 dark:bg-red-900/50'} flex items-center justify-center`}>
                     {room.policies.pets ? <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <X className="w-5 h-5 text-red-600 dark:text-red-400" />}
                   </div>
                   <h3 className="font-bold text-slate-900 dark:text-white">Pets</h3>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-semibold text-lg">{room.policies.pets ? 'Allowed' : 'Not Allowed'}</p>
+                <p className="text-emerald-700 dark:text-emerald-300 font-semibold text-lg">{room.policies.pets ? 'Allowed' : 'Not Allowed'}</p>
               </div>
             </div>
           </div>
 
           {/* Features List */}
           <div className="mt-20 mb-12">
-            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-12 text-center">
-              Room <span className="bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Features</span>
+            <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center">
+              Room <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">Features</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {room.features.map((feature, i) => (
                 <div key={i} className="group relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl blur-xl" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`}}></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl blur-xl"></div>
                   <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50 dark:border-slate-700/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/50">
                       <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
