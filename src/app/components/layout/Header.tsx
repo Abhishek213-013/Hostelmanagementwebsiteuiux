@@ -109,6 +109,16 @@ export function Header() {
             <Link to="/contact" className="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Contact
             </Link>
+            <button
+              onClick={() => {
+                setTheme(theme === 'dark' ? 'light' : 'dark');
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors w-full"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </button>
             <Link to="/login" className="block py-3 px-6 mt-4 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Login / Sign Up
             </Link>
