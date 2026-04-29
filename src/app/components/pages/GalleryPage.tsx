@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Building2, Camera, X, ChevronLeft, ChevronRight, MapPin, Phone, Mail, Wifi, Wind, Utensils, Coffee, Dumbbell, BookOpen, Shield, Car, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const LOGO_PRIMARY = '#0f172a';
-const LOGO_SECONDARY = '#334155';
+import { cardGradients, LOGO_PRIMARY, LOGO_SECONDARY, LOGO_TERTIARY } from '../../constants';
 
 const galleryImages = [
   { id: 1, src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=1200', category: 'rooms', title: 'Modern Bedroom', gradient: 'from-sky-500 to-blue-600' },
@@ -52,46 +50,51 @@ export function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen relative pt-28 pb-20 overflow-hidden bg-[linear-gradient(135deg,#f8fafc_0%,#e2e8f0_50%,#f1f5f9_100%)] dark:bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_50%,#0f172a_100%)]">
+    <div className="min-h-screen relative pt-28 pb-20 overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950" style={{'--logo-primary': LOGO_PRIMARY, '--logo-secondary': LOGO_SECONDARY, '--logo-tertiary': LOGO_TERTIARY} as React.CSSProperties}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-sky-200/20 to-blue-200/20 dark:from-sky-900/20 dark:to-blue-900/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-br from-emerald-200/20 to-teal-200/20 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900 animate-gradient-shift"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-bl from-emerald-400/40 via-teal-300/30 to-cyan-300/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-bl from-amber-400/40 via-orange-300/30 to-rose-300/20 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+        {/* Floating Shapes */}
+        <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-xl animate-float shadow-lg shadow-emerald-400/50"></div>
+        <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur-xl animate-float-delayed shadow-lg shadow-amber-400/50"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-xl animate-float-slow shadow-lg shadow-cyan-400/50"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-full shadow-lg border border-slate-200/50 dark:border-slate-700/50 mb-8">
-            <div className="p-2 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-700 dark:to-slate-900 rounded-xl">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 mb-8 hover:shadow-2xl transition-all">
+            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl">
               <Camera className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-bold tracking-wider text-slate-700 dark:text-slate-300 uppercase">Photo Gallery</span>
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+            <span className="text-sm font-bold tracking-wider bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent uppercase">Photo Gallery</span>
+            <Sparkles className="w-4 h-4 text-amber-500 animate-spin-slow" />
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-[1.1]">
-            Explore Our
+          <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-[1.1]">
+            <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent animate-gradient-x">Explore Our</span>
             <br />
-            <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-300 dark:to-white bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent">
               Beautiful Space
             </span>
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300">Take a visual tour of your new home</p>
+          <p className="text-xl text-emerald-700 dark:text-emerald-300">Take a visual tour of your new home</p>
         </div>
 
         {/* Category Filters */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((cat) => (
+          {categories.map((cat, i) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`group px-6 py-3 rounded-full font-bold transition-all duration-500 ${
                 selectedCategory === cat.id
                   ? 'text-white shadow-2xl scale-105'
-                  : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl text-slate-600 dark:text-slate-300 hover:bg-white hover:dark:bg-slate-700 hover:shadow-lg'
+                  : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl text-emerald-700 dark:text-emerald-300 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg border-2 border-emerald-200/50 dark:border-emerald-700/50'
               }`}
-              style={selectedCategory === cat.id ? {background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY})`} : {}}
+              style={selectedCategory === cat.id ? {background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`} : {}}
             >
               {cat.label}
               {selectedCategory === cat.id && <ChevronRight className="w-4 h-4 inline ml-2 group-hover:translate-x-1 transition-transform" />}
@@ -110,15 +113,15 @@ export function GalleryPage() {
               onMouseLeave={() => setHoveredImage(null)}
               style={{animationDelay: `${index * 50}ms`}}
             >
-              <div className={`absolute -inset-1 bg-gradient-to-r ${image.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl blur-xl`}></div>
+              <div className={`absolute -inset-1 rounded-3xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`} style={{background: cardGradients[index % 5]}}></div>
               <img
                 src={image.src}
                 alt={image.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 relative z-10"
               />
-              <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent z-20 transition-opacity duration-500 ${hoveredImage === image.id ? 'opacity-100' : 'opacity-0'}`}>
+              <div className={`absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent z-20 transition-opacity duration-500 ${hoveredImage === image.id ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className={`inline-block px-4 py-2 bg-gradient-to-r ${image.gradient} text-white rounded-xl font-bold shadow-xl mb-2`}>
+                  <div className="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-xl mb-2" style={{background: cardGradients[index % 5]}}>
                     {image.category}
                   </div>
                   <h4 className="text-white font-bold text-lg">{image.title}</h4>
@@ -135,27 +138,27 @@ export function GalleryPage() {
 
         {/* Visit Info Card */}
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-700 dark:to-slate-900 opacity-5 group-hover:opacity-10 transition-opacity duration-500 rounded-3xl blur-xl"></div>
-          <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 md:p-16 border border-white/50 dark:border-slate-700/50">
+          <div className="absolute -inset-1 rounded-3xl blur-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" style={{background: cardGradients[0]}}></div>
+          <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-10 md:p-16 border-2 border-emerald-200/50 dark:border-emerald-700/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-6">Visit Us Today</h2>
-                <p className="text-lg text-slate-600 dark:text-slate-300 mb-10 leading-relaxed">
+                <h2 className="text-3xl lg:text-4xl font-black mb-6 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">Visit Us Today</h2>
+                <p className="text-lg text-emerald-700 dark:text-emerald-300 mb-10 leading-relaxed">
                   Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
                 </p>
                 <div className="space-y-6">
                   {[
-                    { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh', gradient: 'from-emerald-500 to-teal-600' },
-                    { icon: Phone, label: 'Phone', value: '+880 1711-123456', gradient: 'from-sky-500 to-blue-600' },
-                    { icon: Mail, label: 'Email', value: 'info@sylhetstay.com', gradient: 'from-violet-500 to-purple-600' }
+                    { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh', grad: cardGradients[0] },
+                    { icon: Phone, label: 'Phone', value: '+880 1711-123456', grad: cardGradients[1] },
+                    { icon: Mail, label: 'Email', value: 'info@sylhetstay.com', grad: cardGradients[3] }
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-4 group/item hover:translate-x-2 transition-transform duration-300">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-r ${item.gradient} flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform`}>
-                        <item.icon className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform" style={{background: item.grad}}>
+                        <item.icon className="w-7 h-7 text-white drop-shadow-lg" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 dark:text-white">{item.label}</p>
-                        <p className="text-slate-600 dark:text-slate-300">{item.value}</p>
+                        <p className="font-bold text-emerald-800 dark:text-emerald-200">{item.label}</p>
+                        <p className="text-emerald-700 dark:text-emerald-300">{item.value}</p>
                       </div>
                     </div>
                   ))}
@@ -163,20 +166,20 @@ export function GalleryPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: Wifi, label: '100 Mbps WiFi', gradient: 'from-sky-500 to-blue-600' },
-                  { icon: Wind, label: 'AC Available', gradient: 'from-cyan-500 to-sky-600' },
-                  { icon: Utensils, label: 'Meal Plans', gradient: 'from-orange-500 to-amber-600' },
-                  { icon: Coffee, label: 'Common Room', gradient: 'from-yellow-500 to-amber-600' },
-                  { icon: BookOpen, label: 'Study Rooms', gradient: 'from-indigo-500 to-violet-600' },
-                  { icon: Shield, label: '24/7 Security', gradient: 'from-emerald-500 to-teal-600' },
-                  { icon: Car, label: 'Parking', gradient: 'from-violet-500 to-purple-600' },
-                  { icon: Dumbbell, label: 'Gym', gradient: 'from-rose-500 to-pink-600' }
+                  { icon: Wifi, label: '100 Mbps WiFi', grad: cardGradients[0] },
+                  { icon: Wind, label: 'AC Available', grad: cardGradients[3] },
+                  { icon: Utensils, label: 'Meal Plans', grad: cardGradients[1] },
+                  { icon: Coffee, label: 'Common Room', grad: cardGradients[4] },
+                  { icon: BookOpen, label: 'Study Rooms', grad: cardGradients[2] },
+                  { icon: Shield, label: '24/7 Security', grad: cardGradients[0] },
+                  { icon: Car, label: 'Parking', grad: cardGradients[4] },
+                  { icon: Dumbbell, label: 'Gym', grad: cardGradients[1] }
                 ].map((item, i) => (
-                  <div key={i} className="group/item flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <div className={`p-2 rounded-xl bg-gradient-to-r ${item.gradient} group-hover/item:scale-110 transition-transform`}>
-                      <item.icon className="w-5 h-5 text-white" />
+                  <div key={i} className="group/item flex items-center gap-3 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-emerald-200/50 dark:border-emerald-700/50">
+                    <div className="p-2 rounded-xl shadow-lg group-hover/item:scale-110 transition-transform" style={{background: item.grad}}>
+                      <item.icon className="w-5 h-5 text-white drop-shadow-lg" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item.label}</span>
+                    <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -184,32 +187,32 @@ export function GalleryPage() {
           </div>
         </div>
 
-        <p className="text-center text-slate-500 dark:text-slate-400 mt-12 font-medium">
+        <p className="text-center text-emerald-600 dark:text-emerald-400 mt-12 font-medium">
           {filteredImages.length} photos {selectedCategory !== 'all' && `in ${categories.find(c => c.id === selectedCategory)?.label}`}
         </p>
       </div>
 
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-xl"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-emerald-900/95 backdrop-blur-xl"
           onClick={() => setSelectedImage(null)}
         >
-          <button 
+          <button
             className="absolute top-8 right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group"
             onClick={() => setSelectedImage(null)}
           >
             <X className="w-6 h-6 group-hover:rotate-90 transition-transform" />
           </button>
 
-          <button 
+          <button
             className="absolute left-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110"
             onClick={handlePrevImage}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
 
-          <button 
+          <button
             className="absolute right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110"
             onClick={handleNextImage}
           >
@@ -223,7 +226,7 @@ export function GalleryPage() {
               className="w-full h-full object-contain rounded-2xl shadow-2xl"
             />
             <div className="text-center mt-6">
-              <span className={`inline-block px-4 py-2 bg-gradient-to-r ${selectedImage.gradient} text-white rounded-xl font-bold shadow-xl`}>
+              <span className="inline-block px-4 py-2 text-white rounded-xl font-bold shadow-xl" style={{background: cardGradients[selectedImage.id % 5]}}>
                 {selectedImage.category}
               </span>
               <p className="text-white text-center mt-4 font-bold text-xl">{selectedImage.title}</p>

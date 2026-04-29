@@ -1,8 +1,6 @@
 import { Sparkles, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Home, Tv, Gamepad2, Droplets, ShoppingBag, Clock, Phone, MapPin, Star, CheckCircle2, Zap, Mic, Camera, Sun, Trees, Bed, Bath, WashingMachine, Refrigerator, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const LOGO_PRIMARY = '#0f172a';
-const LOGO_SECONDARY = '#334155';
+import { cardGradients, LOGO_PRIMARY, LOGO_SECONDARY, LOGO_TERTIARY } from '../../constants';
 
 const facilityCategories = [
   {

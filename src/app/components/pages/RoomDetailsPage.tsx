@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Users, Maximize2, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Star, Sparkles, Building2, X } from 'lucide-react';
-
-const LOGO_PRIMARY = '#0f172a';
-const LOGO_SECONDARY = '#334155';
+import { cardGradients, LOGO_PRIMARY, LOGO_SECONDARY, LOGO_TERTIARY } from '../../constants';
 
 interface Room {
   id: number;
