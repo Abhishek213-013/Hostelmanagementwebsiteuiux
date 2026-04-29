@@ -11,6 +11,8 @@ import { RoomDetailsPage } from './components/pages/RoomDetailsPage';
 import { FacilitiesPage } from './components/pages/FacilitiesPage';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { Carousel, CarouselContent, CarouselItem } from './components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 const LOGO_PRIMARY = '#059669';
 const LOGO_SECONDARY = '#06b6d4';
@@ -107,144 +109,219 @@ export default function App() {
         </div>
 
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
-          <div className="text-center max-w-5xl mx-auto space-y-12">
-            {/* Location Badge */}
-             <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-500 hover:scale-105 group animate-pulse-slow">
-               <div className="relative">
-                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-md opacity-75 group-hover:opacity-100 transition-opacity animate-ping-slow"></div>
-                 <div className="relative w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse"></div>
-               </div>
-               <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-               <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent tracking-wide animate-gradient-x">
-                 Sylhet, Bangladesh
-               </span>
-               <Sparkles className="w-5 h-5 text-amber-500 animate-spin-slow" />
-             </div>
-
-             {/* Hero Title */}
-             <div className="space-y-6">
-               <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
-                 <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent animate-gradient-x">Your Home</span>
-                 <span className="block bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent animate-gradient-x" style={{animationDelay: '0.5s'}}>Away From Home</span>
-                 <span className="block mt-2">
-                   <span className="relative inline-block">
-                     <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 blur-3xl opacity-40 animate-pulse"></span>
-                     <span className="relative bg-gradient-to-r from-teal-600 via-cyan-500 to-blue-500 dark:from-teal-400 dark:via-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
-                       in Sylhet
-                     </span>
-                   </span>
-                 </span>
-               </h1>
-
-               <p className="text-xl sm:text-2xl text-emerald-700 dark:text-emerald-300 max-w-3xl mx-auto leading-relaxed font-medium">
-                 Experience premium student accommodation with <span className="text-transparent bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text font-bold">cutting-edge amenities</span>, <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text font-bold">vibrant community</span>, and an environment designed for success.
-               </p>
-             </div>
-
-            {/* Vibrant Search Widget */}
-             <div className="relative group">
-               <div className="absolute -inset-1 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-gradient-shift" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`}}></div>
-               <div className="relative bg-gradient-to-br from-white/95 to-emerald-50/95 dark:from-emerald-900/95 dark:to-teal-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-emerald-500/20 p-10 border-2 border-emerald-200/50 dark:border-emerald-700/50 hover:shadow-emerald-500/30 transition-all duration-500">
-                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                   <div className="space-y-3">
-                     <label className="block text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent tracking-wide uppercase">Room Type</label>
-                     <select
-                       className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-800 dark:to-teal-800 border-2 border-emerald-300 dark:border-emerald-600 focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all duration-300 font-semibold text-emerald-800 dark:text-emerald-200 hover:scale-105"
-                       value={searchFilters.roomType}
-                       onChange={(e) => setSearchFilters({...searchFilters, roomType: e.target.value})}
-                     >
-                       <option value="">All Types</option>
-                       <option value="single">Single</option>
-                       <option value="shared">Shared</option>
-                       <option value="premium">Premium</option>
-                     </select>
-                   </div>
-
-                   <div className="space-y-3">
-                     <label className="block text-sm font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent tracking-wide uppercase">Seats</label>
-                     <select
-                       className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-800 dark:to-orange-800 border-2 border-amber-300 dark:border-amber-600 focus:border-amber-500 dark:focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-500/20 transition-all duration-300 font-semibold text-amber-800 dark:text-amber-200 hover:scale-105"
-                       value={searchFilters.seats}
-                       onChange={(e) => setSearchFilters({...searchFilters, seats: e.target.value})}
-                     >
-                       <option value="">Any</option>
-                       <option value="1">1 Person</option>
-                       <option value="2">2 People</option>
-                       <option value="4">4 People</option>
-                     </select>
-                   </div>
-
-                   <div className="space-y-3">
-                     <label className="block text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent tracking-wide uppercase">Max Price</label>
-                     <select
-                       className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-800 dark:to-blue-800 border-2 border-cyan-300 dark:border-cyan-600 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none focus:ring-4 focus:ring-cyan-500/20 transition-all duration-300 font-semibold text-cyan-800 dark:text-cyan-200 hover:scale-105"
-                       value={searchFilters.maxPrice}
-                       onChange={(e) => setSearchFilters({...searchFilters, maxPrice: e.target.value})}
-                     >
-                       <option value="">Any Budget</option>
-                       <option value="5000">৳5,000/mo</option>
-                       <option value="8000">৳8,000/mo</option>
-                       <option value="12000">৳12,000/mo</option>
-                     </select>
-                   </div>
-
-                  <div className="flex items-end">
-                    <button className="w-full group relative px-8 py-4 text-white rounded-2xl font-bold overflow-hidden shadow-xl transition-all duration-500 hover:scale-110 hover:shadow-2xl animate-gradient-shift" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`}}>
-                      <span className="relative z-10 flex items-center justify-center gap-3">
-                        <Search className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />
-                        Search
+          <Carousel
+            opts={{ loop: true }}
+            plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
+            className="w-full"
+          >
+            <CarouselContent>
+              {/* Slide 1 */}
+              <CarouselItem>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
+                  {/* Left - Text Content */}
+                  <div className="space-y-8">
+                    {/* Location Badge */}
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-500 hover:scale-105 group animate-pulse-slow">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-md opacity-75 group-hover:opacity-100 transition-opacity animate-ping-slow"></div>
+                        <div className="relative w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent tracking-wide animate-gradient-x">
+                        Sylhet, Bangladesh
                       </span>
-                      <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </button>
+                      <Sparkles className="w-5 h-5 text-amber-500 animate-spin-slow" />
+                    </div>
+
+                    {/* Hero Title */}
+                    <div className="space-y-6">
+                      <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent animate-gradient-x">Your Home</span>
+                        <span className="block bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent animate-gradient-x" style={{animationDelay: '0.5s'}}>Away From Home</span>
+                        <span className="block mt-2">
+                          <span className="relative inline-block">
+                            <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 blur-3xl opacity-40 animate-pulse"></span>
+                            <span className="relative bg-gradient-to-r from-teal-600 via-cyan-500 to-blue-500 dark:from-teal-400 dark:via-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">
+                              in Sylhet
+                            </span>
+                          </span>
+                        </span>
+                      </h1>
+
+                      <p className="text-xl sm:text-2xl text-emerald-700 dark:text-emerald-300 leading-relaxed font-medium">
+                        Experience premium student accommodation with <span className="text-transparent bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text font-bold">cutting-edge amenities</span>, <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text font-bold">vibrant community</span>, and an environment designed for success.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right - Image */}
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
+                    <img
+                      src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"
+                      alt="Modern student accommodation"
+                      className="relative rounded-3xl shadow-2xl w-full h-[500px] object-cover"
+                    />
                   </div>
                 </div>
+              </CarouselItem>
+
+              {/* Slide 2 */}
+              <CarouselItem>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
+                  <div className="space-y-8">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50">
+                      <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">Prime Location</span>
+                    </div>
+                    <div className="space-y-6">
+                      <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <span className="block bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 dark:from-purple-400 dark:via-pink-400 dark:to-rose-400 bg-clip-text text-transparent">Study in</span>
+                        <span className="block bg-gradient-to-r from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">Comfort</span>
+                      </h1>
+                      <p className="text-xl sm:text-2xl text-emerald-700 dark:text-emerald-300 leading-relaxed font-medium">
+                        Fully furnished rooms with <span className="text-transparent bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text font-bold">modern furniture</span>, <span className="text-transparent bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text font-bold">high-speed WiFi</span>, and dedicated study areas.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
+                    <img
+                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80"
+                      alt="Comfortable study room"
+                      className="relative rounded-3xl shadow-2xl w-full h-[500px] object-cover"
+                    />
+                  </div>
+                </div>
+              </CarouselItem>
+
+              {/* Slide 3 */}
+              <CarouselItem>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
+                  <div className="space-y-8">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50">
+                      <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">Community Living</span>
+                    </div>
+                    <div className="space-y-6">
+                      <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <span className="block bg-gradient-to-r from-cyan-600 via-blue-500 to-indigo-500 dark:from-cyan-400 dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">Build Your</span>
+                        <span className="block bg-gradient-to-r from-emerald-500 to-teal-500 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">Network</span>
+                      </h1>
+                      <p className="text-xl sm:text-2xl text-emerald-700 dark:text-emerald-300 leading-relaxed font-medium">
+                        Join a <span className="text-transparent bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text font-bold">vibrant community</span> of students from top universities with <span className="text-transparent bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text font-bold">networking events</span>.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
+                    <img
+                      src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+                      alt="Student community"
+                      className="relative rounded-3xl shadow-2xl w-full h-[500px] object-cover"
+                    />
+                  </div>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+          </Carousel>
+
+          {/* Vibrant Search Widget */}
+          <div className="relative group mt-12">
+            <div className="absolute -inset-1 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-gradient-shift" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`}}></div>
+            <div className="relative bg-gradient-to-br from-white/95 to-emerald-50/95 dark:from-emerald-900/95 dark:to-teal-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-emerald-500/20 p-10 border-2 border-emerald-200/50 dark:border-emerald-700/50 hover:shadow-emerald-500/30 transition-all duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent tracking-wide uppercase">Room Type</label>
+                  <select
+                    className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-800 dark:to-teal-800 border-2 border-emerald-300 dark:border-emerald-600 focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all duration-300 font-semibold text-emerald-800 dark:text-emerald-200 hover:scale-105"
+                    value={searchFilters.roomType}
+                    onChange={(e) => setSearchFilters({...searchFilters, roomType: e.target.value})}
+                  >
+                    <option value="">All Types</option>
+                    <option value="single">Single</option>
+                    <option value="shared">Shared</option>
+                    <option value="premium">Premium</option>
+                  </select>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent tracking-wide uppercase">Seats</label>
+                  <select
+                    className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-800 dark:to-orange-800 border-2 border-amber-300 dark:border-amber-600 focus:border-amber-500 dark:focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-500/20 transition-all duration-300 font-semibold text-amber-800 dark:text-amber-200 hover:scale-105"
+                    value={searchFilters.seats}
+                    onChange={(e) => setSearchFilters({...searchFilters, seats: e.target.value})}
+                  >
+                    <option value="">Any</option>
+                    <option value="1">1 Person</option>
+                    <option value="2">2 People</option>
+                    <option value="4">4 People</option>
+                  </select>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent tracking-wide uppercase">Max Price</label>
+                  <select
+                    className="w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-800 dark:to-blue-800 border-2 border-cyan-300 dark:border-cyan-600 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none focus:ring-4 focus:ring-cyan-500/20 transition-all duration-300 font-semibold text-cyan-800 dark:text-cyan-200 hover:scale-105"
+                    value={searchFilters.maxPrice}
+                    onChange={(e) => setSearchFilters({...searchFilters, maxPrice: e.target.value})}
+                  >
+                    <option value="">Any Budget</option>
+                    <option value="5000">৳5,000/mo</option>
+                    <option value="8000">৳8,000/mo</option>
+                    <option value="12000">৳12,000/mo</option>
+                  </select>
+                </div>
+
+               <div className="flex items-end">
+                 <button className="w-full group relative px-8 py-4 text-white rounded-2xl font-bold overflow-hidden shadow-xl transition-all duration-500 hover:scale-110 hover:shadow-2xl animate-gradient-shift" style={{background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`}}>
+                   <span className="relative z-10 flex items-center justify-center gap-3">
+                     <Search className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />
+                     Search
+                   </span>
+                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                 </button>
+               </div>
+             </div>
+           </div>
+         </div>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap items-center justify-center gap-8 pt-8">
+            <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-800/80 dark:to-teal-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 hover:scale-110 transition-transform duration-300">
+              <div className="flex -space-x-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-emerald-900 shadow-lg" style={{background: cardGradients[i % 5]}}></div>
+                ))}
+              </div>
+              <div className="text-left">
+                <div className="font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">150+ Students</div>
+                <div className="text-xs text-emerald-700 dark:text-emerald-300">Living Here</div>
               </div>
             </div>
 
-            {/* Trust Indicators */}
-             <div className="flex flex-wrap items-center justify-center gap-8 pt-8">
-               <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-800/80 dark:to-teal-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 hover:scale-110 transition-transform duration-300">
-                 <div className="flex -space-x-2">
-                   {[...Array(4)].map((_, i) => (
-                     <div key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-emerald-900 shadow-lg" style={{background: cardGradients[i % 5]}}></div>
-                   ))}
-                 </div>
-                 <div className="text-left">
-                   <div className="font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">150+ Students</div>
-                   <div className="text-xs text-emerald-700 dark:text-emerald-300">Living Here</div>
-                 </div>
-               </div>
+            <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-800/80 dark:to-orange-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-amber-500/20 border border-amber-300/50 dark:border-amber-600/50 hover:scale-110 transition-transform duration-300">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400 drop-shadow-lg" />
+                ))}
+              </div>
+              <div className="text-left">
+                <div className="font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">4.8/5.0</div>
+                <div className="text-xs text-amber-700 dark:text-amber-300">Rating</div>
+              </div>
+            </div>
 
-               <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-800/80 dark:to-orange-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-amber-500/20 border border-amber-300/50 dark:border-amber-600/50 hover:scale-110 transition-transform duration-300">
-                 <div className="flex items-center">
-                   {[...Array(5)].map((_, i) => (
-                     <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400 drop-shadow-lg" />
-                   ))}
-                 </div>
-                 <div className="text-left">
-                   <div className="font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">4.8/5.0</div>
-                   <div className="text-xs text-amber-700 dark:text-amber-300">Rating</div>
-                 </div>
-               </div>
-
-               <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-800/80 dark:to-blue-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-cyan-500/20 border border-cyan-300/50 dark:border-cyan-600/50 hover:scale-110 transition-transform duration-300">
-                 <TrendingUp className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-bounce" />
-                 <div className="text-left">
-                   <div className="font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">98% Occupied</div>
-                   <div className="text-xs text-cyan-700 dark:text-cyan-300">High Demand</div>
-                 </div>
-               </div>
-             </div>
+            <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-800/80 dark:to-blue-800/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-cyan-500/20 border border-cyan-300/50 dark:border-cyan-600/50 hover:scale-110 transition-transform duration-300">
+              <TrendingUp className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-bounce" />
+              <div className="text-left">
+                <div className="font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent">98% Occupied</div>
+                <div className="text-xs text-cyan-700 dark:text-cyan-300">High Demand</div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce-slow">
-          <div className="w-8 h-12 border-2 border-emerald-400 rounded-full p-1 shadow-lg shadow-emerald-400/50">
-            <div className="w-2 h-4 rounded-full mx-auto animate-pulse" style={{background: `linear-gradient(to bottom, #059669, #06b6d4, #f59e0b)`}}></div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Vibrant Availability Cards */}
       <section className="relative py-32 overflow-hidden">
