@@ -52,7 +52,7 @@ export function AboutPage() {
               <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Est. 2020</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
+            <h1 className="text-3xl lg:text-5xl font-black leading-[1.1] tracking-tight">
               <span className="block text-teal-600">Creating</span>
               <span className="block text-gray-800">Home Away</span>
               <span className="block mt-2 text-teal-600 text-4xl lg:text-6xl">
@@ -60,7 +60,7 @@ export function AboutPage() {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed max-w-xl">
+            <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
               Established in 2020, SylhetStay has redefined premium student accommodation. We blend <span className="text-teal-600 font-bold">comfort</span>, <span className="text-gray-800 font-bold">technology</span>, and <span className="text-teal-600 font-bold">community</span> to create an environment where academic excellence thrives.
             </p>
 
@@ -104,24 +104,24 @@ export function AboutPage() {
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32">
           {[
-            { num: '150+', label: 'Happy Students', icon: Users },
-            { num: '4.8', label: 'Rating', icon: Star, suffix: '/5' },
-            { num: '50+', label: 'Room Options', icon: Building2 },
-            { num: '24/7', label: 'Security', icon: Shield }
-          ].map((stat, i) => (
-            <AnimatedSection key={i} delay={i * 100}>
-              <div className="bg-white rounded-2xl p-6 shadow border border-gray-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
-                  <stat.icon className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-5xl font-black mb-2 text-teal-600 flex items-center justify-center gap-1">
-                  {stat.num}
-                  {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
-                </div>
-                <div className="text-gray-600 font-semibold">{stat.label}</div>
-              </div>
-            </AnimatedSection>
-          ))}
+             { num: '150+', label: 'Happy Students', icon: Users },
+             { num: '4.8', label: 'Rating', icon: Star, suffix: '/5' },
+             { num: '50+', label: 'Room Options', icon: Building2 },
+             { num: '24/7', label: 'Security', icon: Shield }
+           ].map((stat, i) => (
+             <AnimatedSection key={i} delay={i * 100}>
+               <div className="group bg-white hover:bg-teal-600 rounded-2xl p-6 shadow border border-gray-200 hover:border-teal-500 text-center transition-all duration-300">
+                 <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-teal-600 group-hover:bg-white flex items-center justify-center shadow transition-all duration-300">
+                   <stat.icon className="w-5 h-5 text-white group-hover:text-teal-600" />
+                 </div>
+                 <div className="text-2xl font-black mb-2 text-teal-600 group-hover:text-white flex items-center justify-center gap-1 transition-colors duration-300">
+                   {stat.num}
+                   {stat.suffix && <span className="text-2xl">{stat.suffix}</span>}
+                 </div>
+                 <div className="text-gray-600 group-hover:text-teal-100 font-semibold transition-colors duration-300">{stat.label}</div>
+               </div>
+             </AnimatedSection>
+           ))}
         </div>
 
         {/* Values Section */}
@@ -132,25 +132,25 @@ export function AboutPage() {
               <Award className="w-5 h-5 text-teal-600" />
               <span className="text-sm font-bold tracking-wide text-teal-600 uppercase">Our Principles</span>
             </div>
-            <h2 className="text-5xl lg:text-6xl font-black mb-6 text-teal-600">
+            <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">
               Core Values
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">The principles that guide everything we do and define our commitment to excellence</p>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">The principles that guide everything we do and define our commitment to excellence</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, i) => (
-              <AnimatedSection key={i} delay={i * 100}>
-              <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-                  <div className="w-16 h-16 rounded-2xl mb-6 bg-teal-600 flex items-center justify-center shadow">
-                    <value.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-black mb-3 text-teal-600">{value.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{value.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+             {values.map((value, i) => (
+               <AnimatedSection key={i} delay={i * 100}>
+               <div className="group bg-white hover:bg-teal-600 rounded-2xl p-6 shadow border border-gray-200 hover:border-teal-500 transition-all duration-300">
+                   <div className="w-12 h-12 rounded-2xl mb-6 bg-teal-600 group-hover:bg-white flex items-center justify-center shadow transition-all duration-300">
+                     <value.icon className="w-5 h-5 text-white group-hover:text-teal-600" />
+                   </div>
+                   <h3 className="text-xl font-black mb-3 text-teal-600 group-hover:text-white transition-colors duration-300">{value.title}</h3>
+                   <p className="text-gray-600 group-hover:text-teal-100 leading-relaxed transition-colors duration-300">{value.desc}</p>
+                 </div>
+               </AnimatedSection>
+             ))}
+           </div>
         </div>
         </AnimatedSection>
 
@@ -162,10 +162,10 @@ export function AboutPage() {
               <Sparkles className="w-5 h-5 text-amber-500" />
               <span className="text-sm font-bold tracking-wide text-teal-600 uppercase">Our Story</span>
             </div>
-            <h2 className="text-5xl lg:text-6xl font-black mb-6 text-teal-600">
+            <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">
               Our Journey
             </h2>
-            <p className="text-xl text-gray-600">From humble beginnings to industry leadership</p>
+            <p className="text-lg text-gray-600">From humble beginnings to industry leadership</p>
           </div>
 
           <div className="relative">
@@ -179,13 +179,13 @@ export function AboutPage() {
                   onMouseEnter={() => setActiveMilestone(i)}
                   onMouseLeave={() => setActiveMilestone(null)}
                 >
-                   <div className="relative z-10 w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow bg-teal-600 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                     <milestone.icon className="w-8 h-8" />
+                   <div className="relative z-10 w-15 h-15 mx-auto mb-6 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow bg-teal-600 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                     <milestone.icon className="w-5 h-5" />
                    </div>
                    <div className={`bg-white rounded-2xl p-6 shadow border border-gray-200 transition-all duration-500 ${activeMilestone === i ? 'shadow-lg -translate-y-2 border-teal-400' : ''}`}>
                      <div className="text-center">
-                       <div className="text-2xl font-black mb-1 text-teal-600">{milestone.year}</div>
-                       <h4 className="text-lg font-black mb-2 text-teal-600">{milestone.title}</h4>
+                       <div className="text-xl font-black mb-1 text-teal-600">{milestone.year}</div>
+                       <h4 className="text-m font-black mb-2 text-teal-600">{milestone.title}</h4>
                        <p className="text-sm text-gray-600 leading-relaxed">{milestone.desc}</p>
                      </div>
                    </div>
@@ -205,10 +205,10 @@ export function AboutPage() {
               <Users className="w-5 h-5 text-teal-600" />
               <span className="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>
             </div>
-            <h2 className="text-5xl lg:text-6xl font-black mb-6 text-teal-600">
+            <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">
               Meet Our Team
             </h2>
-            <p className="text-xl text-gray-600">Dedicated professionals committed to your success</p>
+            <p className="text-lg text-gray-600">Dedicated professionals committed to your success</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -234,8 +234,8 @@ export function AboutPage() {
         {/* CTA Section */}
         <AnimatedSection>
         <div className="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center">
-          <h2 className="text-4xl lg:text-5xl font-black mb-6">Ready to Join Our Community?</h2>
-          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
+          <h2 className="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
+          <p className="text-lg text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/booking" className="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
               <Calendar className="w-5 h-5" />

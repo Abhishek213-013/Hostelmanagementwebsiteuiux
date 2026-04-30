@@ -110,11 +110,11 @@ export function FacilitiesPage() {
               <span className="text-sm font-bold tracking-wide text-teal-600 uppercase">Premium Amenities</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight mb-6">
+            <h1 className="text-3xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6">
               <span className="block text-teal-600">World-Class</span>
               <span className="block text-gray-800">Facilities</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-l text-gray-600 max-w-2xl mx-auto leading-relaxed">
               Everything you need for <span className="text-teal-600 font-bold">success</span>, all under one roof
             </p>
           </div>
@@ -124,12 +124,12 @@ export function FacilitiesPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
           {stats.map((stat, i) => (
             <AnimatedSection key={i} delay={i * 100}>
-              <div className="bg-white rounded-2xl p-8 shadow border border-gray-200 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
-                    <stat.icon className="w-10 h-10 text-white" />
+              <div className="group bg-white rounded-2xl p-8 shadow border border-gray-200 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500 hover:bg-teal-600">
+                  <div className="w-15 h-15 mx-auto mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow group-hover:bg-white transition-all duration-500">
+                    <stat.icon className="w-10 h-10 text-white group-hover:text-teal-600" />
                   </div>
-                  <div className="text-4xl font-black mb-2 text-teal-600">{stat.number}</div>
-                  <div className="text-sm font-semibold text-gray-600">{stat.label}</div>
+                  <div className="text-2xl font-black mb-2 text-teal-600 group-hover:text-white transition-all duration-500">{stat.number}</div>
+                  <div className="text-sm font-semibold text-gray-600 group-hover:text-gray-200 transition-all duration-500">{stat.label}</div>
               </div>
             </AnimatedSection>
           ))}
@@ -140,12 +140,12 @@ export function FacilitiesPage() {
           <AnimatedSection key={catIdx} delay={catIdx * 100}>
             <div className="mb-24">
               <div className="flex items-center gap-6 mb-12">
-                <div className="w-20 h-20 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
+                <div className="w-15 h-15 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
                   <category.icon className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-3xl lg:text-4xl font-black mb-2 text-teal-600">{category.title}</h2>
-                  <p className="text-gray-600 text-lg">Everything you need for comfortable living</p>
+                  <h2 className="text-xl lg:text-2xl font-black mb-2 text-teal-600">{category.title}</h2>
+                  <p className="text-gray-600 text-m">Everything you need for comfortable living</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -174,8 +174,8 @@ export function FacilitiesPage() {
         {/* CTA Section */}
         <AnimatedSection delay={200}>
           <div className="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center">
-              <h2 className="text-4xl lg:text-5xl font-black mb-6">Want to Experience Our Facilities?</h2>
-              <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">Book your room today and enjoy all these premium amenities from day one</p>
+              <h2 className="text-2xl lg:text-3xl font-black mb-6">Want to Experience Our Facilities?</h2>
+              <p className="text-l text-white/90 mb-10 max-w-2xl mx-auto">Book your room today and enjoy all these premium amenities from day one</p>
               <div className="flex flex-wrap justify-center gap-4">
                   <Link to="/booking" className="px-10 py-5 bg-white text-teal-600 rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
                     <CheckCircle2 className="w-5 h-5" />

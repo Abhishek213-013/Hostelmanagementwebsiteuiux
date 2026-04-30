@@ -64,12 +64,11 @@ export function ContactPage() {
             <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Contact Us</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-[1.1]">
-            <span className="block text-teal-600">Get In</span>
-            <span className="block text-gray-800">Touch</span>
+          <h1 className="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
+            <span className="block text-teal-600">Get In Touch</span>
             <span className="text-4xl lg:text-5xl text-gray-700 font-light">With Us</span>
           </h1>
-          <p className="text-xl text-gray-600">We'd love to hear from you. Send us a message!</p>
+          <p className="text-lg text-gray-600">We'd love to hear from you. Send us a message!</p>
         </div>
         </AnimatedSection>
 
@@ -82,8 +81,8 @@ export function ContactPage() {
                 onMouseEnter={() => setHoveredCard(i)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                  <div className="w-16 h-16 mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
-                    <info.icon className="w-8 h-8 text-white" />
+                  <div className="w-10 h-10 mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
+                    <info.icon className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-xl font-black mb-4 text-teal-600">{info.title}</h3>
                   {info.details.map((detail, j) => (

@@ -61,13 +61,13 @@ export function GalleryPage() {
             <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-[1.1]">
+          <h1 className="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
             <span className="block text-teal-600">Explore Our</span>
             <span className="block text-gray-800">
               Beautiful Space
             </span>
           </h1>
-          <p className="text-xl text-gray-600">Take a visual tour of your new home</p>
+          <p className="text-l text-gray-600">Take a visual tour of your new home</p>
         </div>
 
         {/* Category Filters */}
@@ -106,7 +106,7 @@ export function GalleryPage() {
               />
               <div className={`absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500 ${hoveredImage === image.id ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-lg bg-teal-600">
+                  <div className="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-lg bg-teal-600 mb-2">
                     {image.category}
                   </div>
                   <h4 className="text-white font-bold text-lg">{image.title}</h4>
@@ -125,8 +125,8 @@ export function GalleryPage() {
         <div className="bg-white rounded-2xl shadow border border-gray-200 p-10 md:p-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Visit Us Today</h2>
-                <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+                <h2 className="text-xl lg:text-2xl font-black mb-6 text-teal-600">Visit Us Today</h2>
+                <p className="text-md text-gray-600 mb-10 leading-relaxed">
                   Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
                 </p>
                 <div className="space-y-6">
