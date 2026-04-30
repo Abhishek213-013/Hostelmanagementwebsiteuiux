@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Building2, Camera, X, ChevronLeft, ChevronRight, MapPin, Phone, Mail, Wifi, Wind, Utensils, Coffee, Dumbbell, BookOpen, Shield, Car, Sparkles } from 'lucide-react';
+import { Camera, ChevronRight, Sparkles, ArrowRight, Utensils, Dumbbell, Wifi, Car, BookOpen, X, ChevronLeft, ChevronRight as ChevronRightIcon, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { cardGradients, LOGO_PRIMARY, LOGO_SECONDARY, LOGO_TERTIARY } from '../../constants';
+import { AnimatedSection } from '../ui/AnimatedSection';
 
 const galleryImages = [
   { id: 1, src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=1200', category: 'rooms', title: 'Modern Bedroom', gradient: 'from-sky-500 to-blue-600' },
@@ -50,37 +50,24 @@ export function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen relative pt-28 pb-20 overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950" style={{'--logo-primary': LOGO_PRIMARY, '--logo-secondary': LOGO_SECONDARY, '--logo-tertiary': LOGO_TERTIARY} as React.CSSProperties}>
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900 animate-gradient-shift"></div>
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-bl from-emerald-400/40 via-teal-300/30 to-cyan-300/20 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-bl from-amber-400/40 via-orange-300/30 to-rose-300/20 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}}></div>
-        {/* Floating Shapes */}
-        <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur-xl animate-float shadow-lg shadow-emerald-400/50"></div>
-        <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur-xl animate-float-delayed shadow-lg shadow-amber-400/50"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-xl animate-float-slow shadow-lg shadow-cyan-400/50"></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-28 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-emerald-900/90 backdrop-blur-xl rounded-full shadow-xl shadow-emerald-500/20 border border-emerald-300/50 dark:border-emerald-600/50 mb-8 hover:shadow-2xl transition-all">
-            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200 mb-8">
+            <div className="p-2 bg-teal-600 rounded-xl">
               <Camera className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-bold tracking-wider bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent uppercase">Photo Gallery</span>
-            <Sparkles className="w-4 h-4 text-amber-500 animate-spin-slow" />
+            <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
           </div>
 
           <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-[1.1]">
-            <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-400 dark:to-cyan-400 bg-clip-text text-transparent animate-gradient-x">Explore Our</span>
-            <br />
-            <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 dark:from-amber-400 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent">
+            <span className="block text-teal-600">Explore Our</span>
+            <span className="block text-gray-800">
               Beautiful Space
             </span>
           </h1>
-          <p className="text-xl text-emerald-700 dark:text-emerald-300">Take a visual tour of your new home</p>
+          <p className="text-xl text-gray-600">Take a visual tour of your new home</p>
         </div>
 
         {/* Category Filters */}
@@ -89,15 +76,15 @@ export function GalleryPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`group px-6 py-3 rounded-full font-bold transition-all duration-500 ${
+              className={`px-6 py-3 rounded-full font-bold transition-all duration-500 ${
                 selectedCategory === cat.id
-                  ? 'text-white shadow-2xl scale-105'
-                  : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl text-emerald-700 dark:text-emerald-300 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg border-2 border-emerald-200/50 dark:border-emerald-700/50'
+                  ? 'text-white shadow-lg scale-105'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border-2 border-gray-200'
               }`}
-              style={selectedCategory === cat.id ? {background: `linear-gradient(to right, ${LOGO_PRIMARY}, ${LOGO_SECONDARY}, ${LOGO_TERTIARY}, ${LOGO_PRIMARY})`} : {}}
+              style={selectedCategory === cat.id ? {background: '#0d9488'} : {}}
             >
               {cat.label}
-              {selectedCategory === cat.id && <ChevronRight className="w-4 h-4 inline ml-2 group-hover:translate-x-1 transition-transform" />}
+              {selectedCategory === cat.id && <ChevronRight className="w-4 h-4 inline ml-2" />}
             </button>
           ))}
         </div>
@@ -107,27 +94,25 @@ export function GalleryPage() {
           {filteredImages.map((image, index) => (
             <div
               key={image.id}
-              className="group relative aspect-square overflow-hidden rounded-3xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-700"
+              className="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
               onClick={() => setSelectedImage(image)}
               onMouseEnter={() => setHoveredImage(image.id)}
               onMouseLeave={() => setHoveredImage(null)}
-              style={{animationDelay: `${index * 50}ms`}}
             >
-              <div className={`absolute -inset-1 rounded-3xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`} style={{background: cardGradients[index % 5]}}></div>
               <img
                 src={image.src}
                 alt={image.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 relative z-10"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className={`absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent z-20 transition-opacity duration-500 ${hoveredImage === image.id ? 'opacity-100' : 'opacity-0'}`}>
+              <div className={`absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500 ${hoveredImage === image.id ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-xl mb-2" style={{background: cardGradients[index % 5]}}>
+                  <div className="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-lg bg-teal-600">
                     {image.category}
                   </div>
                   <h4 className="text-white font-bold text-lg">{image.title}</h4>
                 </div>
               </div>
-              <div className="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
                   <Camera className="w-5 h-5 text-white" />
                 </div>
@@ -137,28 +122,26 @@ export function GalleryPage() {
         </div>
 
         {/* Visit Info Card */}
-        <div className="relative group">
-          <div className="absolute -inset-1 rounded-3xl blur-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" style={{background: cardGradients[0]}}></div>
-          <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-10 md:p-16 border-2 border-emerald-200/50 dark:border-emerald-700/50">
+        <div className="bg-white rounded-2xl shadow border border-gray-200 p-10 md:p-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-black mb-6 bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">Visit Us Today</h2>
-                <p className="text-lg text-emerald-700 dark:text-emerald-300 mb-10 leading-relaxed">
+                <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Visit Us Today</h2>
+                <p className="text-lg text-gray-600 mb-10 leading-relaxed">
                   Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
                 </p>
                 <div className="space-y-6">
                   {[
-                    { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh', grad: cardGradients[0] },
-                    { icon: Phone, label: 'Phone', value: '+880 1711-123456', grad: cardGradients[1] },
-                    { icon: Mail, label: 'Email', value: 'info@sylhetstay.com', grad: cardGradients[3] }
+                    { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh' },
+                    { icon: Phone, label: 'Phone', value: '+880 1711-123456' },
+                    { icon: Mail, label: 'Email', value: 'info@sylhetstay.com' }
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-4 group/item hover:translate-x-2 transition-transform duration-300">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform" style={{background: item.grad}}>
-                        <item.icon className="w-7 h-7 text-white drop-shadow-lg" />
+                    <div key={i} className="flex items-center gap-4 hover:translate-x-2 transition-transform duration-300">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600">
+                        <item.icon className="w-7 h-7 text-white" />
                       </div>
                       <div>
-                        <p className="font-bold text-emerald-800 dark:text-emerald-200">{item.label}</p>
-                        <p className="text-emerald-700 dark:text-emerald-300">{item.value}</p>
+                        <p className="font-bold text-gray-800">{item.label}</p>
+                        <p className="text-gray-600">{item.value}</p>
                       </div>
                     </div>
                   ))}
@@ -166,28 +149,27 @@ export function GalleryPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: Wifi, label: '100 Mbps WiFi', grad: cardGradients[0] },
-                  { icon: Wind, label: 'AC Available', grad: cardGradients[3] },
-                  { icon: Utensils, label: 'Meal Plans', grad: cardGradients[1] },
-                  { icon: Coffee, label: 'Common Room', grad: cardGradients[4] },
-                  { icon: BookOpen, label: 'Study Rooms', grad: cardGradients[2] },
-                  { icon: Shield, label: '24/7 Security', grad: cardGradients[0] },
-                  { icon: Car, label: 'Parking', grad: cardGradients[4] },
-                  { icon: Dumbbell, label: 'Gym', grad: cardGradients[1] }
+                  { icon: Wifi, label: '100 Mbps WiFi' },
+                  { icon: Wind, label: 'AC Available' },
+                  { icon: Utensils, label: 'Meal Plans' },
+                  { icon: Coffee, label: 'Common Room' },
+                  { icon: BookOpen, label: 'Study Rooms' },
+                  { icon: Shield, label: '24/7 Security' },
+                  { icon: Car, label: 'Parking' },
+                  { icon: Dumbbell, label: 'Gym' }
                 ].map((item, i) => (
-                  <div key={i} className="group/item flex items-center gap-3 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-emerald-200/50 dark:border-emerald-700/50">
-                    <div className="p-2 rounded-xl shadow-lg group-hover/item:scale-110 transition-transform" style={{background: item.grad}}>
-                      <item.icon className="w-5 h-5 text-white drop-shadow-lg" />
+                  <div key={i} className="group/item flex items-center gap-3 p-4 bg-gray-50 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200">
+                    <div className="p-2 rounded-xl shadow-lg bg-teal-600">
+                      <item.icon className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{item.label}</span>
+                    <span className="text-sm font-semibold text-gray-700">{item.label}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </div>
 
-        <p className="text-center text-emerald-600 dark:text-emerald-400 mt-12 font-medium">
+        <p className="text-center text-gray-600 mt-12 font-medium">
           {filteredImages.length} photos {selectedCategory !== 'all' && `in ${categories.find(c => c.id === selectedCategory)?.label}`}
         </p>
       </div>
@@ -195,7 +177,7 @@ export function GalleryPage() {
       {/* Lightbox Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-emerald-900/95 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl"
           onClick={() => setSelectedImage(null)}
         >
           <button
@@ -226,7 +208,7 @@ export function GalleryPage() {
               className="w-full h-full object-contain rounded-2xl shadow-2xl"
             />
             <div className="text-center mt-6">
-              <span className="inline-block px-4 py-2 text-white rounded-xl font-bold shadow-xl" style={{background: cardGradients[selectedImage.id % 5]}}>
+              <span className="inline-block px-4 py-2 text-white rounded-xl font-bold shadow-xl bg-teal-600">
                 {selectedImage.category}
               </span>
               <p className="text-white text-center mt-4 font-bold text-xl">{selectedImage.title}</p>
