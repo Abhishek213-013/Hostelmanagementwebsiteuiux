@@ -102,13 +102,13 @@ export function RoomsPage() {
             <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Our Rooms</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-[1.1]">
+          <h1 className="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
             <span className="block text-teal-600">Find Your</span>
-            <span className="text-gray-800 text-4xl lg:text-6xl">
+            <span className="text-gray-800 text-3xl lg:text-5xl">
               Perfect Space
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">Choose from our range of thoughtfully designed rooms that cater to every need and budget</p>
+          <p className="text-x text-gray-600 max-w-2xl mx-auto leading-relaxed">Choose from our range of thoughtfully designed rooms that cater to every need and budget</p>
         </div>
 
         {/* Filter Buttons */}
@@ -218,10 +218,10 @@ export function RoomsPage() {
               <Sparkles className="w-5 h-5 text-teal-600" />
               <span className="text-sm font-bold tracking-wide text-teal-600 uppercase">Features</span>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-black mb-6 text-teal-600">
+            <h2 className="text-2xl lg:text-3xl font-black mb-6 text-teal-600">
               Room Amenities
             </h2>
-            <p className="text-xl text-gray-600">Every room comes with essential amenities for comfortable living</p>
+            <p className="text-l text-gray-600">Every room comes with essential amenities for comfortable living</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -239,8 +239,8 @@ export function RoomsPage() {
 
         {/* CTA Section */}
         <div className="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center">
-            <h2 className="text-4xl lg:text-5xl font-black mb-6">Can't Find What You're Looking For?</h2>
-            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">Contact us for custom room arrangements or special requirements</p>
+            <h2 className="text-2xl lg:text-3xl font-black mb-6">Can't Find What You're Looking For?</h2>
+            <p className="text-l text-white/80 mb-10 max-w-xl mx-auto">Contact us for custom room arrangements or special requirements</p>
             <div className="flex flex-wrap justify-center gap-4">
                 <Link to="/booking" className="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
                   <Calendar className="w-5 h-5" />
