@@ -225,16 +225,16 @@ export function RoomsPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {amenities.map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow bg-teal-600">
-                    <item.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-black mb-2 text-center text-teal-600">{item.label}</h3>
-                  <p className="text-gray-600 text-sm text-center">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+             {amenities.map((item, i) => (
+               <div key={i} className="group bg-white rounded-2xl p-8 shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
+                   <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow bg-teal-600 group-hover:bg-white transition-colors duration-500">
+                     <item.icon className="w-8 h-8 text-white group-hover:text-teal-600 transition-colors duration-500" />
+                   </div>
+                   <h3 className="text-lg font-black mb-2 text-center text-teal-600 group-hover:text-white transition-colors duration-500">{item.label}</h3>
+                   <p className="text-gray-600 text-sm text-center group-hover:text-white/90 transition-colors duration-500">{item.desc}</p>
+               </div>
+             ))}
+           </div>
         </div>
 
         {/* CTA Section */}
