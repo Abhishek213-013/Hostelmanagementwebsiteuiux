@@ -14,6 +14,11 @@ import { Footer } from './components/layout/Footer';
 import { Carousel, CarouselContent, CarouselItem } from './components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
+// Move these constants here - outside of any function
+const LOGO_PRIMARY = '#059669';
+const LOGO_SECONDARY = '#06b6d4';
+const LOGO_TERTIARY = '#f59e0b';
+
 const AnimatedSection = ({ children, className = "" }) => {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
