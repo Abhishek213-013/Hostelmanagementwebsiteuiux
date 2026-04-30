@@ -114,14 +114,14 @@ export default function App() {
                       </span>
                     </div>
                     <div className="space-y-6">
-                      <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
                         <span className="block text-white">Your Home</span>
                         <span className="block text-white">Away From Home</span>
                         <span className="block mt-2 text-teal-400">
                           in Sylhet
                         </span>
                       </h1>
-                      <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                      <p className="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
                         Experience premium student accommodation with <span className="text-teal-400 font-bold">cutting-edge amenities</span>, <span className="text-white font-bold">vibrant community</span>, and an environment designed for success.
                       </p>
                     </div>
@@ -146,11 +146,11 @@ export default function App() {
                         <span className="text-sm font-bold text-white">Prime Location</span>
                       </div>
                       <div className="space-y-6">
-                        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
                           <span className="block text-white">Study in</span>
-                          <span className="block text-white">Comfort</span>
+                          <span className="block text-teal-400">Comfort</span>
                         </h1>
-                        <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                        <p className="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
                           Fully furnished rooms with <span className="text-teal-400 font-bold">modern furniture</span>, <span className="text-white font-bold">high-speed WiFi</span>, and dedicated study areas.
                         </p>
                       </div>
@@ -175,11 +175,11 @@ export default function App() {
                         <span className="text-sm font-bold text-white">Community Living</span>
                       </div>
                       <div className="space-y-6">
-                        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
                           <span className="block text-white">Build Your</span>
                           <span className="block text-teal-400">Network</span>
                         </h1>
-                        <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                        <p className="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
                           Join a <span className="text-teal-400 font-bold">vibrant community</span> of students from top universities with <span className="text-teal-400 font-bold">networking events</span>.
                         </p>
                       </div>
@@ -303,13 +303,13 @@ export default function App() {
                     </div>
 
                     <h2 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
-                       <span className="block text-teal-600">Welcome to</span>
-                       <span className="block mt-2 text-teal-600 text-4xl lg:text-6xl">
+                       <span className="block text-teal-600 text-4xl lg:text-5xl">Welcome to</span>
+                       <span className="block mt-2 text-teal-600 text-4xl lg:text-5xl">
                          SylhetStay
                        </span>
                     </h2>
 
-                     <p className="text-xl text-gray-600 leading-relaxed">
+                     <p className="text-l text-gray-600 leading-relaxed">
                        Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span className="text-teal-600 font-bold">comfortable</span>, <span className="text-gray-800 font-bold">safe</span>, and <span className="text-teal-600 font-bold">study-conducive</span> environment.
                      </p>
 
@@ -397,7 +397,7 @@ export default function App() {
                  { icon: Dumbbell, label: 'Fitness Center', desc: 'Modern equipment' }
                ].map((item, i) => (
                  <AnimatedSection key={i}>
-                   <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
+                   <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
                         <div className="w-16 h-16 mx-auto mb-4 bg-teal-600 rounded-xl flex items-center justify-center">
                           <item.icon className="w-8 h-8 text-white" />
                         </div>
@@ -421,7 +421,7 @@ export default function App() {
                     </div>
                     <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
                   </div>
-                  <h2 className="text-5xl lg:text-7xl font-black mb-6 text-teal-600 leading-[1.1]">
+                  <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">
                      Choose Your Perfect Room
                    </h2>
                 </div>
@@ -491,30 +491,30 @@ export default function App() {
                    </div>
                    <span className="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
                  </div>
-                 <h2 className="text-5xl lg:text-7xl font-black mb-6 text-teal-600 leading-[1.1]">
+                 <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">
                     Explore Our Beautiful Space
                   </h2>
-                 <p className="text-xl text-gray-600">Take a visual tour of your new home</p>
+                 <p className="text-l text-gray-600">Take a visual tour of your new home</p>
                </div>
              </AnimatedSection>
 
              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-               {[
-                 { src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=600', label: 'Modern Rooms' },
-                 { src: 'https://images.unsplash.com/photo-1721299417031-de890ff33b26?w=600', label: 'Premium Suites' },
-                 { src: 'https://images.unsplash.com/photo-1753505888770-46be3b748b41?w=600', label: 'Study Areas' },
-                 { src: 'https://images.unsplash.com/photo-1753505889211-9cfbac527474?w=600', label: 'Common Spaces' },
-                 { src: 'https://images.unsplash.com/photo-1723259457560-b76d597f709b?w=600', label: 'Lounge Area' },
-                 { src: 'https://images.unsplash.com/photo-1635321349359-333da6bb6da9?w=600', label: 'Reception' },
-                 { src: 'https://images.unsplash.com/photo-1772944780860-e99bd902d59a?w=600', label: 'Corridor' }
-               ].map((item, i) => (
-                 <div key={i} className={`relative rounded-2xl overflow-hidden shadow ${i % 2 === 1 ? 'mt-8' : ''}`}>
-                   <img src={item.src} alt={item.label} className="w-full h-60 object-cover" />
-                   <div className="absolute bottom-4 left-4">
-                     <span className="px-3 py-1 bg-white rounded-full text-sm font-bold text-gray-800">{item.label}</span>
-                   </div>
-                 </div>
-               ))}
+                {[
+                  { src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=600', label: 'Modern Rooms' },
+                  { src: 'https://images.unsplash.com/photo-1721299417031-de890ff33b26?w=600', label: 'Premium Suites' },
+                  { src: 'https://images.unsplash.com/photo-1753505888770-46be3b748b41?w=600', label: 'Study Areas' },
+                  { src: 'https://images.unsplash.com/photo-1753505889211-9cfbac527474?w=600', label: 'Common Spaces' },
+                  { src: 'https://images.unsplash.com/photo-1723259457560-b76d597f709b?w=600', label: 'Lounge Area' },
+                  { src: 'https://images.unsplash.com/photo-1635321349359-333da6bb6da9?w=600', label: 'Reception' },
+                  { src: 'https://images.unsplash.com/photo-1772944780860-e99bd902d59a?w=600', label: 'Corridor' }
+                ].map((item, i) => (
+                  <div key={i} className={`relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 ${i % 2 === 1 ? 'mt-8' : ''}`}>
+                    <img src={item.src} alt={item.label} className="w-full h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
+                    <div className="absolute bottom-4 left-4">
+                      <span className="px-3 py-1 bg-white rounded-full text-sm font-bold text-gray-800">{item.label}</span>
+                    </div>
+                  </div>
+                ))}
                <div className="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700">
                  <div className="text-center text-white">
                    <div className="text-5xl font-black mb-2">+24</div>
@@ -534,10 +534,10 @@ export default function App() {
                     <Users className="w-5 h-5 text-teal-600" />
                     <span className="text-sm font-bold tracking-wide text-teal-600">The People</span>
                   </div>
-                  <h2 className="text-5xl lg:text-6xl font-black mb-6 text-teal-600">
+                  <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">
                      What Students Say
                    </h2>
-                  <p className="text-xl text-gray-600">Hear from our happy residents</p>
+                  <p className="text-l text-gray-600">Hear from our happy residents</p>
                 </div>
               </AnimatedSection>
 
@@ -572,8 +572,8 @@ export default function App() {
          {/* CTA Section */}
          <section className="py-20">
            <div className="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center mx-6 lg:mx-12">
-             <h2 className="text-4xl lg:text-5xl font-black mb-6">Ready to Join Our Community?</h2>
-             <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
+             <h2 className="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
+             <p className="text-l text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
              <div className="flex flex-wrap justify-center gap-4">
                <Link to="/booking" className="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
                  <Calendar className="w-5 h-5" />
