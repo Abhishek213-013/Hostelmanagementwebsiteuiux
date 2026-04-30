@@ -275,8 +275,8 @@ export default function App() {
                       <h3 className="text-2xl font-black mb-2 text-teal-600">{card.title}</h3>
                       <p className="text-gray-600 mb-8">{card.desc}</p>
                       <div className="flex items-center justify-between">
-                        <div className="text-4xl font-black text-teal-600">
-                          {card.price}
+                        <div className="text-2xl font-black text-teal-600">
+                           {card.price}
                         </div>
                         <div className="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600">
                           <ArrowRight className="w-6 h-6 text-white" />
@@ -462,10 +462,10 @@ export default function App() {
                            <div className="flex items-center justify-between pt-6 border-t border-gray-200">
                              <div>
                                <div className="text-sm text-teal-600 mb-1">Starting from</div>
-                               <div className="text-4xl font-black text-teal-600">
-                                 {room.price}<span className="text-lg">/mo</span>
-                               </div>
-                             </div>
+                                <div className="text-2xl font-black text-teal-600">
+                                  {room.price}<span className="text-lg">/mo</span>
+                                </div>
+                              </div>
                              <button className="px-6 py-3 bg-white text-teal-800 rounded-xl font-bold shadow border border-gray-200 flex items-center gap-2">
                                Book Now
                                <ArrowRight className="w-4 h-4" />
