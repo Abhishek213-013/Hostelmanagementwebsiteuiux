@@ -2,88 +2,65 @@
 
 :root {
   --font-size: 16px;
-  --background: #f0fdf4;
-  --foreground: #064e3b;
+  --background: #f9fafb;
+  --foreground: #1f2937;
   --card: #ffffff;
-  --card-foreground: #064e3b;
+  --card-foreground: #1f2937;
   --popover: #ffffff;
-  --popover-foreground: #064e3b;
-  --primary: #059669;
+  --popover-foreground: #1f2937;
+  --primary: #0d9488;
   --primary-foreground: #ffffff;
-  --secondary: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  --secondary-foreground: #065f46;
-  --muted: #d1fae5;
-  --muted-foreground: #047857;
-  --accent: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  --accent-foreground: #92400e;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #334155;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #334155;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(16, 185, 129, 0.2);
+  --border: #e5e7eb;
   --input: transparent;
-  --input-background: #d1fae5;
-  --switch-background: #6ee7b7;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --ring: #10b981;
-  --chart-1: #10b981;
-  --chart-2: #06b6d4;
-  --chart-3: #f59e0b;
-  --chart-4: #f97316;
-  --chart-5: #8b5cf6;
-  --radius: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --shadow-sm: 0 1px 2px 0 rgba(16, 185, 129, 0.1);
-  --shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.15), 0 2px 4px -2px rgba(16, 185, 129, 0.1);
-  --shadow-md: 0 10px 15px -3px rgba(16, 185, 129, 0.15), 0 4px 6px -4px rgba(16, 185, 129, 0.1);
-  --shadow-lg: 0 20px 25px -5px rgba(16, 185, 129, 0.15), 0 8px 10px -6px rgba(16, 185, 129, 0.1);
-  --shadow-xl: 0 25px 50px -12px rgba(16, 185, 129, 0.25);
-  --shadow-2xl: 0 50px 100px -25px rgba(16, 185, 129, 0.25);
-  --sidebar: #d1fae5;
-  --sidebar-foreground: #064e3b;
-  --sidebar-primary: #059669;
+  --input-background: #f1f5f9;
+  --ring: #0d9488;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --sidebar: #f1f5f9;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #0d9488;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fef3c7;
-  --sidebar-accent-foreground: #92400e;
-  --sidebar-border: #a7f3d0;
-  --sidebar-ring: #10b981;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #0d9488;
 }
 
 .dark {
-  --background: #064e3b;
-  --foreground: #d1fae5;
-  --card: #065f46;
-  --card-foreground: #d1fae5;
-  --popover: #065f46;
-  --popover-foreground: #d1fae5;
-  --primary: #10b981;
-  --primary-foreground: #064e3b;
-  --secondary: #047857;
-  --secondary-foreground: #d1fae5;
-  --muted: #047857;
-  --muted-foreground: #6ee7b7;
-  --accent: #92400e;
-  --accent-foreground: #fef3c7;
+  --background: #111827;
+  --foreground: #f9fafb;
+  --card: #1f2937;
+  --card-foreground: #f9fafb;
+  --popover: #1f2937;
+  --popover-foreground: #f9fafb;
+  --primary: #0d9488;
+  --primary-foreground: #ffffff;
+  --secondary: #374151;
+  --secondary-foreground: #f9fafb;
+  --muted: #374151;
+  --muted-foreground: #9ca3af;
+  --accent: #374151;
+  --accent-foreground: #f9fafb;
   --destructive: #f87171;
   --destructive-foreground: #7f1d1d;
-  --border: rgba(16, 185, 129, 0.3);
-  --input: #047857;
-  --ring: #10b981;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --chart-1: #10b981;
-  --chart-2: #06b6d4;
-  --chart-3: #f59e0b;
-  --chart-4: #f97316;
-  --chart-5: #8b5cf6;
-  --sidebar: #065f46;
-  --sidebar-foreground: #d1fae5;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #064e3b;
-  --sidebar-accent: #92400e;
-  --sidebar-accent-foreground: #fef3c7;
-  --sidebar-border: #047857;
-  --sidebar-ring: #10b981;
+  --border: #374151;
+  --input: #374151;
+  --ring: #0d9488;
+  --sidebar: #1f2937;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #0d9488;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-border: #374151;
+  --sidebar-ring: #0d9488;
 }
 
 @theme inline {
@@ -220,106 +197,4 @@
   .shadow-glow {
     box-shadow: 0 0 40px rgba(var(--primary), 0.15);
   }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-15px) rotate(2deg); }
-  50% { transform: translateY(-20px) rotate(0deg); }
-  75% { transform: translateY(-10px) rotate(-2deg); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
-}
-
-@keyframes float-delayed {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-20px) rotate(3deg); }
-  66% { transform: translateY(-10px) rotate(-3deg); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-30px) scale(1.1); }
-}
-
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-25px); }
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes ping-slow {
-  0% { transform: scale(1); opacity: 1; }
-  75%, 100% { transform: scale(2.5); opacity: 0; }
-}
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes gradient-x {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-}
-
-@keyframes particle-float {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  50% { transform: translate(100px, -100px) scale(1.5); }
-}
-
-.animate-float-delayed {
-  animation: float-delayed 6s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 8s ease-in-out infinite;
-}
-
-.animate-bounce-slow {
-  animation: bounce-slow 4s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
-}
-
-.animate-ping-slow {
-  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.animate-pulse-slow {
-  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-gradient-shift {
-  background-size: 300% 300%;
-  animation: gradient-shift 6s ease infinite;
-}
-
-.animate-gradient-x {
-  background-size: 200% auto;
-  animation: gradient-x 4s ease infinite;
-}
-
-.animate-particle-float {
-  animation: particle-float 5s ease-in-out infinite;
 }

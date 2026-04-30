@@ -3,10 +3,9 @@ import { useState, useEffect, useRef } from 'react';
 interface AnimatedSectionProps {
   children: React.ReactNode;
   className?: string;
-  delay?: number;
 }
 
-export function AnimatedSection({ children, className = "", delay = 0 }: AnimatedSectionProps) {
+export function AnimatedSection({ children, className = "" }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -27,10 +26,9 @@ export function AnimatedSection({ children, className = "", delay = 0 }: Animate
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
+      className={`transition-opacity duration-300 ease-out ${
+        isVisible ? 'opacity-100' : 'opacity-0'
       } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
     </div>
