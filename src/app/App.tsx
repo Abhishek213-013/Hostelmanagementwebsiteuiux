@@ -81,11 +81,11 @@ export default function App() {
       <div className="relative">
       <Header />
       
-      {/* Vibrant Hero Section - Full Width */}
+      {/* Vibrant Hero Section - Full Width with Background Images */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
 
-        <div className="relative w-full py-20">
-          {/* Carousel - Full width, only the text and image content slides */}
+        <div className="relative w-full">
+          {/* Carousel - Full width with background images */}
           <Carousel
             opts={{ loop: true }}
             plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
@@ -94,72 +94,65 @@ export default function App() {
             <CarouselContent>
               {/* Slide 1 */}
               <CarouselItem>
-                <div className="w-full px-6 lg:px-12">
-                  <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
-                    {/* Left - Text Content */}
-                    <div className="space-y-8">
-                     {/* Location Badge */}
-                  <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200">
-                          <div className="w-3 h-3 bg-teal-500 rounded-full"></div>
-                          <MapPin className="w-5 h-5 text-teal-600" />
-                          <span className="text-sm font-bold text-teal-600 tracking-wide">
-                            Sylhet, Bangladesh
-                          </span>
-                        </div>
-
-                     {/* Hero Title */}
-                        <div className="space-y-6">
-                          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
-                            <span className="block text-teal-600">Your Home</span>
-                            <span className="block text-gray-800">Away From Home</span>
-                            <span className="block mt-2 text-teal-600">
-                              in Sylhet
-                            </span>
-                          </h1>
-
-                          <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed font-medium">
-                            Experience premium student accommodation with <span className="text-teal-600 font-bold">cutting-edge amenities</span>, <span className="text-gray-800 font-bold">vibrant community</span>, and an environment designed for success.
-                          </p>
-                        </div>
+                <div className="relative w-full min-h-screen flex items-center justify-center">
+                  {/* Background Image */}
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920&q=80"
+                      alt="Modern student accommodation"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50"></div>
+                  </div>
+                  {/* Centered Text Content */}
+                  <div className="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                      <div className="w-3 h-3 bg-teal-400 rounded-full"></div>
+                      <MapPin className="w-5 h-5 text-teal-400" />
+                      <span className="text-sm font-bold text-white tracking-wide">
+                        Sylhet, Bangladesh
+                      </span>
                     </div>
-
-                   {/* Right - Image */}
-                     <div className="relative">
-                       <img
-                         src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"
-                         alt="Modern student accommodation"
-                         className="rounded-2xl shadow-lg w-full h-[500px] object-cover"
-                       />
-                     </div>
+                    <div className="space-y-6">
+                      <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                        <span className="block text-white">Your Home</span>
+                        <span className="block text-white">Away From Home</span>
+                        <span className="block mt-2 text-teal-400">
+                          in Sylhet
+                        </span>
+                      </h1>
+                      <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                        Experience premium student accommodation with <span className="text-teal-400 font-bold">cutting-edge amenities</span>, <span className="text-white font-bold">vibrant community</span>, and an environment designed for success.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
 
                {/* Slide 2 */}
                 <CarouselItem>
-                  <div className="w-full px-6 lg:px-12">
-                    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
-                      <div className="space-y-8">
-                        <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200">
-                          <MapPin className="w-5 h-5 text-teal-600" />
-                          <span className="text-sm font-bold text-teal-600">Prime Location</span>
-                        </div>
-                        <div className="space-y-6">
-                          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
-                            <span className="block text-teal-600">Study in</span>
-                            <span className="block text-gray-800">Comfort</span>
-                          </h1>
-                          <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed font-medium">
-                            Fully furnished rooms with <span className="text-teal-600 font-bold">modern furniture</span>, <span className="text-gray-800 font-bold">high-speed WiFi</span>, and dedicated study areas.
-                          </p>
-                        </div>
+                  <div className="relative w-full min-h-screen flex items-center justify-center">
+                    <div className="absolute inset-0 z-0">
+                      <img
+                        src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+                        alt="Comfortable study room"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/50"></div>
+                    </div>
+                    <div className="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
+                      <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                        <MapPin className="w-5 h-5 text-teal-400" />
+                        <span className="text-sm font-bold text-white">Prime Location</span>
                       </div>
-                      <div className="relative">
-                        <img
-                          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80"
-                          alt="Comfortable study room"
-                          className="rounded-2xl shadow-lg w-full h-[500px] object-cover"
-                        />
+                      <div className="space-y-6">
+                        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                          <span className="block text-white">Study in</span>
+                          <span className="block text-white">Comfort</span>
+                        </h1>
+                        <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                          Fully furnished rooms with <span className="text-teal-400 font-bold">modern furniture</span>, <span className="text-white font-bold">high-speed WiFi</span>, and dedicated study areas.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -167,29 +160,28 @@ export default function App() {
 
                 {/* Slide 3 */}
                 <CarouselItem>
-                  <div className="w-full px-6 lg:px-12">
-                    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
-                      <div className="space-y-8">
-                        <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200">
-                          <MapPin className="w-5 h-5 text-teal-600" />
-                          <span className="text-sm font-bold text-teal-600">Community Living</span>
-                        </div>
-                        <div className="space-y-6">
-                          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
-                            <span className="block text-teal-600">Build Your</span>
-                            <span className="block text-teal-600">Network</span>
-                          </h1>
-                          <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed font-medium">
-                            Join a <span className="text-teal-600 font-bold">vibrant community</span> of students from top universities with <span className="text-teal-600 font-bold">networking events</span>.
-                          </p>
-                        </div>
+                  <div className="relative w-full min-h-screen flex items-center justify-center">
+                    <div className="absolute inset-0 z-0">
+                      <img
+                        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"
+                        alt="Student community"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/50"></div>
+                    </div>
+                    <div className="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
+                      <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                        <MapPin className="w-5 h-5 text-teal-400" />
+                        <span className="text-sm font-bold text-white">Community Living</span>
                       </div>
-                      <div className="relative">
-                        <img
-                          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                          alt="Student community"
-                          className="rounded-2xl shadow-lg w-full h-[500px] object-cover"
-                        />
+                      <div className="space-y-6">
+                        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight">
+                          <span className="block text-white">Build Your</span>
+                          <span className="block text-teal-400">Network</span>
+                        </h1>
+                        <p className="text-xl sm:text-2xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                          Join a <span className="text-teal-400 font-bold">vibrant community</span> of students from top universities with <span className="text-teal-400 font-bold">networking events</span>.
+                        </p>
                       </div>
                     </div>
                   </div>
