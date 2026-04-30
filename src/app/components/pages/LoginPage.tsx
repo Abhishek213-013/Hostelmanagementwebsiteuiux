@@ -22,15 +22,42 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-6xl">
         <Link to="/" className="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>
 
         <AnimatedSection>
-        <div className="relative">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border-2 border-gray-200">
+        <div className="flex flex-col md:flex-row bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
+          {/* Left Side - Image */}
+          <div className="md:w-1/2 bg-gradient-to-br from-teal-500 to-emerald-600 p-12 flex items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="relative z-10 text-center text-white">
+              <Building2 className="w-24 h-24 mx-auto mb-6 text-white/90" />
+              <h2 className="text-4xl font-black mb-4">SylhetStay</h2>
+              <p className="text-xl text-white/80">Find your perfect student accommodation</p>
+              <div className="mt-8 space-y-4">
+                <div className="flex items-center gap-3 justify-center">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="text-lg">Premium student housing</span>
+                </div>
+                <div className="flex items-center gap-3 justify-center">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="text-lg">Verified properties</span>
+                </div>
+                <div className="flex items-center gap-3 justify-center">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="text-lg">Hassle-free booking</span>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-white/10 rounded-full"></div>
+            <div className="absolute -top-20 -right-20 w-80 h-80 bg-white/10 rounded-full"></div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div className="md:w-1/2 p-8 md:p-10">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-3 mb-6">
                 <div className="p-3 rounded-2xl shadow bg-teal-600">
