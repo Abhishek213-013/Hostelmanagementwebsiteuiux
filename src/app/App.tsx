@@ -254,7 +254,7 @@ export default function App() {
       </section>
 
          {/* Availability Cards */}
-         <section className="py-20">
+         <section className="py-16">
            <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                  {[
@@ -290,7 +290,7 @@ export default function App() {
          </section>
 
          {/* About Section */}
-          <section id="about" className="py-20">
+          <section id="about" className="py-16">
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <AnimatedSection>
@@ -371,7 +371,7 @@ export default function App() {
           </section>
 
          {/* Facilities */}
-         <section className="py-20">
+         <section className="py-16">
            <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
              <AnimatedSection>
                <div className="text-center mb-16">
@@ -411,7 +411,7 @@ export default function App() {
          </section>
 
           {/* Rooms */}
-          <section className="py-20">
+          <section className="py-16">
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
               <AnimatedSection>
                 <div className="text-center mb-16">
@@ -481,7 +481,7 @@ export default function App() {
           </section>
 
          {/* Gallery */}
-         <section className="py-20">
+         <section className="py-16">
            <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
              <AnimatedSection>
                <div className="text-center mb-16">
@@ -526,7 +526,7 @@ export default function App() {
          </section>
 
          {/* Testimonials */}
-          <section className="py-20">
+          <section className="py-16">
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
               <AnimatedSection>
                 <div className="text-center mb-16">
@@ -555,9 +555,9 @@ export default function App() {
                      </div>
                      <p className="text-gray-700 mb-8 leading-relaxed">{testimonial.text}</p>
                      <div className="flex items-center gap-4">
-                       <div className="w-14 h-14 rounded-full bg-teal-600 flex items-center justify-center">
-                         <span className="text-white font-bold text-lg">{testimonial.name[0]}</span>
-                       </div>
+                        <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
+                          <span className="text-white font-bold text-base">{testimonial.name[0]}</span>
+                        </div>
                        <div>
                          <div className="font-black text-gray-800">{testimonial.name}</div>
                          <div className="text-sm text-teal-600">{testimonial.uni}</div>
@@ -570,7 +570,7 @@ export default function App() {
           </section>
 
          {/* CTA Section */}
-         <section className="py-20">
+         <section className="py-16">
            <div className="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center mx-6 lg:mx-12">
              <h2 className="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
              <p className="text-l text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
