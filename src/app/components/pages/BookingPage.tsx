@@ -298,24 +298,24 @@ export function BookingPage() {
                     Back to Booking
                   </button>
 
-                  <h2 className="text-3xl font-black mb-8 text-teal-600">Select Payment Method</h2>
+                  <h2 className="text-xl font-black mb-8 text-teal-600">Select Payment Method</h2>
 
                   <div className="mb-6 p-6 bg-gray-50 rounded-2xl border-2 border-gray-200">
-                    <h4 className="font-black text-gray-800 mb-4">Booking Summary</h4>
+                    <h4 className="text-lg font-black text-gray-800 mb-4">Booking Summary</h4>
                     <div className="space-y-3 text-gray-600">
-                      <div className="flex justify-between">
+                      <div className="text-m flex justify-between">
                         <span>Room Type</span>
                         <span className="font-bold text-gray-800">{selectedRoom.title}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="text-m flex justify-between">
                         <span>Monthly Rent</span>
                         <span className="font-bold text-gray-800">৳{selectedRoom.price.toLocaleString()}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="text-m flex justify-between">
                         <span>Security Deposit</span>
                         <span className="font-bold text-gray-800">৳{Math.round(selectedRoom.price * 2).toLocaleString()}</span>
                       </div>
-                      <div className="border-t border-gray-300 pt-3 mt-3 flex justify-between">
+                      <div className="text-m border-t border-gray-300 pt-3 mt-3 flex justify-between">
                         <span className="font-black text-lg text-gray-800">Total to Pay</span>
                         <span className="font-black text-2xl text-gray-800">৳{Math.round(selectedRoom.price * 2).toLocaleString()}</span>
                       </div>
@@ -364,7 +364,7 @@ export function BookingPage() {
                             <CreditCard className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-left flex-1">
-                            <h4 className="font-black text-gray-800">SSLCOMMERZ</h4>
+                            <h4 className="text-lg font-black text-gray-800">SSLCOMMERZ</h4>
                             <p className="text-sm text-gray-600">Pay securely with SSLCOMMERZ gateway</p>
                           </div>
                           {selectedPayment === 'sslcommerz' && (
@@ -387,7 +387,7 @@ export function BookingPage() {
                             <CreditCard className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-left flex-1">
-                            <h4 className="font-black text-gray-800">Credit/Debit Card</h4>
+                            <h4 className="text-lg font-black text-gray-800">Credit/Debit Card</h4>
                             <p className="text-sm text-gray-600">Visa, MasterCard, American Express</p>
                           </div>
                           {selectedPayment === 'credit-card' && (
@@ -410,7 +410,7 @@ export function BookingPage() {
                             <Smartphone className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-left flex-1">
-                            <h4 className="font-black text-gray-800">Mobile Banking</h4>
+                            <h4 className="text-lg font-black text-gray-800">Mobile Banking</h4>
                             <p className="text-sm text-gray-600">bKash, Nagad, Rocket, Upay</p>
                           </div>
                           {selectedPayment === 'mobile-banking' && (
@@ -433,7 +433,7 @@ export function BookingPage() {
                             <Building2 className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-left flex-1">
-                            <h4 className="font-black text-gray-800">Net Banking</h4>
+                            <h4 className="text-lg font-black text-gray-800">Net Banking</h4>
                             <p className="text-sm text-gray-600">All major banks supported</p>
                           </div>
                           {selectedPayment === 'net-banking' && (

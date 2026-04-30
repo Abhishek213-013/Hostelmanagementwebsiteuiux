@@ -223,7 +223,7 @@ export function RoomDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24">
 
       <div className="relative">
         {/* Back Button */}
@@ -237,12 +237,12 @@ export function RoomDetailsPage() {
             <div className="space-y-6">
               {/* Main Image */}
               <div className="relative">
-                <div className="rounded-2xl overflow-hidden shadow border border-gray-200">
+                <div className="rounded-xl overflow-hidden shadow border border-gray-200">
                   <img
-                    src={currentImage}
-                    alt={room.title}
-                    className="w-full h-[500px] object-cover"
-                  />
+                     src={currentImage}
+                     alt={room.title}
+                     className="w-full h-[400px] object-cover"
+                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
 
                   {/* Price Badge on Image */}
@@ -299,15 +299,15 @@ export function RoomDetailsPage() {
               </div>
 
               {/* Title */}
-              <h1 className="text-5xl lg:text-6xl font-black text-teal-600">
-                {room.title}
-              </h1>
+              <h1 className="text-3xl lg:text-4xl font-black text-teal-600">
+                 {room.title}
+               </h1>
 
               {/* Price */}
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black text-teal-600">৳{room.price.toLocaleString()}</span>
-                <span className="text-xl text-gray-600">/month</span>
-              </div>
+                 <span className="text-2xl font-black text-teal-600">৳{room.price.toLocaleString()}</span>
+                 <span className="text-lg text-gray-600">/month</span>
+               </div>
 
               {/* Availability Status */}
               <div className="flex items-center gap-3">
@@ -318,7 +318,7 @@ export function RoomDetailsPage() {
               </div>
 
               {/* Description */}
-              <p className="text-xl text-gray-600 leading-relaxed">{room.description}</p>
+              <p className="text-base text-gray-600 leading-relaxed">{room.description}</p>
 
               {/* Room Specifications - 2 Columns */}
               <div className="grid grid-cols-2 gap-4 bg-white rounded-2xl p-6 border border-gray-200">
@@ -379,7 +379,7 @@ export function RoomDetailsPage() {
 
         {/* Amenities Section */}
         <div className="mt-20 mb-12">
-          <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center text-teal-600">
+          <h2 className="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">
             Room Amenities
           </h2>
 
@@ -390,22 +390,22 @@ export function RoomDetailsPage() {
                 const opacity = !amenity.available ? 'opacity-50' : '';
 
                 return (
-                  <div key={i} className={`bg-white rounded-2xl p-6 shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 transition-all duration-500 flex items-center gap-4 ${opacity}`}>
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${bgColor}`}>
-                        {amenity.icon === 'Wifi' && <Wifi className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Wind' && <Wind className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Coffee' && <Coffee className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'BookOpen' && <BookOpen className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Dumbbell' && <Dumbbell className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Car' && <Car className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Shield' && <Shield className={`w-6 h-6 ${iconColor}`} />}
-                        {amenity.icon === 'Utensils' && <Utensils className={`w-6 h-6 ${iconColor}`} />}
+                  <div key={i} className={`group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4 ${opacity}`}>
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${bgColor} group-hover:bg-white/20 transition-colors duration-500`}>
+                        {amenity.icon === 'Wifi' && <Wifi className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Wind' && <Wind className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Coffee' && <Coffee className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'BookOpen' && <BookOpen className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Dumbbell' && <Dumbbell className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Car' && <Car className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Shield' && <Shield className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
+                        {amenity.icon === 'Utensils' && <Utensils className={`w-6 h-6 ${iconColor} group-hover:text-white transition-colors duration-500`} />}
                       </div>
                       <div className="flex-1">
-                        <span className="text-gray-700 font-semibold">{amenity.name}</span>
-                        {!amenity.available && <span className="text-xs text-gray-400 ml-2">(Not Available)</span>}
+                        <span className="text-gray-700 font-semibold group-hover:text-white transition-colors duration-500">{amenity.name}</span>
+                        {!amenity.available && <span className="text-xs text-gray-400 ml-2 group-hover:text-white/70 transition-colors duration-500">(Not Available)</span>}
                       </div>
-                      {amenity.available && <CheckCircle2 className="w-5 h-5 text-teal-500 flex-shrink-0" />}
+                      {amenity.available && <CheckCircle2 className="w-5 h-5 text-teal-500 flex-shrink-0 group-hover:text-white transition-colors duration-500" />}
                   </div>
                 );
               })}
@@ -414,78 +414,78 @@ export function RoomDetailsPage() {
 
         {/* Room Policies Section */}
         <div className="mt-20 mb-12">
-          <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center text-teal-600">
+          <h2 className="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">
             Room Policies
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600" />
-                </div>
-                <h3 className="font-bold text-gray-900">Main Gate Opens</h3>
-              </div>
-              <p className="text-gray-700 font-semibold text-lg">{room.policies.checkIn}</p>
-            </div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+             <div className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
+               <div className="flex items-center gap-3 mb-4">
+                 <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center group-hover:bg-white/20 transition-colors duration-500">
+                   <CheckCircle2 className="w-5 h-5 text-teal-600 group-hover:text-white transition-colors duration-500" />
+                 </div>
+                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-white transition-colors duration-500">Main Gate Opens</h3>
+               </div>
+               <p className="text-gray-700 font-semibold text-m group-hover:text-white transition-colors duration-500">{room.policies.checkIn}</p>
+             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600" />
-                </div>
-                <h3 className="font-bold text-gray-900">Main Gate Closes</h3>
-              </div>
-              <p className="text-gray-700 font-semibold text-lg">{room.policies.checkOut}</p>
-            </div>
+             <div className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
+               <div className="flex items-center gap-3 mb-4">
+                 <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center group-hover:bg-white/20 transition-colors duration-500">
+                   <CheckCircle2 className="w-5 h-5 text-teal-600 group-hover:text-white transition-colors duration-500" />
+                 </div>
+                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-white transition-colors duration-500">Main Gate Closes</h3>
+               </div>
+               <p className="text-gray-700 font-semibold text-m group-hover:text-white transition-colors duration-500">{room.policies.checkOut}</p>
+             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-amber-600" />
-                </div>
-                <h3 className="font-bold text-gray-900">Meal Cancellation</h3>
-              </div>
-              <p className="text-amber-700 font-semibold text-lg">{room.policies.cancellation}</p>
-            </div>
+             <div className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
+               <div className="flex items-center gap-3 mb-4">
+                 <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center group-hover:bg-white/20 transition-colors duration-500">
+                   <CheckCircle2 className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors duration-500" />
+                 </div>
+                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-white transition-colors duration-500">Meal Cancellation</h3>
+               </div>
+               <p className="text-amber-700 font-semibold text-m group-hover:text-white transition-colors duration-500">{room.policies.cancellation}</p>
+             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-10 h-10 rounded-xl ${room.policies.smoking ? 'bg-teal-100' : 'bg-red-100'} flex items-center justify-center`}>
-                  {room.policies.smoking ? <CheckCircle2 className="w-5 h-5 text-teal-600" /> : <X className="w-5 h-5 text-red-600" />}
-                </div>
-                <h3 className="font-bold text-gray-900">Smoking</h3>
-              </div>
-              <p className="text-gray-700 font-semibold text-lg">{room.policies.smoking ? 'Allowed' : 'Not Allowed'}</p>
-            </div>
+             <div className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
+               <div className="flex items-center gap-3 mb-4">
+                 <div className={`w-10 h-10 rounded-xl ${room.policies.smoking ? 'bg-teal-100' : 'bg-red-100'} flex items-center justify-center group-hover:bg-white/20 transition-colors duration-500`}>
+                   {room.policies.smoking ? <CheckCircle2 className="w-5 h-5 text-teal-600 group-hover:text-white transition-colors duration-500" /> : <X className="w-5 h-5 text-red-600 group-hover:text-white transition-colors duration-500" />}
+                 </div>
+                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-white transition-colors duration-500">Smoking</h3>
+               </div>
+               <p className="text-gray-700 font-semibold text-m group-hover:text-white transition-colors duration-500">{room.policies.smoking ? 'Allowed' : 'Not Allowed'}</p>
+             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-10 h-10 rounded-xl ${room.policies.pets ? 'bg-teal-100' : 'bg-red-100'} flex items-center justify-center`}>
-                  {room.policies.pets ? <CheckCircle2 className="w-5 h-5 text-teal-600" /> : <X className="w-5 h-5 text-red-600" />}
-                </div>
-                <h3 className="font-bold text-gray-900">Pets</h3>
-              </div>
-              <p className="text-gray-700 font-semibold text-lg">{room.policies.pets ? 'Allowed' : 'Not Allowed'}</p>
-            </div>
-          </div>
+             <div className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
+               <div className="flex items-center gap-3 mb-4">
+                 <div className={`w-10 h-10 rounded-xl ${room.policies.pets ? 'bg-teal-100' : 'bg-red-100'} flex items-center justify-center group-hover:bg-white/20 transition-colors duration-500`}>
+                   {room.policies.pets ? <CheckCircle2 className="w-5 h-5 text-teal-600 group-hover:text-white transition-colors duration-500" /> : <X className="w-5 h-5 text-red-600 group-hover:text-white transition-colors duration-500" />}
+                 </div>
+                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-white transition-colors duration-500">Pets</h3>
+               </div>
+               <p className="text-gray-700 font-semibold text-m group-hover:text-white transition-colors duration-500">{room.policies.pets ? 'Allowed' : 'Not Allowed'}</p>
+             </div>
+           </div>
         </div>
 
         {/* Features List */}
         <div className="mt-20 mb-12">
-          <h2 className="text-4xl lg:text-5xl font-black mb-12 text-center text-teal-600">
+          <h2 className="text-3xl lg:text-3xl font-black mb-12 text-center text-teal-600">
             Room Features
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {room.features.map((feature, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 transition-all duration-500 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-teal-100">
-                    <CheckCircle2 className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <span className="text-gray-700 font-semibold">{feature}</span>
-              </div>
-            ))}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             {room.features.map((feature, i) => (
+               <div key={i} className="group bg-white rounded-2xl p-6 shadow border border-gray-200 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-teal-100 group-hover:bg-white/20 transition-colors duration-500">
+                     <CheckCircle2 className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors duration-500" />
+                   </div>
+                   <span className="text-gray-700 font-semibold group-hover:text-white transition-colors duration-500">{feature}</span>
+               </div>
+             ))}
           </div>
         </div>
         </div>
