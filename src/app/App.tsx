@@ -385,27 +385,27 @@ export default function App() {
                </div>
              </AnimatedSection>
 
-             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-               {[
-                 { icon: Wifi, label: 'High-Speed WiFi', desc: '100 Mbps fiber' },
-                 { icon: Wind, label: 'Air Conditioning', desc: 'Premium rooms' },
-                 { icon: Utensils, label: 'Dining Hall', desc: '3 meals daily' },
-                 { icon: Coffee, label: 'Common Room', desc: 'Recreation area' },
-                 { icon: BookOpen, label: 'Study Rooms', desc: 'Quiet & peaceful' },
-                 { icon: Shield, label: '24/7 Security', desc: 'CCTV & guards' },
-                 { icon: Car, label: 'Parking', desc: 'Bike & car spaces' },
-                 { icon: Dumbbell, label: 'Fitness Center', desc: 'Modern equipment' }
-               ].map((item, i) => (
-                 <AnimatedSection key={i}>
-                   <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-                        <div className="w-16 h-16 mx-auto mb-4 bg-teal-600 rounded-xl flex items-center justify-center">
-                          <item.icon className="w-8 h-8 text-white" />
-                        </div>
-                        <h4 className="text-lg font-black mb-2 text-teal-600">{item.label}</h4>
-                        <p className="text-sm text-gray-600">{item.desc}</p>
-                      </div>
-                   </AnimatedSection>
-                 ))}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  { icon: Wifi, label: 'High-Speed WiFi', desc: '100 Mbps fiber' },
+                  { icon: Wind, label: 'Air Conditioning', desc: 'Premium rooms' },
+                  { icon: Utensils, label: 'Dining Hall', desc: '3 meals daily' },
+                  { icon: Coffee, label: 'Common Room', desc: 'Recreation area' },
+                  { icon: BookOpen, label: 'Study Rooms', desc: 'Quiet & peaceful' },
+                  { icon: Shield, label: '24/7 Security', desc: 'CCTV & guards' },
+                  { icon: Car, label: 'Parking', desc: 'Bike & car spaces' },
+                  { icon: Dumbbell, label: 'Fitness Center', desc: 'Modern equipment' }
+                ].map((item, i) => (
+                  <AnimatedSection key={i}>
+                    <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+                         <div className="w-16 h-16 mx-auto mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
+                           <item.icon className="w-8 h-8 text-white group-hover:text-teal-600" />
+                         </div>
+                         <h4 className="text-lg font-black mb-2 text-teal-600 group-hover:text-white transition-colors duration-500">{item.label}</h4>
+                         <p className="text-sm text-gray-600 group-hover:text-teal-100 transition-colors duration-500">{item.desc}</p>
+                       </div>
+                    </AnimatedSection>
+                  ))}
              </div>
            </div>
          </section>
