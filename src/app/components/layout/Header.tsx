@@ -10,7 +10,12 @@ const LOGO_TERTIARY = '#1c1917';
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +24,10 @@ export function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -74,11 +83,11 @@ export function Header() {
               <span className="relative z-10">Contact Us</span>
             </Link>
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               className="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+              {resolvedTheme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
             </button>
           </div>
 
@@ -109,16 +118,16 @@ export function Header() {
             <Link to="/contact" className="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Contact
             </Link>
-            <button
-              onClick={() => {
-                setTheme(theme === 'dark' ? 'light' : 'dark');
-                setMobileMenuOpen(false);
-              }}
-              className="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors w-full"
-            >
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </button>
+             <button
+               onClick={() => {
+                 setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+                 setMobileMenuOpen(false);
+               }}
+               className="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors w-full"
+             >
+               {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+               {resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+             </button>
             <Link to="/login" className="block py-3 px-6 mt-4 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Login / Sign Up
             </Link>
