@@ -11,7 +11,7 @@ import { RoomDetailsPage } from './components/pages/RoomDetailsPage';
 import { FacilitiesPage } from './components/pages/FacilitiesPage';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-import { Carousel, CarouselContent, CarouselItem } from './components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from './components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
 // Move these constants here - outside of any function
@@ -58,6 +58,8 @@ export default function App() {
     maxPrice: ''
   });
   const [scrolled, setScrolled] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
   const isHomePage = location.pathname === '/' || location.pathname === '';
 
   const cardGradients = [
@@ -76,6 +78,17 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!carouselApi) return;
+    const onSelect = () => {
+      setCurrentSlide(carouselApi.selectedScrollSnap());
+    };
+    carouselApi.on('select', onSelect);
+    return () => {
+      carouselApi.off('select', onSelect);
+    };
+  }, [carouselApi]);
+
   const renderHomePage = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="relative">
@@ -87,10 +100,11 @@ export default function App() {
         <div className="relative w-full">
           {/* Carousel - Full width with background images */}
           <Carousel
-            opts={{ loop: true }}
-            plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
-            className="w-full"
-          >
+             opts={{ loop: true }}
+             plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
+             className="w-full"
+             setApi={setCarouselApi}
+           >
             <CarouselContent>
               {/* Slide 1 */}
               <CarouselItem>
@@ -187,7 +201,22 @@ export default function App() {
                   </div>
                 </CarouselItem>
             </CarouselContent>
-          </Carousel>
+            {/* Slider Indicator Dots */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+              {[0, 1, 2].map((index) => (
+                <button
+                  key={index}
+                  onClick={() => carouselApi?.scrollTo(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index
+                      ? 'bg-white w-8'
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+           </Carousel>
 
            {/* Search Widget - Full Width Container */}
             <div className="w-full px-6 lg:px-12 mt-12">
