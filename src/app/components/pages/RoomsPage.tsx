@@ -147,7 +147,7 @@ export function RoomsPage() {
               <div className="bg-white rounded-3xl overflow-hidden shadow border border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
                 <div className="relative h-72 overflow-hidden">
                   <img src={room.image} alt={room.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
 
                   {/* Badges */}
                   <div className="absolute bottom-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
@@ -181,8 +181,8 @@ export function RoomsPage() {
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-                    <div className="flex items-center gap-3">
+                  <div className="pt-6 border-t border-gray-200">
+                    <div className="flex items-center gap-3 mb-4">
                       <div className={`w-3 h-3 rounded-full ${room.available > 0 ? 'bg-teal-500' : 'bg-red-500'}`}></div>
                       <span className="text-sm font-bold text-gray-700">
                         {room.available > 0 ? `${room.available} available` : 'Fully booked'}
