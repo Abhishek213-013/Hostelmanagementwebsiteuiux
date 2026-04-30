@@ -249,42 +249,7 @@ export default function App() {
               </div>
             </div>
 
-           {/* Trust Indicators - Full Width Container */}
-            <div className="w-full px-6 lg:px-12 pt-8">
-              <div className="max-w-[1400px] mx-auto flex flex-wrap items-center justify-center gap-8">
-                <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
-                  <div className="flex -space-x-2">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-white" style={{background: '#0d9488'}}></div>
-                    ))}
-                  </div>
-                  <div className="text-left">
-                    <div className="font-bold text-teal-600">150+ Students</div>
-                    <div className="text-xs text-gray-600">Living Here</div>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <div className="text-left">
-                    <div className="font-bold text-amber-600">4.8/5.0</div>
-                    <div className="text-xs text-gray-600">Rating</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
-                  <TrendingUp className="w-6 h-6 text-teal-600" />
-                  <div className="text-left">
-                    <div className="font-bold text-teal-600">98% Occupied</div>
-                    <div className="text-xs text-gray-600">High Demand</div>
-                  </div>
-                </div>
-              </div>
-            </div>
         </div>
       </section>
 
@@ -348,22 +313,39 @@ export default function App() {
                        Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span className="text-teal-600 font-bold">comfortable</span>, <span className="text-gray-800 font-bold">safe</span>, and <span className="text-teal-600 font-bold">study-conducive</span> environment.
                      </p>
 
-                     <div className="grid grid-cols-2 gap-6">
-                       {[
-                         { num: '150+', label: 'Happy Students' },
-                         { num: '4.8', label: 'Average Rating', icon: true },
-                         { num: '50+', label: 'Room Options' },
-                         { num: '24/7', label: 'Security' }
-                       ].map((stat, i) => (
-                         <div key={i} className="bg-white rounded-xl p-6 shadow border border-gray-200">
-                           <div className="text-4xl font-black mb-2 flex items-center gap-1 text-teal-600">
-                             {stat.num}
-                             {stat.icon && <Star className="w-6 h-6 fill-amber-400 text-amber-400 inline ml-1" />}
-                           </div>
-                           <div className="text-sm font-semibold text-gray-600">{stat.label}</div>
-                         </div>
-                       ))}
-                     </div>
+                      <div className="flex flex-wrap items-center gap-6">
+                        <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                          <div className="flex -space-x-2">
+                            {[...Array(4)].map((_, i) => (
+                              <div key={i} className="w-8 h-8 rounded-full border-2 border-white" style={{background: '#0d9488'}}></div>
+                            ))}
+                          </div>
+                          <div className="text-left">
+                            <div className="font-bold text-teal-600">150+ Students</div>
+                            <div className="text-xs text-gray-600">Living Here</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                            ))}
+                          </div>
+                          <div className="text-left">
+                            <div className="font-bold text-amber-600">4.8/5.0</div>
+                            <div className="text-xs text-gray-600">Rating</div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                          <TrendingUp className="w-6 h-6 text-teal-600" />
+                          <div className="text-left">
+                            <div className="font-bold text-teal-600">98% Occupied</div>
+                            <div className="text-xs text-gray-600">High Demand</div>
+                          </div>
+                        </div>
+                      </div>
                   </div>
                 </AnimatedSection>
 
@@ -396,10 +378,10 @@ export default function App() {
                  <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
                    <span className="text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
                  </div>
-                 <h2 className="text-5xl lg:text-6xl font-black mb-6 text-teal-600">
+                 <h2 className="text-3xl lg:text-4xl font-black mb-6 text-teal-600">
                     World-Class Facilities
                   </h2>
-                  <p className="text-xl text-gray-600 max-w-2xl mx-auto">Everything you need for <span className="text-teal-600 font-bold">success</span>, all under one roof</p>
+                  <p className="text-l text-gray-600 max-w-2xl mx-auto">Everything you need for <span className="text-teal-600 font-bold">success</span>, all under one roof</p>
                </div>
              </AnimatedSection>
 
@@ -415,7 +397,7 @@ export default function App() {
                  { icon: Dumbbell, label: 'Fitness Center', desc: 'Modern equipment' }
                ].map((item, i) => (
                  <AnimatedSection key={i}>
-                   <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center">
+                   <div className="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
                         <div className="w-16 h-16 mx-auto mb-4 bg-teal-600 rounded-xl flex items-center justify-center">
                           <item.icon className="w-8 h-8 text-white" />
                         </div>
