@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 interface Room {
   id: number;
@@ -85,10 +85,29 @@ const amenities = [
 ];
 
 export function RoomsPage() {
+  const [searchParams] = useSearchParams();
   const [selectedType, setSelectedType] = useState<string>('all');
+  const [maxSeats, setMaxSeats] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
   const [hoveredRoom, setHoveredRoom] = useState<number | null>(null);
 
-  const filteredRooms = selectedType === 'all' ? rooms : rooms.filter(room => room.type === selectedType);
+  useEffect(() => {
+    const typeFromUrl = searchParams.get('type');
+    const seatsFromUrl = searchParams.get('seats');
+    const maxPriceFromUrl = searchParams.get('maxPrice');
+
+    if (typeFromUrl) setSelectedType(typeFromUrl);
+    if (seatsFromUrl) setMaxSeats(seatsFromUrl);
+    if (maxPriceFromUrl) setMaxPrice(maxPriceFromUrl);
+  }, [searchParams]);
+
+  const filteredRooms = rooms.filter(room => {
+    let match = true;
+    if (selectedType !== 'all') match = match && room.type === selectedType;
+    if (maxSeats) match = match && room.capacity <= parseInt(maxSeats);
+    if (maxPrice) match = match && room.price <= parseInt(maxPrice);
+    return match;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

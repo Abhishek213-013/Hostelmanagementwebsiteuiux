@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft } from 'lucide-react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LoginPage } from './components/pages/LoginPage';
 import { BookingPage } from './components/pages/BookingPage';
 import { GalleryPage } from './components/pages/GalleryPage';
@@ -51,6 +51,7 @@ const AnimatedSection = ({ children, className = "" }) => {
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
     roomType: '',
@@ -82,6 +83,14 @@ export default function App() {
       carouselApi.off('select', onSelect);
     };
   }, [carouselApi]);
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchFilters.roomType) params.set('type', searchFilters.roomType);
+    if (searchFilters.seats) params.set('seats', searchFilters.seats);
+    if (searchFilters.maxPrice) params.set('maxPrice', searchFilters.maxPrice);
+    navigate(`/rooms?${params.toString()}`);
+  };
 
   const galleryImages = [
     { src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=1200', label: 'Modern Rooms' },
@@ -286,7 +295,7 @@ export default function App() {
                     </div>
 
                     <div className="flex items-end">
-                      <button className="w-full px-8 py-3 text-white rounded-xl font-bold" style={{background: '#0d9488'}}>
+                      <button onClick={handleSearch} className="w-full px-8 py-3 text-white rounded-xl font-bold" style={{background: '#0d9488'}}>
                         <span className="flex items-center justify-center gap-3">
                           <Search className="w-5 h-5" />
                           Search
