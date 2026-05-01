@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Smartphone, Building2, Send } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatedSection } from '../ui/AnimatedSection';
 
 // Color theme constants
@@ -37,6 +37,28 @@ const defaultRoom: Room = {
   grad: cardGradients[0]
 };
 
+const roomTypes: Record<string, Room> = {
+  'shared': defaultRoom,
+  'semi-private': {
+    id: 2,
+    title: 'Semi-Private',
+    type: 'semi-private',
+    price: 7500,
+    image: 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
+    features: ['2 Single Beds', 'Attached Bath', 'Study Desks', 'Ceiling Fan', 'High-Speed WiFi', 'Wardrobe'],
+    grad: cardGradients[1]
+  },
+  'premium': {
+    id: 3,
+    title: 'Premium Single',
+    type: 'premium',
+    price: 10500,
+    image: 'https://images.unsplash.com/photo-16638113493eff11?w=800',
+    features: ['Private Room', 'Attached Bath', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'],
+    grad: cardGradients[2]
+  }
+};
+
 interface PaymentResponse {
   status: 'success' | 'failed' | 'canceled';
   transactionId?: string;
@@ -44,7 +66,11 @@ interface PaymentResponse {
 }
 
 export function BookingPage() {
-  const [selectedRoom, setSelectedRoom] = useState<Room>(defaultRoom);
+  const [searchParams] = useSearchParams();
+  const roomType = searchParams.get('room');
+  const initialRoom = roomType && roomTypes[roomType] ? roomTypes[roomType] : defaultRoom;
+  
+  const [selectedRoom, setSelectedRoom] = useState<Room>(initialRoom);
   const [bookingData, setBookingData] = useState({
     checkIn: '',
     checkOut: '',

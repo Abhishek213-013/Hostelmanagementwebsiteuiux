@@ -307,9 +307,9 @@ export default function App() {
                         <div className="text-2xl font-black text-teal-600">
                            {card.price}
                         </div>
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600">
+                        <Link to="/rooms" className="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600">
                           <ArrowRight className="w-6 h-6 text-white" />
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   </AnimatedSection>
@@ -458,9 +458,9 @@ export default function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
-                  { img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800', title: 'Shared Room', desc: 'Perfect for vibrant community', price: '৳4,500', features: ['4 bunk beds', 'Shared bathroom', 'Study desk', 'Wardrobe'], popular: false },
-                  { img: 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800', title: 'Semi-Private', desc: 'Balance of privacy & affordability', price: '৳7,500', features: ['2 single beds', 'Attached bath', 'Study desks', 'Ceiling fan'], popular: true },
-                  { img: 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800', title: 'Premium Single', desc: 'Ultimate privacy & comfort', price: '৳10,500', features: ['Private room', 'Attached bath', 'Air conditioning', 'Premium furniture'], popular: false }
+                  { img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800', title: 'Shared Room', desc: 'Perfect for vibrant community', price: '৳4,500', features: ['4 bunk beds', 'Shared bathroom', 'Study desk', 'Wardrobe'], popular: false, type: 'shared' },
+                  { img: 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800', title: 'Semi-Private', desc: 'Balance of privacy & affordability', price: '৳7,500', features: ['2 single beds', 'Attached bath', 'Study desks', 'Ceiling fan'], popular: true, type: 'semi-private' },
+                  { img: 'https://images.unsplash.com/photo-16638113493eff11?w=800', title: 'Premium Single', desc: 'Ultimate privacy & comfort', price: '৳10,500', features: ['Private room', 'Attached bath', 'Air conditioning', 'Premium furniture'], popular: false, type: 'premium' }
                 ].map((room, i) => (
                   <AnimatedSection key={i}>
                     <div className="relative">
@@ -495,10 +495,10 @@ export default function App() {
                                   {room.price}<span className="text-lg">/mo</span>
                                 </div>
                               </div>
-                             <button className="px-6 py-3 bg-white text-teal-800 rounded-xl font-bold shadow border border-gray-200 flex items-center gap-2">
-                               Book Now
-                               <ArrowRight className="w-4 h-4" />
-                             </button>
+                              <Link to={`/booking?room=${room.type}`} className="px-6 py-3 bg-white text-teal-800 rounded-xl font-bold shadow border border-gray-200 flex items-center gap-2">
+                                Book Now
+                                <ArrowRight className="w-4 h-4" />
+                              </Link>
                            </div>
                          </div>
                        </div>
