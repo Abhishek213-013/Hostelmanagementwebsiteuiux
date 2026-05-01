@@ -189,14 +189,14 @@ export function GalleryPage() {
 
           <button
             className="absolute left-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110"
-            onClick={handlePrevImage}
+            onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
 
           <button
             className="absolute right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110"
-            onClick={handleNextImage}
+            onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
           >
             <ChevronRight className="w-8 h-8" />
           </button>
