@@ -1,0 +1,117 @@
+<template>
+  <nav :class="['fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+    scrolled ? 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-lg shadow-slate-900/5 dark:shadow-slate-900/20 border-b border-slate-200/50 dark:border-slate-700/50' : 'bg-transparent']">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex justify-between items-center h-24">
+        <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
+          <div class="relative">
+            <div class="absolute inset-0 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" :style="{ background: 'linear-gradient(to bottom right, #1a1a1a, #525252, #1c1917)' }"></div>
+            <div class="relative p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-500" :style="{ background: 'linear-gradient(to bottom right, #1a1a1a, #525252, #1c1917)' }">
+              <Building2 class="w-7 h-7 text-white" />
+            </div>
+          </div>
+          <div>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">SylhetStay</h1>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider uppercase">Premium Living</p>
+          </div>
+        </router-link>
+
+        <div class="hidden lg:flex items-center gap-10">
+          <router-link to="/rooms" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            Rooms
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+          </router-link>
+          <router-link to="/facilities" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            Facilities
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+          </router-link>
+          <router-link to="/gallery" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            Gallery
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+          </router-link>
+          <router-link to="/about" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            About
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+          </router-link>
+          <router-link to="/login" class="px-8 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
+            <span class="relative z-10">Login / Sign Up</span>
+          </router-link>
+          <router-link to="/contact" class="relative px-8 py-3.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
+            <span class="relative z-10">Contact Us</span>
+          </router-link>
+          <button @click="toggleTheme" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300" aria-label="Toggle theme">
+            <Sun v-if="isDark" class="w-6 h-6" />
+            <Moon v-else class="w-6 h-6" />
+          </button>
+        </div>
+
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300">
+          <Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
+          <X v-else class="w-6 h-6" />
+        </button>
+      </div>
+    </div>
+
+    <div v-if="mobileMenuOpen" class="lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200/50 dark:border-slate-700/50">
+      <div class="px-6 py-6 space-y-4">
+        <router-link to="/rooms" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Rooms</router-link>
+        <router-link to="/facilities" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Facilities</router-link>
+        <router-link to="/gallery" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Gallery</router-link>
+        <router-link to="/about" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">About</router-link>
+        <router-link to="/contact" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Contact</router-link>
+        <button @click="toggleThemeAndClose" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors w-full">
+          <Sun v-if="isDark" class="w-5 h-5" />
+          <Moon v-else class="w-5 h-5" />
+          {{ isDark ? 'Light Mode' : 'Dark Mode' }}
+        </button>
+        <router-link to="/login" class="block py-3 px-6 mt-4 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors" @click="mobileMenuOpen = false">Login / Sign Up</router-link>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Building2, Menu, X, Sun, Moon } from 'lucide-vue-next'
+
+const mobileMenuOpen = ref(false)
+const scrolled = ref(false)
+const isDark = ref(false)
+
+let scrollHandler = null
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  if (isDark.value) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
+const toggleThemeAndClose = () => {
+  toggleTheme()
+  mobileMenuOpen.value = false
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme')
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  isDark.value = savedTheme === 'dark' || (!savedTheme && prefersDark)
+  if (isDark.value) {
+    document.documentElement.classList.add('dark')
+  }
+
+  scrollHandler = () => {
+    scrolled.value = window.scrollY > 50
+  }
+  window.addEventListener('scroll', scrollHandler)
+})
+
+onUnmounted(() => {
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler)
+  }
+})
+</script>

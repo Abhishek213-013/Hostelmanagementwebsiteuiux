@@ -1,0 +1,231 @@
+<template>
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="relative">
+      <Header />
+
+      <!-- Hero Section with Simple Carousel -->
+      <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
+        <div class="relative w-full">
+          <div v-for="(slide, index) in slides" :key="index" v-show="currentSlide === index" class="absolute inset-0 w-full min-h-screen flex items-center justify-center">
+            <div class="absolute inset-0 z-0">
+              <img :src="slide.image" :alt="slide.alt" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-black/50"></div>
+            </div>
+            <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
+              <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                <MapPin class="w-5 h-5 text-teal-400" />
+                <span class="text-sm font-bold text-white tracking-wide">{{ slide.location }}</span>
+              </div>
+              <div class="space-y-6">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                  <span v-for="(line, i) in slide.titleLines" :key="i" class="block" :class="line.class">
+                    {{ line.text }}
+                  </span>
+                </h1>
+                <p class="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto" v-html="slide.description"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide Indicators -->
+          <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <button v-for="(slide, index) in slides" :key="'btn-'+index" @click="goToSlide(index)"
+              :class="['w-3 h-3 rounded-full transition-all duration-300', currentSlide === index ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/75']"
+              :aria-label="`Go to slide ${index + 1}`" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Search Widget -->
+      <div class="w-full px-6 lg:px-12 mt-12">
+        <div class="max-w-[1400px] mx-auto">
+          <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-slate-700">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div class="space-y-3">
+                <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Room Type</label>
+                <select v-model="searchFilters.roomType" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 focus:border-teal-500 focus:outline-none font-semibold text-gray-800 dark:text-white">
+                  <option value="">All Types</option>
+                  <option value="single">Single</option>
+                  <option value="shared">Shared</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+              <div class="space-y-3">
+                <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Seats</label>
+                <select v-model="searchFilters.seats" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 focus:border-teal-500 focus:outline-none font-semibold text-gray-800 dark:text-white">
+                  <option value="">Any</option>
+                  <option value="1">1 Person</option>
+                  <option value="2">2 People</option>
+                  <option value="4">4 People</option>
+                </select>
+              </div>
+              <div class="space-y-3">
+                <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Max Price</label>
+                <select v-model="searchFilters.maxPrice" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 focus:border-teal-500 focus:outline-none font-semibold text-gray-800 dark:text-white">
+                  <option value="">Any Budget</option>
+                  <option value="5000">৳5,000/mo</option>
+                  <option value="8000">৳8,000/mo</option>
+                  <option value="12000">৳12,000/mo</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button @click="handleSearch" class="w-full px-8 py-3 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
+                  <span class="flex items-center justify-center gap-3">
+                    <Search class="w-5 h-5" />
+                    Search
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Rest of the content sections... -->
+      <section class="py-16">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div v-for="card in availabilityCards" :key="card.title" class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-slate-700">
+              <div class="flex items-start justify-between mb-6">
+                <div class="p-4 rounded-2xl bg-teal-600">
+                  <component :is="card.icon" class="w-7 h-7 text-white" />
+                </div>
+                <span class="px-4 py-2 text-white rounded-full text-sm font-bold bg-teal-600">{{ card.badge }}</span>
+              </div>
+              <h3 class="text-2xl font-black mb-2 text-teal-600">{{ card.title }}</h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-8">{{ card.desc }}</p>
+              <div class="flex items-center justify-between">
+                <div class="text-2xl font-black text-teal-600">{{ card.price }}</div>
+                <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors">
+                  <ArrowRight class="w-6 h-6 text-white" />
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="py-16">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="space-y-6">
+              <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 rounded-full shadow border border-gray-200 dark:border-slate-700">
+                <div class="p-2 bg-teal-600 rounded-xl">
+                  <Award class="w-4 h-4 text-white" />
+                </div>
+                <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Est. 2020</span>
+              </div>
+              <h2 class="text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight text-teal-600">
+                <span class="block">Welcome to</span>
+                <span class="block mt-2">SylhetStay</span>
+              </h2>
+              <p class="text-l text-gray-600 dark:text-gray-300 leading-relaxed">
+                Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span class="text-teal-600 font-bold">comfortable</span>, <span class="text-gray-800 dark:text-white font-bold">safe</span>, and <span class="text-teal-600 font-bold">study-conducive</span> environment.
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div v-for="(item, i) in aboutImages" :key="i" :class="['relative rounded-2xl overflow-hidden shadow', i % 2 === 1 ? 'mt-8' : '']">
+                <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover" />
+                <div class="absolute bottom-4 left-4">
+                  <span class="px-3 py-1 bg-white rounded-full text-sm font-bold text-gray-800">{{ item.label }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- More sections would continue here... -->
+      <Footer />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import { Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, X, Menu, Sun, Moon, Building2, Facebook, Instagram, Twitter, Youtube, Send, Mail as MailIcon } from 'lucide-vue-next'
+
+const router = useRouter()
+const currentSlide = ref(0)
+const lightboxOpen = ref(false)
+const currentImageIndex = ref(0)
+const searchFilters = ref({ roomType: '', seats: '', maxPrice: '' })
+const slideInterval = ref(null)
+
+const slides = [
+  {
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920&q=80',
+    alt: 'Modern student accommodation',
+    location: 'Sylhet, Bangladesh',
+    titleLines: [
+      { text: 'Your Home', class: 'text-white' },
+      { text: 'Away From Home', class: 'text-white' },
+      { text: 'in Sylhet', class: 'text-teal-400 mt-2' }
+    ],
+    description: 'Experience premium student accommodation with <span class="text-teal-400 font-bold">cutting-edge amenities</span>, <span class="text-white font-bold">vibrant community</span>, and an environment designed for success.'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80',
+    alt: 'Comfortable study room',
+    location: 'Prime Location',
+    titleLines: [
+      { text: 'Study in', class: 'text-white' },
+      { text: 'Comfort', class: 'text-teal-400' }
+    ],
+    description: 'Fully furnished rooms with <span class="text-teal-400 font-bold">modern furniture</span>, <span class="text-white font-bold">high-speed WiFi</span>, and dedicated study areas.'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80',
+    alt: 'Student community',
+    location: 'Community Living',
+    titleLines: [
+      { text: 'Build Your', class: 'text-white' },
+      { text: 'Network', class: 'text-teal-400' }
+    ],
+    description: 'Join a <span class="text-teal-400 font-bold">vibrant community</span> of students from top universities with <span class="text-teal-400 font-bold">networking events</span>.'
+  }
+]
+
+const availabilityCards = [
+  { icon: Users, title: '12 Seats Available', desc: 'Across all room types', price: '৳4,500/mo', badge: 'Available Now' },
+  { icon: Award, title: 'Premium Rooms', desc: 'AC + Attached Bath', price: '৳10,500/mo', badge: 'Popular' },
+  { icon: Sparkles, title: 'Early Bird Discount', desc: 'Book 3 months, get 10% off', price: 'Save ৳1,350', badge: 'Limited' }
+]
+
+const aboutImages = [
+  { src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=600', label: 'Modern Rooms' },
+  { src: 'https://images.unsplash.com/photo-1721299417031-de890ff33b26?w=600', label: 'Premium Suites' },
+  { src: 'https://images.unsplash.com/photo-1753505888770-46be3b748b41?w=600', label: 'Study Areas' },
+  { src: 'https://images.unsplash.com/photo-1753505889211-9cfbac527474?w=600', label: 'Common Spaces' }
+]
+
+const goToSlide = (index) => {
+  currentSlide.value = index
+}
+
+const handleSearch = () => {
+  const params = new URLSearchParams()
+  if (searchFilters.value.roomType) params.set('type', searchFilters.value.roomType)
+  if (searchFilters.value.seats) params.set('seats', searchFilters.value.seats)
+  if (searchFilters.value.maxPrice) params.set('maxPrice', searchFilters.value.maxPrice)
+  router.push(`/rooms?${params.toString()}`)
+}
+
+// Autoplay
+onMounted(() => {
+  slideInterval.value = setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % slides.length
+  }, 5000)
+})
+
+onUnmounted(() => {
+  if (slideInterval.value) {
+    clearInterval(slideInterval.value)
+  }
+})
+</script>
