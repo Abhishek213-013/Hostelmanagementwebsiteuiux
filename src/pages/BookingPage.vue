@@ -354,6 +354,24 @@ const confirmPayment = async () => {
     const newTransactionId = `${selectedPayment.value.toUpperCase()}_${Date.now()}`
     transactionId.value = newTransactionId
     paymentStatus.value = { status: 'success', transactionId: newTransactionId, message: 'Payment successful!' }
+
+    // Save booking to localStorage
+    const bookings = JSON.parse(localStorage.getItem('myRooms') || '[]')
+    bookings.push({
+      id: Date.now(),
+      name: selectedRoom.value.title,
+      description: `${selectedRoom.value.type} room with modern amenities`,
+      image: selectedRoom.value.image,
+      status: 'Active',
+      checkIn: bookingData.value.checkIn,
+      checkOut: bookingData.value.checkOut,
+      guests: bookingData.value.guests,
+      roomType: selectedRoom.value.type,
+      price: selectedRoom.value.price,
+      bookedAt: new Date().toISOString()
+    })
+    localStorage.setItem('myRooms', JSON.stringify(bookings))
+
     setTimeout(() => {
       step.value = 4
       isProcessing.value = false

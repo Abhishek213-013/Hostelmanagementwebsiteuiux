@@ -47,6 +47,8 @@
                 <p class="font-bold text-slate-800 dark:text-white">{{ userName }}</p>
                 <p class="text-sm text-slate-500">{{ userEmail }}</p>
               </div>
+              <router-link to="/my-rooms" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">My Rooms</router-link>
+              <router-link to="/my-payments" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">My Payments</router-link>
               <button @click="logout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Logout</button>
             </div>
           </div>
@@ -80,6 +82,14 @@
         </button>
         <div v-if="isAuthenticated" class="pt-4 border-t border-slate-200 dark:border-slate-700">
           <p class="py-3 font-bold text-slate-800 dark:text-white">{{ userName }}</p>
+          <router-link to="/my-rooms" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
+            <Building2 class="w-5 h-5" />
+            My Rooms
+          </router-link>
+          <router-link to="/my-payments" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
+            <CreditCard class="w-5 h-5" />
+            My Payments
+          </router-link>
           <button @click="logout" class="flex items-center gap-3 py-3 text-red-600 font-semibold transition-colors w-full">
             <LogOut class="w-5 h-5" />
             Logout
@@ -93,7 +103,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { Building2, Menu, X, Sun, Moon, User, LogOut } from 'lucide-vue-next'
+import { Building2, Menu, X, Sun, Moon, User, LogOut, CreditCard } from 'lucide-vue-next'
 
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
