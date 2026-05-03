@@ -33,11 +33,25 @@
             About
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
-          <router-link to="/login" class="px-8 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
-            <span class="relative z-10">Login / Sign Up</span>
-          </router-link>
           <router-link to="/contact" class="relative px-8 py-3.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
             <span class="relative z-10">Contact Us</span>
+          </router-link>
+          <div v-if="isAuthenticated" class="relative">
+            <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
+                {{ userInitial }}
+              </div>
+            </button>
+            <div v-if="profileOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50">
+              <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                <p class="font-bold text-slate-800 dark:text-white">{{ userName }}</p>
+                <p class="text-sm text-slate-500">{{ userEmail }}</p>
+              </div>
+              <button @click="logout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Logout</button>
+            </div>
+          </div>
+          <router-link v-else to="/login" class="px-8 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
+            <span class="relative z-10">Login / Sign Up</span>
           </router-link>
           <button @click="toggleTheme" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300" aria-label="Toggle theme">
             <Sun v-if="isDark" class="w-6 h-6" />
@@ -64,21 +78,43 @@
           <Moon v-else class="w-5 h-5" />
           {{ isDark ? 'Light Mode' : 'Dark Mode' }}
         </button>
-        <router-link to="/login" class="block py-3 px-6 mt-4 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors" @click="mobileMenuOpen = false">Login / Sign Up</router-link>
+        <div v-if="isAuthenticated" class="pt-4 border-t border-slate-200 dark:border-slate-700">
+          <p class="py-3 font-bold text-slate-800 dark:text-white">{{ userName }}</p>
+          <button @click="logout" class="flex items-center gap-3 py-3 text-red-600 font-semibold transition-colors w-full">
+            <LogOut class="w-5 h-5" />
+            Logout
+          </button>
+        </div>
+        <router-link v-else to="/login" class="block py-3 px-6 mt-4 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors" @click="mobileMenuOpen = false">Login / Sign Up</router-link>
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { Building2, Menu, X, Sun, Moon } from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { Building2, Menu, X, Sun, Moon, User, LogOut } from 'lucide-vue-next'
 
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
 const isDark = ref(false)
+const isAuthenticated = ref(false)
+const profileOpen = ref(false)
+const user = ref({ name: '', email: '' })
 
 let scrollHandler = null
+
+const userName = computed(() => user.value.name || 'User')
+const userEmail = computed(() => user.value.email || '')
+const userInitial = computed(() => userName.value.charAt(0).toUpperCase())
+
+const checkAuth = () => {
+  isAuthenticated.value = localStorage.getItem('isAuthenticated') === 'true'
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    user.value = JSON.parse(storedUser)
+  }
+}
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
@@ -95,7 +131,17 @@ const toggleThemeAndClose = () => {
   mobileMenuOpen.value = false
 }
 
+const logout = () => {
+  localStorage.removeItem('isAuthenticated')
+  localStorage.removeItem('user')
+  isAuthenticated.value = false
+  user.value = { name: '', email: '' }
+  profileOpen.value = false
+  mobileMenuOpen.value = false
+}
+
 onMounted(() => {
+  checkAuth()
   const savedTheme = localStorage.getItem('theme')
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   isDark.value = savedTheme === 'dark' || (!savedTheme && prefersDark)

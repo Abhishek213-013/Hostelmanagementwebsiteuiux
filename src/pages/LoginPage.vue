@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
+  <div @click="fillForm" class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6 cursor-pointer">
     <div class="w-full max-w-6xl">
       <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
         <ArrowLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -184,7 +184,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Building2, Mail, Lock, Eye, EyeOff, User, Phone, ArrowLeft, ArrowRight, Facebook, ChevronRight, Sparkles } from 'lucide-vue-next'
+
+const router = useRouter()
 const isLogin = ref(true)
 const showPassword = ref(false)
 const formData = ref({
@@ -196,8 +199,23 @@ const formData = ref({
   agreeTerms: false
 })
 
-const handleSubmit = (e) => {
-  e.preventDefault()
-  console.log('Form submitted:', formData.value)
+const fillForm = () => {
+  formData.value = {
+    email: 'user@sylhetstay.com',
+    password: 'password123',
+    confirmPassword: 'password123',
+    fullName: 'John Doe',
+    phone: '+8801234567890',
+    agreeTerms: true
+  }
+}
+
+const handleSubmit = () => {
+  localStorage.setItem('isAuthenticated', 'true')
+  localStorage.setItem('user', JSON.stringify({
+    name: formData.value.fullName || 'John Doe',
+    email: formData.value.email || 'user@sylhetstay.com'
+  }))
+  router.push('/')
 }
 </script>
