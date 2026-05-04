@@ -20,11 +20,11 @@
             Established in 2020, SylhetStay has redefined premium student accommodation. We blend <span class="text-teal-600 font-bold">comfort</span>, <span class="text-gray-800 font-bold">technology</span>, and <span class="text-teal-600 font-bold">community</span> to create an environment where academic excellence thrives.
           </p>
           <div class="flex flex-wrap gap-4 pt-4">
-            <router-link to="/booking" class="group px-8 py-4 text-white rounded-2xl font-bold shadow hover:shadow-xl flex items-center gap-3" style="background: #0d9488">
+            <button @click="openTourModal" class="group px-8 py-4 text-white rounded-2xl font-bold shadow hover:shadow-xl flex items-center gap-3 cursor-pointer" style="background: #0d9488">
               <Calendar class="w-5 h-5" />
               <span>Book a Tour</span>
               <ArrowRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </router-link>
+            </button>
             <router-link to="/contact" class="px-8 py-4 bg-white text-teal-800 rounded-2xl font-bold border-2 border-gray-200 hover:border-teal-500 transition-all flex items-center gap-3 shadow hover:shadow-xl">
               <Phone class="w-5 h-5" />
               Contact Us
@@ -154,8 +154,9 @@
           </router-link>
         </div>
       </div>
+      <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
+      <Footer />
     </div>
-    <Footer />
   </div>
 </template>
 
@@ -163,9 +164,19 @@
 import { ref } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
+import TourBookingModal from '../components/TourBookingModal.vue'
 import { Building2, Award, Sparkles, Users, Star, BookOpen, Shield, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, Calendar, MapPin, Phone, TrendingUp, Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-vue-next'
 
 const activeMilestone = ref(null)
+const isTourModalOpen = ref(false)
+
+const openTourModal = () => {
+  isTourModalOpen.value = true
+}
+
+const closeTourModal = () => {
+  isTourModalOpen.value = false
+}
 
 const aboutImages = [
   { src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=600', label: 'Modern Rooms' },

@@ -99,14 +99,23 @@
           <!-- Quick Actions -->
           <div class="bg-white rounded-2xl shadow border border-gray-200 p-8">
             <h2 class="text-2xl font-black mb-6 text-teal-600">Quick Actions</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <router-link v-for="link in quickLinks" :key="link.label" :to="link.href"
-                           class="group flex items-center gap-3 p-4 bg-gray-50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:scale-105">
-                <div class="p-2 rounded-xl bg-teal-600 group-hover:scale-110 transition-transform">
-                  <component :is="link.icon" class="w-5 h-5 text-white" />
-                </div>
-                <span class="font-semibold text-gray-800">{{ link.label }}</span>
-              </router-link>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <template v-for="link in quickLinks" :key="link.label">
+                <button v-if="link.type === 'button'" @click="openTourModal()"
+                        class="group flex items-center gap-3 p-4 bg-gray-50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:scale-105 w-full text-left">
+                  <div class="p-2 rounded-xl bg-teal-600 group-hover:scale-110 transition-transform">
+                    <component :is="link.icon" class="w-5 h-5 text-white" />
+                  </div>
+                  <span class="font-semibold text-gray-800">{{ link.label }}</span>
+                </button>
+                <router-link v-else :to="link.href"
+                             class="group flex items-center gap-3 p-4 bg-gray-50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:scale-105">
+                  <div class="p-2 rounded-xl bg-teal-600 group-hover:scale-110 transition-transform">
+                    <component :is="link.icon" class="w-5 h-5 text-white" />
+                  </div>
+                  <span class="font-semibold text-gray-800">{{ link.label }}</span>
+                </router-link>
+              </template>
             </div>
           </div>
 
@@ -141,6 +150,7 @@
           width="100%" height="400" style="border:0" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
+    <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
     <Footer />
   </div>
 </template>
@@ -149,11 +159,21 @@
 import { ref } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
+import TourBookingModal from '../components/TourBookingModal.vue'
 import { Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, Twitter, Youtube, MessageCircle, Headphones, Calendar, CheckCircle2, ChevronRight, Sparkles } from 'lucide-vue-next'
 
 const submitted = ref(false)
 const hoveredCard = ref(null)
+const isTourModalOpen = ref(false)
 const formData = ref({ name: '', email: '', phone: '', subject: '', message: '' })
+
+const openTourModal = () => {
+  isTourModalOpen.value = true
+}
+
+const closeTourModal = () => {
+  isTourModalOpen.value = false
+}
 
 const contactInfo = [
   { icon: MapPin, title: 'Visit Us', details: ['123 Akhalia Road', 'Sylhet 3100, Bangladesh'] },
@@ -163,10 +183,10 @@ const contactInfo = [
 ]
 
 const quickLinks = [
-  { icon: Calendar, label: 'Schedule a Tour', href: '/rooms' },
-  { icon: MessageCircle, label: 'Live Chat', href: '/contact' },
-  { icon: Headphones, label: 'FAQs', href: '/about' },
-  { icon: Building2, label: 'Book a Room', href: '/rooms' }
+  { icon: Calendar, label: 'Schedule a Tour', type: 'button' },
+  { icon: MessageCircle, label: 'Live Chat', href: '/contact', type: 'link' },
+  { icon: Headphones, label: 'FAQs', href: '/about', type: 'link' },
+  { icon: Building2, label: 'Book a Room', href: '/rooms', type: 'link' }
 ]
 
 const socialIcons = [Facebook, Instagram, Twitter, Youtube]
