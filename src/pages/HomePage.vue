@@ -13,7 +13,7 @@
               <div class="relative w-full min-h-screen flex-shrink-0 flex items-center justify-center">
                 <div class="absolute inset-0 z-0">
                   <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920&q=80" alt="Modern student accommodation" class="w-full h-full object-cover" />
-                  <div class="absolute inset-0 bg-black/50"></div>
+                  <div class="absolute inset-0 bg-black/30"></div>
                 </div>
                 <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
                   <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
@@ -38,7 +38,7 @@
               <div class="relative w-full min-h-screen flex-shrink-0 flex items-center justify-center">
                 <div class="absolute inset-0 z-0">
                   <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" alt="Comfortable study room" class="w-full h-full object-cover" />
-                  <div class="absolute inset-0 bg-black/50"></div>
+                  <div class="absolute inset-0 bg-black/30"></div>
                 </div>
                 <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
                   <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
@@ -61,7 +61,7 @@
               <div class="relative w-full min-h-screen flex-shrink-0 flex items-center justify-center">
                 <div class="absolute inset-0 z-0">
                   <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80" alt="Student community" class="w-full h-full object-cover" />
-                  <div class="absolute inset-0 bg-black/50"></div>
+                  <div class="absolute inset-0 bg-black/30"></div>
                 </div>
                 <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
                   <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
