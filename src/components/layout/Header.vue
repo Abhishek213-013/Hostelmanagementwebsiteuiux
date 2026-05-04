@@ -74,7 +74,13 @@
           {{ isDark ? 'Light Mode' : 'Dark Mode' }}
         </button>
         <div v-if="isAuthenticated" class="pt-4 border-t border-slate-200 dark:border-slate-700">
-          <p class="py-3 font-bold text-slate-800 dark:text-white">{{ userName }}</p>
+          <div class="flex items-center gap-3 py-3">
+            <div class="w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
+              <img v-if="profileImage" :src="profileImage" alt="Profile" class="w-full h-full object-cover" />
+              <span v-else>{{ userInitial }}</span>
+            </div>
+            <p class="font-bold text-slate-800 dark:text-white">{{ userName }}</p>
+          </div>
           <router-link to="/my-rooms" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
             <Building2 class="w-5 h-5" />
             My Rooms
