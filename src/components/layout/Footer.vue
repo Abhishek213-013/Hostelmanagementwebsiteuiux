@@ -84,16 +84,16 @@ const footerColumns = [
   {
     title: 'Information',
     links: [
-      { label: 'Admission', path: '#' },
-      { label: 'Payment', path: '#' },
-      { label: 'FAQs', path: '#' },
-      { label: 'Terms', path: '#' }
+      { label: 'Admission', path: '/rooms' },
+      { label: 'Payment', path: '/rooms' },
+      { label: 'FAQs', path: '/about' },
+      { label: 'Terms', path: '/about' }
     ]
   },
   {
     title: 'Contact',
     links: [
-      { label: '123 Akhalia Road', path: '#' },
+      { label: '123 Akhalia Road', path: '/contact' },
       { label: '+880 1711-123456', path: 'tel:+8801711123456' },
       { label: 'info@sylhetstay.com', path: 'mailto:info@sylhetstay.com' }
     ]

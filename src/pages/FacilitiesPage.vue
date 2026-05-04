@@ -63,7 +63,7 @@
         <h2 class="text-2xl lg:text-3xl font-black mb-6">Want to Experience Our Facilities?</h2>
         <p class="text-l text-white/90 mb-10 max-w-2xl mx-auto">Book your room today and enjoy all these premium amenities from day one</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <router-link to="/booking" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
             <CheckCircle2 class="w-5 h-5" />
             Book Your Room
             <ArrowRight class="w-5 h-5" />

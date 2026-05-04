@@ -163,10 +163,10 @@ const contactInfo = [
 ]
 
 const quickLinks = [
-  { icon: Calendar, label: 'Schedule a Tour', href: '/booking' },
-  { icon: MessageCircle, label: 'Live Chat', href: '#' },
-  { icon: Headphones, label: 'FAQs', href: '#' },
-  { icon: Building2, label: 'Book a Room', href: '/booking' }
+  { icon: Calendar, label: 'Schedule a Tour', href: '/rooms' },
+  { icon: MessageCircle, label: 'Live Chat', href: '/contact' },
+  { icon: Headphones, label: 'FAQs', href: '/about' },
+  { icon: Building2, label: 'Book a Room', href: '/rooms' }
 ]
 
 const socialIcons = [Facebook, Instagram, Twitter, Youtube]

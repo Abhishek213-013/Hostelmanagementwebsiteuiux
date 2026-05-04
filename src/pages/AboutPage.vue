@@ -143,7 +143,7 @@
         <h2 class="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
         <p class="text-lg text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
         <div class="flex flex-wrap justify-center gap-4">
-<router-link to="/booking" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
+          <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
              <Calendar class="w-5 h-5" />
              Book Your Room
              <ChevronRight class="w-5 h-5" />

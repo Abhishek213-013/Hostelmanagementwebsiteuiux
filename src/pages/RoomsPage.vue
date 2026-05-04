@@ -118,7 +118,7 @@
         <h2 class="text-2xl lg:text-3xl font-black mb-6">Can't Find What You're Looking For?</h2>
         <p class="text-l text-white/80 mb-10 max-w-xl mx-auto">Contact us for custom room arrangements or special requirements</p>
         <div class="flex flex-wrap justify-center gap-4">
-          <router-link to="/booking" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
+          <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
             <Calendar class="w-5 h-5" />
             Book a Room
             <ChevronRight class="w-5 h-5" />
