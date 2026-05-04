@@ -4,7 +4,11 @@
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
       <div class="flex justify-between items-center h-24">
         <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
-          <img src="@/assets/logo/logo.png" alt="Logo" class="h-36 w-auto object-contain" />
+          <img 
+            src="@/assets/logo/logo.png" 
+            alt="Logo" 
+            class="h-24 lg:h-36 w-auto object-contain transition-all duration-300" 
+          />
         </router-link>
 
         <div class="hidden lg:flex items-center gap-10">
