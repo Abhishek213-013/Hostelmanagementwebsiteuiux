@@ -48,8 +48,9 @@
                 <p class="text-sm text-slate-500">{{ userEmail }}</p>
               </div>
               <router-link to="/my-rooms" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">My Rooms</router-link>
-              <router-link to="/my-payments" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">My Payments</router-link>
-              <button @click="logout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Logout</button>
+               <router-link to="/my-payments" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">My Payments</router-link>
+               <router-link to="/profile-management" @click="profileOpen = false" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Profile Management</router-link>
+               <button @click="logout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Logout</button>
             </div>
           </div>
           <router-link v-else to="/login" class="px-8 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
@@ -87,9 +88,13 @@
             My Rooms
           </router-link>
           <router-link to="/my-payments" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
-            <CreditCard class="w-5 h-5" />
-            My Payments
-          </router-link>
+             <CreditCard class="w-5 h-5" />
+             My Payments
+           </router-link>
+           <router-link to="/profile-management" class="flex items-center gap-3 py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
+             <User class="w-5 h-5" />
+             Profile Management
+           </router-link>
           <button @click="logout" class="flex items-center gap-3 py-3 text-red-600 font-semibold transition-colors w-full">
             <LogOut class="w-5 h-5" />
             Logout

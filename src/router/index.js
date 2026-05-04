@@ -55,6 +55,11 @@ const routes = [
     path: '/my-payments',
     name: 'MyPayments',
     component: () => import('@/pages/MyPaymentsPage.vue')
+  },
+  {
+    path: '/profile-management',
+    name: 'ProfileManagement',
+    component: () => import('@/pages/ProfileManagementPage.vue')
   }
 ]
 
