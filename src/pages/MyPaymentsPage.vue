@@ -54,13 +54,7 @@
                  <!-- Receipt Header with Logo -->
                  <div class="flex items-center justify-between mb-2 pb-2 border-b-2 border-teal-600">
                   <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Building2 class="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 class="text-base font-black text-teal-600 leading-tight">SylhetStay</h2>
-                      <h3 class="text-xs font-bold text-gray-600 leading-tight">Premium Living</h3>
-                    </div>
+                    <img src="@/assets/logo/logo.png" alt="SylhetStay Logo" class="w-19 h-16 object-contain" />
                   </div>
                   <div class="text-right">
                     <p class="text-2xs font-bold text-gray-500">RECEIPT #</p>
@@ -179,7 +173,7 @@
 import { ref, onMounted } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { CreditCard, X, Building2, Printer } from 'lucide-vue-next'
+import { CreditCard, X, Printer } from 'lucide-vue-next'
 
 const payments = ref([])
 const selectedPayment = ref(null)

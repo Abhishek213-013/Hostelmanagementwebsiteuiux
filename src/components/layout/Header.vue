@@ -4,16 +4,7 @@
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
       <div class="flex justify-between items-center h-24">
         <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
-          <div class="relative">
-            <div class="absolute inset-0 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" :style="{ background: 'linear-gradient(to bottom right, #1a1a1a, #525252, #1c1917)' }"></div>
-            <div class="relative p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-500" :style="{ background: 'linear-gradient(to bottom right, #1a1a1a, #525252, #1c1917)' }">
-              <Building2 class="w-7 h-7 text-white" />
-            </div>
-          </div>
-          <div>
-            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">SylhetStay</h1>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider uppercase">Premium Living</p>
-          </div>
+          <img src="@/assets/logo/logo.png" alt="Logo" class="h-36 w-auto object-contain" />
         </router-link>
 
         <div class="hidden lg:flex items-center gap-10">
@@ -110,7 +101,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Building2, Menu, X, Sun, Moon, User, LogOut, CreditCard } from 'lucide-vue-next'
+import { Menu, X, Sun, Moon, User, LogOut, CreditCard } from 'lucide-vue-next'
 
 const route = useRoute()
 

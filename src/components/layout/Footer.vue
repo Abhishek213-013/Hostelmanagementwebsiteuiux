@@ -4,12 +4,9 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         <div class="space-y-6">
           <router-link to="/" class="flex items-center gap-3 mb-6">
-            <div class="p-3 bg-gradient-to-br from-sky-400 to-emerald-500 rounded-2xl">
-              <Building2 class="w-6 h-6" />
-            </div>
-            <span class="font-black text-2xl">SylhetStay</span>
+            <img src="@/assets/logo/logo.png" alt="Logo" class="h-20 w-auto" />
           </router-link>
-          <p class="text-muted-foreground mb-6">Premium student accommodation in Sylhet, Bangladesh.</p>
+          <!-- <p class="text-muted-foreground mb-6">Premium student accommodation in Sylhet, Bangladesh.</p> -->
           <div class="flex gap-4">
             <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all cursor-pointer">
               <Facebook class="w-5 h-5" />
@@ -69,7 +66,7 @@
 </template>
 
 <script setup>
-import { Building2, Facebook, Instagram, Twitter, Youtube, Mail, Send } from 'lucide-vue-next'
+import { Facebook, Instagram, Twitter, Youtube, Mail, Send } from 'lucide-vue-next'
 
 const footerColumns = [
   {
