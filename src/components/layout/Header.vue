@@ -36,7 +36,7 @@
           <router-link to="/contact" class="relative px-8 py-3.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
             <span class="relative z-10">Contact Us</span>
           </router-link>
-          <div v-if="isAuthenticated" class="relative">
+          <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
             <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
                 {{ userInitial }}
@@ -111,6 +111,7 @@ const isDark = ref(false)
 const isAuthenticated = ref(false)
 const profileOpen = ref(false)
 const user = ref({ name: '', email: '' })
+const profileDropdownRef = ref(null)
 
 let scrollHandler = null
 
@@ -163,11 +164,20 @@ onMounted(() => {
     scrolled.value = window.scrollY > 50
   }
   window.addEventListener('scroll', scrollHandler)
+
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   if (scrollHandler) {
     window.removeEventListener('scroll', scrollHandler)
   }
+  document.removeEventListener('click', handleClickOutside)
 })
+
+const handleClickOutside = (event) => {
+  if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
+    profileOpen.value = false
+  }
+}
 </script>
