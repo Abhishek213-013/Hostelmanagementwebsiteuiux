@@ -14,8 +14,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Profile Photo Change Section -->
         <div class="bg-white rounded-2xl shadow border border-gray-200 p-8 flex flex-col items-center justify-center">
-          <div class="w-10 h-300 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold text-4xl mb-4 shadow-lg">
-            {{ userInitial }}
+          <div class="w-32 h-32 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold text-4xl mb-4 shadow-lg overflow-hidden">
+            <img v-if="profileImage" :src="profileImage" alt="Profile" class="w-full h-full object-cover" />
+            <span v-else>{{ userInitial }}</span>
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-1">{{ userName }}</h3>
           <p class="text-sm text-gray-500 mb-6">{{ userEmail }}</p>
@@ -132,6 +133,7 @@ import Footer from '../components/layout/Footer.vue'
 import { User } from 'lucide-vue-next'
 
 const fileInput = ref(null)
+const profileImage = ref('')
 const formData = reactive({
   name: '',
   email: '',
@@ -157,7 +159,13 @@ const triggerFileInput = () => {
 const handlePhotoUpload = (event) => {
   const file = event.target.files[0]
   if (file) {
-    alert('Photo upload functionality would be implemented here')
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      profileImage.value = e.target.result
+      localStorage.setItem('profileImage', e.target.result)
+      alert('Profile photo updated successfully!')
+    }
+    reader.readAsDataURL(file)
   }
 }
 
@@ -193,6 +201,10 @@ onMounted(() => {
     formData.phone = user.phone || ''
     formData.dob = user.dob || ''
     formData.address = user.address || ''
+  }
+  const storedImage = localStorage.getItem('profileImage')
+  if (storedImage) {
+    profileImage.value = storedImage
   }
 })
 </script>

@@ -38,8 +38,9 @@
           </router-link>
           <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
             <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
-                {{ userInitial }}
+              <div class="w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
+                <img v-if="profileImage" :src="profileImage" alt="Profile" class="w-full h-full object-cover" />
+                <span v-else>{{ userInitial }}</span>
               </div>
             </button>
             <div v-if="profileOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50">
@@ -107,8 +108,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { Building2, Menu, X, Sun, Moon, User, LogOut, CreditCard } from 'lucide-vue-next'
+
+const route = useRoute()
 
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
@@ -116,6 +120,7 @@ const isDark = ref(false)
 const isAuthenticated = ref(false)
 const profileOpen = ref(false)
 const user = ref({ name: '', email: '' })
+const profileImage = ref('')
 const profileDropdownRef = ref(null)
 
 let scrollHandler = null
@@ -129,6 +134,14 @@ const checkAuth = () => {
   const storedUser = localStorage.getItem('user')
   if (storedUser) {
     user.value = JSON.parse(storedUser)
+  }
+  loadProfileImage()
+}
+
+const loadProfileImage = () => {
+  const storedImage = localStorage.getItem('profileImage')
+  if (storedImage) {
+    profileImage.value = storedImage
   }
 }
 
@@ -178,6 +191,10 @@ onUnmounted(() => {
     window.removeEventListener('scroll', scrollHandler)
   }
   document.removeEventListener('click', handleClickOutside)
+})
+
+watch(() => route.path, () => {
+  loadProfileImage()
 })
 
 const handleClickOutside = (event) => {
