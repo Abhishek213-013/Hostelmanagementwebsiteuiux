@@ -233,12 +233,15 @@
 import { ref, onMounted } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Smartphone, Building2, Send } from 'lucide-vue-next'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
 
 const route = useRoute()
+const router = useRouter()
 const step = ref(2)
+
+// Initialize room from URL params and check auth
 const selectedPayment = ref('')
 const isProcessing = ref(false)
 const transactionId = ref('')
@@ -292,8 +295,13 @@ const paymentMethods = [
   { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2 }
 ]
 
-// Initialize room from URL params
+// Initialize room from URL params and check auth
 onMounted(() => {
+  if (!localStorage.getItem('isAuthenticated')) {
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
   const roomType = route.query.room
   if (roomType && roomTypes[roomType]) {
     selectedRoom.value = roomTypes[roomType]

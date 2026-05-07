@@ -132,10 +132,10 @@
             </div>
 
             <!-- Book Now Button -->
-            <router-link to="/booking" class="group px-10 py-5 bg-teal-600 text-white rounded-xl font-black shadow hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3 text-lg">
+            <button @click="handleBookNow" class="group px-10 py-5 bg-teal-600 text-white rounded-xl font-black shadow hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3 text-lg">
               Book Now
               <ArrowRight class="w-5 h-5 rotate-180 group-hover:-translate-x-1 transition-transform" />
-            </router-link>
+            </button>
           </div>
         </div>
 
@@ -253,11 +253,20 @@
 import { computed, ref } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft, Users, Maximize2, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Star, Sparkles, Zap, Mic, Camera, Sun, Trees, Bath, WashingMachine, Refrigerator, ChevronRight, ArrowRight, X, Building2 } from 'lucide-vue-next'
 
 const route = useRoute()
+const router = useRouter()
 const currentImage = ref('')
+
+const handleBookNow = () => {
+  if (!localStorage.getItem('isAuthenticated')) {
+    router.push({ path: '/login', query: { redirect: '/booking' } })
+    return
+  }
+  router.push('/booking')
+}
 
 const rooms = [
   {

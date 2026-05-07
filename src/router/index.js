@@ -24,7 +24,8 @@ const routes = [
   {
     path: '/booking',
     name: 'Booking',
-    component: () => import('@/pages/BookingPage.vue')
+    component: () => import('@/pages/BookingPage.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/facilities',
@@ -49,17 +50,20 @@ const routes = [
   {
     path: '/my-rooms',
     name: 'MyRooms',
-    component: () => import('@/pages/MyRoomsPage.vue')
+    component: () => import('@/pages/MyRoomsPage.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/my-payments',
     name: 'MyPayments',
-    component: () => import('@/pages/MyPaymentsPage.vue')
+    component: () => import('@/pages/MyPaymentsPage.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/profile-management',
     name: 'ProfileManagement',
-    component: () => import('@/pages/ProfileManagementPage.vue')
+    component: () => import('@/pages/ProfileManagementPage.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -68,6 +72,14 @@ const router = createRouter({
   routes,
   scrollBehavior() {
     return { top: 0 }
+  }
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !localStorage.getItem('isAuthenticated')) {
+    next({ path: '/login', query: { redirect: to.fullPath } })
+  } else {
+    next()
   }
 })
 

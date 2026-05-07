@@ -79,11 +79,11 @@
                     See Details
                     <ArrowRight class="w-4 h-4" />
                   </router-link>
-                  <router-link to="/booking" 
-                               class="px-6 py-3 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 bg-teal-600 hover:bg-teal-700">
+                  <button @click="handleBookNow"
+                          class="px-6 py-3 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 bg-teal-600 hover:bg-teal-700">
                     Book Now
                     <ArrowRight class="w-4 h-4" />
-                  </router-link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -135,13 +135,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info } from 'lucide-vue-next'
 
 const route = useRoute()
+const router = useRouter()
+const isLoggedIn = ref(false)
+
+onMounted(() => {
+  isLoggedIn.value = !!localStorage.getItem('isAuthenticated')
+})
+
+const handleBookNow = () => {
+  if (!isLoggedIn.value) {
+    router.push('/login')
+    return
+  }
+  router.push('/booking')
+}
+
 const selectedType = ref('all')
 const hoveredRoom = ref(null)
 const maxSeats = ref('')
