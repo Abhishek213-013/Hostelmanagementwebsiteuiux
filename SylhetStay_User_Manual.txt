@@ -1,0 +1,556 @@
+# SYLHETSTAY HOTEL MANAGEMENT SYSTEM
+
+## User Manual
+
+**Version:** 1.0
+**Last Updated:** May 2026
+**Platform:** Web Application
+**Technology:** Vue.js 3 • Vite • Tailwind CSS
+
+---
+
+# Table of Contents
+
+1. Introduction
+2. System Requirements
+3. User Roles
+4. Public Features
+5. User Features
+6. Booking Process
+7. Payment System
+8. Room Types & Pricing
+9. Facilities & Amenities
+10. Profile & Account Management
+11. Troubleshooting
+12. Frequently Asked Questions
+13. Support & Contact
+
+---
+
+# 1. Introduction
+
+SylhetStay is a modern student hostel management platform designed to simplify room booking, payment management, and hostel services for students in Sylhet, Bangladesh.
+
+The system allows users to:
+
+* Browse available rooms
+* Book hostel accommodations online
+* Make secure payments
+* View booking and payment history
+* Manage personal profiles
+* Explore hostel facilities and gallery
+
+---
+
+# 2. System Requirements
+
+To use the system smoothly, ensure the following:
+
+### Recommended Browser
+
+* Google Chrome
+* Mozilla Firefox
+* Microsoft Edge
+* Safari
+
+### Minimum Requirements
+
+* Stable internet connection
+* JavaScript enabled
+* Cookies enabled
+* Screen width: 375px or above
+
+### Supported Devices
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile devices
+
+---
+
+# 3. User Roles
+
+## 3.1 Guest User
+
+Users without an account can:
+
+* Browse rooms
+* View facilities
+* Explore gallery
+* Contact support
+* View pricing information
+
+### Restrictions
+
+Guest users cannot:
+
+* Book rooms
+* Make payments
+* Access profile features
+* View booking history
+
+---
+
+## 3.2 Registered User
+
+Logged-in users can:
+
+* Book rooms
+* Make payments
+* View booking history
+* Manage profile information
+* View payment receipts
+* Upload profile photos
+
+---
+
+# 4. Public Features
+
+## 4.1 Homepage
+
+The homepage includes:
+
+* Hero carousel
+* Room search section
+* Featured rooms
+* Facilities overview
+* Student testimonials
+* Quick booking access
+
+---
+
+## 4.2 Rooms Page
+
+Users can browse available rooms using filters such as:
+
+* Shared
+* Semi-Private
+* Premium
+* Deluxe
+
+Each room card displays:
+
+* Room image
+* Price
+* Capacity
+* Availability status
+* Key features
+
+---
+
+## 4.3 Room Details
+
+Detailed room information includes:
+
+* Room size
+* Capacity
+* Bathroom type
+* Amenities
+* Room policies
+* Booking option
+
+---
+
+## 4.4 Facilities Page
+
+The facilities section highlights hostel amenities including:
+
+* High-speed WiFi
+* Security services
+* Study lounges
+* Dining facilities
+* Laundry services
+* Fitness center
+
+---
+
+## 4.5 Gallery
+
+Users can:
+
+* Browse hostel photos
+* Filter gallery categories
+* View images in full-screen mode
+
+---
+
+## 4.6 About Page
+
+Contains:
+
+* Hostel overview
+* Company timeline
+* Core values
+* Team information
+
+---
+
+## 4.7 Contact Page
+
+Users can:
+
+* Send support messages
+* View contact information
+* Schedule hostel tours
+* Access emergency contact details
+
+---
+
+# 5. User Features
+
+## 5.1 Login & Registration
+
+### Sign In
+
+Users can log in using:
+
+* Email and password
+* Google login
+* Facebook login
+
+### Sign Up
+
+New users must provide:
+
+* Full name
+* Email address
+* Phone number
+* Password
+
+---
+
+## 5.2 Dark Mode
+
+The application supports:
+
+* Light mode
+* Dark mode
+
+Theme preferences are automatically saved.
+
+---
+
+# 6. Booking Process
+
+## Step 1: Login
+
+Users must log in before booking a room.
+
+---
+
+## Step 2: Select Room
+
+Browse available rooms and click **Book Now**.
+
+---
+
+## Step 3: Fill Booking Information
+
+Required information:
+
+* Check-in date
+* Check-out date
+* Number of guests
+* Personal information
+* Special requests (optional)
+
+---
+
+## Step 4: Payment
+
+Users can choose from multiple payment methods:
+
+* SSLCommerz
+* Credit/Debit Cards
+* Mobile Banking
+* Net Banking
+
+The system automatically calculates:
+
+* Monthly rent
+* Security deposit
+* Total payable amount
+
+---
+
+## Step 5: Confirmation
+
+After successful payment:
+
+* Booking is confirmed
+* Transaction ID is generated
+* Booking appears in **My Rooms**
+
+---
+
+# 7. Payment System
+
+## Supported Payment Methods
+
+### SSLCommerz
+
+Recommended payment gateway for Bangladesh.
+
+### Credit/Debit Cards
+
+Supported cards:
+
+* Visa
+* MasterCard
+* American Express
+
+### Mobile Banking
+
+Supported services:
+
+* bKash
+* Nagad
+* Rocket
+* Upay
+
+### Net Banking
+
+Supported for major banks.
+
+---
+
+## Payment Security
+
+The system uses:
+
+* SSL/TLS encryption
+* Secure payment gateways
+* PCI-DSS compliant services
+
+No card information is stored on the server.
+
+---
+
+# 8. Room Types & Pricing
+
+| Room Type           | Monthly Rent | Capacity    | Features                |
+| ------------------- | ------------ | ----------- | ----------------------- |
+| Shared Room         | ৳4,500       | 4–8 Persons | Shared facilities, WiFi |
+| Semi-Private Room   | ৳7,500       | 2 Persons   | Attached bathroom       |
+| Premium Single Room | ৳10,500      | 1 Person    | AC, premium furniture   |
+| Deluxe Suite        | ৳15,000      | 1–2 Persons | Luxury facilities       |
+
+### Additional Information
+
+* Security Deposit: 2× monthly rent
+* Water: Included
+* WiFi: Included
+* Housekeeping: Included
+
+---
+
+# 9. Facilities & Amenities
+
+## Living & Comfort
+
+* Air Conditioning
+* High-Speed Internet
+* Premium Bedding
+* Natural Lighting
+
+---
+
+## Dining & Kitchen
+
+* Dining Hall
+* Common Kitchen
+* Fridge Access
+* Vending Machines
+
+---
+
+## Study & Work
+
+* Study Lounge
+* Meeting Rooms
+* Print Station
+* Power Backup
+
+---
+
+## Recreation & Fitness
+
+* Fitness Center
+* Entertainment Room
+* Game Zone
+* Garden Area
+
+---
+
+## Security & Services
+
+* 24/7 Security
+* CCTV Monitoring
+* Laundry Service
+* Housekeeping
+
+---
+
+# 10. Profile & Account Management
+
+Users can manage:
+
+## Personal Information
+
+* Full name
+* Email
+* Phone number
+* Address
+* Date of birth
+
+---
+
+## Profile Photo
+
+Users can:
+
+* Upload profile images
+* Preview before saving
+
+Supported formats:
+
+* JPG
+* PNG
+* GIF
+
+---
+
+## Password Management
+
+Users can securely:
+
+* Change passwords
+* Update credentials
+
+Minimum password length: 6 characters.
+
+---
+
+# 11. Troubleshooting
+
+## Login Issues
+
+### Solutions:
+
+* Verify email and password
+* Disable Caps Lock
+* Clear browser cache
+* Try another browser
+
+---
+
+## Booking Issues
+
+### Solutions:
+
+* Fill all required fields
+* Verify date selection
+* Check internet connection
+
+---
+
+## Payment Issues
+
+### Solutions:
+
+* Ensure sufficient balance
+* Verify payment details
+* Retry after a few minutes
+* Contact bank if needed
+
+---
+
+## Display Problems
+
+### Solutions:
+
+* Refresh the page
+* Update browser
+* Enable JavaScript
+* Disable conflicting extensions
+
+---
+
+# 12. Frequently Asked Questions
+
+### Do I need an account to browse rooms?
+
+No. Browsing is available without registration.
+
+---
+
+### Is the security deposit refundable?
+
+Yes. Deposits are refundable after room inspection.
+
+---
+
+### Can I cancel a booking?
+
+Yes. Contact support for cancellation policies.
+
+---
+
+### Are meals included?
+
+No. Meal plans are available separately.
+
+---
+
+### Is parking available?
+
+Yes. Secure parking is available for bicycles and motorcycles.
+
+---
+
+### Can guests visit?
+
+Yes. Guests must follow hostel visitor policies.
+
+---
+
+### How do I reset my password?
+
+Use the **Forgot Password** option on the login page.
+
+---
+
+# 13. Support & Contact
+
+## SylhetStay Hostel Management
+
+### Support Services
+
+For:
+
+* Booking issues
+* Payment problems
+* Technical support
+* General inquiries
+
+Use the **Contact Page** within the application.
+
+---
+
+### Support Recommendations
+
+When contacting support, provide:
+
+* Your registered email
+* Booking reference number
+* Transaction ID (if applicable)
+* Screenshots of errors
+
+---
+
+# Thank You
+
+Thank you for using **SylhetStay Hostel Management System**.
+
+We are committed to providing a comfortable, secure, and modern accommodation experience for students in Sylhet, Bangladesh.

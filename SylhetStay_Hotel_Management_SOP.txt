@@ -1,0 +1,733 @@
+# SYLHETSTAY HOTEL MANAGEMENT SYSTEM
+
+# Standard Operating Procedure (SOP)
+
+**Version:** 1.0
+**Prepared Date:** May 2026
+**System Type:** Hostel Booking & Management Platform
+
+---
+
+# Table of Contents
+
+1. Introduction
+2. Purpose & Scope
+3. Technology Stack
+4. User Roles & Responsibilities
+5. Room Types & Pricing
+6. Operational Procedures
+7. System Workflows
+8. Data Management
+9. Security Procedures
+10. Maintenance & Troubleshooting
+11. Deployment Procedures
+12. Appendix – Room Specifications
+
+---
+
+# 1. Introduction
+
+## System Overview
+
+SylhetStay is a modern web-based hostel booking and management platform designed for students in Sylhet, Bangladesh.
+
+The platform allows users to:
+
+* Browse hostel rooms
+* Book accommodations online
+* Make secure payments
+* Manage profiles and bookings
+* View payment history
+* Explore facilities and gallery sections
+
+The application is responsive and optimized for desktop, tablet, and mobile devices.
+
+---
+
+# 2. Purpose & Scope
+
+## Purpose
+
+This SOP provides operational and technical documentation for the SylhetStay Hostel Management System.
+
+It is intended for:
+
+* Developers
+* Administrators
+* Project supervisors
+* End users
+
+---
+
+## Scope
+
+### Included
+
+* User workflows
+* Booking procedures
+* Payment operations
+* Authentication process
+* Data management
+* Deployment procedures
+* Security considerations
+
+### Excluded
+
+* Backend database administration
+* Advanced admin operations
+* Email server configuration
+* Production-scale infrastructure management
+
+---
+
+# 3. Technology Stack
+
+## Frontend
+
+| Technology      | Purpose            |
+| --------------- | ------------------ |
+| Vue.js 3        | Frontend framework |
+| Vite            | Build tool         |
+| Tailwind CSS    | Styling            |
+| Vue Router      | Routing            |
+| vee-validate    | Form validation    |
+| lucide-vue-next | Icons              |
+| embla-carousel  | Carousel system    |
+| date-fns        | Date handling      |
+
+---
+
+## Backend
+
+| Technology | Purpose                   |
+| ---------- | ------------------------- |
+| Laravel    | Backend runtime           |
+| SSLCommerz | Payment gateway           |
+| dotenv     | Environment configuration |
+
+---
+
+## Storage
+
+Current version uses browser localStorage for:
+
+* Authentication state
+* User data
+* Booking history
+* Payment history
+* Theme preferences
+
+---
+
+## Deployment
+
+| Platform | Purpose              |
+| -------- | -------------------- |
+| Vercel   | Hosting & deployment |
+
+---
+
+# 4. User Roles & Responsibilities
+
+## 4.1 Guest User
+
+### Permissions
+
+Guest users can:
+
+* Browse rooms
+* View facilities
+* Explore gallery
+* View pricing information
+* Access contact page
+
+### Restrictions
+
+Guest users cannot:
+
+* Book rooms
+* Make payments
+* Access profile management
+* View booking history
+* Access payment records
+
+---
+
+## 4.2 Registered User
+
+### Permissions
+
+Registered users can:
+
+* Book rooms
+* Make online payments
+* View booking history
+* Manage profile information
+* Print payment receipts
+* Upload profile photos
+* Toggle dark/light mode
+
+### Authentication Methods
+
+* Email & password
+* Google login
+* Facebook login
+
+---
+
+# 5. Room Types & Pricing
+
+| Room Type           | Monthly Rent | Capacity    | Security Deposit |
+| ------------------- | ------------ | ----------- | ---------------- |
+| Shared Room         | ৳4,500       | 4–8 Persons | ৳9,000           |
+| Semi-Private Room   | ৳7,500       | 2 Persons   | ৳15,000          |
+| Premium Single Room | ৳10,500      | 1 Person    | ৳21,000          |
+| Deluxe Suite        | ৳15,000      | 1–2 Persons | ৳30,000          |
+
+---
+
+## Included Services
+
+* WiFi
+* Water supply
+* Housekeeping
+* Security
+* Power backup
+
+---
+
+# 6. Operational Procedures
+
+# 6.1 Guest User Workflow
+
+## Step 1: Access Homepage
+
+Users enter the website and browse featured content.
+
+---
+
+## Step 2: Browse Rooms
+
+Users can filter rooms by:
+
+* Room type
+* Capacity
+* Price range
+
+---
+
+## Step 3: View Room Details
+
+Users can view:
+
+* Room specifications
+* Amenities
+* Policies
+* Availability
+
+---
+
+## Step 4: Explore Additional Pages
+
+Accessible pages:
+
+* Facilities
+* Gallery
+* About
+* Contact
+
+---
+
+## Step 5: Attempt Booking
+
+If a guest clicks **Book Now**, the system redirects them to the login page.
+
+---
+
+# 6.2 User Registration & Authentication
+
+## Registration Procedure
+
+### Required Information
+
+* Full name
+* Email address
+* Phone number
+* Password
+
+### Process
+
+1. Open Login page
+2. Switch to “Sign Up”
+3. Complete registration form
+4. Submit form
+5. Authentication state saved in localStorage
+6. Redirect to homepage
+
+---
+
+## Login Procedure
+
+### Required Information
+
+* Email address
+* Password
+
+### Process
+
+1. Open Login page
+2. Enter credentials
+3. Submit form
+4. System authenticates user
+5. Redirect to homepage
+
+---
+
+## Logout Procedure
+
+1. Open profile dropdown
+2. Click “Logout”
+3. Authentication state cleared
+4. User returned to guest mode
+
+---
+
+# 6.3 Room Booking Procedure
+
+## Step 1: Room Selection
+
+User selects a room and clicks **Book Now**.
+
+---
+
+## Step 2: Booking Information
+
+User provides:
+
+* Check-in date
+* Check-out date
+* Number of guests
+* Personal details
+* Special requests (optional)
+
+---
+
+## Step 3: Validation
+
+System validates:
+
+* Required fields
+* Email format
+* Guest limits
+* Date validity
+
+---
+
+## Step 4: Payment Selection
+
+Available methods:
+
+* SSLCommerz
+* Credit/Debit Cards
+* Mobile Banking
+* Net Banking
+
+---
+
+## Step 5: Payment Confirmation
+
+After successful payment:
+
+* Booking is saved
+* Transaction ID generated
+* Payment added to history
+* Booking appears in **My Rooms**
+
+---
+
+# 6.4 Payment Processing Procedure
+
+## Payment Flow
+
+1. Frontend sends payment request
+2. Backend communicates with SSLCommerz
+3. User redirected to payment gateway
+4. Payment processed securely
+5. Callback status returned:
+
+   * Success
+   * Failed
+   * Cancelled
+
+---
+
+## Supported Payment Methods
+
+* Visa
+* MasterCard
+* American Express
+* bKash
+* Nagad
+* Rocket
+* Upay
+* Net Banking
+
+---
+
+# 6.5 Booking Management (My Rooms)
+
+Users can:
+
+* View booked rooms
+* View booking status
+* Review check-in/check-out dates
+* Access room details
+
+If no bookings exist, an empty-state message is displayed.
+
+---
+
+# 6.6 Payment History Management (My Payments)
+
+Users can:
+
+* View payment history
+* Open detailed receipts
+* Print receipts
+* Review transaction details
+
+---
+
+# 6.7 Profile Management
+
+## Available Features
+
+Users can:
+
+* Update personal information
+* Change password
+* Upload profile photo
+* Manage theme preferences
+
+---
+
+## Profile Photo Upload
+
+Supported formats:
+
+* JPG
+* PNG
+* GIF
+
+Images are stored in localStorage as Base64 strings.
+
+---
+
+# 6.8 Facilities & Gallery Management
+
+## Facilities Page
+
+Displays categorized facilities including:
+
+* Living & Comfort
+* Dining & Kitchen
+* Study & Work
+* Recreation & Fitness
+* Security & Services
+
+---
+
+## Gallery Page
+
+Users can:
+
+* Browse hostel images
+* Filter categories
+* Open full-screen previews
+
+---
+
+# 6.9 Contact & Support Procedure
+
+## Contact Form
+
+Users submit:
+
+* Name
+* Email
+* Phone number
+* Subject
+* Message
+
+---
+
+## Support Services
+
+Available support includes:
+
+* General inquiries
+* Booking assistance
+* Technical issues
+* Emergency contact access
+
+---
+
+# 7. System Workflows
+
+# 7.1 Complete Booking Workflow
+
+1. User browses rooms
+2. User selects room
+3. Authentication check performed
+4. Booking form completed
+5. Payment method selected
+6. Payment processed
+7. Booking confirmed
+8. Booking & payment saved
+
+---
+
+# 7.2 Payment Gateway Workflow
+
+1. Frontend initiates payment
+2. Backend sends request to SSLCommerz
+3. Gateway processes payment
+4. Callback response returned
+5. Frontend displays payment status
+
+---
+
+# 7.3 Authentication Workflow
+
+1. User registers or logs in
+2. System validates input
+3. Authentication stored in localStorage
+4. User gains access to protected pages
+
+---
+
+# 8. Data Management
+
+## Stored Data
+
+The system stores:
+
+* Authentication state
+* User profile
+* Booking history
+* Payment records
+* Theme preference
+* Profile image
+
+---
+
+## Current Limitations
+
+* Data stored only in browser
+* No cloud synchronization
+* Clearing browser data removes records
+* No centralized database
+
+---
+
+## Recommended Future Improvements
+
+* Implement backend database
+* Add secure session handling
+* Enable cross-device synchronization
+* Introduce admin dashboard
+
+---
+
+# 9. Security Procedures
+
+## Current Security Measures
+
+* Client-side form validation
+* Secure SSLCommerz integration
+* Environment variable protection
+* CORS middleware support
+
+---
+
+## Current Limitations
+
+* Authentication is prototype-based
+* No backend password hashing
+* No JWT/session authentication
+* localStorage vulnerabilities
+
+---
+
+## Recommended Enhancements
+
+* Implement JWT authentication
+* Add bcrypt password hashing
+* Enforce HTTPS
+* Add rate limiting
+* Implement CSRF protection
+
+---
+
+# 10. Maintenance & Troubleshooting
+
+## Routine Maintenance
+
+* Update dependencies regularly
+* Monitor payment gateway credentials
+* Check image assets
+* Review build performance
+
+---
+
+## Common Issues
+
+### Payment Server Not Starting
+
+Possible causes:
+
+* Port conflict
+* Missing dependencies
+* Incorrect environment variables
+
+---
+
+### Booking Not Saving
+
+Possible causes:
+
+* localStorage limit exceeded
+* JavaScript errors
+* Callback issues
+
+---
+
+### Authentication Issues
+
+Possible causes:
+
+* Cleared browser data
+* Incognito mode restrictions
+* localStorage disabled
+
+---
+
+### Deployment Issues
+
+Possible causes:
+
+* Build errors
+* Missing environment variables
+* Incorrect Vercel configuration
+
+---
+
+# 11. Deployment Procedures
+
+# Development Setup
+
+## Step 1: Clone Repository
+
+```bash
+git clone <repository-url>
+cd project-folder
+```
+
+## Step 2: Install Dependencies
+
+```bash
+npm install
+```
+
+## Step 3: Configure Environment Variables
+
+```env
+SSLCOMMERZ_STORE_ID=your_store_id
+SSLCOMMERZ_STORE_PASSWORD=your_store_password
+NODE_ENV=development
+PORT=3001
+```
+
+---
+
+## Step 4: Run Development Server
+
+```bash
+npm run dev
+```
+
+---
+
+# Production Deployment
+
+## Build Application
+
+```bash
+npm run build
+```
+
+---
+
+## Deploy to Vercel
+
+* Connect repository to Vercel
+* Add environment variables
+* Deploy production build
+
+---
+
+## Recommended Post-Deployment Checks
+
+* Verify room browsing
+* Test booking flow
+* Test authentication
+* Verify payment callbacks
+* Check responsive layout
+* Test dark/light mode
+
+---
+
+# 12. Appendix – Room Specifications
+
+## Shared Room
+
+* Capacity: 4–8 persons
+* Shared bathroom
+* Study desk
+* WiFi included
+
+---
+
+## Semi-Private Room
+
+* Capacity: 2 persons
+* Attached bathroom
+* Balcony
+* Study desks
+
+---
+
+## Premium Single Room
+
+* Private room
+* Air conditioning
+* Mini fridge
+* Premium furniture
+
+---
+
+## Deluxe Suite
+
+* King-size bed
+* Smart TV
+* Mini kitchen
+* Private balcony
+* Room service
+
+---
+
+# Conclusion
+
+This SOP provides the operational and technical foundation of the SylhetStay Hostel Management System.
+
+The current implementation serves as a modern prototype system and can be expanded into a production-ready hostel management platform with backend database integration, secure authentication, and advanced administrative functionality.
