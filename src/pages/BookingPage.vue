@@ -110,7 +110,7 @@
                       :disabled="isProcessing"
                       :class="['w-full p-5 rounded-2xl border-2 transition-all flex items-center gap-4',
                         selectedPayment === method.id
-                          ? 'border-teal-500 bg-teal-50'
+                          ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/50 dark:border-teal-400'
                           : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 bg-white dark:bg-gray-700',
                         'disabled:opacity-50']">
                       <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg bg-teal-600">
