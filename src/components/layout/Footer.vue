@@ -1,12 +1,11 @@
 <template>
-  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-20">
+  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-8">
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-        <div class="space-y-6">
-          <router-link to="/" class="flex items-center gap-3 mb-6">
-            <img src="@/assets/logo/logo.png" alt="Logo" class="h-20 w-auto" />
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="space-y-4">
+          <router-link to="/" class="flex items-center gap-3 mb-4">
+            <img src="@/assets/logo/logo.png" alt="Logo" class="h-16 w-auto" />
           </router-link>
-          <!-- <p class="text-muted-foreground mb-6">Premium student accommodation in Sylhet, Bangladesh.</p> -->
           <div class="flex gap-4">
             <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all cursor-pointer">
               <Facebook class="w-5 h-5" />
@@ -24,8 +23,8 @@
         </div>
 
         <div v-for="col in footerColumns" :key="col.title">
-          <h4 class="font-black mb-6">{{ col.title }}</h4>
-          <div class="space-y-3">
+          <h4 class="font-black mb-4">{{ col.title }}</h4>
+          <div class="space-y-2">
             <div v-for="link in col.links" :key="link.label">
 <a v-if="link.path.startsWith('#') || link.path.startsWith('tel:') || link.path.startsWith('mailto:')" 
                   :href="link.path" class="text-muted-foreground hover:text-white transition-colors cursor-pointer">
@@ -39,7 +38,7 @@
         </div>
       </div>
 
-      <div class="bg-gradient-to-r from-sky-500/20 to-emerald-500/20 dark:from-sky-500/30 dark:to-emerald-500/30 rounded-3xl p-8 mb-12 border border-white/10">
+      <div class="bg-gradient-to-r from-sky-500/20 to-emerald-500/20 dark:from-sky-500/30 dark:to-emerald-500/30 rounded-3xl p-4 mb-6 border border-white/10">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div class="text-center md:text-left">
             <h4 class="font-black text-2xl mb-2">Subscribe to Our Newsletter</h4>
@@ -49,16 +48,16 @@
             <div class="relative flex-1 md:w-72">
               <Mail class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input type="email" placeholder="Enter your email" 
-                     class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-all" />
+                     class="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-all" />
             </div>
-            <button class="px-8 py-4 bg-gradient-to-r from-sky-500 to-emerald-500 rounded-2xl font-bold hover:scale-105 transition-all flex items-center gap-2">
+            <button class="px-6 py-3 bg-gradient-to-r from-sky-500 to-emerald-500 rounded-2xl font-bold hover:scale-105 transition-all flex items-center gap-2">
               <Send class="w-5 h-5" />
             </button>
           </div>
         </div>
       </div>
 
-      <div class="border-t border-slate-800 dark:border-slate-700 pt-8 text-center text-muted-foreground">
+      <div class="border-t border-slate-800 dark:border-slate-700 pt-4 text-center text-muted-foreground">
         <p>&copy; 2026 SylhetStay Hostel. All rights reserved.</p>
       </div>
     </div>
