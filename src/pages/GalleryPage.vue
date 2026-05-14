@@ -5,7 +5,7 @@
       <div class="max-w-7xl mx-auto px-6">
         <!-- Header -->
         <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200 mb-8">
+            <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
             <div class="p-2 bg-teal-600 rounded-xl">
               <Camera class="w-4 h-4 text-white" />
             </div>
@@ -13,9 +13,9 @@
           </div>
           <h1 class="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
             <span class="block text-teal-600">Explore Our</span>
-            <span class="block text-gray-800">Beautiful Space</span>
+             <span class="block text-gray-800 dark:text-white">Beautiful Space</span>
           </h1>
-            <p class="text-l text-gray-600">Take a visual tour of your new home</p>
+            <p class="text-l text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
         </div>
 
         <!-- Category Filters -->
@@ -25,7 +25,7 @@
                    :class="['px-6 py-3 rounded-full font-bold transition-all duration-500',
                      selectedCategory === cat.id
                        ? 'text-white shadow-lg scale-105 bg-teal-600'
-                       : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border-2 border-gray-200']">
+                       : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg border-2 border-gray-200 dark:border-gray-600']">
             {{ cat.label }}
             <ChevronRight v-if="selectedCategory === cat.id" class="w-4 h-4 inline ml-2" />
           </button>
@@ -56,11 +56,11 @@
         </div>
 
         <!-- Visit Info Card -->
-          <div class="bg-white rounded-2xl shadow border border-gray-200 p-10 md:p-16">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-10 md:p-16">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
               <h2 class="text-xl lg:text-2xl font-black mb-6 text-teal-600">Visit Us Today</h2>
-                <p class="text-md text-gray-600 mb-10 leading-relaxed">
+                <p class="text-md text-gray-600 dark:text-gray-400 mb-10 leading-relaxed">
                 Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
               </p>
               <div class="space-y-6">
@@ -69,24 +69,24 @@
                     <component :is="item.icon" class="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <p class="font-bold text-gray-800">{{ item.label }}</p>
-                    <p class="text-gray-600">{{ item.value }}</p>
+                     <p class="font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</p>
+                    <p class="text-gray-600 dark:text-gray-400">{{ item.value }}</p>
                   </div>
                 </div>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-              <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-3 p-4 bg-gray-50 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200">
+              <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
                 <div class="p-2 rounded-xl shadow-lg bg-teal-600">
                   <component :is="item.icon" class="w-5 h-5 text-white" />
                 </div>
-                <span class="text-sm font-semibold text-gray-700">{{ item.label }}</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ item.label }}</span>
               </div>
             </div>
           </div>
         </div>
 
-          <p class="text-center text-gray-600 mt-12 font-medium">
+          <p class="text-center text-gray-600 dark:text-gray-400 mt-12 font-medium">
           {{ filteredImages.length }} photos {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel() : '' }}
         </p>
       </div>

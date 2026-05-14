@@ -173,6 +173,16 @@
     font-weight: 400;
     line-height: 1.5;
   }
+
+  select option {
+    color: #1f2937;
+    background: #ffffff;
+  }
+
+  .dark select option {
+    color: #e5e7eb;
+    background: #1f2937;
+  }
 }
 
 @layer components {

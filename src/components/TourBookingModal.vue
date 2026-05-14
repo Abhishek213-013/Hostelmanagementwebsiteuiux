@@ -9,24 +9,24 @@
       ></div>
       
       <!-- Modal -->
-      <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full transform transition-all">
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full transform transition-all">
         <!-- Close button -->
         <button 
           @click="closeModal" 
-          class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
+          class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10"
         >
-          <X class="w-5 h-5 text-gray-500" />
+          <X class="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
         
         <!-- Header -->
         <div class="px-6 pt-6 pb-4">
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
-              <Calendar class="w-5 h-5 text-teal-600" />
+            <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
+              <Calendar class="w-5 h-5 text-teal-600 dark:text-teal-300" />
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">Book a Tour</h3>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Book a Tour</h3>
           </div>
-          <p class="text-sm text-gray-500 pl-13">Fill in your details and we'll confirm your appointment</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 pl-13">Fill in your details and we'll confirm your appointment</p>
         </div>
         
         <!-- Form -->
@@ -34,47 +34,47 @@
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <!-- Name -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
               <input 
                 type="text" 
                 v-model="form.name" 
                 placeholder="John Doe"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 placeholder:text-gray-400 outline-none" 
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
                 required 
               />
             </div>
             
             <!-- Email -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
               <input 
                 type="email" 
                 v-model="form.email" 
                 placeholder="john@example.com"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 placeholder:text-gray-400 outline-none" 
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
                 required 
               />
             </div>
             
             <!-- Phone -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
               <input 
                 type="tel" 
                 v-model="form.phone" 
                 placeholder="+1 (555) 000-0000"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 placeholder:text-gray-400 outline-none" 
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
                 required 
               />
             </div>
             
             <!-- Date & Time -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Date & Time</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Date & Time</label>
               <input 
                 type="datetime-local" 
                 v-model="form.scheduleTime"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 outline-none cursor-pointer" 
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer" 
                 required 
               />
             </div>
@@ -89,7 +89,7 @@
             </button>
             
             <!-- Footer Text -->
-            <p class="text-xs text-center text-gray-400 mt-4">
+            <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-4">
               We'll send you a confirmation via email and WhatsApp
             </p>
           </form>

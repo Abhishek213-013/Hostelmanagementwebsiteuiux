@@ -6,7 +6,7 @@
         Back to Home
       </router-link>
 
-        <div class="flex flex-col md:flex-row bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200">
+        <div class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
         <!-- Left Side - Image -->
         <div class="md:w-1/2 bg-gradient-to-br from-teal-500 to-emerald-600 p-12 flex items-center justify-center relative overflow-hidden">
           <div class="absolute inset-0 bg-black/20"></div>
@@ -45,7 +45,7 @@
             <h1 class="text-4xl font-black mb-2 text-teal-600">
               {{ isLogin ? 'Welcome Back!' : 'Create Account' }}
             </h1>
-            <p class="text-gray-600 text-lg">
+            <p class="text-gray-600 dark:text-gray-400 text-lg">
               {{ isLogin ? 'Sign in to continue to your account' : 'Join our student community today' }}
             </p>
           </div>
@@ -56,7 +56,7 @@
                     :class="['flex-1 py-4 rounded-2xl font-bold transition-all duration-500',
                       isLogin
                         ? 'text-white shadow-lg scale-105'
-                        : 'bg-white text-gray-700 hover:bg-gray-50']"
+                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600']"
                     :style="isLogin ? { background: '#0d9488' } : {}">
               Sign In
             </button>
@@ -64,7 +64,7 @@
                     :class="['flex-1 py-4 rounded-2xl font-bold transition-all duration-500',
                       !isLogin
                         ? 'text-white shadow-lg scale-105'
-                        : 'bg-white text-gray-700 hover:bg-gray-50']"
+                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600']"
                     :style="!isLogin ? { background: '#0d9488' } : {}">
               Sign Up
             </button>
@@ -75,8 +75,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Full Name</label>
               <div class="relative">
                 <User class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                 <input type="text" placeholder="Enter your full name" v-model="formData.fullName"
-                        class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400" />
+                  <input type="text" placeholder="Enter your full name" v-model="formData.fullName"
+                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -84,8 +84,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
               <div class="relative">
                 <Mail class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                 <input type="email" placeholder="Enter your email" v-model="formData.email"
-                        class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400" required />
+                  <input type="email" placeholder="Enter your email" v-model="formData.email"
+                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
               </div>
             </div>
 
@@ -93,8 +93,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
               <div class="relative">
                 <Phone class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                 <input type="tel" placeholder="Enter your phone number" v-model="formData.phone"
-                        class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400" />
+                  <input type="tel" placeholder="Enter your phone number" v-model="formData.phone"
+                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -102,8 +102,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Password</label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                 <input :type="showPassword ? 'text' : 'password'" placeholder="Enter your password" v-model="formData.password"
-                        class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400" required />
+                  <input :type="showPassword ? 'text' : 'password'" placeholder="Enter your password" v-model="formData.password"
+                         class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
                 <button type="button" @click="showPassword = !showPassword" class="absolute right-5 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-600 transition-colors">
                   <EyeOff v-if="showPassword" class="w-5 h-5" />
                   <Eye v-else class="w-5 h-5" />
@@ -115,8 +115,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Confirm Password</label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                 <input :type="showPassword ? 'text' : 'password'" placeholder="Confirm your password" v-model="formData.confirmPassword"
-                        class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400" />
+                  <input :type="showPassword ? 'text' : 'password'" placeholder="Confirm your password" v-model="formData.confirmPassword"
+                         class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -147,13 +147,13 @@
           <!-- Social Login -->
           <div class="mt-8">
                <div class="relative flex py-2 items-center">
-              <div class="flex-grow border-t-2 border-gray-200"></div>
-              <span class="flex-shrink-0 mx-4 text-gray-500 font-bold">or continue with</span>
-              <div class="flex-grow border-t-2 border-gray-200"></div>
+               <div class="flex-grow border-t-2 border-gray-200 dark:border-gray-700"></div>
+              <span class="flex-shrink-0 mx-4 text-gray-500 dark:text-gray-400 font-bold">or continue with</span>
+              <div class="flex-grow border-t-2 border-gray-200 dark:border-gray-700"></div>
             </div>
 
             <div class="flex gap-4 mt-4">
-              <button class="flex-1 group py-4 rounded-2xl font-bold bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg transition-all flex items-center justify-center gap-3 border border-gray-200">
+              <button class="flex-1 group py-4 rounded-2xl font-bold bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 hover:shadow-lg transition-all flex items-center justify-center gap-3 border border-gray-200 dark:border-gray-600">
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -162,14 +162,14 @@
                 </svg>
                 Google
               </button>
-              <button class="flex-1 group py-4 rounded-2xl font-bold bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg transition-all flex items-center justify-center gap-3 border border-gray-200">
+              <button class="flex-1 group py-4 rounded-2xl font-bold bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 hover:shadow-lg transition-all flex items-center justify-center gap-3 border border-gray-200 dark:border-gray-600">
                 <Facebook class="w-5 h-5" />
                 Facebook
               </button>
             </div>
           </div>
 
-           <p class="mt-8 text-center text-gray-600 font-medium">
+           <p class="mt-8 text-center text-gray-600 dark:text-gray-400 font-medium">
             {{ isLogin ? "Don't have an account? " : "Already have an account? " }}
             <button @click="isLogin = !isLogin" class="group text-teal-600 font-bold hover:underline inline-flex items-center gap-1">
               {{ isLogin ? 'Sign Up' : 'Sign In' }}

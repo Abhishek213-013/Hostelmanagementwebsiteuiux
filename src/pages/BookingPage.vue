@@ -9,14 +9,14 @@
           </div>
         </div>
         <h1 class="text-5xl lg:text-6xl font-black mb-4 text-teal-600">Booking Confirmed!</h1>
-        <p class="text-xl text-gray-600 mb-2">Your room has been reserved successfully.</p>
-        <p class="text-gray-700 mb-4">
-          A confirmation email has been sent to <span class="font-semibold text-gray-800">{{ bookingData.email }}</span>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your room has been reserved successfully.</p>
+        <p class="text-gray-700 dark:text-gray-300 mb-4">
+           A confirmation email has been sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email }}</span>
         </p>
 
-        <div v-if="transactionId" class="bg-white rounded-2xl p-6 mb-8 shadow border border-gray-200">
+        <div v-if="transactionId" class="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow border border-gray-200 dark:border-gray-700">
           <p class="text-sm text-teal-600 mb-1">Transaction ID</p>
-          <p class="font-mono font-bold text-gray-800 text-lg">{{ transactionId }}</p>
+           <p class="font-mono font-bold text-gray-800 dark:text-white text-lg">{{ transactionId }}</p>
         </div>
 
         <div class="flex flex-wrap gap-4 justify-center">
@@ -42,7 +42,7 @@
       <div v-if="step === 3 && selectedRoom">
         <AnimatedSection>
           <div class="relative">
-            <div class="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div class="grid grid-cols-1 lg:grid-cols-2">
                 <div class="relative min-h-[500px] lg:min-h-0">
                   <img :src="selectedRoom.image" :alt="selectedRoom.title" class="w-full h-full object-cover" />
@@ -56,30 +56,30 @@
                   </div>
                 </div>
                 <div class="p-10">
-                  <button @click="step = 2" class="mb-6 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-2">
+                  <button @click="step = 2" class="mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-2">
                     <ArrowLeft class="w-4 h-4" />
                     Back to Booking
                   </button>
                   <h2 class="text-xl font-black mb-8 text-teal-600">Select Payment Method</h2>
 
-                  <div class="mb-6 p-6 bg-gray-50 rounded-2xl border-2 border-gray-200">
-                    <h4 class="text-lg font-black text-gray-800 mb-4">Booking Summary</h4>
-                    <div class="space-y-3 text-gray-600">
+                  <div class="mb-6 p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl border-2 border-gray-200 dark:border-gray-600">
+                     <h4 class="text-lg font-black text-gray-800 dark:text-white mb-4">Booking Summary</h4>
+                    <div class="space-y-3 text-gray-600 dark:text-gray-400">
                       <div class="text-sm flex justify-between">
                         <span>Room Type</span>
-                        <span class="font-bold text-gray-800">{{ selectedRoom.title }}</span>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ selectedRoom.title }}</span>
                       </div>
                       <div class="text-sm flex justify-between">
                         <span>Monthly Rent</span>
-                        <span class="font-bold text-gray-800">৳{{ selectedRoom.price.toLocaleString() }}</span>
-                      </div>
-                      <div class="text-sm flex justify-between">
-                        <span>Security Deposit</span>
-                        <span class="font-bold text-gray-800">৳{{ Math.round(selectedRoom.price * 2).toLocaleString() }}</span>
+                        <span class="font-bold text-gray-800 dark:text-white">৳{{ selectedRoom.price.toLocaleString() }}</span>
+                       </div>
+                       <div class="text-sm flex justify-between">
+                         <span>Security Deposit</span>
+                         <span class="font-bold text-gray-800 dark:text-white">৳{{ Math.round(selectedRoom.price * 2).toLocaleString() }}</span>
                       </div>
                       <div class="text-sm border-t border-gray-300 pt-3 mt-3 flex justify-between">
-                        <span class="font-black text-lg text-gray-800">Total to Pay</span>
-                        <span class="font-black text-2xl text-gray-800">৳{{ Math.round(selectedRoom.price * 2).toLocaleString() }}</span>
+                         <span class="font-black text-lg text-gray-800 dark:text-white">Total to Pay</span>
+                         <span class="font-black text-2xl text-gray-800 dark:text-white">৳{{ Math.round(selectedRoom.price * 2).toLocaleString() }}</span>
                       </div>
                     </div>
                   </div>
@@ -89,17 +89,17 @@
                     <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
                       <X class="w-8 h-8 text-red-600" />
                     </div>
-                    <h3 class="text-2xl font-black text-gray-800 mb-2">Payment Failed</h3>
-                    <p class="text-gray-600 mb-4">{{ paymentStatus.message }}</p>
+                      <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Failed</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentStatus.message }}</p>
                     <button @click="paymentStatus = null" class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all" style="background: #0d9488">
                       Try Again
                     </button>
                   </div>
 
                   <div v-else-if="paymentStatus?.status === 'canceled'" class="text-center py-6 mb-6">
-                    <h3 class="text-2xl font-black text-gray-800 mb-4">Payment Canceled</h3>
-                    <p class="text-gray-600 mb-4">{{ paymentStatus.message }}</p>
-                    <button @click="paymentStatus = null" class="px-6 py-3 rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all bg-gray-100">
+                     <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-4">Payment Canceled</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentStatus.message }}</p>
+                    <button @click="paymentStatus = null" class="px-6 py-3 rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all bg-gray-100 dark:bg-gray-700">
                       Go Back
                     </button>
                   </div>
@@ -111,14 +111,14 @@
                       :class="['w-full p-5 rounded-2xl border-2 transition-all flex items-center gap-4',
                         selectedPayment === method.id
                           ? 'border-teal-500 bg-teal-50'
-                          : 'border-gray-200 hover:border-teal-300 bg-white',
+                          : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 bg-white dark:bg-gray-700',
                         'disabled:opacity-50']">
                       <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg bg-teal-600">
                         <component :is="method.icon" class="w-6 h-6 text-white" />
                       </div>
                       <div class="text-left flex-1">
-                        <h4 class="text-lg font-black text-gray-800">{{ method.title }}</h4>
-                        <p class="text-sm text-gray-600">{{ method.desc }}</p>
+                         <h4 class="text-lg font-black text-gray-800 dark:text-white">{{ method.title }}</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ method.desc }}</p>
                       </div>
                       <div v-if="selectedPayment === method.id" class="w-6 h-6 rounded-full flex items-center justify-center bg-teal-600">
                         <CheckCircle2 class="w-4 h-4 text-white" />
@@ -155,21 +155,21 @@
       <!-- Step 2: Booking Form -->
       <div v-else class="relative max-w-2xl mx-auto">
         <AnimatedSection>
-          <div class="bg-white rounded-3xl shadow-2xl p-10 border-2 border-gray-200">
+          <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-10 border-2 border-gray-200 dark:border-gray-700">
             <h2 class="text-3xl font-black mb-8 text-teal-600">Booking Information</h2>
             <form @submit.prevent="confirmBooking" class="space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="group">
                   <label class="block text-sm font-bold text-teal-600 mb-3">Check-in Date</label>
-                  <input type="date" v-model="bookingData.checkIn"
-                    :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 transition-all font-semibold text-gray-800',
-                      formErrors.checkIn ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                  <p v-if="formErrors.checkIn" class="text-red-500 text-sm mt-1">{{ formErrors.checkIn }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-3">Check-out Date</label>
-                  <input type="date" v-model="bookingData.checkOut"
-                    :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 transition-all font-semibold text-gray-800',
+                   <input type="date" v-model="bookingData.checkIn"
+                     :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
+                       formErrors.checkIn ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" required />
+                   <p v-if="formErrors.checkIn" class="text-red-500 text-sm mt-1">{{ formErrors.checkIn }}</p>
+                 </div>
+                 <div>
+                   <label class="block text-sm font-bold text-teal-600 mb-3">Check-out Date</label>
+                   <input type="date" v-model="bookingData.checkOut"
+                     :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
                       formErrors.checkOut ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
                   <p v-if="formErrors.checkOut" class="text-red-500 text-sm mt-1">{{ formErrors.checkOut }}</p>
                 </div>
@@ -177,7 +177,7 @@
 
               <div>
                 <label class="block text-sm font-bold text-teal-600 mb-3">Number of Guests</label>
-                <select v-model="bookingData.guests" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800">
+                 <select v-model="bookingData.guests" class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
                   <option :value="1">1 Guest</option>
                   <option :value="2">2 Guests</option>
                   <option :value="3">3 Guests</option>
@@ -188,24 +188,24 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="group">
                   <label class="block text-sm font-bold text-teal-600 mb-3">Your Name</label>
-                  <input type="text" placeholder="Enter your name" v-model="bookingData.name"
-                    :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 transition-all font-semibold text-gray-800 placeholder:text-gray-400',
-                      formErrors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                  <p v-if="formErrors.name" class="text-red-500 text-sm mt-1">{{ formErrors.name }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
-                  <input type="email" placeholder="Enter your email" v-model="bookingData.email"
-                    :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 transition-all font-semibold text-gray-800 placeholder:text-gray-400',
-                      formErrors.email ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                  <p v-if="formErrors.email" class="text-red-500 text-sm mt-1">{{ formErrors.email }}</p>
-                </div>
-              </div>
+                   <input type="text" placeholder="Enter your name" v-model="bookingData.name"
+                     :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                       formErrors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" required />
+                   <p v-if="formErrors.name" class="text-red-500 text-sm mt-1">{{ formErrors.name }}</p>
+                 </div>
+                 <div>
+                   <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
+                   <input type="email" placeholder="Enter your email" v-model="bookingData.email"
+                     :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                       formErrors.email ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" required />
+                   <p v-if="formErrors.email" class="text-red-500 text-sm mt-1">{{ formErrors.email }}</p>
+                 </div>
+               </div>
 
-              <div>
-                <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
-                <input type="tel" placeholder="Enter your phone number" v-model="bookingData.phone"
-                  :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 transition-all font-semibold text-gray-800 placeholder:text-gray-400',
+               <div>
+                 <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
+                 <input type="tel" placeholder="Enter your phone number" v-model="bookingData.phone"
+                   :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
                     formErrors.phone ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
                 <p v-if="formErrors.phone" class="text-red-500 text-sm mt-1">{{ formErrors.phone }}</p>
               </div>
@@ -213,7 +213,7 @@
               <div>
                 <label class="block text-sm font-bold text-teal-600 mb-3">Special Requests (Optional)</label>
                 <textarea placeholder="Any special requirements or preferences..." v-model="bookingData.specialRequests"
-                  class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 placeholder:text-gray-400 resize-none h-36"></textarea>
+                   class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400 resize-none h-36"></textarea>
               </div>
 
               <button type="submit" class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg" style="background: #0d9488">

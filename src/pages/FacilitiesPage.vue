@@ -4,27 +4,27 @@
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
       <!-- Header -->
       <div class="text-center mb-20">
-        <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
+        <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <Sparkles class="w-5 h-5 text-amber-500" />
           <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Premium Amenities</span>
         </div>
         <h1 class="text-3xl lg:text-5xl font-black leading-[1.1] tracking-tight mb-6">
           <span class="block text-teal-600">World-Class</span>
-          <span class="block text-gray-800">Facilities</span>
+           <span class="block text-gray-800 dark:text-white">Facilities</span>
         </h1>
-        <p class="text-l text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-l text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
           Everything you need for <span class="text-teal-600 font-bold">success</span>, all under one roof
         </p>
       </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
-        <div v-for="stat in stats" :key="stat.label" class="group bg-white rounded-2xl p-8 shadow border border-gray-200 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500 hover:bg-teal-600">
+        <div v-for="stat in stats" :key="stat.label" class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500 hover:bg-teal-600">
           <div class="w-15 h-15 mx-auto mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow group-hover:bg-white transition-all duration-500">
             <component :is="stat.icon" class="w-10 h-10 text-white group-hover:text-teal-600" />
           </div>
           <div class="text-2xl font-black mb-2 text-teal-600 group-hover:text-white transition-all duration-500">{{ stat.number }}</div>
-          <div class="text-sm font-semibold text-gray-600 group-hover:text-gray-200 transition-all duration-500">{{ stat.label }}</div>
+          <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-200 transition-all duration-500">{{ stat.label }}</div>
         </div>
       </div>
 
@@ -36,11 +36,11 @@
           </div>
           <div>
             <h2 class="text-xl lg:text-2xl font-black mb-2 text-teal-600">{{ category.title }}</h2>
-            <p class="text-gray-600 text-m">Everything you need for comfortable living</p>
+            <p class="text-gray-600 dark:text-gray-400 text-m">Everything you need for comfortable living</p>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="facility in category.facilities" :key="facility.name" class="bg-white rounded-2xl overflow-hidden shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
+          <div v-for="facility in category.facilities" :key="facility.name" class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 transition-all duration-500">
             <div class="relative h-56 overflow-hidden">
               <img :src="facility.image" :alt="facility.name" class="w-full h-full object-cover" />
               <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
@@ -52,7 +52,7 @@
                 </div>
                 <h3 class="text-lg font-black text-teal-600">{{ facility.name }}</h3>
               </div>
-              <p class="text-gray-600 leading-relaxed">{{ facility.desc }}</p>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ facility.desc }}</p>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@
         <h2 class="text-2xl lg:text-3xl font-black mb-6">Want to Experience Our Facilities?</h2>
         <p class="text-l text-white/90 mb-10 max-w-2xl mx-auto">Book your room today and enjoy all these premium amenities from day one</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
+            <router-link to="/rooms" class="px-10 py-5 bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-300 rounded-xl font-bold flex items-center gap-3 hover:shadow-lg hover:scale-105 transition-all">
             <CheckCircle2 class="w-5 h-5" />
             Book Your Room
             <ArrowRight class="w-5 h-5" />

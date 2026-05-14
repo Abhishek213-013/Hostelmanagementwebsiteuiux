@@ -4,7 +4,7 @@
       <Header />
 
       <!-- Vibrant Hero Section - Full Width with Background Images -->
-      <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
+      <section class="relative min-h-screen flex items-center justify-center pt-24">
         <div class="relative w-full">
           <!-- Carousel - Full width with background images -->
           <div class="relative w-full overflow-hidden" ref="carouselRef">
@@ -97,36 +97,21 @@
           <!-- Search Widget - Full Width Container -->
           <div class="w-full px-6 lg:px-12 mt-12">
             <div class="max-w-[1400px] mx-auto">
-              <div class="relative bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+              <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div class="space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Room Type</label>
-                    <select v-model="searchFilters.roomType" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 focus:border-teal-500 focus:outline-none font-semibold text-gray-800">
-                      <option value="">All Types</option>
-                      <option value="single">Single</option>
-                      <option value="shared">Shared</option>
-                      <option value="premium">Premium</option>
-                    </select>
+                     <SearchSelect v-model="searchFilters.roomType" :options="roomTypeOptions" placeholder="All Types" />
                   </div>
 
                   <div class="space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Seats</label>
-                    <select v-model="searchFilters.seats" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 focus:border-teal-500 focus:outline-none font-semibold text-gray-800">
-                      <option value="">Any</option>
-                      <option value="1">1 Person</option>
-                      <option value="2">2 People</option>
-                      <option value="4">4 People</option>
-                    </select>
+                     <SearchSelect v-model="searchFilters.seats" :options="seatsOptions" placeholder="Any" />
                   </div>
 
                   <div class="space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Max Price</label>
-                    <select v-model="searchFilters.maxPrice" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 focus:border-teal-500 focus:outline-none font-semibold text-gray-800">
-                      <option value="">Any Budget</option>
-                      <option value="5000">৳5,000/mo</option>
-                      <option value="8000">৳8,000/mo</option>
-                      <option value="12000">৳12,000/mo</option>
-                    </select>
+                     <SearchSelect v-model="searchFilters.maxPrice" :options="maxPriceOptions" placeholder="Any Budget" />
                   </div>
 
                   <div class="flex items-end">
@@ -149,7 +134,7 @@
         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedSection v-for="(card, i) in availabilityCards" :key="i">
-              <div class="bg-white rounded-2xl p-6 shadow border border-gray-200">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
                 <div class="flex items-start justify-between mb-6">
                   <div class="p-4 rounded-2xl bg-teal-600">
                     <component :is="card.icon" class="w-7 h-7 text-white" />
@@ -159,7 +144,7 @@
                   </span>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-teal-600">{{ card.title }}</h3>
-                <p class="text-gray-600 mb-8">{{ card.desc }}</p>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">{{ card.desc }}</p>
                 <div class="flex items-center justify-between">
                   <div class="text-2xl font-black text-teal-600">{{ card.price }}</div>
                   <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors">
@@ -178,7 +163,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
               <div class="space-y-6">
-                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Award class="w-4 h-4 text-white" />
                   </div>
@@ -190,36 +175,36 @@
                   <span class="block mt-2 text-teal-600 text-4xl lg:text-5xl">SylhetStay</span>
                 </h2>
 
-                <p class="text-l text-gray-600 leading-relaxed">
-                  Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span class="text-teal-600 font-bold">comfortable</span>, <span class="text-gray-800 font-bold">safe</span>, and <span class="text-teal-600 font-bold">study-conducive</span> environment.
+                <p class="text-l text-gray-600 dark:text-gray-400 leading-relaxed">
+                     Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span class="text-teal-600 font-bold">comfortable</span>, <span class="text-gray-800 dark:text-gray-200 font-bold">safe</span>, and <span class="text-teal-600 font-bold">study-conducive</span> environment.
                 </p>
 
                 <div class="flex flex-wrap items-center gap-6">
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="flex -space-x-2">
                       <div v-for="n in 4" :key="n" class="w-8 h-8 rounded-full border-2 border-white bg-teal-600"></div>
                     </div>
                     <div class="text-left">
                       <div class="font-bold text-teal-600">150+ Students</div>
-                      <div class="text-xs text-gray-600">Living Here</div>
+                      <div class="text-xs text-gray-600 dark:text-gray-400">Living Here</div>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
                       <Star v-for="n in 5" :key="n" class="w-5 h-5 fill-amber-400 text-amber-400" />
                     </div>
                     <div class="text-left">
                       <div class="font-bold text-amber-600">4.8/5.0</div>
-                      <div class="text-xs text-gray-600">Rating</div>
+                      <div class="text-xs text-gray-600 dark:text-gray-400">Rating</div>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <TrendingUp class="w-6 h-6 text-teal-600" />
                     <div class="text-left">
                       <div class="font-bold text-teal-600">98% Occupied</div>
-                      <div class="text-xs text-gray-600">High Demand</div>
+                      <div class="text-xs text-gray-600 dark:text-gray-400">High Demand</div>
                     </div>
                   </div>
                 </div>
@@ -231,124 +216,124 @@
                 <div v-for="(item, i) in aboutImages" :key="i" class="relative rounded-2xl overflow-hidden shadow" :class="i % 2 === 1 ? 'mt-8' : ''">
                   <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover" />
                   <div class="absolute bottom-4 left-4">
-                    <span class="px-3 py-1 bg-white rounded-full text-sm font-bold text-gray-800">{{ item.label }}</span>
+                     <span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
+                   </div>
+                 </div>
+               </div>
+             </AnimatedSection>
+           </div>
+         </div>
+       </section>
+
+       <!-- Facilities -->
+       <section class="py-16">
+         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+           <AnimatedSection>
+             <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                 <span class="text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
+               </div>
+               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">World-Class Facilities</h2>
+                <p class="text-l text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Everything you need for <span class="text-teal-600 font-bold">success</span>, all under one roof</p>
+             </div>
+           </AnimatedSection>
+
+           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+             <AnimatedSection v-for="(item, i) in facilities" :key="i">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
+                    <component :is="item.icon" class="w-8 h-8 text-white group-hover:text-teal-600" />
                   </div>
+                  <h4 class="text-lg font-black mb-2 text-teal-600 group-hover:text-white transition-colors duration-500">{{ item.label }}</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-teal-100 transition-colors duration-500">{{ item.desc }}</p>
                 </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
+             </AnimatedSection>
+           </div>
+         </div>
+       </section>
 
-      <!-- Facilities -->
-      <section class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <AnimatedSection>
-            <div class="text-center mb-16">
-              <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
-                <span class="text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
-              </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">World-Class Facilities</h2>
-              <p class="text-l text-gray-600 max-w-2xl mx-auto">Everything you need for <span class="text-teal-600 font-bold">success</span>, all under one roof</p>
-            </div>
-          </AnimatedSection>
-
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <AnimatedSection v-for="(item, i) in facilities" :key="i">
-              <div class="bg-white rounded-xl p-6 shadow border border-gray-200 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
-                <div class="w-16 h-16 mx-auto mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
-                  <component :is="item.icon" class="w-8 h-8 text-white group-hover:text-teal-600" />
-                </div>
-                <h4 class="text-lg font-black mb-2 text-teal-600 group-hover:text-white transition-colors duration-500">{{ item.label }}</h4>
-                <p class="text-sm text-gray-600 group-hover:text-teal-100 transition-colors duration-500">{{ item.desc }}</p>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      <!-- Rooms -->
-      <section class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <AnimatedSection>
-            <div class="text-center mb-16">
-              <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200 mb-8">
-                <div class="p-2 bg-teal-600 rounded-xl">
-                  <Home class="w-4 h-4 text-white" />
-                </div>
-                <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
-              </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Choose Your Perfect Room</h2>
-            </div>
-          </AnimatedSection>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(room, i) in rooms" :key="i">
-              <div class="relative">
-                <div v-if="room.popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-6 py-2.5 text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600">
-                  <Star class="w-4 h-4 fill-current" />
-                  Most Popular
-                </div>
-                <div class="bg-white rounded-2xl overflow-hidden shadow border border-gray-200">
-                  <div class="relative h-64 overflow-hidden">
-                    <img :src="room.img" :alt="room.title" class="w-full h-full object-cover" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+       <!-- Rooms -->
+       <section class="py-16">
+         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+           <AnimatedSection>
+             <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
+                  <div class="p-2 bg-teal-600 rounded-xl">
+                    <Home class="w-4 h-4 text-white" />
                   </div>
-                  <div class="p-6">
-                    <h3 class="text-2xl font-black mb-3 text-teal-600">{{ room.title }}</h3>
-                    <p class="text-gray-600 mb-6">{{ room.desc }}</p>
-                    <div class="space-y-3 mb-8">
-                      <div v-for="(feature, j) in room.features" :key="j" class="flex items-center gap-3">
-                        <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                          <CheckCircle2 class="w-4 h-4 text-teal-600" />
-                        </div>
-                        <span class="text-gray-700 font-medium">{{ feature }}</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-                      <div>
-                        <div class="text-sm text-teal-600 mb-1">Starting from</div>
-                        <div class="text-2xl font-black text-teal-600">{{ room.price }}<span class="text-lg">/mo</span></div>
-                      </div>
-                      <router-link :to="`/rooms/${room.type}`" class="px-6 py-3 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
-                        View Details
-                      </router-link>
-                    </div>
+                  <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
+                </div>
+               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Choose Your Perfect Room</h2>
+             </div>
+           </AnimatedSection>
+
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+             <AnimatedSection v-for="(room, i) in rooms" :key="i">
+               <div class="relative">
+                 <div v-if="room.popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-6 py-2.5 text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600">
+                   <Star class="w-4 h-4 fill-current" />
+                   Most Popular
+                 </div>
+                  <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700">
+                   <div class="relative h-64 overflow-hidden">
+                     <img :src="room.img" :alt="room.title" class="w-full h-full object-cover" />
+                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                   </div>
+                   <div class="p-6">
+                     <h3 class="text-2xl font-black mb-3 text-teal-600">{{ room.title }}</h3>
+                      <p class="text-gray-600 dark:text-gray-400 mb-6">{{ room.desc }}</p>
+                     <div class="space-y-3 mb-8">
+                       <div v-for="(feature, j) in room.features" :key="j" class="flex items-center gap-3">
+                         <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                           <CheckCircle2 class="w-4 h-4 text-teal-600" />
+                         </div>
+                          <span class="text-gray-700 dark:text-gray-300 font-medium">{{ feature }}</span>
+                       </div>
+                     </div>
+                      <div class="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+                       <div>
+                         <div class="text-sm text-teal-600 mb-1">Starting from</div>
+                         <div class="text-2xl font-black text-teal-600">{{ room.price }}<span class="text-lg">/mo</span></div>
+                       </div>
+                       <router-link :to="`/rooms/${room.type}`" class="px-6 py-3 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
+                         View Details
+                       </router-link>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </AnimatedSection>
+           </div>
+         </div>
+       </section>
+
+       <!-- Gallery -->
+       <section class="py-16">
+         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+           <AnimatedSection>
+             <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
+                  <div class="p-2 bg-teal-600 rounded-xl">
+                    <Camera class="w-4 h-4 text-white" />
                   </div>
+                  <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
                 </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
+                <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Explore Our Beautiful Space</h2>
+                <p class="text-l text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
+             </div>
+           </AnimatedSection>
 
-      <!-- Gallery -->
-      <section class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <AnimatedSection>
-            <div class="text-center mb-16">
-              <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200 mb-8">
-                <div class="p-2 bg-teal-600 rounded-xl">
-                  <Camera class="w-4 h-4 text-white" />
-                </div>
-                <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
-              </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Explore Our Beautiful Space</h2>
-              <p class="text-l text-gray-600">Take a visual tour of your new home</p>
-            </div>
-          </AnimatedSection>
-
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div
-              v-for="(item, i) in galleryImages"
-              :key="i"
-              @click="openLightbox(i)"
-              class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
-              :class="i % 2 === 1 ? 'mt-8' : ''"
-            >
-              <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
-              <div class="absolute bottom-4 left-4">
-                <span class="px-3 py-1 bg-white rounded-full text-sm font-bold text-gray-800">{{ item.label }}</span>
+           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+             <div
+               v-for="(item, i) in galleryImages"
+               :key="i"
+               @click="openLightbox(i)"
+               class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
+               :class="i % 2 === 1 ? 'mt-8' : ''"
+             >
+               <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
+               <div class="absolute bottom-4 left-4">
+                 <span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
               </div>
             </div>
             <div class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer" @click="openLightbox(0)">
@@ -395,27 +380,27 @@
         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-16">
-              <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
+              <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <Users class="w-5 h-5 text-teal-600" />
                 <span class="text-sm font-bold tracking-wide text-teal-600">The People</span>
               </div>
               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">What Students Say</h2>
-              <p class="text-l text-gray-600">Hear from our happy residents</p>
+              <p class="text-l text-gray-600 dark:text-gray-400">Hear from our happy residents</p>
             </div>
           </AnimatedSection>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div v-for="(testimonial, i) in testimonials" :key="i" class="bg-white rounded-2xl p-6 shadow border border-gray-200">
+            <div v-for="(testimonial, i) in testimonials" :key="i" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
               <div class="flex gap-1 mb-6">
                 <Star v-for="n in 5" :key="n" class="w-5 h-5 fill-amber-400 text-amber-400" />
               </div>
-              <p class="text-gray-700 mb-8 leading-relaxed">{{ testimonial.text }}</p>
+              <p class="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">{{ testimonial.text }}</p>
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
                   <span class="text-white font-bold text-base">{{ testimonial.name[0] }}</span>
                 </div>
                 <div>
-                  <div class="font-black text-gray-800">{{ testimonial.name }}</div>
+                   <div class="font-black text-gray-800 dark:text-white">{{ testimonial.name }}</div>
                   <div class="text-sm text-teal-600">{{ testimonial.uni }}</div>
                 </div>
               </div>
@@ -458,11 +443,12 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft
+  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
+import SearchSelect from '../components/ui/SearchSelect.vue'
 
 const router = useRouter()
 
@@ -472,6 +458,28 @@ const searchFilters = ref({
   seats: '',
   maxPrice: ''
 })
+
+const roomTypeOptions = [
+  { value: '', label: 'All Types' },
+  { value: 'single', label: 'Single' },
+  { value: 'shared', label: 'Shared' },
+  { value: 'premium', label: 'Premium' },
+]
+
+const seatsOptions = [
+  { value: '', label: 'Any' },
+  { value: '1', label: '1 Person' },
+  { value: '2', label: '2 People' },
+  { value: '4', label: '4 People' },
+]
+
+const maxPriceOptions = [
+  { value: '', label: 'Any Budget' },
+  { value: '5000', label: '৳5,000/mo' },
+  { value: '8000', label: '৳8,000/mo' },
+  { value: '12000', label: '৳12,000/mo' },
+]
+
 const scrolled = ref(false)
 const currentSlide = ref(0)
 const lightboxOpen = ref(false)

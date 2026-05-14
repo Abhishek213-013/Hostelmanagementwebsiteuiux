@@ -3,16 +3,16 @@
     <Header />
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
       <div class="mb-12">
-          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
+          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <CreditCard class="w-5 h-5 text-teal-600" />
           <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">My Payments</span>
         </div>
         <h1 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">My Payments</h1>
-        <p class="text-lg text-gray-600 max-w-2xl">Track your payment history and manage upcoming bills</p>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">Track your payment history and manage upcoming bills</p>
       </div>
 
       <div v-if="payments.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="payment in payments" :key="payment.id" class="bg-white rounded-2xl overflow-hidden shadow border border-gray-200 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+        <div v-for="payment in payments" :key="payment.id" class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
           <div class="relative h-48 overflow-hidden bg-teal-600">
             <div class="absolute inset-0 flex items-center justify-center">
               <CreditCard class="w-20 h-20 text-white/30" />
@@ -23,9 +23,9 @@
           </div>
           <div class="p-6">
             <h4 class="text-xl font-black mb-2 text-teal-600">{{ payment.description }}</h4>
-            <p class="text-sm text-gray-600 mb-4">{{ payment.date }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ payment.date }}</p>
 <div class="flex items-center justify-between mb-4">
-  <span class="text-sm text-gray-600">Amount</span>
+  <span class="text-sm text-gray-600 dark:text-gray-400">Amount</span>
   <span class="text-2xl font-black text-teal-600">৳{{ payment.amount }}</span>
 </div>
             <button @click="openReceipt(payment)" class="block w-full py-3 bg-teal-600 text-white rounded-xl font-bold text-center hover:bg-teal-700 transition-colors">
@@ -37,11 +37,11 @@
 
       <!-- Receipt Modal -->
       <div v-if="showReceipt && selectedPayment" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
           <!-- Modal Header -->
-          <div class="flex justify-between items-center p-4 border-b border-gray-200 flex-shrink-0">
+          <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
             <h3 class="text-lg font-black text-teal-600">Payment Receipt</h3>
-            <button @click="closeReceipt" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <button @click="closeReceipt" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
               <X class="w-5 h-5" />
             </button>
           </div>
@@ -57,7 +57,7 @@
                     <img src="@/assets/logo/logo.png" alt="SylhetStay Logo" class="w-19 h-16 object-contain" />
                   </div>
                   <div class="text-right">
-                    <p class="text-2xs font-bold text-gray-500">RECEIPT #</p>
+                     <p class="text-2xs font-bold text-gray-500 dark:text-gray-400">RECEIPT #</p>
                     <p class="text-sm font-black text-teal-600">TXN-{{ selectedPayment.id }}2026</p>
                   </div>
                 </div>
@@ -66,20 +66,20 @@
                  <div class="grid grid-cols-2 gap-3 mb-3">
                   <!-- Left Column -->
                   <div>
-                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Bill To</p>
-                    <p class="text-xs font-bold text-gray-800">John Doe</p>
-                    <p class="text-2xs text-gray-600">john.doe@email.com</p>
-                    <p class="text-2xs text-gray-600">+880 1712-345678</p>
-                    <p class="text-2xs text-gray-600 mt-1">Room 402, Deluxe Wing</p>
+                     <p class="text-2xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-0.5">Bill To</p>
+                     <p class="text-xs font-bold text-gray-800 dark:text-gray-200">John Doe</p>
+                    <p class="text-2xs text-gray-600 dark:text-gray-400">john.doe@email.com</p>
+                    <p class="text-2xs text-gray-600 dark:text-gray-400">+880 1712-345678</p>
+                    <p class="text-2xs text-gray-600 dark:text-gray-400 mt-1">Room 402, Deluxe Wing</p>
                   </div>
                   
                   <!-- Right Column -->
                   <div class="text-right">
-                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Payment Details</p>
-                    <p class="text-2xs text-gray-600">Date: <span class="font-bold text-gray-800">{{ selectedPayment.date }}</span></p>
-                    <p class="text-2xs text-gray-600">Time: <span class="font-bold text-gray-800">{{ new Date().toLocaleTimeString() }}</span></p>
-                    <p class="text-2xs text-gray-600">Method: <span class="font-bold text-gray-800">Credit Card</span></p>
-                    <p class="text-2xs text-gray-600">Status: 
+                     <p class="text-2xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-0.5">Payment Details</p>
+                     <p class="text-2xs text-gray-600 dark:text-gray-400">Date: <span class="font-bold text-gray-800 dark:text-gray-200">{{ selectedPayment.date }}</span></p>
+                     <p class="text-2xs text-gray-600 dark:text-gray-400">Time: <span class="font-bold text-gray-800 dark:text-gray-200">{{ new Date().toLocaleTimeString() }}</span></p>
+                     <p class="text-2xs text-gray-600 dark:text-gray-400">Method: <span class="font-bold text-gray-800 dark:text-gray-200">Credit Card</span></p>
+                    <p class="text-2xs text-gray-600 dark:text-gray-400">Status: 
                       <span class="font-bold" :class="selectedPayment.status === 'Paid' ? 'text-green-600' : 'text-yellow-600'">
                         {{ selectedPayment.status }}
                       </span>
@@ -92,15 +92,15 @@
                   <table class="w-full text-2xs">
                     <thead>
                       <tr class="border-b-2 border-teal-600">
-                        <th class="text-left py-1.5 font-bold text-gray-500 uppercase">Description</th>
-                        <th class="text-right py-1.5 font-bold text-gray-500 uppercase">Amount</th>
+                        <th class="text-left py-1.5 font-bold text-gray-500 dark:text-gray-400 uppercase">Description</th>
+                        <th class="text-right py-1.5 font-bold text-gray-500 dark:text-gray-400 uppercase">Amount</th>
                       </tr>
                     </thead>
                     <tbody>
                        <tr class="border-b border-gray-200">
                          <td class="py-1.5">
-                          <p class="font-bold text-gray-800 text-xs">{{ selectedPayment.description }}</p>
-                          <p class="text-gray-500 text-2xs">Booking Ref: BK-{{ selectedPayment.id }}426</p>
+                           <p class="font-bold text-gray-800 dark:text-gray-200 text-xs">{{ selectedPayment.description }}</p>
+                           <p class="text-gray-500 dark:text-gray-400 text-2xs">Booking Ref: BK-{{ selectedPayment.id }}426</p>
                         </td>
                          <td class="text-right py-1.5">
                           <p class="font-black text-teal-600 text-sm">৳{{ selectedPayment.amount }}</p>
@@ -109,7 +109,7 @@
                     </tbody>
                     <tfoot>
                        <tr class="border-t-2 border-teal-600">
-                         <td class="py-1.5 font-black text-gray-800 text-xs">Total Amount</td>
+                          <td class="py-1.5 font-black text-gray-800 dark:text-white text-xs">Total Amount</td>
                          <td class="text-right py-1.5 font-black text-teal-600 text-sm">৳{{ selectedPayment.amount }}</td>
                       </tr>
                     </tfoot>
@@ -118,7 +118,7 @@
 
                  <!-- Signature Area -->
                  <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
-                  <div class="text-2xs text-gray-500">
+                  <div class="text-2xs text-gray-500 dark:text-gray-400">
                     <p class="mb-0.5"><span class="font-bold">Check-in:</span> {{ selectedPayment.date }}</p>
                     <p><span class="font-bold">Check-out:</span> {{ new Date(new Date(selectedPayment.date).getTime() + 3*24*60*60*1000).toISOString().split('T')[0] }}</p>
                   </div>
@@ -135,16 +135,16 @@
 
                  <!-- Footer -->
                  <div class="text-center mt-2 pt-2 border-t border-gray-200">
-                  <p class="text-2xs text-gray-500">Thank you for staying with us!</p>
-                  <p class="text-2xs text-gray-400 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-500 dark:text-gray-400">Thank you for staying with us!</p>
+                  <p class="text-2xs text-gray-400 dark:text-gray-500 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Modal Footer with Actions -->
-          <div class="flex justify-end gap-2 p-4 border-t border-gray-200 flex-shrink-0">
-            <button @click="closeReceipt" class="px-4 py-2 border border-gray-300 rounded-xl font-bold text-gray-700 text-sm hover:bg-gray-50 transition-colors">
+          <div class="flex justify-end gap-2 p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <button @click="closeReceipt" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl font-bold text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Close
             </button>
             <button @click="printReceipt" class="px-4 py-2 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-colors flex items-center gap-1.5">
@@ -156,9 +156,9 @@
       </div>
 
       <div v-if="payments.length === 0" class="text-center py-20">
-        <CreditCard class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 class="text-xl font-bold text-gray-600 mb-2">No Payment History</h3>
-        <p class="text-gray-500 mb-6">Your payment records will appear here</p>
+        <CreditCard class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Payment History</h3>
+        <p class="text-gray-500 dark:text-gray-400 mb-6">Your payment records will appear here</p>
         <router-link to="/payments" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-colors">
           <CreditCard class="w-5 h-5" />
           Make a Payment

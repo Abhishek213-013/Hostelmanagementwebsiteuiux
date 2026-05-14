@@ -4,7 +4,7 @@
     <div class="max-w-7xl mx-auto px-6 py-20">
       <!-- Header Section -->
       <div class="text-center mb-16">
-        <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow border border-gray-200 mb-8">
+        <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
           <div class="p-2 bg-teal-600 rounded-xl">
             <Building2 class="w-4 h-4 text-white" />
           </div>
@@ -12,9 +12,9 @@
         </div>
         <h1 class="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
           <span class="block text-teal-600">Find Your</span>
-          <span class="text-gray-800 text-3xl lg:text-5xl">Perfect Space</span>
+           <span class="text-gray-800 dark:text-white text-3xl lg:text-5xl">Perfect Space</span>
         </h1>
-        <p class="text-x text-gray-600 max-w-2xl mx-auto leading-relaxed">Choose from our range of thoughtfully designed rooms that cater to every need and budget</p>
+        <p class="text-x text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">Choose from our range of thoughtfully designed rooms that cater to every need and budget</p>
       </div>
 
       <!-- Filter Buttons -->
@@ -24,7 +24,7 @@
                 :class="['px-8 py-4 rounded-2xl font-bold transition-all duration-500 capitalize', 
                   selectedType === type 
                     ? 'text-white shadow-lg scale-105' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border-2 border-gray-200']"
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg border-2 border-gray-200 dark:border-gray-600']"
                 :style="selectedType === type ? { background: '#0d9488' } : {}">
           {{ type === 'all' ? 'All Rooms' : type.replace('-', ' ') }}
         </button>
@@ -36,7 +36,7 @@
              class="group"
              @mouseenter="hoveredRoom = room.id"
              @mouseleave="hoveredRoom = null">
-          <div class="bg-white rounded-3xl overflow-hidden shadow border border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+          <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
             <div class="relative h-72 overflow-hidden">
               <img :src="room.image" :alt="room.title" class="w-full h-full object-cover" />
               <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
@@ -46,7 +46,7 @@
                 <span class="text-white font-bold text-sm">Up to {{ room.capacity }}</span>
               </div>
               <div class="absolute top-4 right-4 px-4 py-2 bg-white rounded-full shadow-lg">
-                <span class="text-gray-800 font-black text-sm">{{ room.size }}</span>
+                 <span class="text-gray-800 dark:text-white font-black text-sm">{{ room.size }}</span>
               </div>
               <!-- Price Overlay -->
               <div class="absolute top-4 left-4">
@@ -57,25 +57,25 @@
             </div>
             <div class="p-8">
               <h3 class="text-2xl font-black mb-3 text-teal-600">{{ room.title }}</h3>
-              <p class="text-gray-600 text-sm mb-6 leading-relaxed">{{ room.description }}</p>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{{ room.description }}</p>
               <div class="space-y-3 mb-8">
                 <div v-for="(feature, i) in room.features.slice(0, 5)" :key="i" class="flex items-center gap-3">
                   <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 class="w-4 h-4 text-teal-600" />
                   </div>
-                  <span class="text-gray-700 text-sm font-medium">{{ feature }}</span>
+                  <span class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{ feature }}</span>
                 </div>
               </div>
-              <div class="pt-6 border-t border-gray-200">
+              <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-3 mb-4">
                   <div :class="['w-3 h-3 rounded-full', room.available > 0 ? 'bg-teal-500' : 'bg-red-500']"></div>
-                  <span class="text-sm font-bold text-gray-700">
+                  <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
                     {{ room.available > 0 ? `${room.available} available` : 'Fully booked' }}
                   </span>
                 </div>
                 <div class="flex items-center gap-3">
                   <router-link :to="`/rooms/${room.id}`" 
-                               class="px-6 py-3 bg-white text-gray-800 rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 border-2 border-gray-200">
+                                class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 border-2 border-gray-200 dark:border-gray-700">
                     See Details
                     <ArrowRight class="w-4 h-4" />
                   </router-link>
@@ -94,21 +94,21 @@
       <!-- Amenities Section -->
       <div class="mb-24">
         <div class="text-center mb-16">
-          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 bg-white">
+          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <Sparkles class="w-5 h-5 text-teal-600" />
             <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Features</span>
           </div>
           <h2 class="text-2xl lg:text-3xl font-black mb-6 text-teal-600">Room Amenities</h2>
-          <p class="text-l text-gray-600">Every room comes with essential amenities for comfortable living</p>
+          <p class="text-l text-gray-600 dark:text-gray-400">Every room comes with essential amenities for comfortable living</p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div v-for="(item, i) in amenities" :key="i" 
-               class="group bg-white rounded-2xl p-8 shadow border border-gray-200 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
+                class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
             <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow bg-teal-600 group-hover:bg-white transition-colors duration-500">
               <component :is="item.icon" class="w-8 h-8 text-white group-hover:text-teal-600 transition-colors duration-500" />
             </div>
             <h3 class="text-lg font-black mb-2 text-center text-teal-600 group-hover:text-white transition-colors duration-500">{{ item.label }}</h3>
-            <p class="text-gray-600 text-sm text-center group-hover:text-white/90 transition-colors duration-500">{{ item.desc }}</p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm text-center group-hover:text-white/90 transition-colors duration-500">{{ item.desc }}</p>
           </div>
         </div>
       </div>
