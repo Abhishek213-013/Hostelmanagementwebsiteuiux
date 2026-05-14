@@ -12,6 +12,10 @@
         </router-link>
 
         <div class="hidden lg:flex items-center gap-10">
+          <router-link to="/" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            Home
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+          </router-link>
           <router-link to="/rooms" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Rooms
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
@@ -67,6 +71,7 @@
 
     <div v-if="mobileMenuOpen" class="lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200/50 dark:border-slate-700/50">
       <div class="px-6 py-6 space-y-4">
+        <router-link to="/" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Home</router-link>
         <router-link to="/rooms" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Rooms</router-link>
         <router-link to="/facilities" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Facilities</router-link>
         <router-link to="/gallery" class="block py-3 text-slate-700 dark:text-slate-300 hover:text-sky-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Gallery</router-link>
