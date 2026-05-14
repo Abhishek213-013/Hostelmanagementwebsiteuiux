@@ -1,7 +1,7 @@
 <template>
-  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-6 md:py-8">
+  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-4 md:py-6">
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-4 md:mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-3 md:mb-4">
         <div class="space-y-3 md:space-y-4">
           <router-link to="/" class="flex items-center gap-3 mb-3 md:mb-4">
             <img src="@/assets/logo/logo.png" alt="Logo" class="h-12 md:h-16 w-auto" />
@@ -57,7 +57,7 @@
         </div>
       </div> -->
 
-      <div class="border-t border-slate-800 dark:border-slate-700 pt-3 md:pt-4 text-center text-muted-foreground">
+      <div class="border-t border-slate-800 dark:border-slate-700 pt-2 md:pt-3 text-center text-muted-foreground">
         <p>&copy; 2026 SylhetStay Hostel. All rights reserved.</p>
       </div>
     </div>

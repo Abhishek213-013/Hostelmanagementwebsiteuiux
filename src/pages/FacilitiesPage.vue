@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <Header />
-    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-16">
       <!-- Header -->
-      <div class="text-center mb-20">
+      <div class="text-center mb-12">
         <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <Sparkles class="w-5 h-5 text-amber-500" />
           <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Premium Amenities</span>
@@ -18,7 +18,7 @@
       </div>
 
       <!-- Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
         <div v-for="stat in stats" :key="stat.label" class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 text-center hover:shadow-lg hover:-translate-y-2 transition-all duration-500 hover:bg-teal-600">
           <div class="w-15 h-15 mx-auto mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow group-hover:bg-white transition-all duration-500">
             <component :is="stat.icon" class="w-10 h-10 text-white group-hover:text-teal-600" />
@@ -29,7 +29,7 @@
       </div>
 
       <!-- Categories -->
-      <div v-for="category in facilityCategories" :key="category.title" class="mb-24">
+      <div v-for="category in facilityCategories" :key="category.title" class="mb-16">
         <div class="flex items-center gap-6 mb-12">
           <div class="w-15 h-15 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
             <component :is="category.icon" class="w-10 h-10 text-white" />

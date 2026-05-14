@@ -130,7 +130,7 @@
       </section>
 
       <!-- Availability Cards -->
-      <section class="py-16">
+      <section class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedSection v-for="(card, i) in availabilityCards" :key="i">
@@ -158,9 +158,9 @@
       </section>
 
       <!-- About Section -->
-      <section id="about" class="py-16">
+      <section id="about" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <div class="space-y-6">
                 <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
@@ -226,10 +226,10 @@
        </section>
 
        <!-- Facilities -->
-       <section class="py-16">
+       <section class="py-12">
          <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
-             <div class="text-center mb-16">
+             <div class="text-center mb-10">
                 <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                  <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
                </div>
@@ -253,10 +253,10 @@
        </section>
 
        <!-- Rooms -->
-       <section class="py-16">
+       <section class="py-12">
          <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
-             <div class="text-center mb-16">
+             <div class="text-center mb-10">
                 <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Home class="w-4 h-4 text-white" />
@@ -308,10 +308,10 @@
        </section>
 
        <!-- Gallery -->
-       <section class="py-16">
+       <section class="py-12">
          <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
-             <div class="text-center mb-16">
+             <div class="text-center mb-10">
                 <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Camera class="w-4 h-4 text-white" />
@@ -376,10 +376,10 @@
       </div>
 
       <!-- Testimonials -->
-      <section class="py-16">
+      <section class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
-            <div class="text-center mb-16">
+            <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <Users class="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
                 <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">The People</span>
@@ -410,7 +410,7 @@
       </section>
 
       <!-- CTA Section -->
-      <section class="py-16">
+      <section class="py-12">
         <div class="bg-teal-600 rounded-2xl p-8 sm:p-12 md:p-20 text-white text-center mx-4 sm:mx-6 lg:mx-12">
           <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 break-words">Ready to Join Our Community?</h2>
           <p class="text-sm sm:text-base text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto break-words">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>

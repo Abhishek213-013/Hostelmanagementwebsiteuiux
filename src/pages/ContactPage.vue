@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <Header />
-    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
       <!-- Header -->
-      <div class="text-center mb-20">
+      <div class="text-center mb-12">
         <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
           <div class="p-2 bg-teal-600 rounded-xl">
             <MessageCircle class="w-4 h-4 text-white" />
@@ -18,7 +18,7 @@
       </div>
 
       <!-- Contact Info Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <div v-for="(info, i) in contactInfo" :key="i" 
              class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
              @mouseenter="hoveredCard = i"
@@ -32,7 +32,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
         <!-- Contact Form -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-10">
           <div v-if="submitted" class="text-center py-12">

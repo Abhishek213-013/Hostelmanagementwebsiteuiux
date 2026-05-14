@@ -11,7 +11,7 @@
       </div>
 
       <!-- Room Details Section -->
-      <div class="max-w-7xl mx-auto px-6 py-12" v-if="room">
+      <div class="max-w-7xl mx-auto px-6 py-10" v-if="room">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <!-- Left Side - Room Image -->
           <div class="space-y-6">
@@ -140,7 +140,7 @@
         </div>
 
         <!-- Amenities Section -->
-        <div class="mt-20 mb-12">
+        <div class="mt-16 mb-10">
           <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Amenities</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div v-for="(amenity, i) in room.amenities" :key="i" 
@@ -161,7 +161,7 @@
         </div>
 
         <!-- Room Policies Section -->
-        <div class="mt-20 mb-12">
+        <div class="mt-16 mb-10">
           <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Policies</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div class="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-slate-700 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500">
@@ -221,7 +221,7 @@
         </div>
 
         <!-- Features List -->
-        <div class="mt-20 mb-12">
+        <div class="mt-16 mb-10">
           <h2 class="text-3xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Features</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div v-for="(feature, i) in room.features" :key="i" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-slate-700 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4">

@@ -10,7 +10,7 @@
           />
         </router-link>
 
-        <div class="hidden lg:flex items-center gap-10">
+        <div class="hidden lg:flex items-center gap-8">
           <router-link to="/" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Home
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>

@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <Header />
-    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
       <!-- Hero Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
         <div class="space-y-8">
  <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
              <div class="p-2 bg-teal-600 rounded-xl">
@@ -48,7 +48,7 @@
       </div>
 
       <!-- Stats Section -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
         <div v-for="stat in stats" :key="stat.label" class="group bg-white dark:bg-gray-800 hover:bg-teal-600 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:border-teal-500 text-center transition-all duration-300">
           <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-teal-600 group-hover:bg-white flex items-center justify-center shadow transition-all duration-300">
             <component :is="stat.icon" class="w-5 h-5 text-white group-hover:text-teal-600" />
@@ -61,8 +61,8 @@
       </div>
 
       <!-- Values Section -->
-      <div class="mb-32">
-        <div class="text-center mb-16">
+      <div class="mb-20">
+        <div class="text-center mb-10">
 <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
              <Award class="w-5 h-5 text-teal-600" />
             <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Our Principles</span>
@@ -82,8 +82,8 @@
       </div>
 
       <!-- Timeline Section -->
-      <div class="mb-32">
-        <div class="text-center mb-16">
+      <div class="mb-20">
+        <div class="text-center mb-10">
 <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
              <Sparkles class="w-5 h-5 text-amber-500" />
             <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Our Story</span>
@@ -114,8 +114,8 @@
       </div>
 
       <!-- Team Section -->
-      <div class="mb-32">
-        <div class="text-center mb-16">
+      <div class="mb-20">
+        <div class="text-center mb-10">
 <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
              <Users class="w-5 h-5 text-teal-600" />
             <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>

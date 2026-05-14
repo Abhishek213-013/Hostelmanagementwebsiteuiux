@@ -1,38 +1,38 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
     <Header />
-    <main class="flex-1 pt-28 pb-20">
-      <div class="max-w-7xl mx-auto px-6">
+    <main class="flex-1 pt-20 sm:pt-28 pb-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <!-- Header -->
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
+        <div class="text-center mb-12 sm:mb-16">
+            <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-6 sm:mb-8">
             <div class="p-2 bg-teal-600 rounded-xl">
-              <Camera class="w-4 h-4 text-white" />
+              <Camera class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
             </div>
-            <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
+            <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
           </div>
-          <h1 class="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-[1.1]">
             <span class="block text-teal-600">Explore Our</span>
              <span class="block text-gray-800 dark:text-white">Beautiful Space</span>
           </h1>
-            <p class="text-l text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
+            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
         </div>
 
         <!-- Category Filters -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
           <button v-for="cat in categories" :key="cat.id"
                   @click="selectedCategory = cat.id"
-                   :class="['px-6 py-3 rounded-full font-bold transition-all duration-500',
+                   :class="['px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold transition-all duration-500 text-xs sm:text-sm whitespace-nowrap',
                      selectedCategory === cat.id
                        ? 'text-white shadow-lg scale-105 bg-teal-600'
                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg border-2 border-gray-200 dark:border-gray-600']">
             {{ cat.label }}
-            <ChevronRight v-if="selectedCategory === cat.id" class="w-4 h-4 inline ml-2" />
+            <ChevronRight v-if="selectedCategory === cat.id" class="w-3 h-3 sm:w-4 sm:h-4 inline ml-1 sm:ml-2" />
           </button>
         </div>
 
         <!-- Gallery Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
           <div v-for="(image, index) in filteredImages" :key="image.id"
                class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
                @click="selectedImage = image"
@@ -40,75 +40,75 @@
                @mouseleave="hoveredImage = null">
             <img :src="image.src" :alt="image.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div :class="['absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500', hoveredImage === image.id ? 'opacity-100' : 'opacity-0']">
-              <div class="absolute bottom-6 left-6 right-6">
-                <div class="inline-block px-4 py-2 rounded-xl text-white font-bold shadow-lg bg-teal-600 mb-2">
+              <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
+                <div class="inline-block px-2 sm:px-4 py-1 sm:py-2 rounded-xl text-white font-bold shadow-lg text-xs sm:text-sm bg-teal-600 mb-1 sm:mb-2 whitespace-nowrap">
                   {{ image.category }}
                 </div>
-                <h4 class="text-white font-bold text-lg">{{ image.title }}</h4>
+                <h4 class="text-white font-bold text-sm sm:text-lg break-words">{{ image.title }}</h4>
               </div>
             </div>
-            <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-                <Camera class="w-5 h-5 text-white" />
+            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                <Camera class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
             </div>
           </div>
         </div>
 
         <!-- Visit Info Card -->
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-10 md:p-16">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 sm:p-10 md:p-16">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
             <div>
-              <h2 class="text-xl lg:text-2xl font-black mb-6 text-teal-600">Visit Us Today</h2>
-                <p class="text-md text-gray-600 dark:text-gray-400 mb-10 leading-relaxed">
+              <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 text-teal-600 break-words">Visit Us Today</h2>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 leading-relaxed break-words">
                 Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
               </p>
-              <div class="space-y-6">
-                <div v-for="item in visitInfo" :key="item.label" class="flex items-center gap-4 hover:translate-x-2 transition-transform duration-300">
-                  <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600">
-                    <component :is="item.icon" class="w-7 h-7 text-white" />
+              <div class="space-y-4 sm:space-y-6">
+                <div v-for="item in visitInfo" :key="item.label" class="flex items-center gap-3 sm:gap-4 hover:translate-x-2 transition-transform duration-300">
+                  <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600 flex-shrink-0">
+                    <component :is="item.icon" class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                   </div>
-                  <div>
-                     <p class="font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</p>
-                    <p class="text-gray-600 dark:text-gray-400">{{ item.value }}</p>
+                  <div class="min-w-0">
+                     <p class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 break-words">{{ item.label }}</p>
+                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">{{ item.value }}</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
-                <div class="p-2 rounded-xl shadow-lg bg-teal-600">
-                  <component :is="item.icon" class="w-5 h-5 text-white" />
+            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+              <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
+                <div class="p-1.5 sm:p-2 rounded-xl shadow-lg bg-teal-600 flex-shrink-0">
+                  <component :is="item.icon" class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ item.label }}</span>
+                <span class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 break-words">{{ item.label }}</span>
               </div>
             </div>
           </div>
         </div>
 
-          <p class="text-center text-gray-600 dark:text-gray-400 mt-12 font-medium">
+          <p class="text-center text-gray-600 dark:text-gray-400 mt-8 sm:mt-12 font-medium text-sm sm:text-base break-words">
           {{ filteredImages.length }} photos {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel() : '' }}
         </p>
       </div>
 
       <!-- Lightbox Modal -->
       <div v-if="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl" @click="selectedImage = null">
-        <button class="absolute top-8 right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="selectedImage = null">
-          <X class="w-6 h-6 group-hover:rotate-90 transition-transform" />
+        <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="selectedImage = null">
+          <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
         </button>
-        <button class="absolute left-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
-          <ChevronLeft class="w-8 h-8" />
+        <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
+          <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
-        <button class="absolute right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
-          <ChevronRight class="w-8 h-8" />
+        <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
+          <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
-        <div class="max-w-5xl max-h-[80vh] mx-6" @click.stop>
+        <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
           <img :src="selectedImage.src" :alt="selectedImage.title" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
-          <div class="text-center mt-6">
-            <span class="inline-block px-4 py-2 text-white rounded-xl font-bold shadow-xl bg-teal-600">
+          <div class="text-center mt-4 sm:mt-6">
+            <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600">
               {{ selectedImage.category }}
             </span>
-            <p class="text-white text-center mt-4 font-bold text-xl">{{ selectedImage.title }}</p>
+            <p class="text-white text-center mt-3 sm:mt-4 font-bold text-base sm:text-xl break-words">{{ selectedImage.title }}</p>
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@
 import { ref, computed } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { Camera, ChevronRight, ChevronLeft, ChevronRight as ArrowRight, Utensils, Dumbbell, Wifi, Car, BookOpen, X, ChevronLeft as PrevIcon, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
+import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
 
 const selectedCategory = ref('all')
 const selectedImage = ref(null)
