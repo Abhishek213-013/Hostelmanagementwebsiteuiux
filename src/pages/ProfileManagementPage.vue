@@ -20,7 +20,7 @@
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{ userName }}</h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ userEmail }}</p>
-          <button @click="triggerFileInput" class="w-full max-w-[200px] py-3 px-6 bg-teal-600 text-white rounded-xl font-semibold text-sm hover:bg-teal-700 transition-colors shadow-md hover:shadow-lg">
+          <button @click="triggerFileInput" class="w-full max-w-[200px] py-2.5 px-5 bg-teal-600 text-white rounded-xl font-semibold text-sm hover:bg-teal-700 transition-colors shadow-md hover:shadow-lg">
             Change Photo
           </button>
           <input type="file" ref="fileInput" @change="handlePhotoUpload" accept="image/*" class="hidden" />

@@ -80,7 +80,7 @@
                     <ArrowRight class="w-4 h-4" />
                   </router-link>
                   <button @click="handleBookNow"
-                          class="px-6 py-3 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 bg-teal-600 hover:bg-teal-700">
+                          class="px-5 py-2.5 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 bg-teal-600 hover:bg-teal-700">
                     Book Now
                     <ArrowRight class="w-4 h-4" />
                   </button>

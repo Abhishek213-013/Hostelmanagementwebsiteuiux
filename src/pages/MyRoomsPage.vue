@@ -32,7 +32,7 @@
                 <span>Check-out: {{ room.checkOut }}</span>
               </div>
             </div>
-            <router-link :to="`/rooms/${room.id}`" class="block w-full py-3 bg-teal-600 text-white rounded-xl font-bold text-center hover:bg-teal-700 transition-colors">
+            <router-link :to="`/rooms/${room.id}`" class="block w-full py-2.5 bg-teal-600 text-white rounded-xl font-bold text-center hover:bg-teal-700 transition-colors">
               View Details
             </router-link>
           </div>
@@ -43,7 +43,7 @@
         <Building2 class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
         <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Rooms Booked Yet</h3>
         <p class="text-gray-500 dark:text-gray-400 mb-6">Explore our available rooms and book your stay</p>
-        <router-link to="/rooms" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-colors">
+        <router-link to="/rooms" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
           <Building2 class="w-5 h-5" />
           Browse Rooms
         </router-link>

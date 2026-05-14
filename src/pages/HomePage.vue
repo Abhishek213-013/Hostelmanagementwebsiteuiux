@@ -115,7 +115,7 @@
                   </div>
 
                   <div class="flex items-end">
-                    <button @click="handleSearch" class="w-full px-8 py-3 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
+                    <button @click="handleSearch" class="w-full px-6 py-2.5 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
                       <span class="flex items-center justify-center gap-3">
                         <Search class="w-5 h-5" />
                         Search
@@ -295,7 +295,7 @@
                          <div class="text-xs sm:text-sm text-teal-600 mb-1">Starting from</div>
                          <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">{{ room.price }}<span class="text-base sm:text-lg">/mo</span></div>
                        </div>
-                       <router-link :to="`/rooms/${room.type}`" class="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
+                       <router-link :to="`/rooms/${room.type}`" class="px-3 sm:px-5 py-1.5 sm:py-2.5 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
                          View Details
                        </router-link>
                      </div>
@@ -429,7 +429,7 @@
       </section>
 
       <!-- Sticky Button -->
-      <router-link to="/rooms" class="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 px-4 sm:px-8 py-3 sm:py-4 text-white rounded-full font-black shadow-lg z-50 flex items-center gap-2 sm:gap-3 bg-teal-600 hover:bg-teal-700 transition-colors text-sm sm:text-base">
+      <router-link to="/rooms" class="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 px-4 sm:px-6 py-2.5 sm:py-3 text-white rounded-full font-black shadow-lg z-50 flex items-center gap-2 sm:gap-3 bg-teal-600 hover:bg-teal-700 transition-colors text-sm sm:text-base">
         <Home class="w-5 h-5 sm:w-6 sm:h-6" />
         <span class="hidden sm:inline">Book Your Seat</span>
         <ArrowRight class="w-5 h-5 sm:w-6 sm:h-6" />

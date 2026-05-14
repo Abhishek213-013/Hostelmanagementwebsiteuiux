@@ -31,7 +31,7 @@
             About
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
-          <router-link to="/contact" class="relative px-8 py-3.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
+          <router-link to="/contact" class="relative px-6 py-2.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
             <span class="relative z-10">Contact Us</span>
           </router-link>
           <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">

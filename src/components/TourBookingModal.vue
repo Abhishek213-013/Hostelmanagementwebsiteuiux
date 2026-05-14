@@ -82,7 +82,7 @@
             <!-- Submit Button -->
             <button 
               type="submit" 
-              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-6"
+              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-6"
             >
               <Calendar class="w-5 h-5" />
               Book Appointment

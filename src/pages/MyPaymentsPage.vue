@@ -28,7 +28,7 @@
   <span class="text-sm text-gray-600 dark:text-gray-400">Amount</span>
   <span class="text-2xl font-black text-teal-600">৳{{ payment.amount }}</span>
 </div>
-            <button @click="openReceipt(payment)" class="block w-full py-3 bg-teal-600 text-white rounded-xl font-bold text-center hover:bg-teal-700 transition-colors">
+            <button @click="openReceipt(payment)" class="block w-full py-2.5 bg-teal-600 text-white rounded-xl font-bold text-center hover:bg-teal-700 transition-colors">
               View Details
             </button>
           </div>
@@ -159,7 +159,7 @@
         <CreditCard class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
         <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Payment History</h3>
         <p class="text-gray-500 dark:text-gray-400 mb-6">Your payment records will appear here</p>
-        <router-link to="/payments" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-colors">
+        <router-link to="/payments" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
           <CreditCard class="w-5 h-5" />
           Make a Payment
         </router-link>

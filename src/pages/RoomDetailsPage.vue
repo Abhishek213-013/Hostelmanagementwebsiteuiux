@@ -132,7 +132,7 @@
             </div>
 
             <!-- Book Now Button -->
-            <button @click="handleBookNow" class="group px-10 py-5 bg-teal-600 text-white rounded-xl font-black shadow hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3 text-lg">
+            <button @click="handleBookNow" class="group px-8 py-4 bg-teal-600 text-white rounded-xl font-black shadow hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3">
               Book Now
               <ArrowRight class="w-5 h-5 rotate-180 group-hover:-translate-x-1 transition-transform" />
             </button>
@@ -239,7 +239,7 @@
         <div class="text-center">
           <h1 class="text-6xl font-black text-teal-600 mb-4">Room Not Found</h1>
           <p class="text-xl text-muted-foreground mb-8">The room you're looking for doesn't exist.</p>
-          <router-link to="/rooms" class="px-8 py-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
+          <router-link to="/rooms" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
             View All Rooms
           </router-link>
         </div>
