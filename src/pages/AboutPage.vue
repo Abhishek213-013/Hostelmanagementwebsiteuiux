@@ -155,8 +155,8 @@
         </div>
       </div>
       <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
-      <Footer />
     </div>
+    <Footer />
   </div>
 </template>
 

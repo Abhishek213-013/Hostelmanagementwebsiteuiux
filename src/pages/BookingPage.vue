@@ -35,9 +35,9 @@
   </div>
 
   <!-- Steps 2 and 3: Booking Form and Payment -->
-  <div v-else class="min-h-screen bg-gray-50 dark:bg-gray-900 pt-28 pb-20 px-6">
+  <div v-else class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
     <Header />
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto w-full flex-1 pt-28 pb-20 px-6">
       <!-- Step 3: Payment -->
       <div v-if="step === 3 && selectedRoom">
         <AnimatedSection>
