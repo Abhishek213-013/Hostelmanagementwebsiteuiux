@@ -1,10 +1,10 @@
 <template>
-  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-8">
+  <footer class="relative bg-slate-900 dark:bg-slate-950 text-white py-6 md:py-8">
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="space-y-4">
-          <router-link to="/" class="flex items-center gap-3 mb-4">
-            <img src="@/assets/logo/logo.png" alt="Logo" class="h-16 w-auto" />
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-4 md:mb-6">
+        <div class="space-y-3 md:space-y-4">
+          <router-link to="/" class="flex items-center gap-3 mb-3 md:mb-4">
+            <img src="@/assets/logo/logo.png" alt="Logo" class="h-12 md:h-16 w-auto" />
           </router-link>
           <div class="flex gap-4">
             <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all cursor-pointer">
@@ -22,8 +22,8 @@
           </div>
         </div>
 
-        <div v-for="col in footerColumns" :key="col.title">
-          <h4 class="font-black mb-4">{{ col.title }}</h4>
+        <div v-for="(col, colIndex) in footerColumns" :key="col.title" :class="colIndex < 2 ? 'hidden md:block' : ''">
+          <h4 class="font-black mb-3 md:mb-4">{{ col.title }}</h4>
           <div class="space-y-2">
             <div v-for="link in col.links" :key="link.label">
 <a v-if="link.path.startsWith('#') || link.path.startsWith('tel:') || link.path.startsWith('mailto:')" 
@@ -57,7 +57,7 @@
         </div>
       </div> -->
 
-      <div class="border-t border-slate-800 dark:border-slate-700 pt-4 text-center text-muted-foreground">
+      <div class="border-t border-slate-800 dark:border-slate-700 pt-3 md:pt-4 text-center text-muted-foreground">
         <p>&copy; 2026 SylhetStay Hostel. All rights reserved.</p>
       </div>
     </div>
