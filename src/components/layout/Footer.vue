@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <div class="bg-gradient-to-r from-sky-500/20 to-emerald-500/20 dark:from-sky-500/30 dark:to-emerald-500/30 rounded-3xl p-4 mb-6 border border-white/10">
+      <!-- <div class="bg-gradient-to-r from-sky-500/20 to-emerald-500/20 dark:from-sky-500/30 dark:to-emerald-500/30 rounded-3xl p-4 mb-6 border border-white/10">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div class="text-center md:text-left">
             <h4 class="font-black text-2xl mb-2">Subscribe to Our Newsletter</h4>
@@ -55,7 +55,7 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="border-t border-slate-800 dark:border-slate-700 pt-4 text-center text-muted-foreground">
         <p>&copy; 2026 SylhetStay Hostel. All rights reserved.</p>
