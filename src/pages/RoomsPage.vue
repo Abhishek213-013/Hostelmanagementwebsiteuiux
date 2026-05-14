@@ -45,7 +45,7 @@
                 <Users class="w-4 h-4 text-white" />
                 <span class="text-white font-bold text-sm">Up to {{ room.capacity }}</span>
               </div>
-              <div class="absolute top-4 right-4 px-4 py-2 bg-white rounded-full shadow-lg">
+              <div class="absolute top-4 right-4 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-lg">
                  <span class="text-gray-800 dark:text-white font-black text-sm">{{ room.size }}</span>
               </div>
               <!-- Price Overlay -->
