@@ -4,7 +4,7 @@
       <Header />
 
       <!-- Vibrant Hero Section - Full Width with Background Images -->
-      <section class="relative min-h-screen flex items-center justify-center pt-24">
+      <section class="relative min-h-screen flex items-center justify-center pt-16 lg:pt-24">
         <div class="relative w-full">
           <!-- Carousel - Full width with background images -->
           <div class="relative w-full overflow-hidden" ref="carouselRef">
