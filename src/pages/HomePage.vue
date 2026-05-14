@@ -15,19 +15,19 @@
                   <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920&q=80" alt="Modern student accommodation" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-black/30"></div>
                 </div>
-                <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
-                  <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                    <div class="w-3 h-3 bg-teal-400 rounded-full"></div>
-                    <MapPin class="w-5 h-5 text-teal-400" />
-                    <span class="text-sm font-bold text-white tracking-wide">Sylhet, Bangladesh</span>
+                <div class="relative z-10 text-center text-white px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 w-full">
+                  <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                    <div class="w-2 h-2 sm:w-3 sm:h-3 bg-teal-400 rounded-full"></div>
+                    <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-teal-400" />
+                    <span class="text-xs sm:text-sm font-bold text-white tracking-wide">Sylhet, Bangladesh</span>
                   </div>
-                  <div class="space-y-6">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                  <div class="space-y-4 sm:space-y-6">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight break-words">
                       <span class="block text-white">Your Home</span>
                       <span class="block text-white">Away From Home</span>
                       <span class="block mt-2 text-teal-400">in Sylhet</span>
                     </h1>
-                    <p class="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                    <p class="text-sm sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto px-2">
                       Experience premium student accommodation with <span class="text-teal-400 font-bold">cutting-edge amenities</span>, <span class="text-white font-bold">vibrant community</span>, and an environment designed for success.
                     </p>
                   </div>
@@ -40,17 +40,17 @@
                   <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" alt="Comfortable study room" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-black/30"></div>
                 </div>
-                <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
-                  <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                    <MapPin class="w-5 h-5 text-teal-400" />
-                    <span class="text-sm font-bold text-white">Prime Location</span>
+                <div class="relative z-10 text-center text-white px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 w-full">
+                  <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                    <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-teal-400" />
+                    <span class="text-xs sm:text-sm font-bold text-white">Prime Location</span>
                   </div>
-                  <div class="space-y-6">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                  <div class="space-y-4 sm:space-y-6">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight break-words">
                       <span class="block text-white">Study in</span>
                       <span class="block text-teal-400">Comfort</span>
                     </h1>
-                    <p class="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                    <p class="text-sm sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto px-2">
                       Fully furnished rooms with <span class="text-teal-400 font-bold">modern furniture</span>, <span class="text-white font-bold">high-speed WiFi</span>, and dedicated study areas.
                     </p>
                   </div>
@@ -63,17 +63,17 @@
                   <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80" alt="Student community" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-black/30"></div>
                 </div>
-                <div class="relative z-10 text-center text-white px-6 lg:px-12 max-w-[1400px] mx-auto space-y-8">
-                  <div class="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                    <MapPin class="w-5 h-5 text-teal-400" />
-                    <span class="text-sm font-bold text-white">Community Living</span>
+                <div class="relative z-10 text-center text-white px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 w-full">
+                  <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                    <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-teal-400" />
+                    <span class="text-xs sm:text-sm font-bold text-white">Community Living</span>
                   </div>
-                  <div class="space-y-6">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                  <div class="space-y-4 sm:space-y-6">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight break-words">
                       <span class="block text-white">Build Your</span>
                       <span class="block text-teal-400">Network</span>
                     </h1>
-                    <p class="text-l sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto">
+                    <p class="text-sm sm:text-xl text-gray-200 leading-relaxed font-medium max-w-3xl mx-auto px-2">
                       Join a <span class="text-teal-400 font-bold">vibrant community</span> of students from top universities with <span class="text-teal-400 font-bold">networking events</span>.
                     </p>
                   </div>
@@ -95,21 +95,21 @@
           </div>
 
           <!-- Search Widget - Full Width Container -->
-          <div class="w-full px-6 lg:px-12 mt-12">
+          <div class="w-full px-4 sm:px-6 lg:px-12 mt-8 sm:mt-12">
             <div class="max-w-[1400px] mx-auto">
-              <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <div class="space-y-3">
+              <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8 border border-gray-200 dark:border-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
+                  <div class="space-y-2 sm:space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Room Type</label>
                      <SearchSelect v-model="searchFilters.roomType" :options="roomTypeOptions" placeholder="All Types" />
                   </div>
 
-                  <div class="space-y-3">
+                  <div class="space-y-2 sm:space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Seats</label>
                      <SearchSelect v-model="searchFilters.seats" :options="seatsOptions" placeholder="Any" />
                   </div>
 
-                  <div class="space-y-3">
+                  <div class="space-y-2 sm:space-y-3">
                     <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Max Price</label>
                      <SearchSelect v-model="searchFilters.maxPrice" :options="maxPriceOptions" placeholder="Any Budget" />
                   </div>
@@ -131,7 +131,7 @@
 
       <!-- Availability Cards -->
       <section class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedSection v-for="(card, i) in availabilityCards" :key="i">
               <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
@@ -139,14 +139,14 @@
                   <div class="p-4 rounded-2xl bg-teal-600">
                     <component :is="card.icon" class="w-7 h-7 text-white" />
                   </div>
-                  <span class="px-4 py-2 text-white rounded-full text-sm font-bold bg-teal-600">
+                  <span class="px-3 sm:px-4 py-2 text-white rounded-full text-xs sm:text-sm font-bold bg-teal-600 whitespace-nowrap">
                     {{ card.badge }}
                   </span>
                 </div>
-                <h3 class="text-2xl font-black mb-2 text-teal-600">{{ card.title }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-8">{{ card.desc }}</p>
+                <h3 class="text-xl sm:text-2xl font-black mb-2 text-teal-600 break-words">{{ card.title }}</h3>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 break-words">{{ card.desc }}</p>
                 <div class="flex items-center justify-between">
-                  <div class="text-2xl font-black text-teal-600">{{ card.price }}</div>
+                  <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">{{ card.price }}</div>
                   <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors">
                     <ArrowRight class="w-6 h-6 text-white" />
                   </router-link>
@@ -159,51 +159,51 @@
 
       <!-- About Section -->
       <section id="about" class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
               <div class="space-y-6">
-                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
+                <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Award class="w-4 h-4 text-white" />
                   </div>
-                  <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Est. 2020</span>
+                  <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Est. 2020</span>
                 </div>
 
-                <h2 class="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
-                  <span class="block text-teal-600 text-4xl lg:text-5xl">Welcome to</span>
-                  <span class="block mt-2 text-teal-600 text-4xl lg:text-5xl">SylhetStay</span>
+                <h2 class="text-4xl sm:text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight">
+                  <span class="block text-teal-600 text-3xl sm:text-4xl lg:text-5xl">Welcome to</span>
+                  <span class="block mt-2 text-teal-600 text-3xl sm:text-4xl lg:text-5xl">SylhetStay</span>
                 </h2>
 
-                <p class="text-l text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed break-words">
                      Providing exceptional accommodation to students pursuing their academic dreams. We understand the importance of a <span class="text-teal-600 font-bold">comfortable</span>, <span class="text-gray-800 dark:text-gray-200 font-bold">safe</span>, and <span class="text-teal-600 font-bold">study-conducive</span> environment.
                 </p>
 
-                <div class="flex flex-wrap items-center gap-6">
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+                  <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="flex -space-x-2">
-                      <div v-for="n in 4" :key="n" class="w-8 h-8 rounded-full border-2 border-white bg-teal-600"></div>
+                      <div v-for="n in 4" :key="n" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-teal-600"></div>
                     </div>
                     <div class="text-left">
-                      <div class="font-bold text-teal-600">150+ Students</div>
+                      <div class="font-bold text-sm sm:text-base text-teal-600">150+ Students</div>
                       <div class="text-xs text-gray-600 dark:text-gray-400">Living Here</div>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
-                      <Star v-for="n in 5" :key="n" class="w-5 h-5 fill-amber-400 text-amber-400" />
+                      <Star v-for="n in 5" :key="n" class="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
                     </div>
                     <div class="text-left">
-                      <div class="font-bold text-amber-600">4.8/5.0</div>
+                      <div class="font-bold text-sm sm:text-base text-amber-600">4.8/5.0</div>
                       <div class="text-xs text-gray-600 dark:text-gray-400">Rating</div>
                     </div>
                   </div>
 
-                  <div class="flex items-center gap-3 px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <TrendingUp class="w-6 h-6 text-teal-600" />
+                  <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <TrendingUp class="w-5 h-5 sm:w-6 sm:h-6 text-teal-600" />
                     <div class="text-left">
-                      <div class="font-bold text-teal-600">98% Occupied</div>
+                      <div class="font-bold text-sm sm:text-base text-teal-600">98% Occupied</div>
                       <div class="text-xs text-gray-600 dark:text-gray-400">High Demand</div>
                     </div>
                   </div>
@@ -214,9 +214,9 @@
             <AnimatedSection>
               <div class="grid grid-cols-2 gap-4">
                 <div v-for="(item, i) in aboutImages" :key="i" class="relative rounded-2xl overflow-hidden shadow" :class="i % 2 === 1 ? 'mt-8' : ''">
-                  <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover" />
-                  <div class="absolute bottom-4 left-4">
-                     <span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
+                  <img :src="item.src" :alt="item.label" class="w-full h-40 sm:h-60 object-cover" />
+                  <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+                     <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
                    </div>
                  </div>
                </div>
@@ -227,25 +227,25 @@
 
        <!-- Facilities -->
        <section class="py-16">
-         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
              <div class="text-center mb-16">
-                <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                 <span class="text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
+                <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                 <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
                </div>
-               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">World-Class Facilities</h2>
-                <p class="text-l text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Everything you need for <span class="text-teal-600 font-bold">success</span>, all under one roof</p>
+               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">World-Class Facilities</h2>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto break-words">Everything you need for <span class="text-teal-600 font-bold">success</span>, all under one roof</p>
              </div>
            </AnimatedSection>
 
-           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
              <AnimatedSection v-for="(item, i) in facilities" :key="i">
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
-                    <component :is="item.icon" class="w-8 h-8 text-white group-hover:text-teal-600" />
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+                  <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
+                    <component :is="item.icon" class="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-teal-600" />
                   </div>
-                  <h4 class="text-lg font-black mb-2 text-teal-600 group-hover:text-white transition-colors duration-500">{{ item.label }}</h4>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-teal-100 transition-colors duration-500">{{ item.desc }}</p>
+                  <h4 class="text-sm sm:text-lg font-black mb-1 sm:mb-2 text-teal-600 group-hover:text-white transition-colors duration-500 break-words">{{ item.label }}</h4>
+                  <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 group-hover:text-teal-100 transition-colors duration-500 break-words">{{ item.desc }}</p>
                 </div>
              </AnimatedSection>
            </div>
@@ -254,48 +254,48 @@
 
        <!-- Rooms -->
        <section class="py-16">
-         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
              <div class="text-center mb-16">
-                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
+                <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Home class="w-4 h-4 text-white" />
                   </div>
-                  <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
+                  <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
                 </div>
-               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Choose Your Perfect Room</h2>
+               <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">Choose Your Perfect Room</h2>
              </div>
            </AnimatedSection>
 
            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
              <AnimatedSection v-for="(room, i) in rooms" :key="i">
                <div class="relative">
-                 <div v-if="room.popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-6 py-2.5 text-white rounded-full text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600">
+                 <div v-if="room.popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-2 sm:py-2.5 text-white rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600 whitespace-nowrap">
                    <Star class="w-4 h-4 fill-current" />
                    Most Popular
                  </div>
                   <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700">
-                   <div class="relative h-64 overflow-hidden">
+                   <div class="relative h-48 sm:h-64 overflow-hidden">
                      <img :src="room.img" :alt="room.title" class="w-full h-full object-cover" />
                      <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
                    </div>
-                   <div class="p-6">
-                     <h3 class="text-2xl font-black mb-3 text-teal-600">{{ room.title }}</h3>
-                      <p class="text-gray-600 dark:text-gray-400 mb-6">{{ room.desc }}</p>
-                     <div class="space-y-3 mb-8">
-                       <div v-for="(feature, j) in room.features" :key="j" class="flex items-center gap-3">
-                         <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                           <CheckCircle2 class="w-4 h-4 text-teal-600" />
+                   <div class="p-4 sm:p-6">
+                     <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.title }}</h3>
+                      <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.desc }}</p>
+                     <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+                       <div v-for="(feature, j) in room.features" :key="j" class="flex items-center gap-2 sm:gap-3">
+                         <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                           <CheckCircle2 class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
                          </div>
-                          <span class="text-gray-700 dark:text-gray-300 font-medium">{{ feature }}</span>
+                          <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium break-words">{{ feature }}</span>
                        </div>
                      </div>
-                      <div class="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
+                      <div class="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
                        <div>
-                         <div class="text-sm text-teal-600 mb-1">Starting from</div>
-                         <div class="text-2xl font-black text-teal-600">{{ room.price }}<span class="text-lg">/mo</span></div>
+                         <div class="text-xs sm:text-sm text-teal-600 mb-1">Starting from</div>
+                         <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">{{ room.price }}<span class="text-base sm:text-lg">/mo</span></div>
                        </div>
-                       <router-link :to="`/rooms/${room.type}`" class="px-6 py-3 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
+                       <router-link :to="`/rooms/${room.type}`" class="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
                          View Details
                        </router-link>
                      </div>
@@ -309,21 +309,21 @@
 
        <!-- Gallery -->
        <section class="py-16">
-         <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
            <AnimatedSection>
              <div class="text-center mb-16">
-                <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
+                <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                   <div class="p-2 bg-teal-600 rounded-xl">
                     <Camera class="w-4 h-4 text-white" />
                   </div>
-                  <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
+                  <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
                 </div>
-                <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1]">Explore Our Beautiful Space</h2>
-                <p class="text-l text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
+                <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">Explore Our Beautiful Space</h2>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">Take a visual tour of your new home</p>
              </div>
            </AnimatedSection>
 
-           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
              <div
                v-for="(item, i) in galleryImages"
                :key="i"
@@ -331,15 +331,15 @@
                class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
                :class="i % 2 === 1 ? 'mt-8' : ''"
              >
-               <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
-               <div class="absolute bottom-4 left-4">
-                 <span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
+               <img :src="item.src" :alt="item.label" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
+               <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+                 <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
               </div>
             </div>
             <div class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer" @click="openLightbox(0)">
               <div class="text-center text-white">
-                <div class="text-5xl font-black mb-2">+24</div>
-                <div class="font-bold">More Photos</div>
+                <div class="text-4xl sm:text-5xl font-black mb-2">+24</div>
+                <div class="font-bold text-sm sm:text-base">More Photos</div>
               </div>
             </div>
           </div>
@@ -352,56 +352,56 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl"
         @click="closeLightbox"
       >
-        <button class="absolute top-8 right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="closeLightbox">
-          <X class="w-6 h-6 group-hover:rotate-90 transition-transform" />
+        <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="closeLightbox">
+          <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
         </button>
 
-        <button class="absolute left-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
-          <ChevronLeft class="w-8 h-8" />
+        <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
+          <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
 
-        <button class="absolute right-8 p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
-          <ChevronRight class="w-8 h-8" />
+        <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
+          <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
 
-        <div class="max-w-5xl max-h-[80vh] mx-6" @click.stop>
+        <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
           <img :src="galleryImages[currentImageIndex].src" :alt="galleryImages[currentImageIndex].label" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
-          <div class="text-center mt-6">
-            <span class="inline-block px-4 py-2 text-white rounded-xl font-bold shadow-xl bg-teal-600">
+          <div class="text-center mt-4 sm:mt-6">
+            <span class="inline-block px-3 sm:px-4 py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600">
               {{ galleryImages[currentImageIndex].label }}
             </span>
-            <p class="text-white text-sm mt-3 font-medium">{{ currentImageIndex + 1 }} / {{ galleryImages.length }}</p>
+            <p class="text-white text-xs sm:text-sm mt-2 sm:mt-3 font-medium">{{ currentImageIndex + 1 }} / {{ galleryImages.length }}</p>
           </div>
         </div>
       </div>
 
       <!-- Testimonials -->
       <section class="py-16">
-        <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-16">
-              <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                <Users class="w-5 h-5 text-teal-600" />
-                <span class="text-sm font-bold tracking-wide text-teal-600">The People</span>
+              <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <Users class="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
+                <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">The People</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">What Students Say</h2>
-              <p class="text-l text-gray-600 dark:text-gray-400">Hear from our happy residents</p>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">What Students Say</h2>
+              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">Hear from our happy residents</p>
             </div>
           </AnimatedSection>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div v-for="(testimonial, i) in testimonials" :key="i" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
-              <div class="flex gap-1 mb-6">
-                <Star v-for="n in 5" :key="n" class="w-5 h-5 fill-amber-400 text-amber-400" />
+            <div v-for="(testimonial, i) in testimonials" :key="i" class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700">
+              <div class="flex gap-1 mb-4 sm:mb-6">
+                <Star v-for="n in 5" :key="n" class="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
               </div>
-              <p class="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">{{ testimonial.text }}</p>
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center">
-                  <span class="text-white font-bold text-base">{{ testimonial.name[0] }}</span>
+              <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed break-words">{{ testimonial.text }}</p>
+              <div class="flex items-center gap-3 sm:gap-4">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-teal-600 flex items-center justify-center flex-shrink-0">
+                  <span class="text-white font-bold text-sm sm:text-base">{{ testimonial.name[0] }}</span>
                 </div>
                 <div>
-                   <div class="font-black text-gray-800 dark:text-white">{{ testimonial.name }}</div>
-                  <div class="text-sm text-teal-600">{{ testimonial.uni }}</div>
+                   <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white break-words">{{ testimonial.name }}</div>
+                  <div class="text-xs sm:text-sm text-teal-600 break-words">{{ testimonial.uni }}</div>
                 </div>
               </div>
             </div>
@@ -411,17 +411,17 @@
 
       <!-- CTA Section -->
       <section class="py-16">
-        <div class="bg-teal-600 rounded-2xl p-12 md:p-20 text-white text-center mx-6 lg:mx-12">
-          <h2 class="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
-          <p class="text-l text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
-          <div class="flex flex-wrap justify-center gap-4">
-            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3 hover:bg-gray-100 transition-colors">
-              <Calendar class="w-5 h-5" />
+        <div class="bg-teal-600 rounded-2xl p-8 sm:p-12 md:p-20 text-white text-center mx-4 sm:mx-6 lg:mx-12">
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 break-words">Ready to Join Our Community?</h2>
+          <p class="text-sm sm:text-base text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto break-words">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
+          <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <router-link to="/rooms" class="px-6 sm:px-10 py-3 sm:py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-2 sm:gap-3 hover:bg-gray-100 transition-colors text-sm sm:text-base whitespace-nowrap">
+              <Calendar class="w-4 h-4 sm:w-5 sm:h-5" />
               Book Your Room
-              <ChevronRight class="w-5 h-5" />
+              <ChevronRight class="w-4 h-4 sm:w-5 sm:h-5" />
             </router-link>
-            <router-link to="/contact" class="px-10 py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-3 hover:bg-teal-800 transition-colors">
-              <Phone class="w-5 h-5" />
+            <router-link to="/contact" class="px-6 sm:px-10 py-3 sm:py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-2 sm:gap-3 hover:bg-teal-800 transition-colors text-sm sm:text-base whitespace-nowrap">
+              <Phone class="w-4 h-4 sm:w-5 sm:h-5" />
               Contact Us
             </router-link>
           </div>
@@ -429,10 +429,10 @@
       </section>
 
       <!-- Sticky Button -->
-      <router-link to="/rooms" class="fixed bottom-8 right-8 px-8 py-4 text-white rounded-full font-black shadow-lg z-50 flex items-center gap-3 bg-teal-600 hover:bg-teal-700 transition-colors">
-        <Home class="w-6 h-6" />
-        <span>Book Your Seat</span>
-        <ArrowRight class="w-6 h-6" />
+      <router-link to="/rooms" class="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 px-4 sm:px-8 py-3 sm:py-4 text-white rounded-full font-black shadow-lg z-50 flex items-center gap-2 sm:gap-3 bg-teal-600 hover:bg-teal-700 transition-colors text-sm sm:text-base">
+        <Home class="w-5 h-5 sm:w-6 sm:h-6" />
+        <span class="hidden sm:inline">Book Your Seat</span>
+        <ArrowRight class="w-5 h-5 sm:w-6 sm:h-6" />
       </router-link>
     </div>
     <Footer />
