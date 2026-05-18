@@ -59,6 +59,7 @@
 
       <div class="border-t border-slate-800 dark:border-slate-700 pt-2 md:pt-3 text-center text-muted-foreground">
         <p>&copy; 2026 SylhetStay Hostel. All rights reserved.</p>
+        <p class="mt-1">Developed By - <a href="https://itlabsolutions.com" target="_blank" rel="noopener noreferrer" class="hover:text-sky-500 transition-colors">IT Lab Solutions Ltd.</a></p>
       </div>
     </div>
   </footer>
