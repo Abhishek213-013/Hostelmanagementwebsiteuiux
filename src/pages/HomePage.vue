@@ -324,32 +324,64 @@
       </div>
 
       <!-- Testimonials -->
-      <section v-if="pageData.testimonials" class="py-12">
+      <section v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <Users class="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
-                <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">{{ pageData.testimonials.badge }}</span>
+                <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">What Students Say</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">{{ pageData.testimonials.headline }}</h2>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">{{ pageData.testimonials.description }}</p>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">Trusted by Students</h2>
+              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">Hear from our happy residents across Sylhet's top universities</p>
             </div>
           </AnimatedSection>
+
+          <!-- Featured Testimonials -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div v-for="(testimonial, i) in pageData.testimonials.items" :key="i" class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700">
+            <div v-for="testimonial in testimonials" :key="testimonial.id" 
+                 class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <!-- Rating Stars -->
               <div class="flex gap-1 mb-4 sm:mb-6">
-                <Star v-for="n in 5" :key="n" class="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-400" />
+                <Star v-for="n in 5" :key="n" :class="['w-4 h-4 sm:w-5 sm:h-5', n <= testimonial.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600']" />
               </div>
-              <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed break-words">{{ testimonial.text }}</p>
-              <div class="flex items-center gap-3 sm:gap-4">
-                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-teal-600 flex items-center justify-center flex-shrink-0">
-                  <span class="text-white font-bold text-sm sm:text-base">{{ testimonial.name[0] }}</span>
+              
+              <!-- Content -->
+              <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed break-words">
+                "{{ testimonial.content }}"
+              </p>
+              
+              <!-- Tags -->
+              <div v-if="testimonial.tags && testimonial.tags.length > 0" class="flex flex-wrap gap-1 mb-4">
+                <span v-for="tag in testimonial.tags" :key="tag" 
+                      class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
+                  #{{ tag }}
+                </span>
+              </div>
+              
+              <!-- User Info -->
+              <div class="flex items-center gap-3 sm:gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <img :src="testimonial.user.avatar" :alt="testimonial.user.name" 
+                     class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-teal-600 flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white truncate">{{ testimonial.user.name }}</div>
+                  <div class="text-xs text-teal-600 font-medium">{{ testimonial.university }}</div>
+                  <div class="text-xs text-gray-400">{{ testimonial.department }}</div>
                 </div>
-                <div>
-                  <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white break-words">{{ testimonial.name }}</div>
-                  <div class="text-xs sm:text-sm text-teal-600 break-words">{{ testimonial.uni }}</div>
+                <!-- Featured Badge -->
+                <div v-if="testimonial.is_featured" class="flex-shrink-0">
+                  <span class="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
+                    Featured
+                  </span>
                 </div>
+              </div>
+              
+              <!-- Stay Info -->
+              <div v-if="testimonial.stay_duration" class="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                <Clock class="w-3 h-3" />
+                <span>{{ testimonial.stay_duration }}</span>
+                <span v-if="testimonial.room_name" class="text-gray-300">•</span>
+                <span v-if="testimonial.room_name" class="text-teal-600">{{ testimonial.room_name }}</span>
               </div>
             </div>
           </div>
@@ -391,7 +423,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import {
-  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown
+  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown, Clock
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -430,6 +462,7 @@ const maxPriceOptions = [
 const pageData = ref({})
 const heroSlides = ref([])
 const searchWidgetData = ref({})
+const testimonials = ref([])
 const loading = ref(true)
 const error = ref('')
 const searchFilters = ref({ roomType: '', seats: '', maxPrice: '' })
@@ -443,9 +476,12 @@ async function fetchPageData() {
   loading.value = true
   error.value = ''
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json')
+    const [homeResponse, testimonialsResponse] = await Promise.all([
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json'),
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json')
+    ])
     
-    const data = response.data
+    const data = homeResponse.data
     
     // Set hero slides
     heroSlides.value = data.hero?.slides || []
@@ -455,6 +491,13 @@ async function fetchPageData() {
     
     // Set page data
     pageData.value = data
+    
+    // Set testimonials - show featured first, then others
+    const allTestimonials = testimonialsResponse.data || []
+    testimonials.value = [
+      ...allTestimonials.filter(t => t.is_featured),
+      ...allTestimonials.filter(t => !t.is_featured)
+    ].slice(0, 6) // Limit to 6 testimonials
     
     // Start autoplay
     if (autoplayInterval.value) clearInterval(autoplayInterval.value)

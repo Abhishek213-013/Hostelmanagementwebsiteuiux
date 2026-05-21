@@ -1,155 +1,281 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-    <Header />
-    <main class="flex-1 pt-20 sm:pt-28 pb-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <!-- Header -->
-        <div class="text-center mb-12 sm:mb-16">
+    <!-- Loading State -->
+    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+      <div class="text-center">
+        <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-600 dark:text-gray-400">Loading gallery...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+      <div class="text-center">
+        <p class="text-red-600 mb-4">{{ error }}</p>
+        <button @click="fetchGalleryData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div v-else>
+      <Header />
+      <main class="flex-1 pt-20 sm:pt-28 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <!-- Header -->
+          <div class="text-center mb-12 sm:mb-16">
             <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-6 sm:mb-8">
-            <div class="p-2 bg-teal-600 rounded-xl">
-              <Camera class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div class="p-2 bg-teal-600 rounded-xl">
+                <Camera class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              </div>
+              <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
             </div>
-            <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
-          </div>
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-[1.1]">
-            <span class="block text-teal-600">Explore Our</span>
-             <span class="block text-gray-800 dark:text-white">Beautiful Space</span>
-          </h1>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-[1.1]">
+              <span class="block text-teal-600">Explore Our</span>
+              <span class="block text-gray-800 dark:text-white">Beautiful Space</span>
+            </h1>
             <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Take a visual tour of your new home</p>
-        </div>
+          </div>
 
-        <!-- Category Filters -->
-        <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
-          <button v-for="cat in categories" :key="cat.id"
-                  @click="selectedCategory = cat.id"
-                   :class="['px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold transition-all duration-500 text-xs sm:text-sm whitespace-nowrap',
-                     selectedCategory === cat.id
-                       ? 'text-white shadow-lg scale-105 bg-teal-600'
-                       : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg border-2 border-gray-200 dark:border-gray-600']">
-            {{ cat.label }}
-            <ChevronRight v-if="selectedCategory === cat.id" class="w-3 h-3 sm:w-4 sm:h-4 inline ml-1 sm:ml-2" />
-          </button>
-        </div>
+          <!-- Category Filters -->
+          <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+            <button v-for="cat in categories" :key="cat.id"
+                    @click="selectedCategory = cat.id"
+                    :class="['px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold transition-all duration-500 text-xs sm:text-sm whitespace-nowrap',
+                      selectedCategory === cat.id
+                        ? 'text-white shadow-lg scale-105 bg-teal-600'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg border-2 border-gray-200 dark:border-gray-600']">
+              {{ cat.label }}
+              <span v-if="selectedCategory === cat.id" class="ml-2 text-white/70 text-xs">({{ getCategoryCount(cat.id) }})</span>
+            </button>
+          </div>
 
-        <!-- Gallery Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
-          <div v-for="(image, index) in filteredImages" :key="image.id"
-               class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
-               @click="selectedImage = image"
-               @mouseenter="hoveredImage = image.id"
-               @mouseleave="hoveredImage = null">
-            <img :src="image.src" :alt="image.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div :class="['absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500', hoveredImage === image.id ? 'opacity-100' : 'opacity-0']">
-              <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
-                <div class="inline-block px-2 sm:px-4 py-1 sm:py-2 rounded-xl text-white font-bold shadow-lg text-xs sm:text-sm bg-teal-600 mb-1 sm:mb-2 whitespace-nowrap">
-                  {{ image.category }}
+          <!-- Gallery Grid -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+            <div v-for="(image, index) in filteredImages" :key="image.id"
+                 class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
+                 @click="openLightbox(index)"
+                 @mouseenter="hoveredImage = image.id"
+                 @mouseleave="hoveredImage = null">
+              <img :src="image.thumbnail || image.src" :alt="image.alt_text" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <div :class="['absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500', hoveredImage === image.id ? 'opacity-100' : 'opacity-0']">
+                <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
+                  <div class="inline-block px-2 sm:px-4 py-1 sm:py-2 rounded-xl text-white font-bold shadow-lg text-xs sm:text-sm bg-teal-600 mb-1 sm:mb-2 capitalize whitespace-nowrap">
+                    {{ getCategoryLabel(image.category) }}
+                  </div>
+                  <h4 class="text-white font-bold text-sm sm:text-lg break-words">{{ image.title }}</h4>
+                  <!-- Tags -->
+                  <div class="flex flex-wrap gap-1 mt-1">
+                    <span v-for="tag in image.tags?.slice(0, 2)" :key="tag" 
+                          class="px-1.5 py-0.5 bg-white/20 rounded text-xs text-white/80">
+                      #{{ tag }}
+                    </span>
+                  </div>
                 </div>
-                <h4 class="text-white font-bold text-sm sm:text-lg break-words">{{ image.title }}</h4>
               </div>
-            </div>
-            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-                <Camera class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div class="absolute top-3 sm:top-4 right-3 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                  <Camera class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Visit Info Card -->
+          <!-- Empty State -->
+          <div v-if="filteredImages.length === 0" class="text-center py-16">
+            <Camera class="w-16 h-16 mx-auto mb-4 text-gray-400" />
+            <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No images found</h3>
+            <p class="text-gray-500">Try selecting a different category</p>
+          </div>
+
+          <!-- Visit Info Card -->
           <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 sm:p-10 md:p-16">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
-            <div>
-              <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 text-teal-600 break-words">Visit Us Today</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
+              <div>
+                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 text-teal-600 break-words">Visit Us Today</h2>
                 <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 leading-relaxed break-words">
-                Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
-              </p>
-              <div class="space-y-4 sm:space-y-6">
-                <div v-for="item in visitInfo" :key="item.label" class="flex items-center gap-3 sm:gap-4 hover:translate-x-2 transition-transform duration-300">
-                  <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600 flex-shrink-0">
-                    <component :is="item.icon" class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
-                  </div>
-                  <div class="min-w-0">
-                     <p class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 break-words">{{ item.label }}</p>
-                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">{{ item.value }}</p>
+                  Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
+                </p>
+                <div class="space-y-4 sm:space-y-6">
+                  <div v-for="item in visitInfo" :key="item.label" class="flex items-center gap-3 sm:gap-4 hover:translate-x-2 transition-transform duration-300">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600 flex-shrink-0">
+                      <component :is="item.icon" class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+                    </div>
+                    <div class="min-w-0">
+                      <p class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 break-words">{{ item.label }}</p>
+                      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">{{ item.value }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 sm:gap-4">
-              <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
-                <div class="p-1.5 sm:p-2 rounded-xl shadow-lg bg-teal-600 flex-shrink-0">
-                  <component :is="item.icon" class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
+                  <div class="p-1.5 sm:p-2 rounded-xl shadow-lg bg-teal-600 flex-shrink-0">
+                    <component :is="item.icon" class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <span class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 break-words">{{ item.label }}</span>
                 </div>
-                <span class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 break-words">{{ item.label }}</span>
               </div>
             </div>
           </div>
-        </div>
 
           <p class="text-center text-gray-600 dark:text-gray-400 mt-8 sm:mt-12 font-medium text-sm sm:text-base break-words">
-          {{ filteredImages.length }} photos {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel() : '' }}
-        </p>
-      </div>
-
-      <!-- Lightbox Modal -->
-      <div v-if="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl" @click="selectedImage = null">
-        <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="selectedImage = null">
-          <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
-        </button>
-        <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
-          <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
-        <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
-          <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
-        <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
-          <img :src="selectedImage.src" :alt="selectedImage.title" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
-          <div class="text-center mt-4 sm:mt-6">
-            <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600">
-              {{ selectedImage.category }}
+            {{ filteredImages.length }} photo{{ filteredImages.length !== 1 ? 's' : '' }} {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel(selectedCategory) : 'total' }}
+            <span v-if="latestPhoto" class="block text-xs mt-1 text-gray-400">
+              Latest photo added: {{ formatDate(latestPhoto.uploaded_at) }}
             </span>
-            <p class="text-white text-center mt-3 sm:mt-4 font-bold text-base sm:text-xl break-words">{{ selectedImage.title }}</p>
+          </p>
+        </div>
+
+        <!-- Lightbox Modal -->
+        <div v-if="lightboxImage" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl" @click="closeLightbox">
+          <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="closeLightbox">
+            <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
+          </button>
+          <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
+            <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
+          </button>
+          <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
+            <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
+          </button>
+          <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
+            <img :src="lightboxImage.src" :alt="lightboxImage.alt_text" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
+            <div class="text-center mt-4 sm:mt-6">
+              <div class="flex flex-wrap justify-center gap-2 mb-2">
+                <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600 capitalize">
+                  {{ getCategoryLabel(lightboxImage.category) }}
+                </span>
+                <span v-for="tag in lightboxImage.tags" :key="tag" 
+                      class="px-2 py-1 bg-white/20 rounded-lg text-xs text-white/80">
+                  #{{ tag }}
+                </span>
+              </div>
+              <p class="text-white text-center mt-3 sm:mt-4 font-bold text-base sm:text-xl break-words">{{ lightboxImage.title }}</p>
+              <p class="text-white/70 text-center mt-2 text-sm max-w-lg mx-auto">{{ lightboxImage.description }}</p>
+              <p class="text-white/50 text-xs mt-2">{{ currentLightboxIndex + 1 }} / {{ filteredImages.length }}</p>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
-    <Footer />
+      </main>
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
 
+// State
+const galleryImages = ref([])
+const loading = ref(true)
+const error = ref('')
 const selectedCategory = ref('all')
-const selectedImage = ref(null)
 const hoveredImage = ref(null)
+const currentLightboxIndex = ref(0)
 
-const galleryImages = [
-  { id: 1, src: 'https://images.unsplash.com/photo-1620332372374-f108c53d2e03?w=1200', category: 'rooms', title: 'Modern Bedroom' },
-  { id: 2, src: 'https://images.unsplash.com/photo-1721299417031-de890ff33b26?w=1200', category: 'rooms', title: 'Premium Suite' },
-  { id: 3, src: 'https://images.unsplash.com/photo-1753505888770-46be3b748b41?w=1200', category: 'rooms', title: 'Living Area' },
-  { id: 4, src: 'https://images.unsplash.com/photo-1753505889211-9cfbac527474?w=1200', category: 'rooms', title: 'Study Room' },
-  { id: 5, src: 'https://images.unsplash.com/photo-1723259457560-b76d597f709b?w=1200', category: 'common', title: 'Lounge Area' },
-  { id: 6, src: 'https://images.unsplash.com/photo-1635321349359-333da6bb6da9?w=1200', category: 'common', title: 'Reception' },
-  { id: 7, src: 'https://images.unsplash.com/photo-1772944780860-e99bd902d59a?w=1200', category: 'common', title: 'Corridor' },
-  { id: 8, src: 'https://images.unsplash.com/photo-1630694144867-37acec97af5c?w=1200', category: 'dining', title: 'Dining Hall' },
-  { id: 9, src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200', category: 'dining', title: 'Kitchen' },
-  { id: 10, src: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200', category: 'facilities', title: 'Gym' },
-  { id: 11, src: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=1200', category: 'facilities', title: 'Study Lounge' },
-  { id: 12, src: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200', category: 'facilities', title: 'Outdoor Area' }
-]
+// Fetch gallery data from JSON
+async function fetchGalleryData() {
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/gallery.json')
+    galleryImages.value = response.data
+  } catch (err) {
+    console.error('Error fetching gallery data:', err)
+    error.value = 'Failed to load gallery. Please check your connection and try again.'
+  } finally {
+    loading.value = false
+  }
+}
 
-const categories = [
-  { id: 'all', label: 'All Photos' },
-  { id: 'rooms', label: 'Rooms' },
-  { id: 'common', label: 'Common Areas' },
-  { id: 'dining', label: 'Dining' },
-  { id: 'facilities', label: 'Facilities' }
-]
+// Dynamic categories from JSON data
+const categories = computed(() => {
+  const cats = new Map()
+  cats.set('all', { id: 'all', label: 'All Photos' })
+  
+  galleryImages.value.forEach(img => {
+    if (!cats.has(img.category)) {
+      cats.set(img.category, {
+        id: img.category,
+        label: getCategoryLabel(img.category)
+      })
+    }
+  })
+  
+  return Array.from(cats.values())
+})
 
+// Get category display label
+const getCategoryLabel = (categoryId) => {
+  const labels = {
+    'rooms': 'Rooms',
+    'common': 'Common Areas',
+    'dining': 'Dining',
+    'facilities': 'Facilities',
+  }
+  return labels[categoryId] || categoryId.charAt(0).toUpperCase() + categoryId.slice(1).replace('-', ' ')
+}
+
+// Get count for category
+const getCategoryCount = (categoryId) => {
+  if (categoryId === 'all') return galleryImages.value.length
+  return galleryImages.value.filter(img => img.category === categoryId).length
+}
+
+// Filtered images
+const filteredImages = computed(() => {
+  if (selectedCategory.value === 'all') return galleryImages.value
+  return galleryImages.value.filter(img => img.category === selectedCategory.value)
+})
+
+// Lightbox image
+const lightboxImage = computed(() => {
+  if (filteredImages.value.length === 0) return null
+  return filteredImages.value[currentLightboxIndex.value] || null
+})
+
+// Latest photo
+const latestPhoto = computed(() => {
+  if (galleryImages.value.length === 0) return null
+  return [...galleryImages.value].sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at))[0]
+})
+
+// Open lightbox at specific index
+const openLightbox = (index) => {
+  currentLightboxIndex.value = index
+}
+
+// Close lightbox
+const closeLightbox = () => {
+  currentLightboxIndex.value = -1
+}
+
+// Navigate images
+const prevImage = () => {
+  if (filteredImages.value.length === 0) return
+  currentLightboxIndex.value = currentLightboxIndex.value > 0 
+    ? currentLightboxIndex.value - 1 
+    : filteredImages.value.length - 1
+}
+
+const nextImage = () => {
+  if (filteredImages.value.length === 0) return
+  currentLightboxIndex.value = currentLightboxIndex.value < filteredImages.value.length - 1 
+    ? currentLightboxIndex.value + 1 
+    : 0
+}
+
+// Format date
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+// Static data
 const visitInfo = [
   { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh' },
   { icon: Phone, label: 'Phone', value: '+880 1711-123456' },
@@ -157,7 +283,7 @@ const visitInfo = [
 ]
 
 const amenities = [
-  { icon: Wifi, label: '100 Mbps WiFi' },
+  { icon: Wifi, label: '1 Gbps WiFi' },
   { icon: Wind, label: 'AC Available' },
   { icon: Utensils, label: 'Meal Plans' },
   { icon: Coffee, label: 'Common Room' },
@@ -167,27 +293,7 @@ const amenities = [
   { icon: Dumbbell, label: 'Gym' }
 ]
 
-const filteredImages = computed(() => {
-  if (selectedCategory.value === 'all') return galleryImages
-  return galleryImages.filter(img => img.category === selectedCategory.value)
+onMounted(() => {
+  fetchGalleryData()
 })
-
-const prevImage = () => {
-  if (!selectedImage.value) return
-  const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.value.id)
-  const prevIndex = currentIndex > 0 ? currentIndex - 1 : galleryImages.length - 1
-  selectedImage.value = galleryImages[prevIndex]
-}
-
-const nextImage = () => {
-  if (!selectedImage.value) return
-  const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.value.id)
-  const nextIndex = currentIndex < galleryImages.length - 1 ? currentIndex + 1 : 0
-  selectedImage.value = galleryImages[nextIndex]
-}
-
-const getCategoryLabel = () => {
-  const category = categories.find(c => c.id === selectedCategory.value)
-  return category ? category.label : ''
-}
 </script>

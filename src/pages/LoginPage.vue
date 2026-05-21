@@ -1,12 +1,12 @@
 <template>
-  <div @click="fillForm" class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6 cursor-pointer">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <div class="w-full max-w-6xl">
       <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
         <ArrowLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
         Back to Home
       </router-link>
 
-        <div class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+      <div class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
         <!-- Left Side - Image -->
         <div class="md:w-1/2 bg-gradient-to-br from-teal-500 to-emerald-600 p-12 flex items-center justify-center relative overflow-hidden">
           <div class="absolute inset-0 bg-black/20"></div>
@@ -50,9 +50,21 @@
             </p>
           </div>
 
+          <!-- Error Message -->
+          <div v-if="loginError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+            <AlertCircle class="w-4 h-4 flex-shrink-0" />
+            {{ loginError }}
+          </div>
+
+          <!-- Success Message -->
+          <div v-if="loginSuccess" class="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-2">
+            <CheckCircle2 class="w-4 h-4 flex-shrink-0" />
+            {{ loginSuccess }}
+          </div>
+
           <!-- Toggle Buttons -->
           <div class="flex gap-3 mb-8">
-            <button @click="isLogin = true"
+            <button @click="isLogin = true; loginError = ''; loginSuccess = ''"
                     :class="['flex-1 py-4 rounded-2xl font-bold transition-all duration-500',
                       isLogin
                         ? 'text-white shadow-lg scale-105'
@@ -60,7 +72,7 @@
                     :style="isLogin ? { background: '#0d9488' } : {}">
               Sign In
             </button>
-            <button @click="isLogin = false"
+            <button @click="isLogin = false; loginError = ''; loginSuccess = ''"
                     :class="['flex-1 py-4 rounded-2xl font-bold transition-all duration-500',
                       !isLogin
                         ? 'text-white shadow-lg scale-105'
@@ -75,8 +87,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Full Name</label>
               <div class="relative">
                 <User class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                  <input type="text" placeholder="Enter your full name" v-model="formData.fullName"
-                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <input type="text" placeholder="Enter your full name" v-model="formData.fullName"
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -84,8 +96,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
               <div class="relative">
                 <Mail class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                  <input type="email" placeholder="Enter your email" v-model="formData.email"
-                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
+                <input type="email" placeholder="Enter your email" v-model="formData.email"
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
               </div>
             </div>
 
@@ -93,8 +105,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
               <div class="relative">
                 <Phone class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                  <input type="tel" placeholder="Enter your phone number" v-model="formData.phone"
-                         class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <input type="tel" placeholder="Enter your phone number" v-model="formData.phone"
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -102,8 +114,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Password</label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                  <input :type="showPassword ? 'text' : 'password'" placeholder="Enter your password" v-model="formData.password"
-                         class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
+                <input :type="showPassword ? 'text' : 'password'" placeholder="Enter your password" v-model="formData.password"
+                       class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" required />
                 <button type="button" @click="showPassword = !showPassword" class="absolute right-5 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-600 transition-colors">
                   <EyeOff v-if="showPassword" class="w-5 h-5" />
                   <Eye v-else class="w-5 h-5" />
@@ -115,8 +127,8 @@
               <label class="block text-sm font-bold text-teal-600 mb-3">Confirm Password</label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                  <input :type="showPassword ? 'text' : 'password'" placeholder="Confirm your password" v-model="formData.confirmPassword"
-                         class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <input :type="showPassword ? 'text' : 'password'" placeholder="Confirm your password" v-model="formData.confirmPassword"
+                       class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
               </div>
             </div>
 
@@ -137,17 +149,22 @@
             </div>
 
             <button type="submit"
-                    class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg"
-                    style="background: #0d9488">
-              <span>{{ isLogin ? 'Sign In' : 'Create Account' }}</span>
-              <ArrowRight class="w-5 h-5" />
+                    class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    style="background: #0d9488"
+                    :disabled="isLoading">
+              <span v-if="isLoading" class="flex items-center gap-2">
+                <Loader2 class="w-5 h-5 animate-spin" />
+                Processing...
+              </span>
+              <span v-else>{{ isLogin ? 'Sign In' : 'Create Account' }}</span>
+              <ArrowRight v-if="!isLoading" class="w-5 h-5" />
             </button>
           </form>
 
           <!-- Social Login -->
           <div class="mt-8">
-               <div class="relative flex py-2 items-center">
-               <div class="flex-grow border-t-2 border-gray-200 dark:border-gray-700"></div>
+            <div class="relative flex py-2 items-center">
+              <div class="flex-grow border-t-2 border-gray-200 dark:border-gray-700"></div>
               <span class="flex-shrink-0 mx-4 text-gray-500 dark:text-gray-400 font-bold">or continue with</span>
               <div class="flex-grow border-t-2 border-gray-200 dark:border-gray-700"></div>
             </div>
@@ -169,9 +186,9 @@
             </div>
           </div>
 
-           <p class="mt-8 text-center text-gray-600 dark:text-gray-400 font-medium">
+          <p class="mt-8 text-center text-gray-600 dark:text-gray-400 font-medium">
             {{ isLogin ? "Don't have an account? " : "Already have an account? " }}
-            <button @click="isLogin = !isLogin" class="group text-teal-600 font-bold hover:underline inline-flex items-center gap-1">
+            <button @click="isLogin = !isLogin; loginError = ''; loginSuccess = ''" class="group text-teal-600 font-bold hover:underline inline-flex items-center gap-1">
               {{ isLogin ? 'Sign Up' : 'Sign In' }}
               <ChevronRight class="w-4 h-4" />
             </button>
@@ -183,13 +200,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { Building2, Mail, Lock, Eye, EyeOff, User, Phone, ArrowLeft, ArrowRight, Facebook, ChevronRight, Sparkles } from 'lucide-vue-next'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+import { Building2, Mail, Lock, Eye, EyeOff, User, Phone, ArrowLeft, ArrowRight, Facebook, ChevronRight, Sparkles, AlertCircle, CheckCircle2, Loader2 } from 'lucide-vue-next'
 
 const router = useRouter()
+const route = useRoute()
 const isLogin = ref(true)
 const showPassword = ref(false)
+const loginError = ref('')
+const loginSuccess = ref('')
+const isLoading = ref(false)
+const users = ref([])
+
 const formData = ref({
   email: '',
   password: '',
@@ -199,23 +223,150 @@ const formData = ref({
   agreeTerms: false
 })
 
-const fillForm = () => {
-  formData.value = {
-    email: 'user@sylhetstay.com',
-    password: 'password123',
-    confirmPassword: 'password123',
-    fullName: 'John Doe',
-    phone: '+8801234567890',
-    agreeTerms: true
+// Fetch users data
+async function fetchUsers() {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/users.json')
+    users.value = response.data.filter(u => u.role === 'boarder' && u.is_active)
+  } catch (err) {
+    console.error('Error fetching users:', err)
   }
 }
 
-const handleSubmit = () => {
-  localStorage.setItem('isAuthenticated', 'true')
-  localStorage.setItem('user', JSON.stringify({
-    name: formData.value.fullName || 'John Doe',
-    email: formData.value.email || 'user@sylhetstay.com'
-  }))
-  router.push('/')
+const handleSubmit = async () => {
+  loginError.value = ''
+  loginSuccess.value = ''
+  isLoading.value = true
+  
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 800))
+  
+  if (isLogin.value) {
+    // Login logic
+    const user = users.value.find(u => u.email === formData.value.email)
+    
+    if (!user) {
+      loginError.value = 'No account found with this email address. Please check and try again.'
+      isLoading.value = false
+      return
+    }
+    
+    if (!user.is_active) {
+      loginError.value = 'This account has been deactivated. Please contact support for assistance.'
+      isLoading.value = false
+      return
+    }
+    
+    if (user.password !== formData.value.password) {
+      loginError.value = 'Incorrect password. Please try again or use forgot password.'
+      isLoading.value = false
+      return
+    }
+    
+    // Successful login
+    localStorage.setItem('isAuthenticated', 'true')
+    localStorage.setItem('currentUserId', user.id.toString())
+    localStorage.setItem('user', JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      avatar: user.avatar || '',
+      role: user.role,
+      university: user.university || '',
+      department: user.department || '',
+      address: user.address || '',
+      dob: user.dob || '',
+      is_verified: user.is_verified,
+      is_active: user.is_active,
+      two_factor_enabled: user.two_factor_enabled,
+      preferred_language: user.preferred_language
+    }))
+    
+    // Dispatch event for Header to update
+    window.dispatchEvent(new Event('profileUpdated'))
+    
+    loginSuccess.value = 'Login successful! Redirecting...'
+    
+    // Redirect after short delay
+    setTimeout(() => {
+      const redirect = route.query.redirect || '/'
+      router.push(redirect)
+    }, 1000)
+    
+  } else {
+    // Signup logic
+    if (!formData.value.fullName.trim()) {
+      loginError.value = 'Please enter your full name.'
+      isLoading.value = false
+      return
+    }
+    
+    if (formData.value.password !== formData.value.confirmPassword) {
+      loginError.value = 'Passwords do not match. Please try again.'
+      isLoading.value = false
+      return
+    }
+    
+    if (formData.value.password.length < 6) {
+      loginError.value = 'Password must be at least 6 characters long for security.'
+      isLoading.value = false
+      return
+    }
+    
+    if (!formData.value.agreeTerms) {
+      loginError.value = 'Please agree to the Terms of Service and Privacy Policy to continue.'
+      isLoading.value = false
+      return
+    }
+    
+    // Check if email already exists
+    const existingUser = users.value.find(u => u.email === formData.value.email)
+    if (existingUser) {
+      loginError.value = 'An account with this email already exists. Please sign in instead.'
+      isLoading.value = false
+      return
+    }
+    
+    // Simulate successful signup
+    const newUserId = Math.floor(Math.random() * 1000) + 100
+    localStorage.setItem('isAuthenticated', 'true')
+    localStorage.setItem('currentUserId', newUserId.toString())
+    localStorage.setItem('user', JSON.stringify({
+      id: newUserId,
+      name: formData.value.fullName,
+      email: formData.value.email,
+      phone: formData.value.phone || '',
+      avatar: '',
+      role: 'boarder',
+      university: '',
+      department: '',
+      is_verified: false,
+      is_active: true,
+      two_factor_enabled: false,
+      preferred_language: 'en'
+    }))
+    
+    // Dispatch event for Header to update
+    window.dispatchEvent(new Event('profileUpdated'))
+    
+    loginSuccess.value = 'Account created successfully! Redirecting...'
+    
+    setTimeout(() => {
+      const redirect = route.query.redirect || '/'
+      router.push(redirect)
+    }, 1000)
+  }
+  
+  isLoading.value = false
 }
+
+onMounted(() => {
+  fetchUsers()
+  
+  // Redirect if already logged in
+  if (localStorage.getItem('isAuthenticated') === 'true') {
+    router.push('/')
+  }
+})
 </script>

@@ -12,7 +12,7 @@
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchAboutData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <button @click="fetchAllData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
       </div>
     </div>
 
@@ -168,6 +168,154 @@
           </div>
         </div>
 
+        <!-- Team Section -->
+        <div v-if="teamMembers.length > 0" class="mb-20">
+          <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <Users class="w-5 h-5 text-teal-600" />
+              <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>
+            </div>
+            <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Meet Our Team</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Dedicated professionals committed to your success</p>
+          </div>
+          
+          <!-- Team Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-black text-teal-600">{{ teamMembers.length }}</div>
+              <div class="text-sm text-gray-500">Total Team</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-black text-teal-600">{{ teamDepartments }}</div>
+              <div class="text-sm text-gray-500">Departments</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-black text-teal-600">{{ teamExperience }}</div>
+              <div class="text-sm text-gray-500">Avg. Experience</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-black text-teal-600">{{ activeMembers }}</div>
+              <div class="text-sm text-gray-500">Active Members</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <div class="text-2xl font-black text-teal-600">{{ earliestJoinYear }}</div>
+              <div class="text-sm text-gray-500">Since</div>
+            </div>
+          </div>
+
+          <!-- Team Members Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div v-for="member in teamMembers" :key="member.id" 
+                 class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+                 @click="selectedMember = selectedMember?.id === member.id ? null : member">
+              <div class="relative h-72 overflow-hidden">
+                <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                
+                <!-- Active/Inactive Badge -->
+                <div class="absolute top-4 right-4">
+                  <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
+                    member.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
+                    {{ member.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+                
+                <!-- Contact Info Overlay -->
+                <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="flex gap-2">
+                    <a v-if="member.email" :href="`mailto:${member.email}`" 
+                       class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                       @click.stop>
+                      <Mail class="w-4 h-4 text-white" />
+                    </a>
+                    <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                       class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                       @click.stop>
+                      <Phone class="w-4 h-4 text-white" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="p-6">
+                <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
+                <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
+                
+                <!-- Short Bio -->
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
+                
+                <!-- Skills -->
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span v-for="skill in member.skills?.slice(0, 3)" :key="skill" 
+                        class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
+                    {{ skill }}
+                  </span>
+                  <span v-if="member.skills?.length > 3" class="text-xs text-gray-400">+{{ member.skills.length - 3 }} more</span>
+                </div>
+                
+                <!-- Joined Date -->
+                <div class="flex items-center gap-1 text-xs text-gray-400">
+                  <Calendar class="w-3 h-3" />
+                  <span>Joined {{ formatDate(member.joining_date) }}</span>
+                </div>
+
+                <!-- Expand Indicator -->
+                <div class="text-center mt-3">
+                  <ChevronDown :class="['w-5 h-5 text-teal-600 transition-transform mx-auto', 
+                    selectedMember?.id === member.id ? 'rotate-180' : '']" />
+                </div>
+              </div>
+              
+              <!-- Expanded Details -->
+              <div v-if="selectedMember?.id === member.id" 
+                   class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+                <!-- Full Bio -->
+                <div>
+                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">About</h5>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
+                </div>
+                
+                <!-- All Skills -->
+                <div>
+                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Skills</h5>
+                  <div class="flex flex-wrap gap-1">
+                    <span v-for="skill in member.skills" :key="skill" 
+                          class="px-2 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
+                      {{ skill }}
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
+                  <div class="space-y-1">
+                    <a v-if="member.email" :href="`mailto:${member.email}`" 
+                       class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                      <Mail class="w-4 h-4" /> {{ member.email }}
+                    </a>
+                    <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                       class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                      <Phone class="w-4 h-4" /> {{ member.phone }}
+                    </a>
+                  </div>
+                </div>
+                
+                <!-- Social Links -->
+                <div v-if="member.social_links && Object.keys(member.social_links).length > 0">
+                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
+                  <div class="flex gap-2">
+                    <a v-for="(link, platform) in member.social_links" :key="platform" 
+                       :href="link" target="_blank" rel="noopener noreferrer"
+                       class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                      <component :is="socialIconMap[platform] || Globe" class="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Nearby Universities -->
         <div v-if="pageData.nearby_universities" class="mb-20">
           <div class="text-center mb-10">
@@ -190,57 +338,6 @@
               <div class="text-right">
                 <div class="font-bold text-teal-600">{{ uni.distance_km }} km</div>
                 <div class="text-xs text-gray-500">{{ uni.travel_time_minutes }} min</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Team Section (from JSON if available, else default) -->
-        <div v-if="pageData.team_stats" class="mb-20">
-          <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <Users class="w-5 h-5 text-teal-600" />
-              <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>
-            </div>
-            <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Meet Our Team</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400">Dedicated professionals committed to your success</p>
-          </div>
-          
-          <!-- Team Stats -->
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
-            <div v-if="pageData.team_stats.total_employees" class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ pageData.team_stats.total_employees }}</div>
-              <div class="text-sm text-gray-500">Total Team</div>
-            </div>
-            <div v-if="pageData.team_stats.management" class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ pageData.team_stats.management }}</div>
-              <div class="text-sm text-gray-500">Management</div>
-            </div>
-            <div v-if="pageData.team_stats.security_staff" class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ pageData.team_stats.security_staff }}</div>
-              <div class="text-sm text-gray-500">Security</div>
-            </div>
-            <div v-if="pageData.team_stats.maintenance_staff" class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ pageData.team_stats.maintenance_staff }}</div>
-              <div class="text-sm text-gray-500">Maintenance</div>
-            </div>
-            <div v-if="pageData.team_stats.housekeeping" class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ pageData.team_stats.housekeeping }}</div>
-              <div class="text-sm text-gray-500">Housekeeping</div>
-            </div>
-          </div>
-
-          <!-- Team Members -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div v-for="member in teamMembers" :key="member.name" class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
-              <div class="relative h-72 overflow-hidden">
-                <img :src="member.image" :alt="member.name" class="w-full h-full object-cover" />
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-              </div>
-              <div class="p-6">
-                <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
-                <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400">{{ member.bio }}</p>
               </div>
             </div>
           </div>
@@ -290,7 +387,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -298,7 +395,8 @@ import TourBookingModal from '../components/TourBookingModal.vue'
 import { 
   Building2, Award, Sparkles, Users, Star, BookOpen, Shield, Wifi, Wind, 
   Utensils, Coffee, Dumbbell, Car, Calendar, MapPin, Phone, TrendingUp, 
-  Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight, Eye 
+  Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
+  Eye, Mail, Globe, Facebook, Linkedin
 } from 'lucide-vue-next'
 
 // Icon mapping for dynamic icons from JSON
@@ -314,9 +412,17 @@ const iconMap = {
   'award': Award,
 }
 
+// Social media icon mapping
+const socialIconMap = {
+  'facebook': Facebook,
+  'linkedin': Linkedin,
+}
+
 const activeMilestone = ref(null)
 const isTourModalOpen = ref(false)
+const selectedMember = ref(null)
 const pageData = ref({})
+const teamMembers = ref([])
 const loading = ref(true)
 const error = ref('')
 
@@ -328,19 +434,58 @@ const closeTourModal = () => {
   isTourModalOpen.value = false
 }
 
-// Fetch data from JSON
-async function fetchAboutData() {
+// Fetch all data from JSON
+async function fetchAllData() {
   loading.value = true
   error.value = ''
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_about.json')
-    pageData.value = response.data
+    const [aboutResponse, teamResponse] = await Promise.all([
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_about.json'),
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/team.json')
+    ])
+    
+    pageData.value = aboutResponse.data
+    teamMembers.value = teamResponse.data.filter(member => member.is_active) // Only show active members
   } catch (err) {
-    console.error('Error fetching about page data:', err)
+    console.error('Error fetching page data:', err)
     error.value = 'Failed to load content. Please check your connection and try again.'
   } finally {
     loading.value = false
   }
+}
+
+// Computed team stats
+const teamDepartments = computed(() => {
+  const departments = new Set(teamMembers.value.map(m => m.role))
+  return departments.size
+})
+
+const teamExperience = computed(() => {
+  if (teamMembers.value.length === 0) return 'N/A'
+  const totalYears = teamMembers.value.reduce((sum, member) => {
+    const joinDate = new Date(member.joining_date)
+    const years = (new Date().getFullYear() - joinDate.getFullYear())
+    return sum + years
+  }, 0)
+  return Math.round(totalYears / teamMembers.value.length) + ' yrs'
+})
+
+const activeMembers = computed(() => {
+  return teamMembers.value.filter(m => m.is_active).length
+})
+
+const earliestJoinYear = computed(() => {
+  if (teamMembers.value.length === 0) return 'N/A'
+  const dates = teamMembers.value.map(m => new Date(m.joining_date))
+  const earliest = new Date(Math.min(...dates))
+  return earliest.getFullYear()
+})
+
+// Format date
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
 }
 
 // Static data that stays as fallback
@@ -358,14 +503,7 @@ const stats = [
   { num: '24/7', label: 'Security', icon: Shield }
 ]
 
-const teamMembers = [
-  { name: 'Md. Rahman', role: 'Managing Director', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600', bio: 'Leading with vision and dedication' },
-  { name: 'Fatima Hassan', role: 'Operations Manager', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600', bio: 'Ensuring excellence in daily operations' },
-  { name: 'Ahmed Khan', role: 'Facility Head', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600', bio: 'Maintaining world-class facilities' },
-  { name: 'Sara Islam', role: 'Student Coordinator', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600', bio: 'Building vibrant student community' }
-]
-
 onMounted(() => {
-  fetchAboutData()
+  fetchAllData()
 })
 </script>
