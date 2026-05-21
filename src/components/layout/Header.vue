@@ -1,16 +1,16 @@
 <template>
   <nav :class="['fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white dark:bg-slate-900 shadow-lg shadow-slate-900/5 dark:shadow-slate-900/20 border-b border-slate-200/50 dark:border-slate-700/50']">
     <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
-      <div class="flex justify-between items-center h-16 lg:h-24">
+      <div class="flex justify-between items-center h-16 lg:h-20">
         <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
           <img 
             src="@/assets/logo/logo.png" 
             alt="Logo" 
-            class="h-16 lg:h-36 w-auto object-contain transition-all duration-300" 
+            class="h-16 lg:h-28 w-auto object-contain transition-all duration-300" 
           />
         </router-link>
 
-        <div class="hidden lg:flex items-center gap-8">
+        <div class="hidden lg:flex items-center gap-6">
           <router-link to="/" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Home
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
@@ -31,7 +31,7 @@
             About
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
-          <router-link to="/contact" class="relative px-6 py-2.5 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
+          <router-link to="/contact" class="relative px-5 py-2 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
             <span class="relative z-10">Contact Us</span>
           </router-link>
           <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
@@ -52,10 +52,10 @@
                <button @click="logout" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Logout</button>
             </div>
           </div>
-          <router-link v-else to="/login" class="px-8 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
+          <router-link v-else to="/login" class="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
             <span class="relative z-10">Login / Sign Up</span>
           </router-link>
-          <button @click="toggleTheme" class="p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300" aria-label="Toggle theme">
+          <button @click="toggleTheme" class="p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300" aria-label="Toggle theme">
             <Sun v-if="isDark" class="w-6 h-6" />
             <Moon v-else class="w-6 h-6" />
           </button>

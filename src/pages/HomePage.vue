@@ -21,7 +21,7 @@
       <Header />
 
       <!-- Vibrant Hero Section -->
-      <section class="relative min-h-screen flex items-center justify-center pt-16 lg:pt-24">
+      <section class="relative min-h-screen flex items-center justify-center pt-16 lg:pt-20">
         <div class="relative w-full">
           <!-- Carousel -->
           <div class="relative w-full overflow-hidden" ref="carouselRef">
