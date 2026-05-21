@@ -205,8 +205,8 @@
         </div>
       </section>
 
-      <!-- Rooms -->
-      <section v-if="pageData.rooms" class="py-12">
+      <!-- Rooms Section - Dynamic from rooms.json -->
+      <section v-if="homepageRooms.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
@@ -214,40 +214,69 @@
                 <div class="p-2 bg-teal-600 rounded-xl">
                   <Home class="w-4 h-4 text-white" />
                 </div>
-                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">{{ pageData.rooms.badge }}</span>
+                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">{{ pageData.rooms?.badge || 'Find Your Space' }}</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">{{ pageData.rooms.headline }}</h2>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">{{ pageData.rooms?.headline || 'Choose Your Perfect Room' }}</h2>
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(room, i) in pageData.rooms.items" :key="i">
+            <AnimatedSection v-for="(room, i) in homepageRooms" :key="room.id">
               <div class="relative">
-                <div v-if="room.popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-2 sm:py-2.5 text-white rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600 whitespace-nowrap">
+                <div v-if="room.is_popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-2 sm:py-2.5 text-white rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600 whitespace-nowrap">
                   <Star class="w-4 h-4 fill-current" />
                   Most Popular
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700">
                   <div class="relative h-48 sm:h-64 overflow-hidden">
-                    <img :src="room.img" :alt="room.title" class="w-full h-full object-cover" />
+                    <img :src="room.image" :alt="room.name" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                    
+                    <!-- Discount Badge -->
+                    <div v-if="room.discount" class="absolute top-4 left-4">
+                      <span class="px-3 py-1 bg-red-500 text-white rounded-full text-xs font-bold shadow">
+                        {{ room.discount.value }}% OFF
+                      </span>
+                    </div>
+                    
+                    <!-- Availability Badge -->
+                    <div class="absolute bottom-4 left-4 flex items-center gap-2">
+                      <div :class="['w-2 h-2 rounded-full', room.is_available && room.available_seats > 0 ? 'bg-green-400' : 'bg-red-400']"></div>
+                      <span class="text-white text-xs font-medium">
+                        {{ room.is_available && room.available_seats > 0 ? `${room.available_seats} seat${room.available_seats > 1 ? 's' : ''} left` : 'Fully booked' }}
+                      </span>
+                    </div>
+                    
+                    <!-- Rating Badge -->
+                    <div class="absolute bottom-4 right-4">
+                      <span class="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white font-medium flex items-center gap-1">
+                        <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
+                        {{ room.rating }}
+                      </span>
+                    </div>
                   </div>
                   <div class="p-4 sm:p-6">
-                    <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.title }}</h3>
-                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.desc }}</p>
+                    <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.name }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.short_description }}</p>
                     <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                      <div v-for="(feature, j) in room.features" :key="j" class="flex items-center gap-2 sm:gap-3">
+                      <div v-for="(feature, j) in room.features.slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
                         <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                           <CheckCircle2 class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
                         </div>
-                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium break-words">{{ feature }}</span>
+                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium break-words capitalize">{{ feature }}</span>
                       </div>
                     </div>
                     <div class="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
                       <div>
                         <div class="text-xs sm:text-sm text-teal-600 mb-1">Starting from</div>
-                        <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">{{ room.price }}<span class="text-base sm:text-lg">/mo</span></div>
+                        <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">
+                          {{ room.currency === 'BDT' ? '৳' : '$' }}{{ room.price.toLocaleString() }}
+                          <span class="text-base sm:text-lg">/mo</span>
+                        </div>
+                        <div v-if="room.original_price && room.original_price !== room.price" class="text-xs text-gray-400 line-through">
+                          {{ room.currency === 'BDT' ? '৳' : '$' }}{{ room.original_price.toLocaleString() }}
+                        </div>
                       </div>
-                      <router-link :to="`/rooms/${room.type}`" class="px-3 sm:px-5 py-1.5 sm:py-2.5 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
+                      <router-link :to="`/rooms/${room.id}`" class="px-3 sm:px-5 py-1.5 sm:py-2.5 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
                         View Details
                       </router-link>
                     </div>
@@ -337,29 +366,21 @@
             </div>
           </AnimatedSection>
 
-          <!-- Featured Testimonials -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div v-for="testimonial in testimonials" :key="testimonial.id" 
                  class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <!-- Rating Stars -->
               <div class="flex gap-1 mb-4 sm:mb-6">
                 <Star v-for="n in 5" :key="n" :class="['w-4 h-4 sm:w-5 sm:h-5', n <= testimonial.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600']" />
               </div>
-              
-              <!-- Content -->
               <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed break-words">
                 "{{ testimonial.content }}"
               </p>
-              
-              <!-- Tags -->
               <div v-if="testimonial.tags && testimonial.tags.length > 0" class="flex flex-wrap gap-1 mb-4">
                 <span v-for="tag in testimonial.tags" :key="tag" 
                       class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
                   #{{ tag }}
                 </span>
               </div>
-              
-              <!-- User Info -->
               <div class="flex items-center gap-3 sm:gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <img :src="testimonial.user.avatar" :alt="testimonial.user.name" 
                      class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-teal-600 flex-shrink-0" />
@@ -368,15 +389,12 @@
                   <div class="text-xs text-teal-600 font-medium">{{ testimonial.university }}</div>
                   <div class="text-xs text-gray-400">{{ testimonial.department }}</div>
                 </div>
-                <!-- Featured Badge -->
                 <div v-if="testimonial.is_featured" class="flex-shrink-0">
                   <span class="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
                     Featured
                   </span>
                 </div>
               </div>
-              
-              <!-- Stay Info -->
               <div v-if="testimonial.stay_duration" class="mt-3 flex items-center gap-2 text-xs text-gray-400">
                 <Clock class="w-3 h-3" />
                 <span>{{ testimonial.stay_duration }}</span>
@@ -463,6 +481,7 @@ const pageData = ref({})
 const heroSlides = ref([])
 const searchWidgetData = ref({})
 const testimonials = ref([])
+const homepageRooms = ref([])
 const loading = ref(true)
 const error = ref('')
 const searchFilters = ref({ roomType: '', seats: '', maxPrice: '' })
@@ -476,9 +495,10 @@ async function fetchPageData() {
   loading.value = true
   error.value = ''
   try {
-    const [homeResponse, testimonialsResponse] = await Promise.all([
+    const [homeResponse, testimonialsResponse, roomsResponse] = await Promise.all([
       axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json'),
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json')
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json'),
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/rooms.json')
     ])
     
     const data = homeResponse.data
@@ -497,7 +517,14 @@ async function fetchPageData() {
     testimonials.value = [
       ...allTestimonials.filter(t => t.is_featured),
       ...allTestimonials.filter(t => !t.is_featured)
-    ].slice(0, 6) // Limit to 6 testimonials
+    ].slice(0, 6)
+    
+    // Set homepage rooms - show popular first, limit to 3
+    const allRooms = roomsResponse.data || []
+    homepageRooms.value = [
+      ...allRooms.filter(r => r.is_popular),
+      ...allRooms.filter(r => !r.is_popular)
+    ].slice(0, 3)
     
     // Start autoplay
     if (autoplayInterval.value) clearInterval(autoplayInterval.value)
