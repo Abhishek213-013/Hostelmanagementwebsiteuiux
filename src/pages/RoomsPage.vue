@@ -11,8 +11,12 @@
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchRoomsData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
+          <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+          <button @click="fetchRoomsData" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+            Try Again
+          </button>
+        </div>
       </div>
     </div>
 
@@ -58,24 +62,24 @@
                @mouseleave="hoveredRoom = null">
             <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
               <div class="relative h-72 overflow-hidden">
-                <img :src="room.image" :alt="room.name" class="w-full h-full object-cover" />
+                <img :src="room.image || getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
                 
                 <!-- Capacity Badge -->
                 <div class="absolute bottom-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
                   <Users class="w-4 h-4 text-white" />
-                  <span class="text-white font-bold text-sm">Up to {{ room.capacity }}</span>
+                  <span class="text-white font-bold text-sm">Up to {{ room.capacity || getCapacityFromType(room.room_type?.name) }}</span>
                 </div>
                 
                 <!-- Size Badge -->
                 <div class="absolute top-4 right-4 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-lg">
-                  <span class="text-gray-800 dark:text-white font-black text-sm">{{ room.size_sqft }} sq ft</span>
+                  <span class="text-gray-800 dark:text-white font-black text-sm">{{ room.size_sqft || getDefaultSize() }} sq ft</span>
                 </div>
                 
                 <!-- Price Overlay -->
                 <div class="absolute top-4 left-4">
                   <div class="px-4 py-2 text-white rounded-xl font-black shadow-lg bg-teal-600">
-                    {{ room.currency === 'BDT' ? '৳' : '$' }}{{ room.price.toLocaleString() }}<span class="text-xs font-normal">/mo</span>
+                    ৳{{ (room.room_price || 0).toLocaleString() }}<span class="text-xs font-normal">/mo</span>
                   </div>
                   <!-- Discount Badge -->
                   <div v-if="room.discount" class="mt-2 px-3 py-1 bg-red-500 text-white rounded-lg text-xs font-bold">
@@ -94,32 +98,32 @@
               
               <div class="p-8">
                 <div class="flex items-center justify-between mb-3">
-                  <h3 class="text-2xl font-black text-teal-600">{{ room.name }}</h3>
+                  <h3 class="text-2xl font-black text-teal-600">{{ room.room_number || 'Room ' + room.id }}</h3>
                   <div class="flex items-center gap-1">
                     <Star class="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ room.rating }}</span>
-                    <span class="text-xs text-gray-500">({{ room.review_count }})</span>
+                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ room.rating || 4.5 }}</span>
+                    <span class="text-xs text-gray-500">({{ room.review_count || 0 }})</span>
                   </div>
                 </div>
                 
                 <!-- Room Info -->
                 <div class="flex flex-wrap gap-2 mb-4">
-                  <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
-                    {{ room.bed_type }}
+                  <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 capitalize">
+                    {{ room.room_type?.name || 'Standard' }}
                   </span>
                   <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
-                    {{ room.bathroom_type }}
+                    Floor {{ room.floor_id || 'N/A' }}
                   </span>
                   <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 capitalize">
-                    {{ room.category }}
+                    {{ room.status || 'Available' }}
                   </span>
                 </div>
                 
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{{ room.short_description }}</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
                 
                 <!-- Features -->
                 <div class="space-y-3 mb-8">
-                  <div v-for="(feature, i) in room.features.slice(0, 5)" :key="i" class="flex items-center gap-3">
+                  <div v-for="(feature, i) in getRoomFeatures(room.room_type?.name).slice(0, 5)" :key="i" class="flex items-center gap-3">
                     <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                       <CheckCircle2 class="w-4 h-4 text-teal-600" />
                     </div>
@@ -130,17 +134,17 @@
                 <!-- Availability & Actions -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
                   <div class="flex items-center gap-3 mb-4">
-                    <div :class="['w-3 h-3 rounded-full', room.is_available && room.available_seats > 0 ? 'bg-teal-500' : 'bg-red-500']"></div>
+                    <div :class="['w-3 h-3 rounded-full', room.status === 'available' ? 'bg-teal-500' : 'bg-red-500']"></div>
                     <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                      {{ room.is_available && room.available_seats > 0 ? `${room.available_seats} seat${room.available_seats > 1 ? 's' : ''} available` : 'Fully booked' }}
+                      {{ room.status === 'available' ? 'Available' : 'Booked' }}
                     </span>
                   </div>
                   
                   <!-- Floor & Wing Info -->
                   <div class="flex gap-4 mb-4 text-xs text-gray-500 dark:text-gray-400">
-                    <span>Floor: {{ room.floor }}</span>
-                    <span>Wing: {{ room.wing }}</span>
-                    <span>Room: {{ room.room_number }}</span>
+                    <span>Building: {{ room.building_id || 'N/A' }}</span>
+                    <span>Floor: {{ room.floor_id || 'N/A' }}</span>
+                    <span>Branch: {{ room.branch_id || 'N/A' }}</span>
                   </div>
                   
                   <div class="flex items-center gap-3">
@@ -150,13 +154,13 @@
                       <ArrowRight class="w-4 h-4" />
                     </router-link>
                     <button 
-                      @click="handleBookNow"
-                      :disabled="!room.is_available || room.available_seats === 0"
+                      @click="handleBookNow(room)"
+                      :disabled="room.status !== 'available'"
                       :class="['px-5 py-2.5 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2',
-                        (!room.is_available || room.available_seats === 0) 
+                        room.status !== 'available' 
                           ? 'bg-gray-400 cursor-not-allowed' 
                           : 'bg-teal-600 hover:bg-teal-700']">
-                      {{ !room.is_available || room.available_seats === 0 ? 'Full' : 'Book Now' }}
+                      {{ room.status !== 'available' ? 'Booked' : 'Book Now' }}
                       <ArrowRight class="w-4 h-4" />
                     </button>
                   </div>
@@ -200,12 +204,12 @@
           <h2 class="text-2xl lg:text-3xl font-black mb-6">Can't Find What You're Looking For?</h2>
           <p class="text-lg text-white/80 mb-10 max-w-xl mx-auto">Contact us for custom room arrangements or special requirements</p>
           <div class="flex flex-wrap justify-center gap-4">
-            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
+            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3 hover:shadow-xl transition-all">
               <Calendar class="w-5 h-5" />
               View All Rooms
               <ChevronRight class="w-5 h-5" />
             </router-link>
-            <router-link to="/contact" class="px-10 py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-3">
+            <router-link to="/contact" class="px-10 py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-3 hover:bg-teal-800 transition-all">
               <Info class="w-5 h-5" />
               Contact Us
             </router-link>
@@ -218,67 +222,84 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { useRoute, useRouter } from 'vue-router'
 import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info } from 'lucide-vue-next'
+import { useRooms } from '../composables/useRooms'
+import { useRoomTypes } from '../composables/useRoomTypes'
 
 const route = useRoute()
 const router = useRouter()
 const isLoggedIn = ref(false)
-const rooms = ref([])
-const loading = ref(true)
-const error = ref('')
 
-// Fetch rooms data from JSON
-async function fetchRoomsData() {
-  loading.value = true
-  error.value = ''
-  try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/rooms.json')
-    rooms.value = response.data
-  } catch (err) {
-    console.error('Error fetching rooms data:', err)
-    error.value = 'Failed to load rooms. Please check your connection and try again.'
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchRoomsData()
-  isLoggedIn.value = !!localStorage.getItem('isAuthenticated')
-})
-
-const handleBookNow = () => {
-  if (!isLoggedIn.value) {
-    router.push('/login')
-    return
-  }
-  router.push('/booking')
-}
+// Use composables
+const { rooms, loading, error, fetchRooms } = useRooms()
+const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
 
 const selectedType = ref('all')
 const hoveredRoom = ref(null)
 
-// Dynamic room types from JSON data
+// Helper functions for UI display
+const getRoomImage = (roomTypeName) => {
+  const images = {
+    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
+    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
+    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
+    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
+  }
+  return images[roomTypeName?.toLowerCase()] || images.standard
+}
+
+const getCapacityFromType = (roomTypeName) => {
+  const capacities = {
+    'shared': 4,
+    'semi-private': 2,
+    'premium': 1,
+    'standard': 2
+  }
+  return capacities[roomTypeName?.toLowerCase()] || 2
+}
+
+const getDefaultSize = () => {
+  return 250
+}
+
+const getDefaultDescription = (roomTypeName) => {
+  const descriptions = {
+    'shared': 'Comfortable shared accommodation with modern amenities perfect for students and professionals.',
+    'semi-private': 'Semi-private room offering privacy with shared common areas. Ideal for two occupants.',
+    'premium': 'Premium single room with attached bathroom and premium furnishings for ultimate comfort.',
+    'standard': 'Well-appointed standard room with essential amenities for a comfortable stay.'
+  }
+  return descriptions[roomTypeName?.toLowerCase()] || 'Comfortable room with modern amenities for a pleasant stay.'
+}
+
+const getRoomFeatures = (roomTypeName) => {
+  const features = {
+    'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
+    'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
+    'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'],
+    'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan']
+  }
+  return features[roomTypeName?.toLowerCase()] || features.standard
+}
+
+// Dynamic room types from API
 const roomTypes = computed(() => {
-  const types = new Map()
-  types.set('all', { value: 'all', label: 'All Rooms' })
+  const types = [{ value: 'all', label: 'All Rooms' }]
   
-  rooms.value.forEach(room => {
-    const typeValue = room.type
-    if (!types.has(typeValue)) {
-      types.set(typeValue, {
-        value: typeValue,
-        label: typeValue.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  if (apiRoomTypes.value && apiRoomTypes.value.length > 0) {
+    apiRoomTypes.value.forEach(type => {
+      types.push({
+        value: type.id.toString(),
+        label: type.name
       })
-    }
-  })
+    })
+  }
   
-  return Array.from(types.values())
+  return types
 })
 
 const amenities = [
@@ -296,12 +317,58 @@ const filteredRooms = computed(() => {
   let result = rooms.value
   
   if (selectedType.value !== 'all') {
-    result = result.filter(room => room.type === selectedType.value)
+    result = result.filter(room => {
+      // Filter by room type ID or name
+      return room.room_type_id?.toString() === selectedType.value || 
+             room.room_type?.id?.toString() === selectedType.value
+    })
   }
+  
+  // Only show available rooms by default (optional)
+  // result = result.filter(room => room.status === 'available')
   
   return result
 })
 
+// Fetch rooms data from API
+async function fetchRoomsData() {
+  try {
+    await Promise.all([
+      fetchRooms(),
+      fetchRoomTypes()
+    ])
+  } catch (err) {
+    console.error('Error fetching data:', err)
+  }
+}
+
+const handleBookNow = (room) => {
+  if (!isLoggedIn.value) {
+    router.push('/login')
+    return
+  }
+  
+  // Store selected room info in sessionStorage for booking page
+  sessionStorage.setItem('selectedRoom', JSON.stringify({
+    id: room.id,
+    room_number: room.room_number,
+    room_price: room.room_price,
+    room_type: room.room_type,
+    branch_id: room.branch_id,
+    building_id: room.building_id,
+    floor_id: room.floor_id
+  }))
+  
+  router.push(`/booking?roomId=${room.id}`)
+}
+
 // Initialize filters from URL params
-if (route.query.type) selectedType.value = route.query.type
+watch(() => route.query.type, (newType) => {
+  if (newType) selectedType.value = newType
+}, { immediate: true })
+
+onMounted(async () => {
+  await fetchRoomsData()
+  isLoggedIn.value = !!localStorage.getItem('isAuthenticated')
+})
 </script>
