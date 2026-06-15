@@ -110,4 +110,17 @@ export const facilitiesAPI = {
   getFacilityDetails: (id) => apiClient.get(`/facilities/${id}`),
   createFacility: (facilityData) => apiClient.post('/facilities', facilityData),
 }
+
+// Gallery API
+export const galleryAPI = {
+  getGallery: (all = 1) => apiClient.get('/gallery', { params: { all } }),
+  getGalleryItem: (id) => apiClient.get(`/gallery/${id}`),
+  createGalleryItem: (formData) => apiClient.post('/gallery', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateGalleryItem: (id, formData) => apiClient.post(`/gallery/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  deleteGalleryItem: (id) => apiClient.delete(`/gallery/${id}`)
+}
 export default apiClient

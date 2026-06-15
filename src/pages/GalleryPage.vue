@@ -11,8 +11,12 @@
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchGalleryData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
+          <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+          <button @click="fetchGalleryData" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+            Try Again
+          </button>
+        </div>
       </div>
     </div>
 
@@ -63,11 +67,11 @@
                     {{ getCategoryLabel(image.category) }}
                   </div>
                   <h4 class="text-white font-bold text-sm sm:text-lg break-words">{{ image.title }}</h4>
-                  <!-- Tags -->
-                  <div class="flex flex-wrap gap-1 mt-1">
-                    <span v-for="tag in image.tags?.slice(0, 2)" :key="tag" 
-                          class="px-1.5 py-0.5 bg-white/20 rounded text-xs text-white/80">
-                      #{{ tag }}
+                  <!-- Status Badge -->
+                  <div v-if="image.status !== undefined" class="mt-1">
+                    <span :class="['px-1.5 py-0.5 rounded text-xs', 
+                      image.status == 1 ? 'bg-green-500/80' : 'bg-red-500/80']">
+                      {{ image.status == 1 ? 'Active' : 'Inactive' }}
                     </span>
                   </div>
                 </div>
@@ -144,9 +148,9 @@
                 <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600 capitalize">
                   {{ getCategoryLabel(lightboxImage.category) }}
                 </span>
-                <span v-for="tag in lightboxImage.tags" :key="tag" 
-                      class="px-2 py-1 bg-white/20 rounded-lg text-xs text-white/80">
-                  #{{ tag }}
+                <span v-if="lightboxImage.status !== undefined" :class="['px-2 py-1 rounded-lg text-xs', 
+                  lightboxImage.status == 1 ? 'bg-green-500/80' : 'bg-red-500/80']">
+                  {{ lightboxImage.status == 1 ? 'Active' : 'Inactive' }}
                 </span>
               </div>
               <p class="text-white text-center mt-3 sm:mt-4 font-bold text-base sm:text-xl break-words">{{ lightboxImage.title }}</p>
@@ -163,40 +167,25 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
+import { useGallery } from '../composables/useGallery'
+
+// Use gallery composable
+const { galleryItems, loading, error, fetchGallery } = useGallery()
 
 // State
-const galleryImages = ref([])
-const loading = ref(true)
-const error = ref('')
 const selectedCategory = ref('all')
 const hoveredImage = ref(null)
 const currentLightboxIndex = ref(0)
 
-// Fetch gallery data from JSON
-async function fetchGalleryData() {
-  loading.value = true
-  error.value = ''
-  try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/gallery.json')
-    galleryImages.value = response.data
-  } catch (err) {
-    console.error('Error fetching gallery data:', err)
-    error.value = 'Failed to load gallery. Please check your connection and try again.'
-  } finally {
-    loading.value = false
-  }
-}
-
-// Dynamic categories from JSON data
+// Dynamic categories from gallery data
 const categories = computed(() => {
   const cats = new Map()
   cats.set('all', { id: 'all', label: 'All Photos' })
   
-  galleryImages.value.forEach(img => {
+  galleryItems.value.forEach(img => {
     if (!cats.has(img.category)) {
       cats.set(img.category, {
         id: img.category,
@@ -216,19 +205,19 @@ const getCategoryLabel = (categoryId) => {
     'dining': 'Dining',
     'facilities': 'Facilities',
   }
-  return labels[categoryId] || categoryId.charAt(0).toUpperCase() + categoryId.slice(1).replace('-', ' ')
+  return labels[categoryId] || categoryId?.charAt(0)?.toUpperCase() + categoryId?.slice(1)?.replace('-', ' ') || 'General'
 }
 
 // Get count for category
 const getCategoryCount = (categoryId) => {
-  if (categoryId === 'all') return galleryImages.value.length
-  return galleryImages.value.filter(img => img.category === categoryId).length
+  if (categoryId === 'all') return galleryItems.value.length
+  return galleryItems.value.filter(img => img.category === categoryId).length
 }
 
 // Filtered images
 const filteredImages = computed(() => {
-  if (selectedCategory.value === 'all') return galleryImages.value
-  return galleryImages.value.filter(img => img.category === selectedCategory.value)
+  if (selectedCategory.value === 'all') return galleryItems.value
+  return galleryItems.value.filter(img => img.category === selectedCategory.value)
 })
 
 // Lightbox image
@@ -239,8 +228,8 @@ const lightboxImage = computed(() => {
 
 // Latest photo
 const latestPhoto = computed(() => {
-  if (galleryImages.value.length === 0) return null
-  return [...galleryImages.value].sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at))[0]
+  if (galleryItems.value.length === 0) return null
+  return [...galleryItems.value].sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at))[0]
 })
 
 // Open lightbox at specific index
@@ -292,6 +281,16 @@ const amenities = [
   { icon: Car, label: 'Parking' },
   { icon: Dumbbell, label: 'Gym' }
 ]
+
+// Fetch gallery data from API
+async function fetchGalleryData() {
+  try {
+    await fetchGallery()
+    console.log('Loaded gallery items:', galleryItems.value)
+  } catch (err) {
+    console.error('Error fetching gallery:', err)
+  }
+}
 
 onMounted(() => {
   fetchGalleryData()
