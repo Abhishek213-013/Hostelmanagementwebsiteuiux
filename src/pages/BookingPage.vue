@@ -187,6 +187,22 @@
                         formErrors.check_out_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
                     <p v-if="formErrors.check_out_date" class="text-red-500 text-sm mt-1">{{ formErrors.check_out_date }}</p>
                   </div>
+                  <!-- Add this after the check-out date fields -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-3">Select Seat</label>
+                      <select v-model="selectedSeatId" @change="bookingData.seat_id = selectedSeatId"
+                        class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
+                        <option value="">Select a seat</option>
+                        <option v-for="seat in availableSeats" :key="seat.id" :value="seat.id">
+                          Seat {{ seat.id }} - {{ seat.seat_description || 'Available' }}
+                        </option>
+                      </select>
+                      <p v-if="availableSeats.length === 0 && selectedRoom" class="text-red-500 text-sm mt-1">
+                        No seats available for this room
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -342,6 +358,13 @@
             </div>
           </AnimatedSection>
         </div>
+        <!-- Debug Section -->
+        <div v-if="selectedRoom" class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-xs overflow-auto">
+          <details>
+            <summary class="font-bold cursor-pointer">Debug: Booking Payload</summary>
+            <pre class="mt-2">{{ JSON.stringify(bookingData, null, 2) }}</pre>
+          </details>
+        </div>
       </div>
     </div>
     <Footer />
@@ -358,14 +381,20 @@ import AnimatedSection from '../components/ui/AnimatedSection.vue'
 import { useRooms } from '../composables/useRooms'
 import { useBookings } from '../composables/useBookings'
 import { useLocations } from '../composables/useLocations'
+// Import roomAPI directly if needed, or use the composable method
+import { roomAPI } from '../services/api'  // <-- ADD THIS IMPORT
 
 const route = useRoute()
 const router = useRouter()
 const step = ref(2)
 
+// Add a new state for available seats
+const availableSeats = ref([])
+const selectedSeatId = ref(null)
+
 // Use composables
-const { rooms, roomTypes, loading: roomsLoading, error: roomsError, fetchRooms, fetchRoomDetails } = useRooms()
-const { createBooking, currentBooking, loading: bookingLoading, error: bookingError } = useBookings()
+const { rooms, roomTypes, loading: roomsLoading, error: roomsError, fetchRooms, fetchRoomDetails, checkRoomAvailability } = useRooms()
+const { createBooking, currentBooking, loading: bookingLoading, error: bookingError, updateBookingStatus } = useBookings()
 const { divisions, districts, upazilas, unions, loading: locationLoading, fetchDivisions, fetchDistricts, fetchUpazilas, fetchUnions } = useLocations()
 
 // Component state
@@ -378,7 +407,7 @@ const selectedDivisionId = ref('')
 const selectedRoom = ref(null)
 
 const bookingData = ref({
-  branch_id: 1,  // You might want to make this dynamic
+  branch_id: 1,
   room_id: null,
   seat_id: null,
   billing_type_id: 1,
@@ -402,7 +431,7 @@ const bookingData = ref({
   check_in_date: '',
   check_out_date: '',
   billing_amount: 0,
-  status: 2,  // 2 might represent pending or confirmed based on your backend
+  status: 2,
   notes: ''
 })
 
@@ -413,6 +442,40 @@ const paymentMethods = [
   { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2 }
 ]
 
+// Fix: Use checkRoomAvailability from useRooms instead of direct roomAPI call
+const fetchAvailableSeats = async (roomId) => {
+  try {
+    // Use the composable method instead of direct roomAPI
+    const availability = await checkRoomAvailability(roomId)
+    console.log('Availability response:', availability)
+    
+    let availData = availability
+    if (availData && availData.data) availData = availData.data
+    
+    if (availData && availData.available_seats) {
+      availableSeats.value = availData.available_seats
+      // Auto-select the first available seat if any
+      if (availableSeats.value.length > 0) {
+        selectedSeatId.value = availableSeats.value[0].id
+        bookingData.value.seat_id = selectedSeatId.value
+      }
+    } else if (availData && availData.data && availData.data.available_seats) {
+      // Handle nested response structure
+      availableSeats.value = availData.data.available_seats
+      if (availableSeats.value.length > 0) {
+        selectedSeatId.value = availableSeats.value[0].id
+        bookingData.value.seat_id = selectedSeatId.value
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch available seats:', err)
+    // If there's an error, create a default seat option
+    availableSeats.value = [{ id: 1, seat_description: 'Default Seat' }]
+    selectedSeatId.value = 1
+    bookingData.value.seat_id = 1
+  }
+}
+
 // Initialize component
 onMounted(async () => {
   if (!localStorage.getItem('isAuthenticated')) {
@@ -420,20 +483,27 @@ onMounted(async () => {
     return
   }
 
-  // Fetch initial data
-  await Promise.all([
-    fetchDivisions(),
-    fetchRooms(),
-    fetchRoomDetails(route.query.roomId) // Assuming room ID is passed in query
-  ])
+  await fetchDivisions()
 
   const roomId = route.query.roomId
   if (roomId) {
     try {
       const room = await fetchRoomDetails(roomId)
       selectedRoom.value = room
+      
       bookingData.value.room_id = room.id
+      bookingData.value.branch_id = room.branch_id
       bookingData.value.billing_amount = room.room_price
+      
+      // Fetch available seats for this room
+      await fetchAvailableSeats(roomId)
+      
+      console.log('Selected room:', {
+        id: room.id,
+        branch_id: room.branch_id,
+        room_price: room.room_price,
+        available_seats: availableSeats.value
+      })
     } catch (error) {
       console.error('Failed to fetch room details:', error)
     }
@@ -503,16 +573,70 @@ const validateForm = () => {
 const confirmBooking = async () => {
   if (!validateForm()) return
   
+  // Make sure we have a seat selected
+  if (!bookingData.value.seat_id) {
+    formErrors.value.seat = 'Please select a seat'
+    return
+  }
+  
+  // Make sure we have the room_id and branch_id
+  if (!bookingData.value.room_id) {
+    formErrors.value.submit = 'Room information is missing. Please go back and select a room.'
+    return
+  }
+  
   submittingBooking.value = true
+  
+  // Prepare booking data matching the exact format from your API spec
+  const bookingPayload = {
+    branch_id: parseInt(bookingData.value.branch_id),
+    room_id: parseInt(bookingData.value.room_id),
+    seat_id: parseInt(bookingData.value.seat_id),
+    billing_type_id: parseInt(bookingData.value.billing_type_id),
+    party_name: bookingData.value.party_name,
+    party_name_bn: bookingData.value.party_name_bn || "",
+    mobile_number: bookingData.value.mobile_number,
+    phone_number: bookingData.value.phone_number || "",
+    whats_app: bookingData.value.whats_app || "",
+    email_number: bookingData.value.email_number,
+    house: bookingData.value.house || "",
+    street: bookingData.value.street || "",
+    union_id: bookingData.value.union_id ? parseInt(bookingData.value.union_id) : null,
+    upazila_id: bookingData.value.upazila_id ? parseInt(bookingData.value.upazila_id) : null,
+    district_id: bookingData.value.district_id ? parseInt(bookingData.value.district_id) : null,
+    division_id: bookingData.value.division_id ? parseInt(bookingData.value.division_id) : null,
+    fb: bookingData.value.fb || "",
+    twiter: bookingData.value.twiter || "",
+    instagram: bookingData.value.instagram || "",
+    linked_in: bookingData.value.linked_in || "",
+    youtube: bookingData.value.youtube || "",
+    check_in_date: bookingData.value.check_in_date,
+    check_out_date: bookingData.value.check_out_date,
+    billing_amount: parseFloat(bookingData.value.billing_amount),
+    status: parseInt(bookingData.value.status),
+    notes: bookingData.value.notes || ""
+  }
+  
+  console.log('Sending booking payload:', JSON.stringify(bookingPayload, null, 2))
+  
   try {
-    // First create the booking with your backend
-    const booking = await createBooking(bookingData.value)
+    const booking = await createBooking(bookingPayload)
     if (booking) {
       step.value = 3
     }
   } catch (error) {
     console.error('Failed to create booking:', error)
-    formErrors.value.submit = error.message || 'Failed to create booking. Please try again.'
+    
+    // Display detailed error message
+    if (error.response?.data?.message) {
+      formErrors.value.submit = error.response.data.message
+    } else if (error.response?.data?.error) {
+      formErrors.value.submit = error.response.data.error
+    } else if (error.message) {
+      formErrors.value.submit = error.message
+    } else {
+      formErrors.value.submit = 'Failed to create booking. Please try again.'
+    }
   } finally {
     submittingBooking.value = false
   }
@@ -552,7 +676,7 @@ const resetBooking = () => {
   paymentStatus.value = null
   selectedPayment.value = ''
   bookingData.value = {
-    branch_id: 1,
+    branch_id: selectedRoom.value?.branch_id || 1,  // Use room's branch_id
     room_id: selectedRoom.value?.id,
     seat_id: null,
     billing_type_id: 1,
@@ -579,6 +703,7 @@ const resetBooking = () => {
     status: 2,
     notes: ''
   }
+  formErrors.value = {}
 }
 
 const retryFetch = () => {

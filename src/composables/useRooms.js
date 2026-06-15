@@ -9,7 +9,6 @@ export function useRooms() {
   const loading = ref(false)
   const error = ref(null)
   const currentRoom = ref(null)
-  const availabilityCache = ref(new Map()) // Cache availability data
 
   const fetchRooms = async (all = 1) => {
     loading.value = true
@@ -26,38 +25,55 @@ export function useRooms() {
         roomsData = response.data
       }
       
-      // Fetch availability for each room
-      const roomsWithAvailability = await Promise.all(
-        roomsData.map(async (room) => {
-          try {
-            const availability = await roomAPI.getRoomAvailability(room.id)
-            console.log(`Room ${room.id} availability:`, availability.data)
+      // Set rooms immediately without availability (faster initial load)
+      rooms.value = roomsData.map(room => ({ ...room, status: 'checking', available_seats: 0 }))
+      
+      // Then fetch availability in parallel with individual timeout
+      const availabilityPromises = roomsData.map(async (room) => {
+        try {
+          // Create a promise with timeout for each room
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Timeout')), 10000) // 10 second timeout per room
+          })
+          
+          const availabilityPromise = roomAPI.getRoomAvailability(room.id)
+          const availability = await Promise.race([availabilityPromise, timeoutPromise])
+          
+          let status = 'unknown'
+          let available_seats = 0
+          
+          if (availability && availability.data) {
+            let availData = availability.data
+            if (availData.data) availData = availData.data
             
-            // Determine status based on availability
-            let status = 'unknown'
-            if (availability.data && availability.data.data) {
-              const availData = availability.data.data
-              status = availData.is_available && availData.available_count > 0 ? 'available' : 'booked'
-            } else if (availability.data) {
-              status = availability.data.is_available && availability.data.available_count > 0 ? 'available' : 'booked'
-            }
-            
-            return {
-              ...room,
-              status: status,
-              available_seats: availability.data?.data?.available_count || availability.data?.available_count || 0,
-              availability_data: availability.data
-            }
-          } catch (err) {
-            console.error(`Failed to fetch availability for room ${room.id}:`, err)
-            return { ...room, status: 'unknown', available_seats: 0 }
+            status = availData.is_available && availData.available_count > 0 ? 'available' : 'booked'
+            available_seats = availData.available_count || 0
           }
-        })
-      )
+          
+          return { roomId: room.id, status, available_seats }
+        } catch (err) {
+          console.warn(`Failed to fetch availability for room ${room.id}:`, err.message)
+          return { roomId: room.id, status: 'unknown', available_seats: 0 }
+        }
+      })
       
-      rooms.value = roomsWithAvailability
+      // Wait for all availability checks to complete (or timeout)
+      const availabilityResults = await Promise.allSettled(availabilityPromises)
+      
+      // Update rooms with availability data
+      rooms.value = roomsData.map(room => {
+        const result = availabilityResults.find(r => r.value?.roomId === room.id)
+        if (result && result.value) {
+          return {
+            ...room,
+            status: result.value.status,
+            available_seats: result.value.available_seats
+          }
+        }
+        return { ...room, status: 'unknown', available_seats: 0 }
+      })
+      
       console.log('Rooms with availability:', rooms.value)
-      
       return response.data
     } catch (err) {
       console.error('Error fetching rooms:', err)
@@ -104,9 +120,18 @@ export function useRooms() {
     error.value = null
     try {
       console.log(`Fetching room details for ID: ${id}`)
-      const [roomResponse, availabilityResponse] = await Promise.all([
-        roomAPI.getRoomDetails(id),
-        roomAPI.getRoomAvailability(id)
+      
+      // Fetch room details and availability in parallel with timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 15000)
+      })
+      
+      const roomPromise = roomAPI.getRoomDetails(id)
+      const availabilityPromise = roomAPI.getRoomAvailability(id)
+      
+      const [roomResponse, availabilityResponse] = await Promise.race([
+        Promise.all([roomPromise, availabilityPromise]),
+        timeoutPromise.then(() => { throw new Error('Timeout') })
       ])
       
       console.log('Room details response:', roomResponse.data)
@@ -135,7 +160,11 @@ export function useRooms() {
       return roomData
     } catch (err) {
       console.error('Error fetching room details:', err)
-      error.value = err.message || 'Failed to fetch room details'
+      if (err.message === 'Timeout' || err.message === 'Request timeout') {
+        error.value = 'Request timed out. Please check your connection and try again.'
+      } else {
+        error.value = err.message || 'Failed to fetch room details'
+      }
       throw err
     } finally {
       loading.value = false
@@ -144,7 +173,12 @@ export function useRooms() {
 
   const checkRoomAvailability = async (roomId) => {
     try {
-      const response = await roomAPI.getRoomAvailability(roomId)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout')), 10000)
+      })
+      
+      const availabilityPromise = roomAPI.getRoomAvailability(roomId)
+      const response = await Promise.race([availabilityPromise, timeoutPromise])
       return response.data
     } catch (err) {
       console.error('Error checking availability:', err)
@@ -156,7 +190,13 @@ export function useRooms() {
     loading.value = true
     error.value = null
     try {
-      const response = await roomAPI.getSeats()
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout')), 10000)
+      })
+      
+      const seatsPromise = roomAPI.getSeats()
+      const response = await Promise.race([seatsPromise, timeoutPromise])
+      
       if (response.data && response.data.data) {
         seats.value = response.data.data
       } else if (Array.isArray(response.data)) {

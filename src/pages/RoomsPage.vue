@@ -134,9 +134,13 @@
                 <!-- Availability & Actions -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
                   <div class="flex items-center gap-3 mb-4">
-                    <div :class="['w-3 h-3 rounded-full', room.status === 'available' ? 'bg-teal-500' : 'bg-red-500']"></div>
+                    <div v-if="room.status === 'checking'" class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
+                    <div v-else :class="['w-3 h-3 rounded-full', room.status === 'available' ? 'bg-teal-500' : 'bg-red-500']"></div>
                     <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                      {{ room.status === 'available' ? 'Available' : 'Booked' }}
+                      <span v-if="room.status === 'checking'">Checking availability...</span>
+                      <span v-else-if="room.status === 'available'">Available</span>
+                      <span v-else-if="room.status === 'booked'">Booked</span>
+                      <span v-else>Unknown</span>
                     </span>
                   </div>
                   
@@ -330,11 +334,12 @@ const filteredRooms = computed(() => {
   return result
 })
 
-// Fetch rooms data from API
+// In RoomsPage.vue, update fetchRoomsData
 async function fetchRoomsData() {
   try {
+    // Only fetch rooms and room types, not availability for every room
     await Promise.all([
-      fetchRooms(),
+      fetchRooms(), // This will now set status to 'checking' initially
       fetchRoomTypes()
     ])
   } catch (err) {

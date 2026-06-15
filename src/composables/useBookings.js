@@ -114,6 +114,7 @@ export function useBookings() {
     }
   }
 
+
   const updateBookingStatus = async (id, status) => {
     loading.value = true
     error.value = null

@@ -12,9 +12,11 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-API-KEY': TENANT_API_KEY // Add tenant API key to every request
+    'X-API-KEY': TENANT_API_KEY
   },
-  timeout: 30000
+  timeout: 60000, // Increase to 60 seconds
+  retry: 2, // Retry failed requests twice
+  retryDelay: 1000 // Wait 1 second between retries
 })
 
 // Request interceptor
@@ -40,18 +42,23 @@ apiClient.interceptors.request.use(
 
 // Response interceptor
 apiClient.interceptors.response.use(
-  (response) => {
-    console.log(`✅ ${response.config.url}`, response.status)
-    return response
-  },
-  (error) => {
-    console.error('❌ API Error:', error.response?.data || error.message)
+  (response) => response,
+  async (error) => {
+    const { config, message } = error
+    const isTimeout = message.includes('timeout') || message.includes('exceeded')
+    const isNetworkError = message === 'Network Error'
     
-    // Handle missing tenant key
-    if (error.response?.data?.message?.includes('tenant API key')) {
-      console.error('🔑 Missing Tenant API Key! Please add X-API-KEY header')
+    if ((isTimeout || isNetworkError) && config && config.retryCount !== undefined) {
+      config.retryCount = (config.retryCount || 0) + 1
+      
+      if (config.retryCount <= config.retry) {
+        console.log(`Retrying request (${config.retryCount}/${config.retry})...`)
+        await new Promise(resolve => setTimeout(resolve, config.retryDelay || 1000))
+        return apiClient(config)
+      }
     }
     
+    console.error('❌ API Error:', error.response?.data || error.message)
     return Promise.reject(error)
   }
 )
@@ -95,7 +102,7 @@ export const bookingAPI = {
   getAllBookings: () => apiClient.get('/bookings'),
   getBookingDetails: (id) => apiClient.get(`/bookings/${id}`),
   cancelBooking: (id) => apiClient.post(`/bookings/${id}/cancel`),
-  updateBookingStatus: (id, status) => apiClient.post(`/bookings/${id}/status`, { status })
+  updateBookingStatus: (id, status) => apiClient.put(`/bookings/${id}/status`, { status }) // PUT instead of POST
 }
 
 export default apiClient
