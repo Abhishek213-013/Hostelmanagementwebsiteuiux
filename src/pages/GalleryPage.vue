@@ -166,19 +166,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
 import { useGallery } from '../composables/useGallery'
 
-// Use gallery composable
 const { galleryItems, loading, error, fetchGallery } = useGallery()
 
-// State
 const selectedCategory = ref('all')
 const hoveredImage = ref(null)
 const currentLightboxIndex = ref(0)
+const isLightboxOpen = ref(false)
 
 // Dynamic categories from gallery data
 const categories = computed(() => {
@@ -197,7 +196,6 @@ const categories = computed(() => {
   return Array.from(cats.values())
 })
 
-// Get category display label
 const getCategoryLabel = (categoryId) => {
   const labels = {
     'rooms': 'Rooms',
@@ -208,41 +206,35 @@ const getCategoryLabel = (categoryId) => {
   return labels[categoryId] || categoryId?.charAt(0)?.toUpperCase() + categoryId?.slice(1)?.replace('-', ' ') || 'General'
 }
 
-// Get count for category
 const getCategoryCount = (categoryId) => {
   if (categoryId === 'all') return galleryItems.value.length
   return galleryItems.value.filter(img => img.category === categoryId).length
 }
 
-// Filtered images
 const filteredImages = computed(() => {
   if (selectedCategory.value === 'all') return galleryItems.value
   return galleryItems.value.filter(img => img.category === selectedCategory.value)
 })
 
-// Lightbox image
 const lightboxImage = computed(() => {
-  if (filteredImages.value.length === 0) return null
+  if (!isLightboxOpen.value || filteredImages.value.length === 0) return null
   return filteredImages.value[currentLightboxIndex.value] || null
 })
 
-// Latest photo
 const latestPhoto = computed(() => {
   if (galleryItems.value.length === 0) return null
   return [...galleryItems.value].sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at))[0]
 })
 
-// Open lightbox at specific index
 const openLightbox = (index) => {
   currentLightboxIndex.value = index
+  isLightboxOpen.value = true
 }
 
-// Close lightbox
 const closeLightbox = () => {
-  currentLightboxIndex.value = -1
+  isLightboxOpen.value = false
 }
 
-// Navigate images
 const prevImage = () => {
   if (filteredImages.value.length === 0) return
   currentLightboxIndex.value = currentLightboxIndex.value > 0 
@@ -257,14 +249,12 @@ const nextImage = () => {
     : 0
 }
 
-// Format date
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-// Static data
 const visitInfo = [
   { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh' },
   { icon: Phone, label: 'Phone', value: '+880 1711-123456' },
@@ -282,11 +272,25 @@ const amenities = [
   { icon: Dumbbell, label: 'Gym' }
 ]
 
-// Fetch gallery data from API
+const handleKeydown = (event) => {
+  if (!isLightboxOpen.value) return
+  
+  switch (event.key) {
+    case 'Escape':
+      closeLightbox()
+      break
+    case 'ArrowLeft':
+      prevImage()
+      break
+    case 'ArrowRight':
+      nextImage()
+      break
+  }
+}
+
 async function fetchGalleryData() {
   try {
     await fetchGallery()
-    console.log('Loaded gallery items:', galleryItems.value)
   } catch (err) {
     console.error('Error fetching gallery:', err)
   }
@@ -294,5 +298,10 @@ async function fetchGalleryData() {
 
 onMounted(() => {
   fetchGalleryData()
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
 })
 </script>
