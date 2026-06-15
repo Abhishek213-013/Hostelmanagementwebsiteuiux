@@ -11,8 +11,12 @@
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchAllData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
+          <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+          <button @click="fetchAllData" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+            Try Again
+          </button>
+        </div>
       </div>
     </div>
 
@@ -206,7 +210,7 @@
           <!-- Team Members Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div v-for="member in teamMembers" :key="member.id" 
-                 class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+                 class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
                  @click="selectedMember = selectedMember?.id === member.id ? null : member">
               <div class="relative h-72 overflow-hidden">
                 <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -243,15 +247,6 @@
                 <!-- Short Bio -->
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
                 
-                <!-- Skills -->
-                <div class="flex flex-wrap gap-1 mb-3">
-                  <span v-for="skill in member.skills?.slice(0, 3)" :key="skill" 
-                        class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
-                    {{ skill }}
-                  </span>
-                  <span v-if="member.skills?.length > 3" class="text-xs text-gray-400">+{{ member.skills.length - 3 }} more</span>
-                </div>
-                
                 <!-- Joined Date -->
                 <div class="flex items-center gap-1 text-xs text-gray-400">
                   <Calendar class="w-3 h-3" />
@@ -274,17 +269,6 @@
                   <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
                 </div>
                 
-                <!-- All Skills -->
-                <div>
-                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Skills</h5>
-                  <div class="flex flex-wrap gap-1">
-                    <span v-for="skill in member.skills" :key="skill" 
-                          class="px-2 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs">
-                      {{ skill }}
-                    </span>
-                  </div>
-                </div>
-                
                 <!-- Contact Info -->
                 <div>
                   <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
@@ -301,13 +285,16 @@
                 </div>
                 
                 <!-- Social Links -->
-                <div v-if="member.social_links && Object.keys(member.social_links).length > 0">
+                <div v-if="member.social_links && Object.keys(member.social_links).filter(k => member.social_links[k]).length > 0">
                   <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
                   <div class="flex gap-2">
-                    <a v-for="(link, platform) in member.social_links" :key="platform" 
-                       :href="link" target="_blank" rel="noopener noreferrer"
+                    <a v-if="member.social_links.facebook" :href="member.social_links.facebook" target="_blank" rel="noopener noreferrer"
                        class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
-                      <component :is="socialIconMap[platform] || Globe" class="w-4 h-4" />
+                      <Facebook class="w-4 h-4" />
+                    </a>
+                    <a v-if="member.social_links.linkedin" :href="member.social_links.linkedin" target="_blank" rel="noopener noreferrer"
+                       class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                      <Linkedin class="w-4 h-4" />
                     </a>
                   </div>
                 </div>
@@ -368,12 +355,12 @@
           <h2 class="text-2xl lg:text-3xl font-black mb-6">Ready to Join Our Community?</h2>
           <p class="text-lg text-white/90 mb-10 max-w-2xl mx-auto">Be part of a thriving student community that supports your academic journey and creates lifelong memories</p>
           <div class="flex flex-wrap justify-center gap-4">
-            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3">
+            <router-link to="/rooms" class="px-10 py-5 bg-white text-teal-600 rounded-xl font-black flex items-center gap-3 hover:shadow-lg transition-all">
               <Calendar class="w-5 h-5" />
               Book Your Room
               <ChevronRight class="w-5 h-5" />
             </router-link>
-            <router-link to="/contact" class="px-10 py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-3">
+            <router-link to="/contact" class="px-10 py-5 bg-teal-700 text-white rounded-xl font-black border-2 border-teal-500 flex items-center gap-3 hover:bg-teal-800 transition-all">
               <Phone class="w-5 h-5" />
               Contact Us
             </router-link>
@@ -392,12 +379,16 @@ import axios from 'axios'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import TourBookingModal from '../components/TourBookingModal.vue'
+import { useTeam } from '../composables/useTeam'
 import { 
   Building2, Award, Sparkles, Users, Star, BookOpen, Shield, Wifi, Wind, 
   Utensils, Coffee, Dumbbell, Car, Calendar, MapPin, Phone, TrendingUp, 
   Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
   Eye, Mail, Globe, Facebook, Linkedin
 } from 'lucide-vue-next'
+
+// Use team composable
+const { teamMembers, loading: teamLoading, error: teamError, fetchFirstTeamMembers } = useTeam()
 
 // Icon mapping for dynamic icons from JSON
 const iconMap = {
@@ -412,17 +403,10 @@ const iconMap = {
   'award': Award,
 }
 
-// Social media icon mapping
-const socialIconMap = {
-  'facebook': Facebook,
-  'linkedin': Linkedin,
-}
-
 const activeMilestone = ref(null)
 const isTourModalOpen = ref(false)
 const selectedMember = ref(null)
 const pageData = ref({})
-const teamMembers = ref([])
 const loading = ref(true)
 const error = ref('')
 
@@ -434,18 +418,18 @@ const closeTourModal = () => {
   isTourModalOpen.value = false
 }
 
-// Fetch all data from JSON
+// Fetch all data from APIs and mock
 async function fetchAllData() {
   loading.value = true
   error.value = ''
   try {
-    const [aboutResponse, teamResponse] = await Promise.all([
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_about.json'),
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/team.json')
-    ])
-    
+    // Fetch about page data from mock JSON
+    const aboutResponse = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_about.json')
     pageData.value = aboutResponse.data
-    teamMembers.value = teamResponse.data.filter(member => member.is_active) // Only show active members
+    
+    // Fetch team members from real API (gets first team and its members)
+    await fetchFirstTeamMembers()
+    
   } catch (err) {
     console.error('Error fetching page data:', err)
     error.value = 'Failed to load content. Please check your connection and try again.'
@@ -463,9 +447,12 @@ const teamDepartments = computed(() => {
 const teamExperience = computed(() => {
   if (teamMembers.value.length === 0) return 'N/A'
   const totalYears = teamMembers.value.reduce((sum, member) => {
-    const joinDate = new Date(member.joining_date)
-    const years = (new Date().getFullYear() - joinDate.getFullYear())
-    return sum + years
+    if (member.joining_date) {
+      const joinDate = new Date(member.joining_date)
+      const years = (new Date().getFullYear() - joinDate.getFullYear())
+      return sum + years
+    }
+    return sum
   }, 0)
   return Math.round(totalYears / teamMembers.value.length) + ' yrs'
 })
@@ -476,7 +463,8 @@ const activeMembers = computed(() => {
 
 const earliestJoinYear = computed(() => {
   if (teamMembers.value.length === 0) return 'N/A'
-  const dates = teamMembers.value.map(m => new Date(m.joining_date))
+  const dates = teamMembers.value.filter(m => m.joining_date).map(m => new Date(m.joining_date))
+  if (dates.length === 0) return 'N/A'
   const earliest = new Date(Math.min(...dates))
   return earliest.getFullYear()
 })

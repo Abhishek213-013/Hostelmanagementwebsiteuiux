@@ -123,4 +123,26 @@ export const galleryAPI = {
   }),
   deleteGalleryItem: (id) => apiClient.delete(`/gallery/${id}`)
 }
+
+// src/services/api.js - Update Team API
+
+// Team API
+export const teamAPI = {
+  // Team endpoints
+  getTeams: (all = 1) => apiClient.get('/team', { params: { all } }),
+  getTeamDetails: (id) => apiClient.get(`/team/${id}`),
+  createTeam: (teamData) => apiClient.post('/team', teamData),
+  updateTeam: (id, teamData) => apiClient.put(`/team/${id}`, teamData),
+  deleteTeam: (id) => apiClient.delete(`/team/${id}`),
+  
+  // Team Members endpoints - Note: GET is not supported for members list, only for single member
+  getMemberDetails: (teamId, memberId) => apiClient.get(`/team/${teamId}/members/${memberId}`),
+  createMember: (teamId, formData) => apiClient.post(`/team/${teamId}/members`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateMember: (teamId, memberId, formData) => apiClient.post(`/team/${teamId}/members/${memberId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  deleteMember: (teamId, memberId) => apiClient.delete(`/team/${teamId}/members/${memberId}`)
+}
 export default apiClient

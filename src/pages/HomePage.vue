@@ -11,8 +11,12 @@
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchPageData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
+          <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+          <button @click="fetchPageData" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+            Try Again
+          </button>
+        </div>
       </div>
     </div>
 
@@ -74,22 +78,22 @@
               <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8 border border-gray-200 dark:border-gray-700">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
                   <div class="space-y-2 sm:space-y-3">
-                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">{{ searchWidgetData.labels?.roomType || 'Room Type' }}</label>
-                    <SearchSelect v-model="searchFilters.roomType" :options="searchWidgetData.roomTypeOptions || roomTypeOptions" placeholder="All Types" />
+                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Room Type</label>
+                    <SearchSelect v-model="searchFilters.roomType" :options="roomTypeOptions" placeholder="All Types" />
                   </div>
                   <div class="space-y-2 sm:space-y-3">
-                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">{{ searchWidgetData.labels?.seats || 'Seats' }}</label>
-                    <SearchSelect v-model="searchFilters.seats" :options="searchWidgetData.seatsOptions || seatsOptions" placeholder="Any" />
+                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Seats</label>
+                    <SearchSelect v-model="searchFilters.seats" :options="seatsOptions" placeholder="Any" />
                   </div>
                   <div class="space-y-2 sm:space-y-3">
-                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">{{ searchWidgetData.labels?.maxPrice || 'Max Price' }}</label>
-                    <SearchSelect v-model="searchFilters.maxPrice" :options="searchWidgetData.maxPriceOptions || maxPriceOptions" placeholder="Any Budget" />
+                    <label class="block text-sm font-bold text-teal-600 tracking-wide uppercase">Max Price</label>
+                    <SearchSelect v-model="searchFilters.maxPrice" :options="maxPriceOptions" placeholder="Any Budget" />
                   </div>
                   <div class="flex items-end">
                     <button @click="handleSearch" class="w-full px-6 py-2.5 text-white rounded-xl font-bold bg-teal-600 hover:bg-teal-700 transition-colors">
                       <span class="flex items-center justify-center gap-3">
                         <Search class="w-5 h-5" />
-                        {{ searchWidgetData.labels?.searchButton || 'Search' }}
+                        Search
                       </span>
                     </button>
                   </div>
@@ -100,7 +104,7 @@
         </div>
       </section>
 
-      <!-- Availability Cards -->
+      <!-- Availability Cards - Using mock data -->
       <section v-if="pageData.availabilityCards" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -128,7 +132,7 @@
         </div>
       </section>
 
-      <!-- About Section -->
+      <!-- About Section - Using mock data -->
       <section v-if="pageData.about" id="about" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -179,33 +183,33 @@
         </div>
       </section>
 
-      <!-- Facilities -->
-      <section v-if="pageData.facilities" class="py-12">
+      <!-- Facilities - From Real API -->
+      <section v-if="facilitiesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">{{ pageData.facilities.badge }}</span>
+                <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">{{ pageData.facilities.headline }}</h2>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto break-words">{{ pageData.facilities.description }}</p>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 break-words">World-Class Facilities</h2>
+              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto break-words">Everything you need for success, all under one roof</p>
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <AnimatedSection v-for="(item, i) in pageData.facilities.items" :key="i">
+            <AnimatedSection v-for="(item, i) in facilitiesList.slice(0, 8)" :key="i">
               <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
                 <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
-                  <component :is="iconMap[item.icon]" class="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-teal-600" />
+                  <component :is="getFacilityIcon(item.icon)" class="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-teal-600" />
                 </div>
-                <h4 class="text-sm sm:text-lg font-black mb-1 sm:mb-2 text-teal-600 group-hover:text-white transition-colors duration-500 break-words">{{ item.label }}</h4>
-                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 group-hover:text-teal-100 transition-colors duration-500 break-words">{{ item.desc }}</p>
+                <h4 class="text-sm sm:text-lg font-black mb-1 sm:mb-2 text-teal-600 group-hover:text-white transition-colors duration-500 break-words">{{ item.title }}</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 group-hover:text-teal-100 transition-colors duration-500 break-words">{{ item.short_description }}</p>
               </div>
             </AnimatedSection>
           </div>
         </div>
       </section>
 
-      <!-- Rooms Section - Dynamic from rooms.json -->
+      <!-- Rooms Section - From Real API -->
       <section v-if="homepageRooms.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -214,9 +218,9 @@
                 <div class="p-2 bg-teal-600 rounded-xl">
                   <Home class="w-4 h-4 text-white" />
                 </div>
-                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">{{ pageData.rooms?.badge || 'Find Your Space' }}</span>
+                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Find Your Space</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">{{ pageData.rooms?.headline || 'Choose Your Perfect Room' }}</h2>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">Choose Your Perfect Room</h2>
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -228,37 +232,22 @@
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700">
                   <div class="relative h-48 sm:h-64 overflow-hidden">
-                    <img :src="room.image" :alt="room.name" class="w-full h-full object-cover" />
+                    <img :src="getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                    
-                    <!-- Discount Badge -->
-                    <div v-if="room.discount" class="absolute top-4 left-4">
-                      <span class="px-3 py-1 bg-red-500 text-white rounded-full text-xs font-bold shadow">
-                        {{ room.discount.value }}% OFF
-                      </span>
-                    </div>
                     
                     <!-- Availability Badge -->
                     <div class="absolute bottom-4 left-4 flex items-center gap-2">
-                      <div :class="['w-2 h-2 rounded-full', room.is_available && room.available_seats > 0 ? 'bg-green-400' : 'bg-red-400']"></div>
+                      <div :class="['w-2 h-2 rounded-full', room.status === 'available' ? 'bg-green-400' : 'bg-red-400']"></div>
                       <span class="text-white text-xs font-medium">
-                        {{ room.is_available && room.available_seats > 0 ? `${room.available_seats} seat${room.available_seats > 1 ? 's' : ''} left` : 'Fully booked' }}
-                      </span>
-                    </div>
-                    
-                    <!-- Rating Badge -->
-                    <div class="absolute bottom-4 right-4">
-                      <span class="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white font-medium flex items-center gap-1">
-                        <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
-                        {{ room.rating }}
+                        {{ room.status === 'available' ? `${room.available_seats || 1} seat(s) left` : 'Fully booked' }}
                       </span>
                     </div>
                   </div>
                   <div class="p-4 sm:p-6">
-                    <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.name }}</h3>
-                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.short_description }}</p>
+                    <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.room_number || `Room ${room.id}` }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
                     <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
-                      <div v-for="(feature, j) in room.features.slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
+                      <div v-for="(feature, j) in getRoomFeatures(room.room_type?.name).slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
                         <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                           <CheckCircle2 class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
                         </div>
@@ -269,11 +258,8 @@
                       <div>
                         <div class="text-xs sm:text-sm text-teal-600 mb-1">Starting from</div>
                         <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">
-                          {{ room.currency === 'BDT' ? '৳' : '$' }}{{ room.price.toLocaleString() }}
+                          ৳{{ (room.room_price || 0).toLocaleString() }}
                           <span class="text-base sm:text-lg">/mo</span>
-                        </div>
-                        <div v-if="room.original_price && room.original_price !== room.price" class="text-xs text-gray-400 line-through">
-                          {{ room.currency === 'BDT' ? '৳' : '$' }}{{ room.original_price.toLocaleString() }}
                         </div>
                       </div>
                       <router-link :to="`/rooms/${room.id}`" class="px-3 sm:px-5 py-1.5 sm:py-2.5 text-white rounded-xl font-bold text-sm sm:text-base bg-teal-600 hover:bg-teal-700 transition-colors whitespace-nowrap">
@@ -288,8 +274,8 @@
         </div>
       </section>
 
-      <!-- Gallery -->
-      <section v-if="pageData.gallery" class="py-12">
+      <!-- Gallery - From Real API -->
+      <section v-if="galleryItems.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
@@ -297,28 +283,28 @@
                 <div class="p-2 bg-teal-600 rounded-xl">
                   <Camera class="w-4 h-4 text-white" />
                 </div>
-                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">{{ pageData.gallery.badge }}</span>
+                <span class="text-xs sm:text-sm font-bold tracking-wider text-teal-600 uppercase">Photo Gallery</span>
               </div>
-              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">{{ pageData.gallery.headline }}</h2>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">{{ pageData.gallery.description }}</p>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600 leading-[1.1] break-words">Explore Our Beautiful Space</h2>
+              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">Take a visual tour of your new home</p>
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             <div
-              v-for="(item, i) in pageData.gallery.images"
+              v-for="(item, i) in galleryItems.slice(0, 7)"
               :key="i"
               @click="openLightbox(i)"
               class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
               :class="i % 2 === 1 ? 'mt-8' : ''"
             >
-              <img :src="item.src" :alt="item.label" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
+              <img :src="item.src" :alt="item.title" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
               <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
-                <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
+                <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.title }}</span>
               </div>
             </div>
-            <div class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer" @click="openLightbox(0)">
+            <div v-if="galleryItems.length > 7" class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer" @click="openLightbox(0)">
               <div class="text-center text-white">
-                <div class="text-4xl sm:text-5xl font-black mb-2">+{{ pageData.gallery.showMoreCount }}</div>
+                <div class="text-4xl sm:text-5xl font-black mb-2">+{{ galleryItems.length - 7 }}</div>
                 <div class="font-bold text-sm sm:text-base">More Photos</div>
               </div>
             </div>
@@ -326,33 +312,7 @@
         </div>
       </section>
 
-      <!-- Lightbox Modal -->
-      <div
-        v-if="lightboxOpen && pageData.gallery"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl"
-        @click="closeLightbox"
-      >
-        <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="closeLightbox">
-          <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
-        </button>
-        <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
-          <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
-        <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
-          <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
-        <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
-          <img :src="pageData.gallery.images[currentImageIndex].src" :alt="pageData.gallery.images[currentImageIndex].label" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
-          <div class="text-center mt-4 sm:mt-6">
-            <span class="inline-block px-3 sm:px-4 py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600">
-              {{ pageData.gallery.images[currentImageIndex].label }}
-            </span>
-            <p class="text-white text-xs sm:text-sm mt-2 sm:mt-3 font-medium">{{ currentImageIndex + 1 }} / {{ pageData.gallery.images.length }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonials -->
+      <!-- Testimonials - Using mock data -->
       <section v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -406,7 +366,7 @@
         </div>
       </section>
 
-      <!-- CTA Section -->
+      <!-- CTA Section - Using mock data -->
       <section v-if="pageData.cta" class="py-12">
         <div class="bg-teal-600 rounded-2xl p-8 sm:p-12 md:p-20 text-white text-center mx-4 sm:mx-6 lg:mx-12">
           <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 break-words">{{ pageData.cta.headline }}</h2>
@@ -447,8 +407,14 @@ import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
 import SearchSelect from '../components/ui/SearchSelect.vue'
+import { useRooms } from '../composables/useRooms'
+import { useFacilities } from '../composables/useFacilities'
+import { useGallery } from '../composables/useGallery'
 
 const router = useRouter()
+const { rooms, fetchRooms } = useRooms()
+const { facilities: facilitiesList, fetchFacilities } = useFacilities()
+const { galleryItems, fetchGallery } = useGallery()
 
 // Icon mapping
 const iconMap = {
@@ -479,7 +445,6 @@ const maxPriceOptions = [
 // State
 const pageData = ref({})
 const heroSlides = ref([])
-const searchWidgetData = ref({})
 const testimonials = ref([])
 const homepageRooms = ref([])
 const loading = ref(true)
@@ -490,41 +455,85 @@ const lightboxOpen = ref(false)
 const currentImageIndex = ref(0)
 const autoplayInterval = ref(null)
 
-// Fetch data from JSON
+// Helper functions for room display
+const getRoomImage = (roomTypeName) => {
+  const images = {
+    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
+    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
+    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
+    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
+  }
+  return images[roomTypeName?.toLowerCase()] || images.standard
+}
+
+const getDefaultDescription = (roomTypeName) => {
+  const descriptions = {
+    'shared': 'Comfortable shared accommodation with modern amenities.',
+    'semi-private': 'Semi-private room offering privacy with shared common areas.',
+    'premium': 'Premium single room with attached bathroom and premium furnishings.',
+    'standard': 'Well-appointed standard room with essential amenities.'
+  }
+  return descriptions[roomTypeName?.toLowerCase()] || 'Comfortable room with modern amenities.'
+}
+
+const getRoomFeatures = (roomTypeName) => {
+  const features = {
+    'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
+    'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
+    'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'],
+    'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan']
+  }
+  return features[roomTypeName?.toLowerCase()] || features.standard
+}
+
+const getFacilityIcon = (iconName) => {
+  const iconMap = {
+    'ri-wifi-line': Wifi,
+    'ri-dumbbell-line': Dumbbell,
+    'ri-restaurant-line': Utensils,
+    'ri-book-open-line': BookOpen,
+    'ri-shield-line': Shield,
+    'ri-car-line': Car,
+    'ri-coffee-line': Coffee,
+  }
+  return iconMap[iconName] || Sparkles
+}
+
+// Fetch data from APIs and mock
 async function fetchPageData() {
   loading.value = true
   error.value = ''
   try {
-    const [homeResponse, testimonialsResponse, roomsResponse] = await Promise.all([
+    // Fetch from mock JSON for static content
+    const [homeResponse, testimonialsResponse] = await Promise.all([
       axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json'),
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json'),
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/rooms.json')
+      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json')
     ])
     
     const data = homeResponse.data
     
-    // Set hero slides
+    // Set hero slides (mock)
     heroSlides.value = data.hero?.slides || []
     
-    // Set search widget data
-    searchWidgetData.value = data.searchWidget || {}
-    
-    // Set page data
+    // Set page data (mock)
     pageData.value = data
     
-    // Set testimonials - show featured first, then others
+    // Set testimonials (mock)
     const allTestimonials = testimonialsResponse.data || []
     testimonials.value = [
       ...allTestimonials.filter(t => t.is_featured),
       ...allTestimonials.filter(t => !t.is_featured)
     ].slice(0, 6)
     
-    // Set homepage rooms - show popular first, limit to 3
-    const allRooms = roomsResponse.data || []
-    homepageRooms.value = [
-      ...allRooms.filter(r => r.is_popular),
-      ...allRooms.filter(r => !r.is_popular)
-    ].slice(0, 3)
+    // Fetch real data from APIs
+    await Promise.all([
+      fetchRooms(),
+      fetchFacilities(),
+      fetchGallery()
+    ])
+    
+    // Set homepage rooms from real API (show first 3)
+    homepageRooms.value = rooms.value.slice(0, 3)
     
     // Start autoplay
     if (autoplayInterval.value) clearInterval(autoplayInterval.value)
@@ -566,15 +575,13 @@ const closeLightbox = () => {
 }
 
 const prevImage = () => {
-  const images = pageData.value.gallery?.images || []
-  if (images.length === 0) return
-  currentImageIndex.value = currentImageIndex.value > 0 ? currentImageIndex.value - 1 : images.length - 1
+  if (galleryItems.value.length === 0) return
+  currentImageIndex.value = currentImageIndex.value > 0 ? currentImageIndex.value - 1 : galleryItems.value.length - 1
 }
 
 const nextImage = () => {
-  const images = pageData.value.gallery?.images || []
-  if (images.length === 0) return
-  currentImageIndex.value = currentImageIndex.value < images.length - 1 ? currentImageIndex.value + 1 : 0
+  if (galleryItems.value.length === 0) return
+  currentImageIndex.value = currentImageIndex.value < galleryItems.value.length - 1 ? currentImageIndex.value + 1 : 0
 }
 
 onMounted(() => {
