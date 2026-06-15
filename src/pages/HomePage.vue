@@ -72,7 +72,7 @@
             </div>
           </div>
 
-          <!-- Search Widget -->
+          <!-- Search Widget - Dynamic from API -->
           <div class="w-full px-4 sm:px-6 lg:px-12 mt-8 sm:mt-12">
             <div class="max-w-[1400px] mx-auto">
               <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8 border border-gray-200 dark:border-gray-700">
@@ -104,24 +104,27 @@
         </div>
       </section>
 
-      <!-- Availability Cards - Using mock data -->
-      <section v-if="pageData.availabilityCards" class="py-12">
+      <!-- Availability Cards - Dynamic from Room Types API -->
+      <section v-if="roomTypesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(card, i) in pageData.availabilityCards" :key="i">
-              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
+            <AnimatedSection v-for="(roomType, i) in roomTypesList.slice(0, 3)" :key="i">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
                 <div class="flex items-start justify-between mb-6">
                   <div class="p-4 rounded-2xl bg-teal-600">
-                    <component :is="iconMap[card.icon]" class="w-7 h-7 text-white" />
+                    <component :is="getRoomTypeIcon(roomType.room_type_title)" class="w-7 h-7 text-white" />
                   </div>
                   <span class="px-3 sm:px-4 py-2 text-white rounded-full text-xs sm:text-sm font-bold bg-teal-600 whitespace-nowrap">
-                    {{ card.badge }}
+                    {{ roomType.room_type_price ? 'Premium' : 'Standard' }}
                   </span>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black mb-2 text-teal-600 break-words">{{ card.title }}</h3>
-                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 break-words">{{ card.desc }}</p>
+                <h3 class="text-xl sm:text-2xl font-black mb-2 text-teal-600 break-words">{{ roomType.room_type_title || 'Room Type' }}</h3>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 break-words">{{ roomType.room_type_details || 'Comfortable accommodation with modern amenities' }}</p>
                 <div class="flex items-center justify-between">
-                  <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">{{ card.price }}</div>
+                  <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">
+                    ৳{{ (roomType.room_type_price || 0).toLocaleString() }}
+                    <span class="text-sm font-normal">/mo</span>
+                  </div>
                   <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors">
                     <ArrowRight class="w-6 h-6 text-white" />
                   </router-link>
@@ -312,7 +315,7 @@
         </div>
       </section>
 
-      <!-- Testimonials - Using mock data -->
+      <!-- Testimonials - From Real API -->
       <section v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -401,7 +404,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import {
-  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown, Clock
+  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown, Clock, Bed, Bath, Tv, Gamepad2
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -411,12 +414,14 @@ import { useRooms } from '../composables/useRooms'
 import { useFacilities } from '../composables/useFacilities'
 import { useGallery } from '../composables/useGallery'
 import { useTestimonials } from '../composables/useTestimonials'
+import { useRoomTypes } from '../composables/useRoomTypes'
 
 const router = useRouter()
 const { rooms, fetchRooms } = useRooms()
 const { facilities: facilitiesList, fetchFacilities } = useFacilities()
 const { galleryItems, fetchGallery } = useGallery()
 const { testimonials: apiTestimonials, fetchTestimonials } = useTestimonials()
+const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
 
 // Icon mapping
 const iconMap = {
@@ -424,19 +429,34 @@ const iconMap = {
   Award, Sparkles, Star, TrendingUp, Calendar, Phone, Home
 }
 
-// Default fallback options
-const roomTypeOptions = [
-  { value: '', label: 'All Types' },
-  { value: 'single', label: 'Single' },
-  { value: 'shared', label: 'Shared' },
-  { value: 'premium', label: 'Premium' },
-]
+// Room type options from API
+const roomTypeOptions = computed(() => {
+  const options = [{ value: '', label: 'All Types' }]
+  if (apiRoomTypes.value && apiRoomTypes.value.length > 0) {
+    apiRoomTypes.value.forEach(type => {
+      options.push({
+        value: type.id,
+        label: type.room_type_title
+      })
+    })
+  } else {
+    // Fallback options
+    options.push(
+      { value: 'single', label: 'Single' },
+      { value: 'shared', label: 'Shared' },
+      { value: 'premium', label: 'Premium' }
+    )
+  }
+  return options
+})
+
 const seatsOptions = [
   { value: '', label: 'Any' },
   { value: '1', label: '1 Person' },
   { value: '2', label: '2 People' },
   { value: '4', label: '4 People' },
 ]
+
 const maxPriceOptions = [
   { value: '', label: 'Any Budget' },
   { value: '5000', label: '৳5,000/mo' },
@@ -449,6 +469,7 @@ const pageData = ref({})
 const heroSlides = ref([])
 const testimonials = ref([])
 const homepageRooms = ref([])
+const roomTypesList = ref([])
 const loading = ref(true)
 const error = ref('')
 const searchFilters = ref({ roomType: '', seats: '', maxPrice: '' })
@@ -456,6 +477,15 @@ const currentSlide = ref(0)
 const lightboxOpen = ref(false)
 const currentImageIndex = ref(0)
 const autoplayInterval = ref(null)
+
+// Get icon for room type card
+const getRoomTypeIcon = (title) => {
+  const titleLower = title?.toLowerCase() || ''
+  if (titleLower.includes('shared')) return Users
+  if (titleLower.includes('premium')) return Star
+  if (titleLower.includes('single')) return Bed
+  return Home
+}
 
 // Helper functions for room display
 const getRoomImage = (roomTypeName) => {
@@ -522,11 +552,15 @@ async function fetchPageData() {
       fetchRooms(),
       fetchFacilities(),
       fetchGallery(),
-      fetchTestimonials()  // Fetch testimonials from real API
+      fetchTestimonials(),
+      fetchRoomTypes()
     ])
     
     // Set homepage rooms from real API (show first 3)
     homepageRooms.value = rooms.value.slice(0, 3)
+    
+    // Set room types for availability cards
+    roomTypesList.value = apiRoomTypes.value
     
     // Set testimonials from real API
     testimonials.value = apiTestimonials.value.slice(0, 6)
@@ -555,9 +589,9 @@ const nextSlide = () => {
 
 const handleSearch = () => {
   const params = new URLSearchParams()
-  if (searchFilters.value.roomType) params.set('type', searchFilters.value.roomType)
+  if (searchFilters.value.roomType) params.set('room_type', searchFilters.value.roomType)
   if (searchFilters.value.seats) params.set('seats', searchFilters.value.seats)
-  if (searchFilters.value.maxPrice) params.set('maxPrice', searchFilters.value.maxPrice)
+  if (searchFilters.value.maxPrice) params.set('max_price', searchFilters.value.maxPrice)
   router.push(`/rooms?${params.toString()}`)
 }
 
