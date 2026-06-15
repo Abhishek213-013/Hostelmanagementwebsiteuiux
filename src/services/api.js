@@ -167,5 +167,9 @@ export const reviewsAPI = {
   updateReview: (id, reviewData) => apiClient.put(`/reviews/${id}`, reviewData),
   deleteReview: (id) => apiClient.delete(`/reviews/${id}`)
 }
-
+// Contact API
+export const contactAPI = {
+  sendEnquiry: (enquiryData) => apiClient.post('/contact', enquiryData),
+  getContactInfo: () => apiClient.get('/contact/info'), // If you have this endpoint
+}
 export default apiClient
