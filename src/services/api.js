@@ -145,4 +145,17 @@ export const teamAPI = {
   }),
   deleteMember: (teamId, memberId) => apiClient.delete(`/team/${teamId}/members/${memberId}`)
 }
+
+// Testimonials API
+export const testimonialsAPI = {
+  getTestimonials: (all = 1) => apiClient.get('/testimonials', { params: { all } }),
+  getTestimonialDetails: (id) => apiClient.get(`/testimonials/${id}`),
+  createTestimonial: (formData) => apiClient.post('/testimonials', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateTestimonial: (id, formData) => apiClient.post(`/testimonials/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  deleteTestimonial: (id) => apiClient.delete(`/testimonials/${id}`)
+}
 export default apiClient

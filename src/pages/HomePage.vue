@@ -410,11 +410,13 @@ import SearchSelect from '../components/ui/SearchSelect.vue'
 import { useRooms } from '../composables/useRooms'
 import { useFacilities } from '../composables/useFacilities'
 import { useGallery } from '../composables/useGallery'
+import { useTestimonials } from '../composables/useTestimonials'
 
 const router = useRouter()
 const { rooms, fetchRooms } = useRooms()
 const { facilities: facilitiesList, fetchFacilities } = useFacilities()
 const { galleryItems, fetchGallery } = useGallery()
+const { testimonials: apiTestimonials, fetchTestimonials } = useTestimonials()
 
 // Icon mapping
 const iconMap = {
@@ -505,10 +507,7 @@ async function fetchPageData() {
   error.value = ''
   try {
     // Fetch from mock JSON for static content
-    const [homeResponse, testimonialsResponse] = await Promise.all([
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json'),
-      axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/testimonials.json')
-    ])
+    const homeResponse = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json')
     
     const data = homeResponse.data
     
@@ -518,22 +517,19 @@ async function fetchPageData() {
     // Set page data (mock)
     pageData.value = data
     
-    // Set testimonials (mock)
-    const allTestimonials = testimonialsResponse.data || []
-    testimonials.value = [
-      ...allTestimonials.filter(t => t.is_featured),
-      ...allTestimonials.filter(t => !t.is_featured)
-    ].slice(0, 6)
-    
     // Fetch real data from APIs
     await Promise.all([
       fetchRooms(),
       fetchFacilities(),
-      fetchGallery()
+      fetchGallery(),
+      fetchTestimonials()  // Fetch testimonials from real API
     ])
     
     // Set homepage rooms from real API (show first 3)
     homepageRooms.value = rooms.value.slice(0, 3)
+    
+    // Set testimonials from real API
+    testimonials.value = apiTestimonials.value.slice(0, 6)
     
     // Start autoplay
     if (autoplayInterval.value) clearInterval(autoplayInterval.value)
