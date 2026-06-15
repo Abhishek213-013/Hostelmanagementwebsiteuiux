@@ -192,6 +192,123 @@
               </div>
             </div>
           </div>
+
+          <!-- Reviews Section -->
+          <div v-if="roomReviews.length > 0" class="mt-16 mb-10">
+            <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Guest Reviews</h2>
+            
+            <!-- Review Summary -->
+            <div class="max-w-3xl mx-auto mb-8">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-4">
+                    <div class="text-4xl font-black text-teal-600">{{ reviewStats.average_rating }}</div>
+                    <div>
+                      <div class="flex items-center gap-1">
+                        <Star v-for="n in 5" :key="n" :class="['w-5 h-5', n <= Math.round(reviewStats.average_rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-300']" />
+                      </div>
+                      <p class="text-sm text-gray-500 mt-1">{{ reviewStats.total_reviews }} review{{ reviewStats.total_reviews !== 1 ? 's' : '' }}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Rating Bars -->
+                <div class="space-y-2">
+                  <div v-for="rating in [5,4,3,2,1]" :key="rating" class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-4">{{ rating }}</span>
+                    <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div class="bg-amber-400 h-2 rounded-full transition-all duration-500" 
+                           :style="{ width: `${getRatingPercentage(rating)}%` }"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 w-8">{{ getRatingCount(rating) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              <div v-for="review in roomReviews.slice(0, 4)" :key="review.id" 
+                   class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
+                <!-- Review Header -->
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <img :src="review.user.avatar" :alt="review.user.name" 
+                         class="w-10 h-10 rounded-full object-cover border-2 border-teal-600" />
+                    <div>
+                      <h4 class="font-bold text-gray-800 dark:text-gray-200">{{ review.user.name }}</h4>
+                      <div class="flex items-center gap-1">
+                        <Star v-for="n in 5" :key="n" :class="['w-3 h-3', n <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300']" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span v-if="review.verified" class="px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
+                      ✓ Verified
+                    </span>
+                    <span class="text-xs text-gray-400">{{ formatDate(review.created_at) }}</span>
+                  </div>
+                </div>
+
+                <!-- Review Title -->
+                <h5 class="font-bold text-gray-800 dark:text-gray-200 mb-2">{{ review.title }}</h5>
+                
+                <!-- Review Comment -->
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">{{ review.comment }}</p>
+
+                <!-- Pros & Cons -->
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div v-if="review.pros && review.pros.length > 0">
+                    <h6 class="text-xs font-bold text-teal-600 mb-2">Pros</h6>
+                    <ul class="space-y-1">
+                      <li v-for="pro in review.pros.slice(0, 3)" :key="pro" class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+                        <CheckCircle2 class="w-3 h-3 text-teal-600 flex-shrink-0" />
+                        {{ pro }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div v-if="review.cons && review.cons.length > 0">
+                    <h6 class="text-xs font-bold text-red-500 mb-2">Cons</h6>
+                    <ul class="space-y-1">
+                      <li v-for="con in review.cons.slice(0, 3)" :key="con" class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+                        <X class="w-3 h-3 text-red-500 flex-shrink-0" />
+                        {{ con }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-1 mb-4">
+                  <span v-for="tag in review.tags?.slice(0, 3)" :key="tag" 
+                        class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-400">
+                    #{{ tag }}
+                  </span>
+                </div>
+
+                <!-- Stay Info -->
+                <div class="flex items-center justify-between text-xs text-gray-400 mb-4">
+                  <span>{{ review.stay_duration }}</span>
+                  <span>{{ review.stay_period }}</span>
+                </div>
+
+                <!-- Management Response -->
+                <div v-if="review.response" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <Shield class="w-4 h-4 text-teal-600" />
+                    <span class="text-xs font-bold text-teal-600">{{ review.response.from }}</span>
+                  </div>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">{{ review.response.message }}</p>
+                </div>
+
+                <!-- Helpful Count -->
+                <div v-if="review.helpful_count > 0" class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <ThumbsUp class="w-4 h-4 text-gray-400" />
+                  <span class="text-xs text-gray-500">{{ review.helpful_count }} found this helpful</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />
@@ -200,20 +317,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRooms } from '../composables/useRooms'
+import { useReviews } from '../composables/useReviews'
 import { roomAPI } from '../services/api'
 import { 
   ArrowLeft, Users, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, 
-  Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X
+  Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
+  Star, ThumbsUp, Clock, MapPin, Bath, Maximize2
 } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
 const { fetchRoomDetails, loading, error, currentRoom } = useRooms()
+const { 
+  reviews: roomReviews, 
+  stats: reviewStats, 
+  fetchReviews, 
+  getRatingPercentage, 
+  getRatingCount,
+  clearReviews 
+} = useReviews()
+
 const currentImage = ref('')
 const availabilityData = ref(null)
 const checkInDate = ref('')
@@ -274,19 +402,21 @@ const amenities = [
   { icon: Coffee, label: 'Common Room' }
 ]
 
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
 const checkAvailability = async () => {
   if (!room.value?.id || !checkInDate.value || !checkOutDate.value) return
   
   checkingAvailability.value = true
   try {
-    // Call the availability API with dates
     const response = await roomAPI.getRoomAvailability(room.value.id)
     console.log('Availability response:', response.data)
     
-    // Filter seats based on date range if needed
-    // For now, just using the API response
     availabilityData.value = response.data?.data || response.data
-    
     console.log('Availability data:', availabilityData.value)
   } catch (err) {
     console.error('Error checking availability:', err)
@@ -318,6 +448,9 @@ const fetchRoomData = async () => {
         
         // Check availability with default dates
         await checkAvailability()
+        
+        // Fetch reviews for this room
+        await fetchReviews(roomId)
       }
     } catch (err) {
       console.error('Failed to fetch room:', err)
@@ -358,6 +491,14 @@ const handleBookNow = () => {
   
   router.push(`/booking?roomId=${route.params.id}`)
 }
+
+// Watch for room ID changes
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    clearReviews()
+    fetchRoomData()
+  }
+})
 
 onMounted(() => {
   fetchRoomData()

@@ -158,4 +158,14 @@ export const testimonialsAPI = {
   }),
   deleteTestimonial: (id) => apiClient.delete(`/testimonials/${id}`)
 }
+
+// Reviews API
+export const reviewsAPI = {
+  getReviews: (params = {}) => apiClient.get('/reviews', { params }),
+  getReviewDetails: (id) => apiClient.get(`/reviews/${id}`),
+  createReview: (reviewData) => apiClient.post('/reviews', reviewData),
+  updateReview: (id, reviewData) => apiClient.put(`/reviews/${id}`, reviewData),
+  deleteReview: (id) => apiClient.delete(`/reviews/${id}`)
+}
+
 export default apiClient
