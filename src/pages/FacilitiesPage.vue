@@ -11,8 +11,12 @@
     <!-- Error State -->
     <div v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button @click="fetchFacilitiesData" class="px-6 py-2 bg-teal-600 text-white rounded-lg">Retry</button>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
+          <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
+          <button @click="fetchFacilitiesData" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+            Try Again
+          </button>
+        </div>
       </div>
     </div>
 
@@ -46,131 +50,75 @@
           </div>
         </div>
 
-        <!-- Categories -->
-        <div v-for="(facilities, category) in groupedFacilities" :key="category" class="mb-16">
-          <div class="flex items-center gap-6 mb-12">
-            <div class="w-16 h-16 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
-              <component :is="getCategoryIcon(category)" class="w-10 h-10 text-white" />
-            </div>
-            <div>
-              <h2 class="text-xl lg:text-2xl font-black mb-2 text-teal-600">{{ category }}</h2>
-              <p class="text-gray-600 dark:text-gray-400 text-base">{{ getCategoryDescription(category) }}</p>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div v-for="facility in facilities" :key="facility.id" 
-                 class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
-                 @click="toggleFacilityDetail(facility.id)">
-              <div class="relative h-56 overflow-hidden">
-                <img :src="facility.image" :alt="facility.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                <!-- Status Badge -->
-                <div class="absolute top-4 right-4">
-                  <span :class="['px-3 py-1 rounded-full text-xs font-bold shadow', 
-                    facility.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
-                    {{ facility.is_active ? 'Active' : 'Inactive' }}
-                  </span>
+        <!-- Facilities Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div v-for="facility in facilities" :key="facility.id" 
+               class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+               @click="toggleFacilityDetail(facility.id)">
+            <div class="p-6">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-14 h-14 rounded-xl bg-teal-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-500">
+                  <component :is="getIconFromRemix(facility.icon)" class="w-7 h-7 text-white" />
                 </div>
-                <!-- Operating Hours Badge -->
-                <div v-if="facility.operating_hours" class="absolute bottom-4 left-4">
-                  <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold text-white border border-white/30">
-                    {{ typeof facility.operating_hours === 'string' ? facility.operating_hours : 'See details' }}
-                  </span>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-black text-teal-600">{{ facility.title }}</h3>
+                    <!-- Status Badge -->
+                    <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
+                      facility.status == 1 ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
+                      {{ facility.status == 1 ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div class="p-6">
-                <div class="flex items-center gap-3 mb-3">
-                  <div class="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-500">
-                    <component :is="getIconComponent(facility.icon)" class="w-6 h-6 text-white" />
-                  </div>
-                  <h3 class="text-lg font-black text-teal-600">{{ facility.name }}</h3>
-                </div>
-                <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-3">{{ facility.description }}</p>
-                
-                <!-- Available In Badges -->
-                <div class="flex flex-wrap gap-1 mb-3">
-                  <span v-for="roomType in facility.available_in" :key="roomType" 
-                        class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium capitalize">
-                    {{ roomType.replace('-', ' ') }}
-                  </span>
-                </div>
-                
-                <!-- Expand Button -->
-                <button class="text-teal-600 text-sm font-semibold hover:text-teal-700 transition-colors flex items-center gap-1">
-                  {{ expandedFacility === facility.id ? 'Show Less' : 'More Details' }}
-                  <ChevronDown :class="['w-4 h-4 transition-transform', expandedFacility === facility.id ? 'rotate-180' : '']" />
-                </button>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-sm mb-4">{{ facility.short_description }}</p>
+              
+              <!-- Expand Button -->
+              <button class="text-teal-600 text-sm font-semibold hover:text-teal-700 transition-colors flex items-center gap-1">
+                {{ expandedFacility === facility.id ? 'Show Less' : 'More Details' }}
+                <ChevronDown :class="['w-4 h-4 transition-transform', expandedFacility === facility.id ? 'rotate-180' : '']" />
+              </button>
+            </div>
+            
+            <!-- Expanded Details -->
+            <div v-if="expandedFacility === facility.id" 
+                 class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+              <!-- Full Description -->
+              <div v-if="facility.description" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h4 class="text-xs font-bold text-teal-600 mb-2">Description</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ facility.description }}</p>
               </div>
               
-              <!-- Expanded Details -->
-              <div v-if="expandedFacility === facility.id" 
-                   class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
-                <!-- Long Description -->
-                <p class="text-sm text-gray-600 dark:text-gray-400">{{ facility.long_description }}</p>
-                
-                <!-- Operating Hours Details -->
-                <div v-if="facility.operating_hours && typeof facility.operating_hours === 'object'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-2">Operating Hours</h4>
-                  <div v-for="(time, meal) in facility.operating_hours" :key="meal" class="flex justify-between text-xs text-gray-600 dark:text-gray-400">
-                    <span class="capitalize">{{ meal }}</span>
-                    <span>{{ time }}</span>
+              <!-- Sort Order Info -->
+              <!-- <div v-if="facility.sort_order" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <div class="flex justify-between text-xs">
+                  <span class="text-gray-500">Sort Order</span>
+                  <span class="text-gray-700 dark:text-gray-300 font-semibold">{{ facility.sort_order }}</span>
+                </div>
+              </div> -->
+              
+              <!-- Timestamps -->
+              <!-- <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span class="text-gray-500">Created:</span>
+                    <span class="text-gray-700 dark:text-gray-300 ml-2">{{ formatDate(facility.created_at) }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500">Updated:</span>
+                    <span class="text-gray-700 dark:text-gray-300 ml-2">{{ formatDate(facility.updated_at) }}</span>
                   </div>
                 </div>
-                <div v-else-if="facility.operating_hours && typeof facility.operating_hours === 'string'" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-1">Operating Hours</h4>
-                  <p class="text-xs text-gray-600 dark:text-gray-400">{{ facility.operating_hours }}</p>
-                </div>
-                
-                <!-- Equipment / Features -->
-                <div v-if="facility.equipment || facility.features" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-2">{{ facility.equipment ? 'Equipment' : 'Features' }}</h4>
-                  <ul class="space-y-1">
-                    <li v-for="(item, i) in (facility.equipment || facility.features)" :key="i" 
-                        class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                      <CheckCircle2 class="w-3 h-3 text-teal-600 flex-shrink-0" />
-                      {{ item }}
-                    </li>
-                  </ul>
-                </div>
-                
-                <!-- Specs -->
-                <div v-if="facility.specs" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-2">Specifications</h4>
-                  <div class="grid grid-cols-2 gap-2">
-                    <div v-for="(value, key) in facility.specs" :key="key" class="text-xs">
-                      <span class="text-gray-500 capitalize">{{ key.replace(/_/g, ' ') }}:</span>
-                      <span class="text-gray-700 dark:text-gray-300 font-semibold">{{ value }}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Schedule -->
-                <div v-if="facility.schedule" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-2">Schedule</h4>
-                  <div v-for="(value, key) in facility.schedule" :key="key" class="flex justify-between text-xs text-gray-600 dark:text-gray-400">
-                    <span class="capitalize">{{ key.replace(/_/g, ' ') }}</span>
-                    <span>{{ value }}</span>
-                  </div>
-                </div>
-                
-                <!-- Meal Plans -->
-                <div v-if="facility.meal_plan_options" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <h4 class="text-xs font-bold text-teal-600 mb-2">Meal Plans</h4>
-                  <div v-for="plan in facility.meal_plan_options" :key="plan.name" class="mb-2 last:mb-0">
-                    <div class="flex justify-between text-xs">
-                      <span class="font-semibold text-gray-700 dark:text-gray-300">{{ plan.name }}</span>
-                      <span class="text-teal-600 font-bold">৳{{ plan.price_per_month?.toLocaleString() }}/mo</span>
-                    </div>
-                    <div class="flex gap-1 mt-1">
-                      <span v-for="meal in plan.includes" :key="meal" class="px-1.5 py-0.5 bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 rounded text-xs">
-                        {{ meal }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </div> -->
             </div>
           </div>
+        </div>
+
+        <!-- No Facilities Message -->
+        <div v-if="facilities.length === 0" class="text-center py-20">
+          <Building2 class="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No facilities found</h3>
+          <p class="text-gray-500">Check back later for updated amenities</p>
         </div>
 
         <!-- CTA Section -->
@@ -197,147 +145,120 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 import { 
   Sparkles, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, 
   Users, Home, Tv, Gamepad2, Droplets, ShoppingBag, Clock, Phone, MapPin, Star, 
   CheckCircle2, Zap, Mic, Camera, Sun, Trees, Bed, Bath, WashingMachine, 
-  Refrigerator, ChevronRight, ArrowRight, ChevronDown, Sunrise 
+  Refrigerator, ChevronDown, ArrowRight, Building2
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
+import { useFacilities } from '../composables/useFacilities'
+
+// Use facilities composable
+const { facilities, loading, error, fetchFacilities } = useFacilities()
 
 // State
-const facilities = ref([])
-const loading = ref(true)
-const error = ref('')
 const expandedFacility = ref(null)
 
-// Fetch facilities data from JSON
-async function fetchFacilitiesData() {
-  loading.value = true
-  error.value = ''
-  try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/facilities.json')
-    facilities.value = response.data
-  } catch (err) {
-    console.error('Error fetching facilities data:', err)
-    error.value = 'Failed to load facilities. Please check your connection and try again.'
-  } finally {
-    loading.value = false
-  }
-}
-
-// Group facilities by category
-const groupedFacilities = computed(() => {
-  const grouped = {}
-  facilities.value.forEach(facility => {
-    if (!grouped[facility.category]) {
-      grouped[facility.category] = []
-    }
-    grouped[facility.category].push(facility)
+// Format date helper
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
   })
-  return grouped
+}
+
+// Convert Remix Icon names to Lucide icons
+const getIconFromRemix = (remixIconName) => {
+  if (!remixIconName) return Sparkles
+  
+  const iconMap = {
+    'ri-wifi-line': Wifi,
+    'ri-wifi-fill': Wifi,
+    'ri-dumbbell-line': Dumbbell,
+    'ri-dumbbell-fill': Dumbbell,
+    'ri-restaurant-line': Utensils,
+    'ri-restaurant-fill': Utensils,
+    'ri-cup-line': Coffee,
+    'ri-cup-fill': Coffee,
+    'ri-car-line': Car,
+    'ri-car-fill': Car,
+    'ri-book-open-line': BookOpen,
+    'ri-book-open-fill': BookOpen,
+    'ri-shield-line': Shield,
+    'ri-shield-fill': Shield,
+    'ri-user-line': Users,
+    'ri-user-fill': Users,
+    'ri-home-line': Home,
+    'ri-home-fill': Home,
+    'ri-tv-line': Tv,
+    'ri-tv-fill': Tv,
+    'ri-gamepad-line': Gamepad2,
+    'ri-gamepad-fill': Gamepad2,
+    'ri-drop-line': Droplets,
+    'ri-drop-fill': Droplets,
+    'ri-shopping-bag-line': ShoppingBag,
+    'ri-shopping-bag-fill': ShoppingBag,
+    'ri-time-line': Clock,
+    'ri-time-fill': Clock,
+    'ri-phone-line': Phone,
+    'ri-phone-fill': Phone,
+    'ri-map-pin-line': MapPin,
+    'ri-map-pin-fill': MapPin,
+    'ri-star-line': Star,
+    'ri-star-fill': Star,
+    'ri-flashlight-line': Zap,
+    'ri-flashlight-fill': Zap,
+    'ri-mic-line': Mic,
+    'ri-mic-fill': Mic,
+    'ri-camera-line': Camera,
+    'ri-camera-fill': Camera,
+    'ri-sun-line': Sun,
+    'ri-sun-fill': Sun,
+    'ri-tree-line': Trees,
+    'ri-tree-fill': Trees,
+    'ri-bed-line': Bed,
+    'ri-bed-fill': Bed,
+    'ri-shower-line': Bath,
+    'ri-shower-fill': Bath,
+    'ri-fridge-line': Refrigerator,
+    'ri-fridge-fill': Refrigerator,
+  }
+  
+  return iconMap[remixIconName] || Sparkles
+}
+
+// Stats computed from facilities data
+const stats = computed(() => {
+  const totalFacilities = facilities.value.length
+  const activeFacilities = facilities.value.filter(f => f.status == 1).length
+  
+  return [
+    { icon: Wifi, number: 'High Speed', label: 'Internet Speed' },
+    { icon: Shield, number: '24/7', label: 'Security' },
+    { icon: Droplets, number: 'Daily', label: 'Housekeeping' },
+    { icon: Clock, number: totalFacilities.toString(), label: 'Total Facilities' }
+  ]
 })
-
-// Get icon component from string name
-const getIconComponent = (iconName) => {
-  const icons = {
-    'wifi': Wifi,
-    'wind': Wind,
-    'utensils': Utensils,
-    'coffee': Coffee,
-    'dumbbell': Dumbbell,
-    'car': Car,
-    'book-open': BookOpen,
-    'shield': Shield,
-    'users': Users,
-    'home': Home,
-    'tv': Tv,
-    'gamepad-2': Gamepad2,
-    'droplets': Droplets,
-    'shopping-bag': ShoppingBag,
-    'clock': Clock,
-    'phone': Phone,
-    'map-pin': MapPin,
-    'star': Star,
-    'zap': Zap,
-    'mic': Mic,
-    'camera': Camera,
-    'sun': Sun,
-    'trees': Trees,
-    'bed': Bed,
-    'bath': Bath,
-    'washing-machine': WashingMachine,
-    'refrigerator': Refrigerator,
-    'parking-circle': Car,
-    'mosque': Home,
-    'spray-can': Droplets,
-    'sunrise': Sunrise,
-    'check-circle-2': CheckCircle2,
-  }
-  return icons[iconName] || Sparkles
-}
-
-// Get category icon
-const getCategoryIcon = (category) => {
-  const icons = {
-    'Living & Comfort': Home,
-    'Dining & Kitchen': Utensils,
-    'Recreation & Fitness': Dumbbell,
-    'Study & Work': BookOpen,
-    'Services & Security': Shield,
-  }
-  return icons[category] || Sparkles
-}
-
-// Get category description
-const getCategoryDescription = (category) => {
-  const descriptions = {
-    'Living & Comfort': 'Everything you need for comfortable living',
-    'Dining & Kitchen': 'Delicious meals and cooking facilities',
-    'Recreation & Fitness': 'Stay active and entertained',
-    'Study & Work': 'Productive spaces for academic success',
-    'Services & Security': 'Essential services for peace of mind',
-  }
-  return descriptions[category] || 'Premium facilities for our residents'
-}
 
 // Toggle facility detail expansion
 const toggleFacilityDetail = (facilityId) => {
   expandedFacility.value = expandedFacility.value === facilityId ? null : facilityId
 }
 
-// Stats computed from facilities data
-const stats = computed(() => {
-  const wifiFacility = facilities.value.find(f => f.icon === 'wifi')
-  const securityFacility = facilities.value.find(f => f.icon === 'shield')
-  const housekeepingFacility = facilities.value.find(f => f.name === 'Housekeeping')
-  const powerFacility = facilities.value.find(f => f.icon === 'zap')
-  
-  return [
-    { 
-      icon: Wifi, 
-      number: wifiFacility?.specs?.speed || '1 Gbps', 
-      label: 'Internet Speed' 
-    },
-    { 
-      icon: Shield, 
-      number: '24/7', 
-      label: 'Security' 
-    },
-    { 
-      icon: Droplets, 
-      number: housekeepingFacility?.schedule?.common_areas || 'Daily', 
-      label: 'Housekeeping' 
-    },
-    { 
-      icon: Clock, 
-      number: powerFacility?.specs?.fuel_backup_hours ? `${powerFacility.specs.fuel_backup_hours}hrs` : '24hrs', 
-      label: 'Power Backup' 
-    }
-  ]
-})
+// Fetch facilities data from API
+async function fetchFacilitiesData() {
+  try {
+    await fetchFacilities()
+    console.log('Loaded facilities:', facilities.value)
+  } catch (err) {
+    console.error('Error fetching facilities:', err)
+  }
+}
 
 onMounted(() => {
   fetchFacilitiesData()
