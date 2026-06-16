@@ -40,11 +40,11 @@
                   <div class="absolute inset-0 bg-black/30"></div>
                 </div>
                 <div class="relative z-10 text-center text-white px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 w-full">
-                  <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                  <!-- <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
                     <div v-if="index === 0" class="w-2 h-2 sm:w-3 sm:h-3 bg-teal-400 rounded-full"></div>
                     <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-teal-400" />
                     <span class="text-xs sm:text-sm font-bold text-white tracking-wide">{{ slide.badge }}</span>
-                  </div>
+                  </div> -->
                   <div class="space-y-4 sm:space-y-6">
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight break-words">
                       <span v-if="slide.headline_part1" class="block text-white">{{ slide.headline_part1 }}</span>
@@ -415,6 +415,7 @@ import { useFacilities } from '../composables/useFacilities'
 import { useGallery } from '../composables/useGallery'
 import { useTestimonials } from '../composables/useTestimonials'
 import { useRoomTypes } from '../composables/useRoomTypes'
+import { usePages } from '../composables/usePages'
 
 const router = useRouter()
 const { rooms, fetchRooms } = useRooms()
@@ -422,6 +423,7 @@ const { facilities: facilitiesList, fetchFacilities } = useFacilities()
 const { galleryItems, fetchGallery } = useGallery()
 const { testimonials: apiTestimonials, fetchTestimonials } = useTestimonials()
 const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
+const { pageSections, fetchPageData: fetchPageSectionsData, loading: pagesLoading } = usePages()
 
 // Icon mapping
 const iconMap = {
@@ -439,13 +441,6 @@ const roomTypeOptions = computed(() => {
         label: type.room_type_title
       })
     })
-  } else {
-    // Fallback options
-    options.push(
-      { value: 'single', label: 'Single' },
-      { value: 'shared', label: 'Shared' },
-      { value: 'premium', label: 'Premium' }
-    )
   }
   return options
 })
@@ -477,6 +472,83 @@ const currentSlide = ref(0)
 const lightboxOpen = ref(false)
 const currentImageIndex = ref(0)
 const autoplayInterval = ref(null)
+
+// Get hero slides from API
+const getHeroSlides = () => {
+  const heroSection = pageSections.value.find(s => s.section_key === 'hero-slider')
+  if (heroSection && heroSection.items && heroSection.items.length > 0) {
+    return heroSection.items.map(item => ({
+      id: item.id,
+      badge: item.subtitle || 'Welcome',
+      image: item.image,
+      headline_part1: item.title?.split(' ').slice(0, 3).join(' ') || item.title || '',
+      headline_part2: item.title?.split(' ').slice(3).join(' ') || '',
+      headline_part3: '',
+      description_part1: 'modern amenities',
+      description_part2: 'comfortable spaces',
+      sort_order: item.sort_order
+    }))
+  }
+  return []
+}
+
+// Get about section from API
+const getAboutData = () => {
+  const aboutSection = pageSections.value.find(s => s.section_key === 'about')
+  if (aboutSection) {
+    // Use subtitle for the main headline
+    const subtitle = aboutSection.subtitle || ''
+    const title = aboutSection.title || ''
+    
+    // Split subtitle into two parts
+    let headline_part1 = ''
+    let headline_part2 = ''
+    
+    // If subtitle is "Welcome to SylhetStay", split into "Welcome to" and "SylhetStay"
+    if (subtitle) {
+      const subtitleParts = subtitle.split(' ')
+      
+      if (subtitleParts.length > 1) {
+        // Find the word 'to' to split naturally
+        const toIndex = subtitleParts.indexOf('to')
+        if (toIndex !== -1 && toIndex < subtitleParts.length - 1) {
+          headline_part1 = subtitleParts.slice(0, toIndex + 1).join(' ')
+          headline_part2 = subtitleParts.slice(toIndex + 1).join(' ')
+        } else {
+          // If no 'to' found, split in half
+          const mid = Math.ceil(subtitleParts.length / 2)
+          headline_part1 = subtitleParts.slice(0, mid).join(' ')
+          headline_part2 = subtitleParts.slice(mid).join(' ')
+        }
+      } else {
+        // Only one word, use it as headline_part1
+        headline_part1 = subtitle
+        headline_part2 = ''
+      }
+    }
+    
+    // Get images from about section items
+    const images = aboutSection.items?.map(item => ({
+      src: item.image,
+      label: item.title || 'Space'
+    })).filter(item => item.src) || []
+    
+    return {
+      badge: title || 'About Us',
+      headline_part1: headline_part1 || 'Welcome to',
+      headline_part2: headline_part2 || '',
+      description: aboutSection.description || '',
+      stats: [
+        { icon: 'Users', value: '150+', label: 'Happy Students' },
+        { icon: 'Star', value: '4.8/5', label: 'Rating' },
+        { icon: 'Building2', value: '50+', label: 'Room Options' },
+        { icon: 'Shield', value: '24/7', label: 'Security' }
+      ],
+      images: images
+    }
+  }
+  return null
+}
 
 // Get icon for room type card
 const getRoomTypeIcon = (title) => {
@@ -531,21 +603,15 @@ const getFacilityIcon = (iconName) => {
   return iconMap[iconName] || Sparkles
 }
 
-// Fetch data from APIs and mock
 async function fetchPageData() {
   loading.value = true
   error.value = ''
   try {
-    // Fetch from mock JSON for static content
-    const homeResponse = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/content_home.json')
+    console.log('Starting to fetch page data...')
     
-    const data = homeResponse.data
-    
-    // Set hero slides (mock)
-    heroSlides.value = data.hero?.slides || []
-    
-    // Set page data (mock)
-    pageData.value = data
+    // Fetch page data (sections and items) for Home page (id: 1)
+    await fetchPageSectionsData(1)
+    console.log('Page sections in composable:', pageSections.value)
     
     // Fetch real data from APIs
     await Promise.all([
@@ -556,6 +622,22 @@ async function fetchPageData() {
       fetchRoomTypes()
     ])
     
+    console.log('All APIs fetched successfully')
+    
+    // Set hero slides from API (only if data exists)
+    const slides = getHeroSlides()
+    heroSlides.value = slides
+    console.log('Hero slides:', heroSlides.value)
+    
+    // Set about section from API (only if data exists)
+    const aboutData = getAboutData()
+    console.log('About data:', aboutData)
+    if (aboutData) {
+      pageData.value.about = aboutData
+    }
+    
+    console.log('Final pageData.about:', pageData.value.about)
+    
     // Set homepage rooms from real API (show first 3)
     homepageRooms.value = rooms.value.slice(0, 3)
     
@@ -565,9 +647,13 @@ async function fetchPageData() {
     // Set testimonials from real API
     testimonials.value = apiTestimonials.value.slice(0, 6)
     
-    // Start autoplay
-    if (autoplayInterval.value) clearInterval(autoplayInterval.value)
-    autoplayInterval.value = setInterval(nextSlide, data.hero?.autoSlideInterval || 5000)
+    // Start autoplay only if there are hero slides
+    if (heroSlides.value.length > 0) {
+      if (autoplayInterval.value) clearInterval(autoplayInterval.value)
+      autoplayInterval.value = setInterval(nextSlide, 5000)
+    }
+    
+    console.log('Page data loading complete')
     
   } catch (err) {
     console.error('Error fetching homepage data:', err)

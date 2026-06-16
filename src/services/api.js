@@ -185,4 +185,31 @@ export const newsletterAPI = {
   subscribe: (data) => apiClient.post('/newsletter/subscribe', data),
   unsubscribe: (data) => apiClient.post('/newsletter/unsubscribe', data)
 }
+
+// Pages API
+export const pagesAPI = {
+  getPages: () => apiClient.get('/pages'),
+  getPageDetails: (id) => apiClient.get(`/pages/${id}`),
+  createPage: (pageData) => apiClient.post('/pages', pageData),
+  updatePage: (id, pageData) => apiClient.put(`/pages/${id}`, pageData),
+  updatePageStatus: (id, status) => apiClient.put(`/pages/update-status/${id}`, { status })
+}
+
+// Page Sections API
+export const pageSectionsAPI = {
+  getSections: () => apiClient.get('/page-sections'),
+  getSectionDetails: (id) => apiClient.get(`/page-sections/${id}`),
+  createSection: (sectionData) => apiClient.post('/page-sections', sectionData),
+  updateSection: (id, sectionData) => apiClient.put(`/page-sections/${id}`, sectionData),
+  updateSectionStatus: (id, status) => apiClient.put(`/page-sections/update-status/${id}`, { status })
+}
+
+// Page Section Items API
+export const sectionItemsAPI = {
+  getItems: () => apiClient.get('/page-section-items'),
+  getItemDetails: (id) => apiClient.get(`/page-section-items/${id}`),
+  createItem: (itemData) => apiClient.post('/page-section-items', itemData),
+  updateItem: (id, itemData) => apiClient.put(`/page-section-items/${id}`, itemData),
+  updateItemStatus: (id, status) => apiClient.put(`/page-section-items/update-status/${id}`, { status })
+}
 export default apiClient
