@@ -172,4 +172,11 @@ export const contactAPI = {
   sendEnquiry: (enquiryData) => apiClient.post('/contact', enquiryData),
   getContactInfo: () => apiClient.get('/contact/info'), // If you have this endpoint
 }
+// Tour Bookings API
+export const tourBookingsAPI = {
+  getTourBookings: () => apiClient.get('/tour-bookings'),
+  getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
+  createTourBooking: (bookingData) => apiClient.post('/tour-bookings', bookingData),
+  updateTourBookingStatus: (id, statusData) => apiClient.put(`/tour-bookings/${id}`, statusData)
+}
 export default apiClient

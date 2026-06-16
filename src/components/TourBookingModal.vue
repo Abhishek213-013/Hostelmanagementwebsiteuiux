@@ -31,6 +31,16 @@
         
         <!-- Form -->
         <div class="px-6 pb-6">
+          <!-- Error Message -->
+          <div v-if="submitError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
+            {{ submitError }}
+          </div>
+
+          <!-- Success Message -->
+          <div v-if="submitSuccess" class="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm">
+            {{ submitSuccess }}
+          </div>
+          
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <!-- Name -->
             <div>
@@ -39,9 +49,11 @@
                 type="text" 
                 v-model="form.name" 
                 placeholder="John Doe"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
+                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none', 
+                  formErrors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
                 required 
               />
+              <p v-if="formErrors.name" class="text-red-500 text-xs mt-1">{{ formErrors.name }}</p>
             </div>
             
             <!-- Email -->
@@ -51,9 +63,11 @@
                 type="email" 
                 v-model="form.email" 
                 placeholder="john@example.com"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
+                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none',
+                  formErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
                 required 
               />
+              <p v-if="formErrors.email" class="text-red-500 text-xs mt-1">{{ formErrors.email }}</p>
             </div>
             
             <!-- Phone -->
@@ -62,30 +76,71 @@
               <input 
                 type="tel" 
                 v-model="form.phone" 
-                placeholder="+1 (555) 000-0000"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none" 
+                placeholder="+880 1711-123456"
+                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none',
+                  formErrors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
                 required 
               />
+              <p v-if="formErrors.phone" class="text-red-500 text-xs mt-1">{{ formErrors.phone }}</p>
+            </div>
+
+            <!-- Preferred Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Date</label>
+              <input 
+                type="date" 
+                v-model="form.preferred_date" 
+                :min="minDate"
+                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer',
+                  formErrors.preferred_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                required 
+              />
+              <p v-if="formErrors.preferred_date" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_date }}</p>
+            </div>
+
+            <!-- Preferred Time -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Time</label>
+              <select 
+                v-model="form.preferred_time"
+                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer',
+                  formErrors.preferred_time ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                required
+              >
+                <option value="">Select a time</option>
+                <option v-for="time in timeSlots" :key="time" :value="time">{{ time }}</option>
+              </select>
+              <p v-if="formErrors.preferred_time" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_time }}</p>
             </div>
             
-            <!-- Date & Time -->
+            <!-- Message -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Date & Time</label>
-              <input 
-                type="datetime-local" 
-                v-model="form.scheduleTime"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer" 
-                required 
-              />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message (Optional)</label>
+              <textarea 
+                v-model="form.message" 
+                placeholder="Any special requests or questions..."
+                rows="3"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none resize-none"
+              ></textarea>
             </div>
             
             <!-- Submit Button -->
             <button 
               type="submit" 
-              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-6"
+              :disabled="isSubmitting"
+              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Calendar class="w-5 h-5" />
-              Book Appointment
+              <span v-if="isSubmitting" class="flex items-center gap-2">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </span>
+              <span v-else class="flex items-center gap-2">
+                <Calendar class="w-5 h-5" />
+                Book Appointment
+              </span>
             </button>
             
             <!-- Footer Text -->
@@ -100,8 +155,9 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { Calendar, X } from 'lucide-vue-next'
+import { useTourBookings } from '../composables/useTourBookings'
 
 const props = defineProps({
   isOpen: Boolean
@@ -109,17 +165,126 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
+const { createTourBooking, submitting: isSubmitting, error: submitError, success: submitSuccess } = useTourBookings()
+
 const form = ref({
   name: '',
   email: '',
   phone: '',
-  scheduleTime: ''
+  preferred_date: '',
+  preferred_time: '',
+  message: ''
 })
+
+const formErrors = ref({})
+const submitted = ref(false)
+
+// Time slots (display format)
+const timeSlots = [
+  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+  '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+]
+
+// Min date for booking (today)
+const minDate = computed(() => {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+})
+
+// Convert 12-hour time to 24-hour format for API
+const convertTo24Hour = (time12h) => {
+  if (!time12h) return ''
+  const [time, modifier] = time12h.split(' ')
+  let [hours, minutes] = time.split(':')
+  
+  if (hours === '12') {
+    hours = '00'
+  }
+  if (modifier === 'PM') {
+    hours = parseInt(hours, 10) + 12
+  }
+  if (hours.toString().length === 1) {
+    hours = '0' + hours
+  }
+  
+  return `${hours}:${minutes}:00`
+}
+
+// Auto-fill user data when modal opens
+const autoFillUserData = () => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser)
+      // Auto-fill name from user data
+      if (user.name && !form.value.name) {
+        form.value.name = user.name
+      }
+      // Auto-fill email from user data
+      if (user.email && !form.value.email) {
+        form.value.email = user.email
+      }
+      // Auto-fill phone from user data
+      if (user.phone && !form.value.phone) {
+        form.value.phone = user.phone
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e)
+    }
+  }
+}
+
+// Validate form
+const validateForm = () => {
+  const errors = {}
+  
+  if (!form.value.name.trim()) {
+    errors.name = 'Full name is required'
+  }
+  
+  if (!form.value.email.trim()) {
+    errors.email = 'Email address is required'
+  } else if (!/\S+@\S+\.\S+/.test(form.value.email)) {
+    errors.email = 'Please enter a valid email address'
+  }
+  
+  if (!form.value.phone.trim()) {
+    errors.phone = 'Phone number is required'
+  } else if (!/^[\+\d\s\-\(\)]{10,15}$/.test(form.value.phone)) {
+    errors.phone = 'Please enter a valid phone number'
+  }
+  
+  if (!form.value.preferred_date) {
+    errors.preferred_date = 'Preferred date is required'
+  }
+  
+  if (!form.value.preferred_time) {
+    errors.preferred_time = 'Preferred time is required'
+  }
+  
+  formErrors.value = errors
+  return Object.keys(errors).length === 0
+}
 
 // Prevent body scroll when modal is open
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     document.body.style.overflow = 'hidden'
+    // Reset form when modal opens
+    form.value = {
+      name: '',
+      email: '',
+      phone: '',
+      preferred_date: '',
+      preferred_time: '',
+      message: ''
+    }
+    formErrors.value = {}
+    submitted.value = false
+    
+    // Auto-fill user data
+    autoFillUserData()
+    
   } else {
     document.body.style.overflow = ''
   }
@@ -140,18 +305,48 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 })
 
-const handleSubmit = () => {
-  const appointments = JSON.parse(localStorage.getItem('tourAppointments') || '[]')
-  appointments.push({
-    ...form.value,
-    id: Date.now(),
-    status: 'pending',
-    createdAt: new Date().toISOString()
-  })
-  localStorage.setItem('tourAppointments', JSON.stringify(appointments))
-  alert('Appointment requested successfully! We will contact you shortly.')
-  form.value = { name: '', email: '', phone: '', scheduleTime: '' }
-  closeModal()
+const handleSubmit = async () => {
+  if (!validateForm()) return
+  
+  try {
+    // Convert time to 24-hour format for API
+    const time24h = convertTo24Hour(form.value.preferred_time)
+    
+    // Format data for API
+    const bookingData = {
+      name: form.value.name,
+      email: form.value.email,
+      phone: form.value.phone,
+      preferred_date: form.value.preferred_date,
+      preferred_time: time24h,
+      message: form.value.message || ''
+    }
+    
+    console.log('Submitting tour booking:', bookingData)
+    
+    await createTourBooking(bookingData)
+    submitted.value = true
+    
+    // Reset form after successful submission
+    form.value = {
+      name: '',
+      email: '',
+      phone: '',
+      preferred_date: '',
+      preferred_time: '',
+      message: ''
+    }
+    formErrors.value = {}
+    
+    // Close modal after delay
+    setTimeout(() => {
+      closeModal()
+    }, 2000)
+    
+  } catch (err) {
+    console.error('Failed to submit tour booking:', err)
+    // Error is handled by the composable
+  }
 }
 
 const closeModal = () => {
