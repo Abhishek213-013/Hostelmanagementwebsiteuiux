@@ -217,6 +217,150 @@
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3618.727256099589!2d92.01732531540178!3d24.89774928036656!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3751f2d53c30e91%3A0x3b85a6b1e8e7e8a8!2sSylhet%2C%20Bangladesh!5e0!3m2!1sen!2sbd!4v1600000000000!5m2!1sen!2sbd"
             width="100%" height="400" style="border:0" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
+
+        <!-- Newsletter Section -->
+        <div class="mt-12">
+          <div class="bg-gradient-to-r from-teal-600 to-teal-700 rounded-2xl p-8 md:p-12 text-white">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <Mail class="w-5 h-5 text-white" />
+                  </div>
+                  <span class="text-sm font-bold tracking-wider uppercase">Newsletter</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-black mb-2">Subscribe to Our Newsletter</h2>
+                <p class="text-white/80 text-sm md:text-base">Stay updated with our latest offers, events, and news about student accommodations.</p>
+              </div>
+              
+              <div>
+                <!-- Success Message - After Subscription -->
+                <div v-if="isSubscribed" class="space-y-4">
+                  <div class="bg-green-500/20 border border-green-400/50 rounded-xl p-4 text-center">
+                    <CheckCircle2 class="w-8 h-8 mx-auto mb-2 text-green-300" />
+                    <p class="font-semibold">Successfully Subscribed!</p>
+                    <p class="text-sm text-white/80">You are now subscribed to our newsletter.</p>
+                  </div>
+                  
+                  <!-- Unsubscribe Button (shown after success) -->
+                  <div class="text-center">
+                    <button 
+                      @click="showUnsubscribeForm = !showUnsubscribeForm" 
+                      class="text-white/70 hover:text-white text-sm underline transition-colors"
+                    >
+                      {{ showUnsubscribeForm ? 'Hide' : 'Unsubscribe?' }}
+                    </button>
+                    
+                    <!-- Unsubscribe Form (shown when clicked) -->
+                    <div v-if="showUnsubscribeForm" class="mt-3 p-3 bg-white/10 rounded-xl">
+                      <form @submit.prevent="handleNewsletterUnsubscribe" class="flex flex-col sm:flex-row gap-2">
+                        <input 
+                          type="email" 
+                          v-model="unsubscribeEmail" 
+                          placeholder="Enter your email to unsubscribe"
+                          class="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all text-sm"
+                          required
+                        />
+                        <button 
+                          type="submit" 
+                          :disabled="newsletterUnsubscribing"
+                          class="px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {{ newsletterUnsubscribing ? 'Unsubscribing...' : 'Unsubscribe' }}
+                        </button>
+                        <button 
+                          type="button" 
+                          @click="showUnsubscribeForm = false"
+                          class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold text-sm transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Error Message -->
+                <div v-else-if="newsletterError" class="bg-red-500/20 border border-red-400/50 rounded-xl p-4 mb-4 text-center">
+                  <X class="w-8 h-8 mx-auto mb-2 text-red-300" />
+                  <p class="font-semibold">Subscription Failed</p>
+                  <p class="text-sm text-white/80">{{ newsletterError }}</p>
+                  <button 
+                    @click="resetNewsletterState" 
+                    class="mt-2 text-sm text-white/70 hover:text-white underline transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+                
+                <!-- Subscribe Form (hidden when subscribed) -->
+                <form v-else @submit.prevent="handleNewsletterSubscribe" class="flex flex-col sm:flex-row gap-3">
+                  <div class="flex-1">
+                    <input 
+                      type="email" 
+                      v-model="newsletterEmail" 
+                      placeholder="Enter your email address"
+                      class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    :disabled="newsletterSubscribing"
+                    class="px-6 py-3 bg-white text-teal-600 rounded-xl font-bold hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center justify-center gap-2"
+                  >
+                    <span v-if="newsletterSubscribing" class="flex items-center gap-2">
+                      <svg class="animate-spin h-5 w-5 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Subscribing...
+                    </span>
+                    <span v-else class="flex items-center gap-2">
+                      Subscribe
+                      <Send class="w-4 h-4" />
+                    </span>
+                  </button>
+                </form>
+                
+                <!-- Unsubscribe Link (only shown when not subscribed) -->
+                <p v-if="!isSubscribed && !newsletterSuccess" class="text-xs text-white/60 mt-3 text-center sm:text-left">
+                  By subscribing, you agree to receive our newsletter. 
+                  <button @click="showUnsubscribeForm = !showUnsubscribeForm" class="text-white/80 hover:text-white underline transition-colors">
+                    Unsubscribe?
+                  </button>
+                </p>
+                
+                <!-- Unsubscribe Form (shown when toggled, only when not subscribed) -->
+                <div v-if="showUnsubscribeForm && !isSubscribed && !newsletterSuccess" class="mt-3 p-3 bg-white/10 rounded-xl">
+                  <form @submit.prevent="handleNewsletterUnsubscribe" class="flex flex-col sm:flex-row gap-2">
+                    <input 
+                      type="email" 
+                      v-model="unsubscribeEmail" 
+                      placeholder="Enter your email to unsubscribe"
+                      class="flex-1 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all text-sm"
+                      required
+                    />
+                    <button 
+                      type="submit" 
+                      :disabled="newsletterUnsubscribing"
+                      class="px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {{ newsletterUnsubscribing ? 'Unsubscribing...' : 'Unsubscribe' }}
+                    </button>
+                    <button 
+                      type="button" 
+                      @click="showUnsubscribeForm = false"
+                      class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold text-sm transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
       <Footer />
@@ -231,10 +375,22 @@ import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import TourBookingModal from '../components/TourBookingModal.vue'
 import { useContact } from '../composables/useContact'
-import { Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, Sparkles, Linkedin } from 'lucide-vue-next'
+import { useNewsletter } from '../composables/useNewsletter'
+import { Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, Sparkles, Linkedin, X } from 'lucide-vue-next'
 
 // Use contact composable
 const { sending, error: sendError, success, sendEnquiry, reset } = useContact()
+
+// Use newsletter composable
+const { 
+  subscribe: newsletterSubscribe, 
+  unsubscribe: newsletterUnsubscribe,
+  subscribing: newsletterSubscribing,
+  unsubscribing: newsletterUnsubscribing,
+  error: newsletterError,
+  success: newsletterSuccess,
+  resetNewsletter
+} = useNewsletter()
 
 // Social media icon mapping
 const socialIconMap = {
@@ -258,6 +414,13 @@ const submitted = ref(false)
 const formError = ref('')
 const hoveredCard = ref(null)
 const isTourModalOpen = ref(false)
+const showUnsubscribe = ref(false)
+const newsletterEmail = ref('')
+const unsubscribeEmail = ref('')
+const isSubscribed = ref(false)
+const subscribedEmail = ref('')
+const showUnsubscribeForm = ref(false)
+
 const formData = ref({ 
   name: '', 
   email: '', 
@@ -284,6 +447,43 @@ async function fetchContactData() {
   }
 }
 
+// Newsletter handlers
+const handleNewsletterSubscribe = async () => {
+  resetNewsletter()
+  try {
+    await newsletterSubscribe(newsletterEmail.value)
+    // Store the subscribed email
+    subscribedEmail.value = newsletterEmail.value
+    // Set subscribed state to true
+    isSubscribed.value = true
+    newsletterEmail.value = ''
+  } catch (err) {
+    console.error('Newsletter subscription failed:', err)
+    isSubscribed.value = false
+  }
+}
+
+const handleNewsletterUnsubscribe = async () => {
+  resetNewsletter()
+  try {
+    const emailToUnsubscribe = unsubscribeEmail.value || subscribedEmail.value
+    await newsletterUnsubscribe(emailToUnsubscribe)
+    unsubscribeEmail.value = ''
+    showUnsubscribeForm.value = false
+    // Reset subscribed state
+    isSubscribed.value = false
+    subscribedEmail.value = ''
+  } catch (err) {
+    console.error('Newsletter unsubscription failed:', err)
+  }
+}
+
+const resetNewsletterState = () => {
+  resetNewsletter()
+  if (!isSubscribed.value) {
+    newsletterError.value = null
+  }
+}
 // Computed contact info from JSON
 const contactInfo = computed(() => {
   const data = pageData.value

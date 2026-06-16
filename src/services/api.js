@@ -179,4 +179,10 @@ export const tourBookingsAPI = {
   createTourBooking: (bookingData) => apiClient.post('/tour-bookings', bookingData),
   updateTourBookingStatus: (id, statusData) => apiClient.put(`/tour-bookings/${id}`, statusData)
 }
+// Newsletter API
+export const newsletterAPI = {
+  getSubscribers: () => apiClient.get('/newsletter'),
+  subscribe: (data) => apiClient.post('/newsletter/subscribe', data),
+  unsubscribe: (data) => apiClient.post('/newsletter/unsubscribe', data)
+}
 export default apiClient
