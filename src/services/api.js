@@ -101,8 +101,8 @@ export const bookingAPI = {
   createBooking: (bookingData) => apiClient.post('/bookings', bookingData),
   getAllBookings: () => apiClient.get('/bookings'),
   getBookingDetails: (id) => apiClient.get(`/bookings/${id}`),
-  cancelBooking: (id) => apiClient.post(`/bookings/${id}/cancel`),
-  updateBookingStatus: (id, status) => apiClient.put(`/bookings/${id}/status`, { status }) // PUT instead of POST
+  cancelBooking: (id) => apiClient.put(`/bookings/${id}/cancel`), // Changed from POST to PUT
+  updateBookingStatus: (id, status) => apiClient.put(`/bookings/${id}/status`, { status })
 }
 // Facilities API
 export const facilitiesAPI = {
