@@ -25,39 +25,39 @@
       <Header />
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
         <!-- Header -->
-        <div class="text-center mb-12">
+        <div v-if="pageData.contact" class="text-center mb-12">
           <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
             <div class="p-2 bg-teal-600 rounded-xl">
-              <MessageCircle class="w-4 h-4 text-white" />
+              <component :is="getIconComponent(pageData.contact.icon)" class="w-4 h-4 text-white" />
             </div>
-            <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">Contact Us</span>
+            <span class="text-sm font-bold tracking-wider text-teal-600 uppercase">{{ pageData.contact.title }}</span>
           </div>
           <h1 class="text-3xl lg:text-5xl font-black mb-6 leading-[1.1]">
-            <span class="block text-teal-600">Get In Touch</span>
-            <span class="text-4xl lg:text-5xl text-gray-700 dark:text-gray-300 font-light">With Us</span>
+            <span class="block text-teal-600">{{ pageData.contact.subtitle?.split(' ')[0] || 'Get In' }}</span>
+            <span class="text-4xl lg:text-5xl text-gray-700 dark:text-gray-300 font-light">{{ pageData.contact.subtitle?.split(' ').slice(1).join(' ') || 'Touch With Us' }}</span>
           </h1>
-          <p class="text-lg text-gray-600 dark:text-gray-400">We'd love to hear from you. Send us a message!</p>
+          <p class="text-lg text-gray-600 dark:text-gray-400">{{ pageData.contact.description }}</p>
         </div>
 
         <!-- Contact Info Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div v-if="contactInfo.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div v-for="(info, i) in contactInfo" :key="i" 
                class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
                @mouseenter="hoveredCard = i"
                @mouseleave="hoveredCard = null">
             <div class="w-10 h-10 mb-6 rounded-2xl bg-teal-600 flex items-center justify-center shadow">
-              <component :is="info.icon" class="w-5 h-5 text-white" />
+              <component :is="getIconComponent(info.icon)" class="w-5 h-5 text-white" />
             </div>
             <h3 class="text-xl font-black mb-4 text-teal-600">{{ info.title }}</h3>
             <div v-for="(detail, j) in info.details" :key="j">
-              <template v-if="info.icon === Phone && detail.startsWith('+')">
+              <template v-if="info.icon === 'heroicon-o-phone' && detail.startsWith('+')">
                 <a :href="`tel:${detail.replace(/\s/g, '')}`" class="text-gray-600 dark:text-gray-400 font-medium leading-relaxed hover:text-teal-600 transition-colors block">{{ detail }}</a>
               </template>
-              <template v-else-if="info.icon === Mail">
+              <template v-else-if="info.icon === 'eva-email'">
                 <a :href="`mailto:${detail}`" class="text-gray-600 dark:text-gray-400 font-medium leading-relaxed hover:text-teal-600 transition-colors block">{{ detail }}</a>
               </template>
               <template v-else>
-                <p class="text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{{ detail }}</p>
+                <p class="text-gray-600 dark:text-gray-400 font-medium leading-relaxed whitespace-pre-line">{{ detail }}</p>
               </template>
             </div>
           </div>
@@ -181,30 +181,22 @@
             </div>
 
             <!-- Office Hours -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-8">
-              <h2 class="text-xl font-black mb-4 text-teal-600">Office Hours</h2>
+            <!-- <div v-if="officeHours" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-8">
+              <h2 class="text-xl font-black mb-4 text-teal-600">{{ officeHours.title }}</h2>
               <div class="space-y-3">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Monday - Friday</span>
-                  <span class="text-sm text-teal-600 font-bold">9:00 AM - 8:00 PM</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Saturday</span>
-                  <span class="text-sm text-teal-600 font-bold">10:00 AM - 6:00 PM</span>
-                </div>
-                <div class="flex justify-between items-center py-2">
-                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Sunday</span>
-                  <span class="text-sm text-teal-600 font-bold">Closed</span>
+                <div v-for="(line, index) in officeHours.lines" :key="index" class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ line.day }}</span>
+                  <span class="text-sm text-teal-600 font-bold">{{ line.time }}</span>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Emergency Contact -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-8">
-              <h2 class="text-xl font-black mb-4 text-teal-600">Emergency Contact</h2>
-              <p class="text-gray-600 dark:text-gray-400 mb-4">Available 24/7 for urgent matters</p>
-              <a href="tel:+8801711123456" class="group text-2xl font-black flex items-center gap-2 text-teal-600 hover:text-teal-700 transition-colors">
-                +880 1711-123456
+            <div v-if="emergencyContact" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-8">
+              <h2 class="text-xl font-black mb-4 text-teal-600">{{ emergencyContact.title }}</h2>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">{{ emergencyContact.description }}</p>
+              <a :href="`tel:${emergencyContact.phone?.replace(/\s/g, '')}`" class="group text-2xl font-black flex items-center gap-2 text-teal-600 hover:text-teal-700 transition-colors">
+                {{ emergencyContact.phone }}
                 <ChevronRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
@@ -376,12 +368,15 @@ import Footer from '../components/layout/Footer.vue'
 import TourBookingModal from '../components/TourBookingModal.vue'
 import { useContact } from '../composables/useContact'
 import { useNewsletter } from '../composables/useNewsletter'
-import { Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, Sparkles, Linkedin, X } from 'lucide-vue-next'
+import { usePages } from '../composables/usePages'
+import { 
+  Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, 
+  Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, 
+  Sparkles, Linkedin, X, Award, Shield, Users, Star, Target, Eye, TrendingUp
+} from 'lucide-vue-next'
 
-// Use contact composable
+// Use composables
 const { sending, error: sendError, success, sendEnquiry, reset } = useContact()
-
-// Use newsletter composable
 const { 
   subscribe: newsletterSubscribe, 
   unsubscribe: newsletterUnsubscribe,
@@ -391,6 +386,7 @@ const {
   success: newsletterSuccess,
   resetNewsletter
 } = useNewsletter()
+const { pageSections, fetchPageData, loading: pagesLoading } = usePages()
 
 // Social media icon mapping
 const socialIconMap = {
@@ -409,17 +405,39 @@ const socialLinks = {
   linkedin: 'https://linkedin.com/company/sylhetstay',
 }
 
+// Helper to get icon component from icon string
+const getIconComponent = (iconString) => {
+  if (!iconString) return Award
+  const iconMap = {
+    'bi-chat': MessageCircle,
+    'bi-award-fill': Award,
+    'bi-shield-fill': Shield,
+    'bi-people': Users,
+    'bi-building-fill': Building2,
+    'carbon-growth': TrendingUp,
+    'feathericon-target': Target,
+    'heroicon-o-eye': Eye,
+    'heroicon-o-phone': Phone,
+    'heroicon-o-clock': Clock,
+    'ionicon-location': MapPin,
+    'eva-email': Mail,
+  }
+  return iconMap[iconString] || Award
+}
+
 // State
 const submitted = ref(false)
 const formError = ref('')
 const hoveredCard = ref(null)
 const isTourModalOpen = ref(false)
-const showUnsubscribe = ref(false)
 const newsletterEmail = ref('')
 const unsubscribeEmail = ref('')
 const isSubscribed = ref(false)
 const subscribedEmail = ref('')
 const showUnsubscribeForm = ref(false)
+const pageData = ref({})
+const loading = ref(true)
+const error = ref('')
 
 const formData = ref({ 
   name: '', 
@@ -428,17 +446,96 @@ const formData = ref({
   subject: '', 
   message: '' 
 })
-const pageData = ref({})
-const loading = ref(true)
-const error = ref('')
 
-// Fetch data from JSON (static content)
+// Parse contact section
+const parseContactSection = () => {
+  const contactSection = pageSections.value.find(s => s.section_key === 'contact-us')
+  if (!contactSection) return null
+  
+  return {
+    title: contactSection.title || 'Contact Us',
+    subtitle: contactSection.subtitle || 'Get In Touch With Us',
+    description: contactSection.description || "We'd love to hear from you. Send us a message!",
+    icon: contactSection.icon || 'bi-chat'
+  }
+}
+
+// Parse contact info from items
+const parseContactInfo = () => {
+  const contactSection = pageSections.value.find(s => s.section_key === 'contact-us')
+  if (!contactSection || !contactSection.items) return []
+  
+  return contactSection.items.map(item => {
+    let details = []
+    if (item.description) {
+      details = item.description.split('\n').filter(d => d.trim())
+    }
+    
+    return {
+      id: item.id,
+      title: item.title,
+      details: details.length > 0 ? details : [item.subtitle || item.description || 'N/A'],
+      icon: item.icon || 'bi-building-fill',
+      sort_order: item.sort_order
+    }
+  }).sort((a, b) => a.sort_order - b.sort_order)
+}
+
+// Parse office hours
+const parseOfficeHours = () => {
+  const officeHoursItem = pageSections.value
+    .find(s => s.section_key === 'contact-us')
+    ?.items?.find(item => item.icon === 'heroicon-o-clock')
+  
+  if (!officeHoursItem) return null
+  
+  const lines = officeHoursItem.description?.split('\n').filter(d => d.trim()) || []
+  
+  return {
+    title: officeHoursItem.title || 'Office Hours',
+    lines: lines.map(line => {
+      const parts = line.split(':')
+      if (parts.length >= 2) {
+        return { day: parts[0].trim(), time: parts.slice(1).join(':').trim() }
+      }
+      return { day: line, time: '' }
+    })
+  }
+}
+
+// Parse emergency contact
+const parseEmergencyContact = () => {
+  const items = pageSections.value
+    .find(s => s.section_key === 'contact-us')
+    ?.items || []
+  
+  // Find phone item that might be emergency contact
+  const phoneItem = items.find(item => item.icon === 'heroicon-o-phone')
+  if (!phoneItem) return null
+  
+  const phones = phoneItem.description?.split('\n').filter(d => d.trim()) || []
+  
+  return {
+    title: 'Emergency Contact',
+    description: 'Available 24/7 for urgent matters',
+    phone: phones[0] || '+880 1711-123456'
+  }
+}
+
+// Fetch contact data from API
 async function fetchContactData() {
   loading.value = true
   error.value = ''
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/contact_info.json')
-    pageData.value = response.data
+    // Fetch page data (sections and items) for Contact page (id: 3)
+    await fetchPageData(3)
+    
+    // Parse all sections
+    pageData.value.contact = parseContactSection()
+    pageData.value.contactInfo = parseContactInfo()
+    pageData.value.officeHours = parseOfficeHours()
+    pageData.value.emergencyContact = parseEmergencyContact()
+    
   } catch (err) {
     console.error('Error fetching contact data:', err)
     error.value = 'Failed to load contact information. Please check your connection and try again.'
@@ -447,14 +544,27 @@ async function fetchContactData() {
   }
 }
 
+// Computed contact info from API
+const contactInfo = computed(() => {
+  return pageData.value.contactInfo || []
+})
+
+// Office hours computed
+const officeHours = computed(() => {
+  return pageData.value.officeHours
+})
+
+// Emergency contact computed
+const emergencyContact = computed(() => {
+  return pageData.value.emergencyContact
+})
+
 // Newsletter handlers
 const handleNewsletterSubscribe = async () => {
   resetNewsletter()
   try {
     await newsletterSubscribe(newsletterEmail.value)
-    // Store the subscribed email
     subscribedEmail.value = newsletterEmail.value
-    // Set subscribed state to true
     isSubscribed.value = true
     newsletterEmail.value = ''
   } catch (err) {
@@ -470,7 +580,6 @@ const handleNewsletterUnsubscribe = async () => {
     await newsletterUnsubscribe(emailToUnsubscribe)
     unsubscribeEmail.value = ''
     showUnsubscribeForm.value = false
-    // Reset subscribed state
     isSubscribed.value = false
     subscribedEmail.value = ''
   } catch (err) {
@@ -484,45 +593,6 @@ const resetNewsletterState = () => {
     newsletterError.value = null
   }
 }
-// Computed contact info from JSON
-const contactInfo = computed(() => {
-  const data = pageData.value
-  const info = []
-
-  if (data.address_lines || data.address) {
-    info.push({
-      icon: MapPin,
-      title: 'Visit Us',
-      details: data.address_lines || [data.address]
-    })
-  } else {
-    info.push({
-      icon: MapPin,
-      title: 'Visit Us',
-      details: ['123 Akhalia Road', 'Sylhet 3100, Bangladesh']
-    })
-  }
-
-  info.push({
-    icon: Phone,
-    title: 'Call Us',
-    details: ['+880 1711-123456', '+880 1811-654321']
-  })
-
-  info.push({
-    icon: Mail,
-    title: 'Email Us',
-    details: ['info@sylhetstay.com', 'booking@sylhetstay.com']
-  })
-
-  info.push({
-    icon: Clock,
-    title: 'Office Hours',
-    details: ['Mon - Fri: 9AM - 8PM', 'Sat: 10AM - 6PM', 'Sun: Closed']
-  })
-
-  return info
-})
 
 const openTourModal = () => {
   isTourModalOpen.value = true
@@ -556,7 +626,6 @@ const handleSubmit = async () => {
   }
   
   try {
-    // Send to real API
     const enquiryData = {
       name: formData.value.name,
       email: formData.value.email,
