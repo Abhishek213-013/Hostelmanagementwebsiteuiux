@@ -68,7 +68,13 @@
                     class="w-full py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl transition-all disabled:opacity-50"
                     style="background: #0d9488"
                     :disabled="isLoading">
-              <span v-if="isLoading">Processing...</span>
+              <span v-if="isLoading" class="flex items-center justify-center gap-2">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+              </span>
               <span v-else>Create Account</span>
             </button>
           </form>
@@ -112,30 +118,34 @@ const handleRegister = async () => {
     
     console.log('Registration response:', response.data)
     
-    if (response.data.token) {
+    // Check for token in response
+    const token = response.data.token || response.data.access_token
+    if (token) {
       // Store the token
-      localStorage.setItem('auth_token', response.data.token)
+      localStorage.setItem('auth_token', token)
       localStorage.setItem('isAuthenticated', 'true')
       
-      registerSuccess.value = 'Registration successful! Redirecting to login...'
-      
-      // Redirect to login after 2 seconds
-      setTimeout(() => {
-        router.push('/login')
-      }, 2000)
-    } else if (response.data.access_token) {
-      // Alternative response format
-      localStorage.setItem('auth_token', response.data.access_token)
-      localStorage.setItem('isAuthenticated', 'true')
-      
+      // Store user data if available
       if (response.data.data) {
         localStorage.setItem('user', JSON.stringify(response.data.data))
+      } else if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user))
       }
+      
+      // Dispatch event for Header to update
+      window.dispatchEvent(new Event('profileUpdated'))
       
       registerSuccess.value = 'Registration successful! Redirecting...'
       
+      // Redirect to homepage after short delay
       setTimeout(() => {
         router.push('/')
+      }, 1000)
+    } else {
+      // If no token, redirect to login
+      registerSuccess.value = 'Registration successful! Please login.'
+      setTimeout(() => {
+        router.push('/login')
       }, 2000)
     }
   } catch (error) {

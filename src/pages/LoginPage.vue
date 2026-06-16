@@ -124,16 +124,19 @@ const handleLogin = async () => {
     
     console.log('Login response:', response.data)
     
-    // Handle the response
-    if (response.data.access_token) {
+    // Check for token in response (could be 'token' or 'access_token')
+    const token = response.data.token || response.data.access_token
+    
+    if (token) {
       // Store the token
-      localStorage.setItem('auth_token', response.data.access_token)
+      localStorage.setItem('auth_token', token)
       localStorage.setItem('token_type', response.data.token_type || 'Bearer')
       localStorage.setItem('isAuthenticated', 'true')
       
-      // Store user data if available
-      if (response.data.data) {
-        localStorage.setItem('user', JSON.stringify(response.data.data))
+      // Store user data if available (could be in 'data' or 'user')
+      const userData = response.data.data || response.data.user
+      if (userData) {
+        localStorage.setItem('user', JSON.stringify(userData))
       }
       
       loginSuccess.value = 'Login successful! Redirecting...'
