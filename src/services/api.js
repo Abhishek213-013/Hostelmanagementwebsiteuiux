@@ -177,7 +177,7 @@ export const tourBookingsAPI = {
   getTourBookings: () => apiClient.get('/tour-bookings'),
   getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
   createTourBooking: (bookingData) => apiClient.post('/tour-bookings', bookingData),
-  updateTourBookingStatus: (id, statusData) => apiClient.put(`/tour-bookings/${id}`, statusData)
+  updateTourBookingStatus: (id, statusData) => apiClient.put(`/tour-bookings/${id}/status`, statusData)
 }
 // Newsletter API
 export const newsletterAPI = {

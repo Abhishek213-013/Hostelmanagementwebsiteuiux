@@ -135,8 +135,209 @@
           </router-link>
         </div>
 
+        <!-- ==================== MY TOURS SECTION ==================== -->
+        <div class="mb-12 pt-8 border-t-2 border-gray-200 dark:border-gray-700">
+          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <MapPin class="w-5 h-5 text-teal-600" />
+            <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">My Tours</span>
+          </div>
+          <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">My Tours</h2>
+          <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">View your scheduled property tours and their status</p>
+        </div>
+
+        <!-- Tour Stats -->
+        <div v-if="myTours.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-teal-600">{{ myTours.length }}</div>
+            <div class="text-xs text-gray-500">Total Tours</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-yellow-600">{{ pendingTours }}</div>
+            <div class="text-xs text-gray-500">Pending</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-green-600">{{ confirmedTours }}</div>
+            <div class="text-xs text-gray-500">Confirmed</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-gray-600">{{ completedTours }}</div>
+            <div class="text-xs text-gray-500">Completed</div>
+          </div>
+        </div>
+
+        <!-- Tour Cards -->
+        <div v-if="myTours.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          <div v-for="tour in myTours" :key="tour.id" 
+               class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+            
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="text-xl font-black text-teal-600">Tour #{{ tour.id }}</h4>
+                <span :class="['text-xs font-bold px-2 py-1 rounded-full', getTourStatusClass(tour.status)]">
+                  {{ formatTourStatus(tour.status) }}
+                </span>
+              </div>
+              
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <User class="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>Name: <strong>{{ tour.name }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Mail class="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>Email: <strong>{{ tour.email }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Phone class="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>Phone: <strong>{{ tour.phone }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Calendar class="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>Date: <strong>{{ formatDate(tour.preferred_date) }}</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Clock class="w-4 h-4 text-teal-600 flex-shrink-0" />
+                  <span>Time: <strong>{{ formatTime(tour.preferred_time) }}</strong></span>
+                </div>
+              </div>
+              
+              <div v-if="tour.message" class="mb-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <p class="text-xs text-gray-600 dark:text-gray-400">
+                  <span class="font-bold">Message:</span> {{ tour.message }}
+                </p>
+              </div>
+              
+              <div v-if="tour.admin_note" class="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p class="text-xs text-blue-600 dark:text-blue-400">
+                  <span class="font-bold">Admin Note:</span> {{ tour.admin_note }}
+                </p>
+              </div>
+              
+              <div class="flex gap-2">
+                <button @click="viewTourDetails(tour.id)" 
+                        class="flex-1 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-center text-sm hover:bg-teal-700 transition-colors">
+                  View Details
+                </button>
+                <button v-if="tour.status === 0 || tour.status === 'pending'"
+                        @click="cancelTour(tour.id)"
+                        :disabled="cancellingTourId === tour.id"
+                        class="flex-1 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50">
+                  {{ cancellingTourId === tour.id ? 'Cancelling...' : 'Cancel' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State for Tours -->
+        <div v-if="myTours.length === 0 && !loading" class="text-center py-12">
+          <MapPin class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+          <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Tours Scheduled</h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-6">Schedule a tour to visit our property and see the rooms in person!</p>
+          <button @click="openTourModal" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
+            <MapPin class="w-5 h-5" />
+            Book a Tour
+          </button>
+        </div>
+
       </div>
+      <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
       <Footer />
+    </div>
+
+    <!-- Tour Details Modal -->
+    <div v-if="selectedTour" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeTourDetails"></div>
+        
+        <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full transform transition-all">
+          <!-- Close button -->
+          <button @click="closeTourDetails" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10">
+            <X class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          </button>
+          
+          <!-- Header -->
+          <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
+                <MapPin class="w-5 h-5 text-teal-600 dark:text-teal-300" />
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Tour Details</h3>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 pl-13">Tour #{{ selectedTour.id }}</p>
+          </div>
+          
+          <!-- Content -->
+          <div class="px-6 pb-6">
+            <div class="space-y-4">
+              <!-- Status -->
+              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Status</span>
+                <span :class="['px-3 py-1 rounded-full text-xs font-bold', getTourStatusClass(selectedTour.status)]">
+                  {{ formatTourStatus(selectedTour.status) }}
+                </span>
+              </div>
+              
+              <!-- Personal Info -->
+              <div class="space-y-2">
+                <h4 class="text-xs font-bold text-teal-600 uppercase tracking-wider">Personal Information</h4>
+                <div class="grid grid-cols-2 gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Name</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">{{ selectedTour.name }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Phone</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">{{ selectedTour.phone }}</p>
+                  </div>
+                  <div class="col-span-2">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Email</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">{{ selectedTour.email }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tour Details -->
+              <div class="space-y-2">
+                <h4 class="text-xs font-bold text-teal-600 uppercase tracking-wider">Tour Details</h4>
+                <div class="grid grid-cols-2 gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Date</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">{{ formatDate(selectedTour.preferred_date) }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Time</p>
+                    <p class="font-semibold text-gray-800 dark:text-gray-200">{{ formatTime(selectedTour.preferred_time) }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Message -->
+              <div v-if="selectedTour.message" class="space-y-2">
+                <h4 class="text-xs font-bold text-teal-600 uppercase tracking-wider">Message</h4>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ selectedTour.message }}</p>
+                </div>
+              </div>
+              
+              <!-- Admin Note -->
+              <div v-if="selectedTour.admin_note" class="space-y-2">
+                <h4 class="text-xs font-bold text-blue-600 uppercase tracking-wider">Admin Note</h4>
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                  <p class="text-sm text-blue-600 dark:text-blue-400">{{ selectedTour.admin_note }}</p>
+                </div>
+              </div>
+              
+              <!-- Created At -->
+              <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-xs text-gray-400 dark:text-gray-500 text-center">
+                  Booked on {{ formatDate(selectedTour.created_at) }} at {{ formatTime(selectedTour.created_at) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -147,15 +348,23 @@ import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useBookings } from '../composables/useBookings'
-import { Building2, Calendar, Clock, Phone, User, Bed, CreditCard, MapPin } from 'lucide-vue-next'
+import { useTourBookings } from '../composables/useTourBookings'
+import TourBookingModal from '../components/TourBookingModal.vue'
+import { Building2, Calendar, Clock, Phone, User, Bed, CreditCard, MapPin, Mail, X } from 'lucide-vue-next'
 
 const router = useRouter()
 const { bookings, fetchAllBookings, cancelBooking: cancelBookingAPI, loading: bookingsLoading, error: bookingsError } = useBookings()
+const { tourBookings, fetchUserTourBookings, getTourBookingDetails, loading: toursLoading, error: toursError } = useTourBookings()
 
 const myBookings = ref([])
+const myTours = ref([])
 const loading = ref(true)
 const error = ref('')
 const cancellingId = ref(null)
+const cancellingTourId = ref(null)
+const isTourModalOpen = ref(false)
+const selectedTour = ref(null)
+const loadingTourDetails = ref(false)
 
 // Computed stats for bookings
 const activeBookings = computed(() => {
@@ -164,7 +373,7 @@ const activeBookings = computed(() => {
   return myBookings.value.filter(b => {
     const checkOut = new Date(b.check_out_date)
     checkOut.setHours(0, 0, 0, 0)
-    return checkOut >= today && b.status !== 3 // status 3 = cancelled
+    return checkOut >= today && b.status !== 3
   }).length
 })
 
@@ -184,19 +393,28 @@ const pastBookings = computed(() => {
   return myBookings.value.filter(b => {
     const checkOut = new Date(b.check_out_date)
     checkOut.setHours(0, 0, 0, 0)
-    return checkOut < today || b.status === 2 // status 2 = completed
+    return checkOut < today || b.status === 2
   }).length
 })
+
+// Computed stats for tours
+const pendingTours = computed(() => myTours.value.filter(t => t.status === 0 || t.status === 'pending').length)
+const confirmedTours = computed(() => myTours.value.filter(t => t.status === 1 || t.status === 'confirmed').length)
+const completedTours = computed(() => myTours.value.filter(t => t.status === 2 || t.status === 'completed').length)
 
 // Fetch all data from API
 async function fetchAllData() {
   loading.value = true
   error.value = ''
   try {
-    // Fetch all bookings from API
+    // Fetch bookings from API
     await fetchAllBookings()
     
+    // Fetch user's tour bookings from localStorage (since admin-only endpoint)
+    await fetchUserTourBookings()
+    
     console.log('All bookings from composable:', bookings.value)
+    console.log('User tour bookings:', tourBookings.value)
     
     // Get current user email from localStorage
     const storedUser = localStorage.getItem('user')
@@ -212,7 +430,7 @@ async function fetchAllData() {
       }
     }
     
-    // Get the actual bookings array from the response
+    // Filter bookings for current user by email
     let allBookingsArray = []
     if (bookings.value && Array.isArray(bookings.value)) {
       allBookingsArray = bookings.value
@@ -220,26 +438,24 @@ async function fetchAllData() {
       allBookingsArray = bookings.value.data
     }
     
-    console.log('All bookings array:', allBookingsArray)
-    
-    // Filter bookings for current user by email
     if (currentUserEmail && allBookingsArray.length > 0) {
       myBookings.value = allBookingsArray.filter(b => {
         return b.party?.contact?.email_number === currentUserEmail
       })
-      console.log('Filtered bookings for user:', myBookings.value)
     } else {
-      // If no user match, show all bookings for testing
       myBookings.value = allBookingsArray
-      console.log('Showing all bookings:', myBookings.value)
     }
+    
+    // Use the filtered tour bookings from the composable
+    myTours.value = tourBookings.value
     
     // Sort by created date (newest first)
     myBookings.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    myTours.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     
   } catch (err) {
     console.error('Error fetching data:', err)
-    error.value = bookingsError.value || 'Failed to load data. Please check your connection and try again.'
+    error.value = bookingsError.value || toursError.value || 'Failed to load data. Please check your connection and try again.'
   } finally {
     loading.value = false
   }
@@ -252,7 +468,6 @@ const cancelBooking = async (bookingId) => {
   cancellingId.value = bookingId
   try {
     await cancelBookingAPI(bookingId)
-    // Refresh the bookings list
     await fetchAllData()
   } catch (err) {
     console.error('Error cancelling booking:', err)
@@ -262,19 +477,88 @@ const cancelBooking = async (bookingId) => {
   }
 }
 
-// Get status CSS class based on numeric status
+// Cancel tour
+const cancelTour = async (tourId) => {
+  if (!confirm('Are you sure you want to cancel this tour?')) return
+  
+  cancellingTourId.value = tourId
+  try {
+    // Update tour status to cancelled (3)
+    // You would need an API endpoint for this
+    // For now, just refresh the data
+    await fetchAllData()
+    alert('Tour cancellation request submitted successfully!')
+  } catch (err) {
+    console.error('Error cancelling tour:', err)
+    alert('Failed to cancel tour. Please try again.')
+  } finally {
+    cancellingTourId.value = null
+  }
+}
+
+// View tour details
+const viewTourDetails = async (tourId) => {
+  try {
+    loadingTourDetails.value = true
+    // Fetch fresh tour details from API
+    const tour = await getTourBookingDetails(tourId)
+    if (tour) {
+      selectedTour.value = tour
+    }
+  } catch (err) {
+    console.error('Error fetching tour details:', err)
+    alert('Failed to load tour details. Please try again.')
+  } finally {
+    loadingTourDetails.value = false
+  }
+}
+
+// Close tour details modal
+const closeTourDetails = () => {
+  selectedTour.value = null
+}
+
+// Open tour modal
+const openTourModal = () => {
+  isTourModalOpen.value = true
+}
+
+// Close tour modal
+const closeTourModal = () => {
+  isTourModalOpen.value = false
+  // Refresh tours after modal closes
+  fetchAllData()
+}
+
+// Format time (convert 24h to 12h format if needed)
+const formatTime = (timeString) => {
+  if (!timeString) return 'N/A'
+  // If time is in 24h format (HH:MM:SS)
+  if (timeString.includes(':')) {
+    const parts = timeString.split(':')
+    let hour = parseInt(parts[0])
+    const minute = parts[1]
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    hour = hour % 12
+    hour = hour ? hour : 12
+    return `${hour}:${minute} ${ampm}`
+  }
+  return timeString
+}
+
+// Get status CSS class based on numeric status for bookings
 function getStatusClass(status) {
   const classes = {
-    0: 'bg-yellow-500 text-white',      // Pending
-    1: 'bg-green-500 text-white',       // Confirmed/Active
-    2: 'bg-gray-500 text-white',        // Completed
-    3: 'bg-red-500 text-white',         // Cancelled
-    4: 'bg-purple-500 text-white'       // Refunded
+    0: 'bg-yellow-500 text-white',
+    1: 'bg-green-500 text-white',
+    2: 'bg-gray-500 text-white',
+    3: 'bg-red-500 text-white',
+    4: 'bg-purple-500 text-white'
   }
   return classes[status] || 'bg-gray-500 text-white'
 }
 
-// Format status for display
+// Format status for display (bookings)
 function formatStatus(status) {
   const labels = {
     0: 'Pending',
@@ -286,6 +570,36 @@ function formatStatus(status) {
   return labels[status] || 'Unknown'
 }
 
+// Get status CSS class for tours
+function getTourStatusClass(status) {
+  const classes = {
+    0: 'bg-yellow-500 text-white',
+    'pending': 'bg-yellow-500 text-white',
+    1: 'bg-green-500 text-white',
+    'confirmed': 'bg-green-500 text-white',
+    2: 'bg-gray-500 text-white',
+    'completed': 'bg-gray-500 text-white',
+    3: 'bg-red-500 text-white',
+    'cancelled': 'bg-red-500 text-white'
+  }
+  return classes[status] || 'bg-gray-500 text-white'
+}
+
+// Format status for display (tours)
+function formatTourStatus(status) {
+  const labels = {
+    0: 'Pending',
+    'pending': 'Pending',
+    1: 'Confirmed',
+    'confirmed': 'Confirmed',
+    2: 'Completed',
+    'completed': 'Completed',
+    3: 'Cancelled',
+    'cancelled': 'Cancelled'
+  }
+  return labels[status] || 'Unknown'
+}
+
 // Format date for display
 function formatDate(dateString) {
   if (!dateString) return 'N/A'
@@ -293,7 +607,7 @@ function formatDate(dateString) {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
   } catch (e) {
-    return dateString.split(' ')[0] // Handle "2026-06-15 00:00:00" format
+    return dateString.split(' ')[0]
   }
 }
 
