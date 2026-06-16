@@ -652,14 +652,11 @@ const confirmPayment = async () => {
   isProcessing.value = true
 
   try {
-    // Here you would integrate with your actual payment gateway
-    // For now, we'll simulate a successful payment
+    // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 2000))
     
-    // Update booking status after successful payment
-    if (currentBooking.value?.id) {
-      await updateBookingStatus(currentBooking.value.id, 1) // 1 might represent confirmed
-    }
+    // Note: The booking status update is handled by admin only
+    // In a real application, the payment gateway would handle this
     
     paymentStatus.value = { status: 'success', message: 'Payment successful!' }
     step.value = 4
