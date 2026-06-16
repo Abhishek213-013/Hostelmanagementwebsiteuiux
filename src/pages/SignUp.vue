@@ -1,87 +1,113 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <div class="w-full max-w-6xl">
-      <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 mb-8 font-medium">
+      <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
         <ArrowLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
         Back to Home
       </router-link>
 
       <div class="flex flex-col md:flex-row bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-        <div class="md:w-1/2 bg-gradient-to-br from-teal-500 to-emerald-600 p-12 flex items-center justify-center">
-          <div class="text-center text-white">
+        <!-- Left Side - Image -->
+        <div class="md:w-1/2 bg-gradient-to-br from-teal-500 to-emerald-600 p-12 flex items-center justify-center relative overflow-hidden">
+          <div class="absolute inset-0 bg-black/20"></div>
+          <div class="relative z-10 text-center text-white">
             <Building2 class="w-24 h-24 mx-auto mb-6 text-white/90" />
-            <h2 class="text-4xl font-black mb-4">Join Us Today!</h2>
+            <h2 class="text-4xl font-black mb-4">SylhetStay</h2>
             <p class="text-xl text-white/80">Create your account to book rooms</p>
           </div>
         </div>
 
+        <!-- Right Side - Form -->
         <div class="md:w-1/2 p-8 md:p-10">
-          <h1 class="text-4xl font-black mb-8 text-teal-600 text-center">Create Account</h1>
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-black mb-2 text-teal-600">Create Account</h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">Join us and start booking rooms today</p>
+          </div>
 
-          <div v-if="registerError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 rounded-xl text-red-600 text-sm">
-            <div v-for="(error, key) in registerError" :key="key">
-              <strong>{{ key }}:</strong> {{ Array.isArray(error) ? error.join(', ') : error }}
+          <!-- Error Message -->
+          <div v-if="registerError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium">
+            <div v-for="(error, key) in registerError" :key="key" class="flex items-start gap-2">
+              <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span><strong>{{ key }}:</strong> {{ Array.isArray(error) ? error.join(', ') : error }}</span>
             </div>
           </div>
 
-          <div v-if="registerSuccess" class="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 rounded-xl text-green-600 text-sm">
+          <!-- Success Message -->
+          <div v-if="registerSuccess" class="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-2">
+            <CheckCircle2 class="w-4 h-4 flex-shrink-0" />
             {{ registerSuccess }}
           </div>
 
           <form @submit.prevent="handleRegister" class="space-y-6">
-            <div>
+            <div class="group">
               <label class="block text-sm font-bold text-teal-600 mb-3">Full Name</label>
-              <input type="text" v-model="formData.name" 
-                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all"
-                     required />
+              <div class="relative">
+                <User class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <input type="text" placeholder="Enter your full name" v-model="formData.name" 
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                       required />
+              </div>
             </div>
 
-            <div>
+            <div class="group">
               <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
-              <input type="email" v-model="formData.email" 
-                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all"
-                     required />
+              <div class="relative">
+                <Mail class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <input type="email" placeholder="Enter your email" v-model="formData.email" 
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                       required />
+              </div>
             </div>
 
-            <div>
+            <div class="group">
               <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
-              <input type="tel" v-model="formData.phone" 
-                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all"
-                     required />
+              <div class="relative">
+                <Phone class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <input type="tel" placeholder="Enter your phone number" v-model="formData.phone" 
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                       required />
+              </div>
             </div>
 
-            <div>
+            <div class="group">
               <label class="block text-sm font-bold text-teal-600 mb-3">Password</label>
-              <input type="password" v-model="formData.password" 
-                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all"
-                     required />
+              <div class="relative">
+                <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <input type="password" placeholder="Create a password" v-model="formData.password" 
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                       required />
+              </div>
             </div>
 
-            <div>
+            <div class="group">
               <label class="block text-sm font-bold text-teal-600 mb-3">Confirm Password</label>
-              <input type="password" v-model="formData.password_confirmation" 
-                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-gray-300 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all"
-                     required />
+              <div class="relative">
+                <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
+                <input type="password" placeholder="Confirm your password" v-model="formData.password_confirmation" 
+                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                       required />
+              </div>
             </div>
 
             <button type="submit"
-                    class="w-full py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl transition-all disabled:opacity-50"
+                    class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     style="background: #0d9488"
                     :disabled="isLoading">
-              <span v-if="isLoading" class="flex items-center justify-center gap-2">
-                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+              <span v-if="isLoading" class="flex items-center gap-2">
+                <Loader2 class="w-5 h-5 animate-spin" />
                 Processing...
               </span>
               <span v-else>Create Account</span>
+              <ArrowRight v-if="!isLoading" class="w-5 h-5" />
             </button>
           </form>
 
-          <p class="mt-8 text-center">
+          <p class="mt-8 text-center text-gray-600 dark:text-gray-400 font-medium">
             Already have an account?
-            <router-link to="/login" class="text-teal-600 font-bold hover:underline">Sign In</router-link>
+            <router-link to="/login" class="group text-teal-600 font-bold hover:underline inline-flex items-center gap-1">
+              Sign In
+              <ChevronRight class="w-4 h-4" />
+            </router-link>
           </p>
         </div>
       </div>
@@ -93,7 +119,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI } from '../services/api'
-import { Building2, ArrowLeft } from 'lucide-vue-next'
+import { Building2, Mail, Lock, User, Phone, ArrowLeft, ArrowRight, ChevronRight, AlertCircle, CheckCircle2, Loader2 } from 'lucide-vue-next'
 
 const router = useRouter()
 const isLoading = ref(false)
