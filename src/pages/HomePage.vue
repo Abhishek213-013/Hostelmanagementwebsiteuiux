@@ -187,7 +187,7 @@
       </section>
 
       <!-- Facilities - From Real API -->
-      <section v-if="facilitiesList.length > 0" class="py-12">
+      <section id="facilities-section" v-if="facilitiesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
@@ -278,7 +278,7 @@
       </section>
 
       <!-- Gallery - From Real API -->
-      <section v-if="galleryItems.length > 0" class="py-12">
+      <section id="gallery-section" v-if="galleryItems.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
@@ -316,7 +316,7 @@
       </section>
 
       <!-- Testimonials - From Real API -->
-      <section v-if="testimonials.length > 0" class="py-12">
+      <section id="testimonials-section" v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
             <div class="text-center mb-10">
@@ -400,7 +400,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import {
@@ -423,7 +423,7 @@ const { facilities: facilitiesList, fetchFacilities } = useFacilities()
 const { galleryItems, fetchGallery } = useGallery()
 const { testimonials: apiTestimonials, fetchTestimonials } = useTestimonials()
 const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
-const { pageSections, fetchPageData: fetchPageSectionsData, loading: pagesLoading } = usePages()
+const { pageSections, fetchHeroSection, fetchAboutSection, loading: pagesLoading } = usePages()
 
 // Icon mapping
 const iconMap = {
@@ -473,6 +473,14 @@ const lightboxOpen = ref(false)
 const currentImageIndex = ref(0)
 const autoplayInterval = ref(null)
 
+// Progressive loading states
+const heroLoaded = ref(false)
+const aboutLoaded = ref(false)
+const roomsLoaded = ref(false)
+const facilitiesLoaded = ref(false)
+const galleryLoaded = ref(false)
+const testimonialsLoaded = ref(false)
+
 // Get hero slides from API
 const getHeroSlides = () => {
   const heroSection = pageSections.value.find(s => s.section_key === 'hero-slider')
@@ -496,38 +504,31 @@ const getHeroSlides = () => {
 const getAboutData = () => {
   const aboutSection = pageSections.value.find(s => s.section_key === 'about')
   if (aboutSection) {
-    // Use subtitle for the main headline
     const subtitle = aboutSection.subtitle || ''
     const title = aboutSection.title || ''
     
-    // Split subtitle into two parts
     let headline_part1 = ''
     let headline_part2 = ''
     
-    // If subtitle is "Welcome to SylhetStay", split into "Welcome to" and "SylhetStay"
     if (subtitle) {
       const subtitleParts = subtitle.split(' ')
       
       if (subtitleParts.length > 1) {
-        // Find the word 'to' to split naturally
         const toIndex = subtitleParts.indexOf('to')
         if (toIndex !== -1 && toIndex < subtitleParts.length - 1) {
           headline_part1 = subtitleParts.slice(0, toIndex + 1).join(' ')
           headline_part2 = subtitleParts.slice(toIndex + 1).join(' ')
         } else {
-          // If no 'to' found, split in half
           const mid = Math.ceil(subtitleParts.length / 2)
           headline_part1 = subtitleParts.slice(0, mid).join(' ')
           headline_part2 = subtitleParts.slice(mid).join(' ')
         }
       } else {
-        // Only one word, use it as headline_part1
         headline_part1 = subtitle
         headline_part2 = ''
       }
     }
     
-    // Get images from about section items
     const images = aboutSection.items?.map(item => ({
       src: item.image,
       label: item.title || 'Space'
@@ -603,65 +604,144 @@ const getFacilityIcon = (iconName) => {
   return iconMap[iconName] || Sparkles
 }
 
+// Progressive fetch - Load critical content first
 async function fetchPageData() {
   loading.value = true
   error.value = ''
+  
   try {
-    console.log('Starting to fetch page data...')
+    console.log('🚀 Starting progressive loading...')
     
-    // Fetch page data (sections and items) for Home page (id: 1)
-    await fetchPageSectionsData(1)
-    console.log('Page sections in composable:', pageSections.value)
-    
-    // Fetch real data from APIs
-    await Promise.all([
-      fetchRooms(),
-      fetchFacilities(),
-      fetchGallery(),
-      fetchTestimonials(),
-      fetchRoomTypes()
-    ])
-    
-    console.log('All APIs fetched successfully')
-    
-    // Set hero slides from API (only if data exists)
+    // STEP 1: Load Hero section first (critical)
+    await fetchHeroSection(1)
     const slides = getHeroSlides()
     heroSlides.value = slides
-    console.log('Hero slides:', heroSlides.value)
+    console.log('✅ Hero loaded:', heroSlides.value.length, 'slides')
     
-    // Set about section from API (only if data exists)
+    // STEP 2: Show the page immediately
+    loading.value = false
+    
+    // STEP 3: Load ALL remaining sections
+    console.log('🔄 Loading remaining sections...')
+    
+    // Fetch about section
+    await fetchAboutSection(1)
     const aboutData = getAboutData()
-    console.log('About data:', aboutData)
     if (aboutData) {
       pageData.value.about = aboutData
+      console.log('✅ About loaded')
     }
     
-    console.log('Final pageData.about:', pageData.value.about)
+    // Fetch facilities
+    await fetchFacilities()
+    facilitiesLoaded.value = true
+    console.log('✅ Facilities loaded:', facilitiesList.value.length)
     
-    // Set homepage rooms from real API (show first 3)
-    homepageRooms.value = rooms.value.slice(0, 3)
+    // Fetch gallery
+    await fetchGallery()
+    galleryLoaded.value = true
+    console.log('✅ Gallery loaded:', galleryItems.value.length)
     
-    // Set room types for availability cards
-    roomTypesList.value = apiRoomTypes.value
-    
-    // Set testimonials from real API
+    // Fetch testimonials
+    await fetchTestimonials()
     testimonials.value = apiTestimonials.value.slice(0, 6)
+    testimonialsLoaded.value = true
+    console.log('✅ Testimonials loaded:', testimonials.value.length)
     
-    // Start autoplay only if there are hero slides
+    // Fetch room types
+    await fetchRoomTypes()
+    roomTypesList.value = apiRoomTypes.value
+    console.log('✅ Room types loaded:', roomTypesList.value.length)
+    
+    // Fetch rooms
+    await fetchRooms()
+    homepageRooms.value = rooms.value.slice(0, 3)
+    console.log('✅ Rooms loaded:', homepageRooms.value.length)
+    
+    console.log('✅ All content loaded!')
+    
+    // Start autoplay
     if (heroSlides.value.length > 0) {
       if (autoplayInterval.value) clearInterval(autoplayInterval.value)
       autoplayInterval.value = setInterval(nextSlide, 5000)
     }
     
-    console.log('Page data loading complete')
-    
   } catch (err) {
     console.error('Error fetching homepage data:', err)
     error.value = 'Failed to load content. Please check your connection and try again.'
-  } finally {
     loading.value = false
   }
 }
+
+// Update the Intersection Observer setup - FIXED
+// const setupIntersectionObserver = () => {
+//   if (!('IntersectionObserver' in window)) return
+  
+//   // Track loaded sections
+//   let facilitiesLoading = false
+//   let galleryLoading = false
+//   let testimonialsLoading = false
+  
+//   const sectionMap = {
+//     'facilities-section': async () => { 
+//       if (!facilitiesLoaded.value && !facilitiesLoading) {
+//         facilitiesLoading = true
+//         console.log('🔄 Loading facilities...')
+//         await fetchFacilities()
+//         facilitiesLoaded.value = true
+//         facilitiesLoading = false
+//         console.log('✅ Facilities lazy loaded:', facilitiesList.value.length)
+//       }
+//     },
+//     'gallery-section': async () => { 
+//       if (!galleryLoaded.value && !galleryLoading) {
+//         galleryLoading = true
+//         console.log('🔄 Loading gallery...')
+//         await fetchGallery()
+//         galleryLoaded.value = true
+//         galleryLoading = false
+//         console.log('✅ Gallery lazy loaded:', galleryItems.value.length)
+//       }
+//     },
+//     'testimonials-section': async () => { 
+//       if (!testimonialsLoaded.value && !testimonialsLoading) {
+//         testimonialsLoading = true
+//         console.log('🔄 Loading testimonials...')
+//         await fetchTestimonials()
+//         testimonials.value = apiTestimonials.value.slice(0, 6)
+//         testimonialsLoaded.value = true
+//         testimonialsLoading = false
+//         console.log('✅ Testimonials lazy loaded:', testimonials.value.length)
+//       }
+//     }
+//   }
+  
+//   const observer = new IntersectionObserver((entries) => {
+//     entries.forEach(entry => {
+//       if (entry.isIntersecting) {
+//         const sectionId = entry.target.id
+//         console.log(`👀 Section visible: ${sectionId}`)
+//         if (sectionMap[sectionId]) {
+//           sectionMap[sectionId]()
+//         }
+//       }
+//     })
+//   }, { rootMargin: '200px' }) // Reduced from 400px to 200px
+  
+//   // Observe sections
+//   const sectionIds = ['facilities-section', 'gallery-section', 'testimonials-section']
+//   sectionIds.forEach(id => {
+//     const element = document.getElementById(id)
+//     if (element) {
+//       console.log(`👀 Observing: ${id}`)
+//       observer.observe(element)
+//     } else {
+//       console.warn(`⚠️ Element not found: ${id}`)
+//     }
+//   })
+  
+//   return observer
+// }
 
 const goToSlide = (index) => {
   currentSlide.value = index
@@ -700,13 +780,19 @@ const nextImage = () => {
   currentImageIndex.value = currentImageIndex.value < galleryItems.value.length - 1 ? currentImageIndex.value + 1 : 0
 }
 
+// let observer = null
+
 onMounted(() => {
   fetchPageData()
+  // observer = setupIntersectionObserver()
 })
 
 onUnmounted(() => {
   if (autoplayInterval.value) {
     clearInterval(autoplayInterval.value)
   }
+  // if (observer) {
+  //   observer.disconnect()
+  // }
 })
 </script>

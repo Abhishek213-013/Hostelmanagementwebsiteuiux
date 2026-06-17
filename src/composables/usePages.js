@@ -31,13 +31,106 @@ export function usePages() {
     }
   }
 
+  // NEW: Fetch only hero section with its items (fastest)
+  const fetchHeroSection = async (pageId = 1) => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log(`🚀 Fetching hero section for page ${pageId}...`)
+      
+      // Step 1: Get all sections
+      const response = await pageSectionsAPI.getSections()
+      
+      let allSections = []
+      if (response.data && response.data.data) {
+        allSections = response.data.data
+      } else if (Array.isArray(response.data)) {
+        allSections = response.data
+      }
+      
+      // Step 2: Find hero section for the page
+      const heroSection = allSections.find(
+        section => section.page_id === parseInt(pageId) && section.section_key === 'hero-slider'
+      )
+      
+      if (!heroSection) {
+        console.warn('No hero section found')
+        return null
+      }
+      
+      // Step 3: Fetch items only for hero section
+      const items = await fetchSectionItems(heroSection.id)
+      
+      const result = {
+        ...heroSection,
+        items: items
+      }
+      
+      // Store in pageSections
+      pageSections.value = [result]
+      
+      console.log(`✅ Hero section loaded with ${items.length} slides`)
+      return result
+    } catch (err) {
+      console.error('Error fetching hero section:', err)
+      error.value = err.response?.data?.message || 'Failed to fetch hero section'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // NEW: Fetch about section separately (for when user scrolls)
+  const fetchAboutSection = async (pageId = 1) => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log(`📄 Fetching about section for page ${pageId}...`)
+      
+      const response = await pageSectionsAPI.getSections()
+      
+      let allSections = []
+      if (response.data && response.data.data) {
+        allSections = response.data.data
+      } else if (Array.isArray(response.data)) {
+        allSections = response.data
+      }
+      
+      const aboutSection = allSections.find(
+        section => section.page_id === parseInt(pageId) && section.section_key === 'about'
+      )
+      
+      if (!aboutSection) {
+        return null
+      }
+      
+      const items = await fetchSectionItems(aboutSection.id)
+      
+      const result = {
+        ...aboutSection,
+        items: items
+      }
+      
+      // Add to existing pageSections
+      const existing = pageSections.value.filter(s => s.section_key !== 'about')
+      pageSections.value = [...existing, result]
+      
+      console.log(`✅ About section loaded`)
+      return result
+    } catch (err) {
+      console.error('Error fetching about section:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const fetchPageSections = async (pageId = null) => {
     loading.value = true
     error.value = null
     try {
       console.log('Fetching page sections...')
       const response = await pageSectionsAPI.getSections()
-      console.log('Sections API response:', response.data)
       
       let data = []
       if (response.data && response.data.data) {
@@ -46,12 +139,8 @@ export function usePages() {
         data = response.data
       }
       
-      console.log('All sections:', data)
-      
-      // Filter by page_id if provided
       if (pageId) {
         data = data.filter(section => section.page_id === parseInt(pageId))
-        console.log(`Filtered sections for page ${pageId}:`, data)
       }
       
       pageSections.value = data
@@ -69,9 +158,12 @@ export function usePages() {
     loading.value = true
     error.value = null
     try {
-      console.log(`Fetching section items for section ID: ${sectionId}`)
+      if (!sectionId) {
+        sectionItems.value = []
+        return []
+      }
+      
       const response = await sectionItemsAPI.getItems()
-      console.log('Section items API response:', response.data)
       
       let data = []
       if (response.data && response.data.data) {
@@ -80,13 +172,8 @@ export function usePages() {
         data = response.data
       }
       
-      console.log('All section items:', data)
-      
-      // Filter by page_section_id if provided
-      if (sectionId) {
-        data = data.filter(item => item.page_section_id === parseInt(sectionId))
-        console.log(`Filtered items for section ${sectionId}:`, data)
-      }
+      // Filter by page_section_id
+      data = data.filter(item => item.page_section_id === parseInt(sectionId))
       
       sectionItems.value = data
       return data
@@ -106,14 +193,10 @@ export function usePages() {
     try {
       console.log(`Fetching complete page data for page ID: ${pageId}`)
       
-      // Fetch sections for the page
       const sections = await fetchPageSections(pageId)
-      console.log('Sections to process:', sections)
       
-      // Fetch items for each section
       const sectionsWithItems = await Promise.all(
         sections.map(async (section) => {
-          console.log(`Processing section ${section.id}: ${section.section_key}`)
           const items = await fetchSectionItems(section.id)
           return {
             ...section,
@@ -123,7 +206,6 @@ export function usePages() {
       )
       
       pageSections.value = sectionsWithItems
-      console.log('Final page sections with items:', sectionsWithItems)
       return sectionsWithItems
     } catch (err) {
       console.error('Error fetching page data:', err)
@@ -144,6 +226,8 @@ export function usePages() {
     fetchPages,
     fetchPageSections,
     fetchSectionItems,
-    fetchPageData
+    fetchPageData,
+    fetchHeroSection,
+    fetchAboutSection
   }
 }
