@@ -138,31 +138,6 @@
                 </div>
               </div>
 
-              <!-- Check-in / Check-out Date Selection for Availability -->
-              <!-- <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-2">Check-in Date</label>
-                  <input type="date" v-model="checkInDate" @change="checkAvailability" 
-                         class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all" />
-                </div>
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-2">Check-out Date</label>
-                  <input type="date" v-model="checkOutDate" @change="checkAvailability" 
-                         class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all" />
-                </div>
-              </div> -->
-
-              <!-- Room Features -->
-              <!-- <div class="space-y-3">
-                <h3 class="text-lg font-bold text-teal-600">Room Features</h3>
-                <div class="grid grid-cols-2 gap-3">
-                  <div v-for="feature in getRoomFeatures(room.room_type?.name)" :key="feature" class="flex items-center gap-2">
-                    <CheckCircle2 class="w-4 h-4 text-teal-600" />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ feature }}</span>
-                  </div>
-                </div>
-              </div> -->
-
               <button 
                 @click="handleBookNow" 
                 :disabled="!isRoomAvailable"
@@ -176,17 +151,18 @@
             </div>
           </div>
 
-          <!-- Room Amenities Section - Now uses dynamic data from room features -->
-          <div class="mt-16 mb-10">
-            <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Amenities</h2>
+          <!-- Room Services/Amenities Section - From API -->
+          <div v-if="displayServices.length > 0" class="mt-16 mb-10">
+            <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Services & Amenities</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="(feature, i) in displayFeatures" :key="i" 
+              <div v-for="(service, i) in displayServices" :key="i" 
                    class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-teal-600 group-hover:bg-white/20 transition-colors duration-500">
-                  <component :is="getFeatureIcon(feature)" class="w-6 h-6 text-white" />
+                  <component :is="getServiceIcon(service)" class="w-6 h-6 text-white" />
                 </div>
                 <div class="flex-1">
-                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500">{{ feature }}</span>
+                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500">{{ service.service_name }}</span>
+                  <p v-if="service.service_description" class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-white/80 transition-colors duration-500 mt-1">{{ service.service_description }}</p>
                 </div>
                 <CheckCircle2 class="w-5 h-5 text-teal-500 flex-shrink-0 group-hover:text-white transition-colors duration-500" />
               </div>
@@ -327,7 +303,9 @@ import { roomAPI } from '../services/api'
 import { 
   ArrowLeft, Users, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, 
   Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
-  Star, ThumbsUp, Clock, MapPin, Bath, Maximize2, Tv, Gamepad2, Refrigerator
+  Star, ThumbsUp, Clock, MapPin, Bath, Maximize2, Tv, Gamepad2, Refrigerator,
+  WashingMachine, Music, Zap, Mic, Camera, Sun, Trees, Droplets, ShoppingBag,
+  Phone, Mail, MapPin as MapPinIcon, Home, Award
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -363,27 +341,62 @@ const isRoomAvailable = computed(() => {
          availabilityData.value.available_seats?.length > 0
 })
 
-// Get room features based on room type
-const displayFeatures = computed(() => {
-  return getRoomFeatures(room.value?.room_type?.name)
+// Get services from room_type and room
+const displayServices = computed(() => {
+  const services = []
+  
+  // Get services from room_type (service_on_room_type)
+  if (room.value?.room_type?.service_on_room_type) {
+    room.value.room_type.service_on_room_type.forEach(item => {
+      if (item.service) {
+        services.push({
+          ...item.service,
+          source: 'room_type'
+        })
+      }
+    })
+  }
+  
+  // Get services directly from room (service_on_room)
+  if (room.value?.service_on_room) {
+    room.value.service_on_room.forEach(item => {
+      if (item.service) {
+        // Check if service already exists (avoid duplicates)
+        const exists = services.some(s => s.id === item.service.id)
+        if (!exists) {
+          services.push({
+            ...item.service,
+            source: 'room'
+          })
+        }
+      }
+    })
+  }
+  
+  return services
 })
 
-// Map features to icons
-const getFeatureIcon = (feature) => {
-  const featureLower = feature.toLowerCase()
-  if (featureLower.includes('wifi') || featureLower.includes('internet')) return Wifi
-  if (featureLower.includes('ac') || featureLower.includes('air') || featureLower.includes('conditioning')) return Wind
-  if (featureLower.includes('kitchen') || featureLower.includes('food')) return Utensils
-  if (featureLower.includes('coffee') || featureLower.includes('tea')) return Coffee
-  if (featureLower.includes('gym') || featureLower.includes('fitness')) return Dumbbell
-  if (featureLower.includes('parking') || featureLower.includes('car')) return Car
-  if (featureLower.includes('study') || featureLower.includes('desk') || featureLower.includes('book')) return BookOpen
-  if (featureLower.includes('security') || featureLower.includes('cctv') || featureLower.includes('guard')) return Shield
-  if (featureLower.includes('tv') || featureLower.includes('television')) return Tv
-  if (featureLower.includes('game') || featureLower.includes('play')) return Gamepad2
-  if (featureLower.includes('fridge') || featureLower.includes('refrigerator')) return Refrigerator
-  if (featureLower.includes('bath') || featureLower.includes('shower') || featureLower.includes('toilet')) return Bath
-  if (featureLower.includes('bed') || featureLower.includes('mattress')) return Bed
+// Map service names to icons
+const getServiceIcon = (service) => {
+  const name = service.service_name?.toLowerCase() || ''
+  
+  if (name.includes('wifi') || name.includes('internet')) return Wifi
+  if (name.includes('ac') || name.includes('air') || name.includes('conditioning')) return Wind
+  if (name.includes('kitchen') || name.includes('food') || name.includes('meal')) return Utensils
+  if (name.includes('coffee') || name.includes('tea')) return Coffee
+  if (name.includes('gym') || name.includes('fitness') || name.includes('exercise')) return Dumbbell
+  if (name.includes('parking') || name.includes('car') || name.includes('vehicle')) return Car
+  if (name.includes('study') || name.includes('desk') || name.includes('book') || name.includes('library')) return BookOpen
+  if (name.includes('security') || name.includes('cctv') || name.includes('guard') || name.includes('safety')) return Shield
+  if (name.includes('tv') || name.includes('television') || name.includes('entertainment')) return Tv
+  if (name.includes('game') || name.includes('play') || name.includes('console')) return Gamepad2
+  if (name.includes('fridge') || name.includes('refrigerator') || name.includes('cooler')) return Refrigerator
+  if (name.includes('wash') || name.includes('laundry') || name.includes('cleaning')) return WashingMachine
+  if (name.includes('music') || name.includes('audio') || name.includes('sound')) return Music
+  if (name.includes('power') || name.includes('electricity') || name.includes('backup')) return Zap
+  if (name.includes('bath') || name.includes('shower') || name.includes('toilet') || name.includes('bathroom')) return Bath
+  if (name.includes('bed') || name.includes('mattress') || name.includes('pillow')) return Bed
+  
   return CheckCircle2
 }
 

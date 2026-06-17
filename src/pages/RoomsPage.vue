@@ -109,7 +109,7 @@
                 <!-- Room Info -->
                 <div class="flex flex-wrap gap-2 mb-4">
                   <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 capitalize">
-                    {{ room.room_type?.name || 'Standard' }}
+                    {{ room.room_type?.room_type_title || room.room_type?.name || 'Standard' }}
                   </span>
                   <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
                     Floor {{ room.floor_id || 'N/A' }}
@@ -121,11 +121,21 @@
                 
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
                 
-                <!-- Features -->
-                <div class="space-y-3 mb-8">
+                <!-- Dynamic Features/Services Section -->
+                <div v-if="getRoomServices(room).length > 0" class="space-y-3 mb-8">
+                  <div v-for="(service, i) in getRoomServices(room).slice(0, 5)" :key="i" class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
+                      <component :is="getServiceIcon(service)" class="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <span class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{ service.service_name }}</span>
+                  </div>
+                </div>
+                
+                <!-- Fallback to hardcoded features if no services available -->
+                <div v-else class="space-y-3 mb-8">
                   <div v-for="(feature, i) in getRoomFeatures(room.room_type?.name).slice(0, 5)" :key="i" class="flex items-center gap-3">
-                    <div class="w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle2 class="w-4 h-4 text-teal-600" />
+                    <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 class="w-4 h-4 text-teal-600 dark:text-teal-400" />
                     </div>
                     <span class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{ feature }}</span>
                   </div>
@@ -181,8 +191,8 @@
           <p class="text-gray-500">Try adjusting your filters to find available rooms</p>
         </div>
 
-        <!-- Amenities Section -->
-        <div class="mb-12">
+        <!-- Amenities Section (Dynamic) -->
+        <div v-if="allUniqueServices.length > 0" class="mb-12">
           <div class="text-center mb-12">
             <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <Sparkles class="w-5 h-5 text-teal-600" />
@@ -192,8 +202,30 @@
             <p class="text-lg text-gray-600 dark:text-gray-400">Every room comes with essential amenities for comfortable living</p>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div v-for="(item, i) in amenities" :key="i" 
-                 class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
+            <div v-for="(service, i) in allUniqueServices" :key="i" 
+                class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
+              <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow bg-teal-600 group-hover:bg-white transition-colors duration-500">
+                <component :is="getServiceIcon(service)" class="w-8 h-8 text-white group-hover:text-teal-600 transition-colors duration-500" />
+              </div>
+              <h3 class="text-lg font-black mb-2 text-center text-teal-600 group-hover:text-white transition-colors duration-500">{{ service.service_name }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm text-center group-hover:text-white/90 transition-colors duration-500">{{ service.service_description || 'Available in our rooms' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fallback Amenities Section (if no services from API) -->
+        <div v-else class="mb-12">
+          <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <Sparkles class="w-5 h-5 text-teal-600" />
+              <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Features</span>
+            </div>
+            <h2 class="text-2xl lg:text-3xl font-black mb-6 text-teal-600">Room Amenities</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Every room comes with essential amenities for comfortable living</p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div v-for="(item, i) in defaultAmenities" :key="i" 
+                class="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-2 hover:bg-teal-600 hover:border-teal-600 transition-all duration-500">
               <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow bg-teal-600 group-hover:bg-white transition-colors duration-500">
                 <component :is="item.icon" class="w-8 h-8 text-white group-hover:text-teal-600 transition-colors duration-500" />
               </div>
@@ -230,7 +262,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info } from 'lucide-vue-next'
+import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath } from 'lucide-vue-next'
 import { useRooms } from '../composables/useRooms'
 import { useRoomTypes } from '../composables/useRoomTypes'
 
@@ -294,13 +326,71 @@ const getRoomFeatures = (roomTypeName) => {
   return features[roomTypeName?.toLowerCase()] || features.standard
 }
 
+// Get services from room_type and room
+const getRoomServices = (room) => {
+  const services = []
+  
+  // Get services from room_type (service_on_room_type)
+  if (room?.room_type?.service_on_room_type) {
+    room.room_type.service_on_room_type.forEach(item => {
+      if (item.service) {
+        services.push({
+          ...item.service,
+          source: 'room_type'
+        })
+      }
+    })
+  }
+  
+  // Get services directly from room (service_on_room)
+  if (room?.service_on_room) {
+    room.service_on_room.forEach(item => {
+      if (item.service) {
+        // Check if service already exists (avoid duplicates)
+        const exists = services.some(s => s.id === item.service.id)
+        if (!exists) {
+          services.push({
+            ...item.service,
+            source: 'room'
+          })
+        }
+      }
+    })
+  }
+  
+  return services
+}
+
+// Map service names to icons
+const getServiceIcon = (service) => {
+  const name = service.service_name?.toLowerCase() || ''
+  
+  if (name.includes('wifi') || name.includes('internet')) return Wifi
+  if (name.includes('ac') || name.includes('air') || name.includes('conditioning')) return Wind
+  if (name.includes('kitchen') || name.includes('food') || name.includes('meal')) return Utensils
+  if (name.includes('coffee') || name.includes('tea')) return Coffee
+  if (name.includes('gym') || name.includes('fitness') || name.includes('exercise')) return Dumbbell
+  if (name.includes('parking') || name.includes('car') || name.includes('vehicle')) return Car
+  if (name.includes('study') || name.includes('desk') || name.includes('book') || name.includes('library')) return BookOpen
+  if (name.includes('security') || name.includes('cctv') || name.includes('guard') || name.includes('safety')) return Shield
+  if (name.includes('tv') || name.includes('television') || name.includes('entertainment')) return Tv
+  if (name.includes('game') || name.includes('play') || name.includes('console')) return Gamepad2
+  if (name.includes('fridge') || name.includes('refrigerator') || name.includes('cooler')) return Refrigerator
+  if (name.includes('wash') || name.includes('laundry') || name.includes('cleaning')) return WashingMachine
+  if (name.includes('music') || name.includes('audio') || name.includes('sound')) return Music
+  if (name.includes('power') || name.includes('electricity') || name.includes('backup')) return Zap
+  if (name.includes('bath') || name.includes('shower') || name.includes('toilet') || name.includes('bathroom')) return Bath
+  if (name.includes('bed') || name.includes('mattress') || name.includes('pillow')) return Bed
+  
+  return CheckCircle2
+}
+
 // Dynamic room types from API
 const roomTypes = computed(() => {
   const types = [{ value: 'all', label: 'All Rooms' }]
   
   if (apiRoomTypes.value && apiRoomTypes.value.length > 0) {
     apiRoomTypes.value.forEach(type => {
-      // Try different possible field names for the room type name
       const typeName = type.room_type_title || type.name || type.title || type.type || 'Unknown'
       types.push({
         value: type.id.toString(),
@@ -309,11 +399,11 @@ const roomTypes = computed(() => {
     })
   }
   
-  console.log('Room types for filters:', types)
   return types
 })
 
-const amenities = [
+// Fallback default amenities (used when no services from API)
+const defaultAmenities = [
   { icon: Wifi, label: 'High-Speed WiFi', desc: 'Fiber optic internet' },
   { icon: Wind, label: 'Climate Control', desc: 'AC & Fan in all rooms' },
   { icon: Shield, label: '24/7 Security', desc: 'CCTV & Security guards' },
@@ -324,12 +414,32 @@ const amenities = [
   { icon: Coffee, label: 'Common Room', desc: 'Recreation space' }
 ]
 
+// Get unique services from all rooms (for the global amenities section)
+const allUniqueServices = computed(() => {
+  const servicesMap = new Map()
+  
+  rooms.value.forEach(room => {
+    const roomServices = getRoomServices(room)
+    roomServices.forEach(service => {
+      // Use service ID as key to ensure uniqueness
+      if (service.id && !servicesMap.has(service.id)) {
+        servicesMap.set(service.id, service)
+      }
+    })
+  })
+  
+  // Convert Map to array and limit to 8 services for display
+  return Array.from(servicesMap.values()).slice(0, 8)
+})
+
+// Remove the old hardcoded amenities constant (it's now replaced by defaultAmenities and allUniqueServices)
+// const amenities = [...] // DELETE THIS
+
 const filteredRooms = computed(() => {
   let result = rooms.value
   
   if (selectedType.value !== 'all') {
     result = result.filter(room => {
-      // Filter by room type ID
       return room.room_type_id?.toString() === selectedType.value || 
              room.room_type?.id?.toString() === selectedType.value
     })
@@ -346,13 +456,15 @@ async function fetchRoomsData() {
   try {
     console.log('🚀 Starting progressive loading for Rooms page...')
     
-    // STEP 1: Load room types first (for filters)
     await fetchRoomTypes()
     console.log('✅ Room types loaded:', apiRoomTypes.value)
     
-    // STEP 2: Load rooms (critical)
     await fetchRooms()
     console.log('✅ Rooms loaded:', rooms.value.length)
+    
+    // Log services summary
+    console.log('✅ Unique services across all rooms:', allUniqueServices.value.length)
+    console.log('Services:', allUniqueServices.value.map(s => s.service_name))
     
     console.log('✅ All content loaded!')
     
