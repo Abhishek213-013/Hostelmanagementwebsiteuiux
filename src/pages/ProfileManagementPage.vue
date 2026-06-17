@@ -115,12 +115,14 @@
             <!-- Change Password -->
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
               <h3 class="text-lg font-black text-teal-600 mb-4">Change Password</h3>
-              <form @submit.prevent="changePassword" class="space-y-4">
+              <form @submit.prevent="changePassword" class="space-y-4" autocomplete="off">
                 <div>
                   <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
                   <input 
                     v-model="passwordForm.current" 
                     type="password" 
+                    autocomplete="new-password"
+                    name="current-password"
                     class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
                     placeholder="Enter current password" 
                   />
@@ -130,6 +132,8 @@
                   <input 
                     v-model="passwordForm.new" 
                     type="password" 
+                    autocomplete="new-password"
+                    name="new-password"
                     class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
                     placeholder="Enter new password" 
                   />
@@ -139,6 +143,8 @@
                   <input 
                     v-model="passwordForm.confirm" 
                     type="password" 
+                    autocomplete="new-password"
+                    name="confirm-password"
                     class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
                     placeholder="Confirm new password" 
                   />
