@@ -239,11 +239,15 @@ const router = useRouter()
 const isLoggedIn = ref(false)
 
 // Use composables
-const { rooms, loading, error, fetchRooms } = useRooms()
-const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
+const { rooms, loading: roomsLoading, error: roomsError, fetchRooms } = useRooms()
+const { roomTypes: apiRoomTypes, loading: roomTypesLoading, fetchRoomTypes } = useRoomTypes()
 
 const selectedType = ref('all')
 const hoveredRoom = ref(null)
+
+// Combined loading state
+const loading = ref(true)
+const error = ref('')
 
 // Helper functions for UI display
 const getRoomImage = (roomTypeName) => {
@@ -322,28 +326,37 @@ const filteredRooms = computed(() => {
   
   if (selectedType.value !== 'all') {
     result = result.filter(room => {
-      // Filter by room type ID or name
       return room.room_type_id?.toString() === selectedType.value || 
              room.room_type?.id?.toString() === selectedType.value
     })
   }
   
-  // Only show available rooms by default (optional)
-  // result = result.filter(room => room.status === 'available')
-  
   return result
 })
 
-// In RoomsPage.vue, update fetchRoomsData
+// Progressive fetch - Load critical content first
 async function fetchRoomsData() {
+  loading.value = true
+  error.value = ''
+  
   try {
-    // Only fetch rooms and room types, not availability for every room
-    await Promise.all([
-      fetchRooms(), // This will now set status to 'checking' initially
-      fetchRoomTypes()
-    ])
+    console.log('🚀 Starting progressive loading for Rooms page...')
+    
+    // STEP 1: Load room types first (for filters)
+    await fetchRoomTypes()
+    console.log('✅ Room types loaded:', apiRoomTypes.value.length)
+    
+    // STEP 2: Load rooms (critical)
+    await fetchRooms()
+    console.log('✅ Rooms loaded:', rooms.value.length)
+    
+    console.log('✅ All content loaded!')
+    
   } catch (err) {
-    console.error('Error fetching data:', err)
+    console.error('Error fetching rooms data:', err)
+    error.value = err.message || 'Failed to load rooms'
+  } finally {
+    loading.value = false
   }
 }
 
@@ -353,7 +366,6 @@ const handleBookNow = (room) => {
     return
   }
   
-  // Store selected room info in sessionStorage for booking page
   sessionStorage.setItem('selectedRoom', JSON.stringify({
     id: room.id,
     room_number: room.room_number,
@@ -367,7 +379,6 @@ const handleBookNow = (room) => {
   router.push(`/booking?roomId=${room.id}`)
 }
 
-// Initialize filters from URL params
 watch(() => route.query.type, (newType) => {
   if (newType) selectedType.value = newType
 }, { immediate: true })

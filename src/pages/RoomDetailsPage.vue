@@ -332,14 +332,15 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-const { fetchRoomDetails, loading, error, currentRoom } = useRooms()
+const { fetchRoomDetails, loading: roomsLoading, error: roomsError, currentRoom } = useRooms()
 const { 
   reviews: roomReviews, 
   stats: reviewStats, 
   fetchReviews, 
   getRatingPercentage, 
   getRatingCount,
-  clearReviews 
+  clearReviews,
+  loading: reviewsLoading
 } = useReviews()
 
 const currentImage = ref('')
@@ -347,6 +348,10 @@ const availabilityData = ref(null)
 const checkInDate = ref('')
 const checkOutDate = ref('')
 const checkingAvailability = ref(false)
+
+// Combined loading state
+const loading = ref(true)
+const error = ref('')
 
 // Current room from API
 const room = computed(() => currentRoom.value)
@@ -425,36 +430,58 @@ const checkAvailability = async () => {
   }
 }
 
+// Progressive fetch - Load critical content first
 const fetchRoomData = async () => {
   const roomId = route.params.id
   console.log('Fetching room with ID:', roomId)
   
-  if (roomId) {
-    try {
-      const roomData = await fetchRoomDetails(roomId)
-      console.log('Room data received:', roomData)
-      
-      if (roomData) {
-        // Set initial image
-        currentImage.value = roomData.image || getRoomImage(roomData.room_type?.name)
-        
-        // Set default dates (today and tomorrow)
-        const today = new Date()
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        
-        checkInDate.value = today.toISOString().split('T')[0]
-        checkOutDate.value = tomorrow.toISOString().split('T')[0]
-        
-        // Check availability with default dates
-        await checkAvailability()
-        
-        // Fetch reviews for this room
-        await fetchReviews(roomId)
-      }
-    } catch (err) {
-      console.error('Failed to fetch room:', err)
+  if (!roomId) {
+    loading.value = false
+    return
+  }
+  
+  loading.value = true
+  error.value = ''
+  
+  try {
+    console.log('🚀 Starting progressive loading for Room Details...')
+    
+    // STEP 1: Load room details (critical)
+    const roomData = await fetchRoomDetails(roomId)
+    console.log('✅ Room details loaded:', roomData)
+    
+    if (!roomData) {
+      error.value = 'Room not found'
+      loading.value = false
+      return
     }
+    
+    // Set initial image
+    currentImage.value = roomData.image || getRoomImage(roomData.room_type?.name)
+    
+    // Set default dates (today and tomorrow)
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    
+    checkInDate.value = today.toISOString().split('T')[0]
+    checkOutDate.value = tomorrow.toISOString().split('T')[0]
+    
+    // STEP 2: Check availability (important for booking)
+    await checkAvailability()
+    console.log('✅ Availability checked')
+    
+    // STEP 3: Load reviews (optional, can load in background)
+    await fetchReviews(roomId)
+    console.log('✅ Reviews loaded:', roomReviews.value.length)
+    
+    console.log('✅ All content loaded!')
+    
+  } catch (err) {
+    console.error('Error fetching room data:', err)
+    error.value = err.message || 'Failed to load room details'
+  } finally {
+    loading.value = false
   }
 }
 
