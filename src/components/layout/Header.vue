@@ -237,16 +237,52 @@ const loadUserData = () => {
   loadProfileImage()
 }
 
-// Load profile image from localStorage
 const loadProfileImage = () => {
   const storedImage = localStorage.getItem('profileImage')
-  if (storedImage) {
+  if (storedImage && storedImage !== 'null' && storedImage !== 'undefined') {
     profileImage.value = storedImage
-  } else if (userData.value.avatar && userData.value.avatar.includes('unsplash')) {
-    profileImage.value = userData.value.avatar
-  } else {
-    profileImage.value = ''
+    return
   }
+  
+  // Then check user object for avatar/img
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    try {
+      const parsed = JSON.parse(storedUser)
+      const imgPath = parsed.img || parsed.avatar
+      if (imgPath) {
+        // Construct full URL if needed
+        const fullUrl = getImageUrl(imgPath)
+        if (fullUrl) {
+          profileImage.value = fullUrl
+          localStorage.setItem('profileImage', fullUrl)
+          return
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing user for image:', e)
+    }
+  }
+  
+  profileImage.value = ''
+}
+
+// Add this helper function to Header.vue
+const getImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:image')) {
+    return path
+  }
+  if (path.startsWith('/storage')) {
+    return `http://localhost:8000${path}`
+  }
+  if (path.startsWith('border-users/')) {
+    return `http://localhost:8000/storage/${path}`
+  }
+  if (!path.includes('/')) {
+    return `http://localhost:8000/storage/border-users/${path}`
+  }
+  return path
 }
 
 // Toggle theme

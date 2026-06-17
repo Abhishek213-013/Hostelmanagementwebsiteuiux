@@ -40,7 +40,7 @@
             </div>
             
             <!-- Verification Badge -->
-            <div v-if="currentUser?.is_verified" class="flex items-center gap-1 mb-1">
+            <div v-if="userData?.is_verified" class="flex items-center gap-1 mb-1">
               <CheckCircle2 class="w-4 h-4 text-teal-600" />
               <span class="text-xs text-teal-600 font-semibold">Verified Account</span>
             </div>
@@ -49,19 +49,17 @@
               <span class="text-xs text-amber-600 font-semibold">Pending Verification</span>
             </div>
             
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ userName }}</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ userEmail }}</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ userData?.name || 'User' }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ userData?.email || '' }}</p>
             
             <!-- User Info Badges -->
             <div class="flex flex-wrap gap-2 justify-center mb-4">
-              <span v-if="currentUser?.university" class="px-2 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
-                {{ currentUser.university }}
-              </span>
-              <span v-if="currentUser?.department" class="px-2 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
-                {{ currentUser.department }}
-              </span>
               <span class="px-2 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-medium capitalize">
-                {{ currentUser?.role || 'Boarder' }}
+                {{ userData?.role || 'Boarder' }}
+              </span>
+              <span :class="['px-2 py-1 rounded-full text-xs font-medium', 
+                userData?.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300']">
+                {{ userData?.status == 1 ? 'Active' : 'Inactive' }}
               </span>
             </div>
             
@@ -104,44 +102,6 @@
                   placeholder="Enter your phone number" 
                 />
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Date of Birth</label>
-                <input 
-                  v-model="formData.dob" 
-                  type="date" 
-                  class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700" 
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Address</label>
-                <input 
-                  v-model="formData.address" 
-                  type="text" 
-                  class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Enter your address"
-                />
-              </div>
-              
-              <!-- Academic Info -->
-              <div v-if="currentUser?.university">
-                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">University</label>
-                <input 
-                  v-model="formData.university" 
-                  type="text" 
-                  class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700" 
-                  readonly
-                />
-              </div>
-              <div v-if="currentUser?.department">
-                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Department</label>
-                <input 
-                  v-model="formData.department" 
-                  type="text" 
-                  class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700" 
-                  readonly
-                />
-              </div>
-              
               <div>
                 <button type="submit" class="w-full py-2.5 bg-teal-600 text-white rounded-lg font-bold text-sm hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1">
                   Save Changes
@@ -197,25 +157,17 @@
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                   <span class="text-gray-500">Account Status</span>
-                  <span :class="currentUser?.is_active ? 'text-teal-600' : 'text-red-500'" class="font-semibold">
-                    {{ currentUser?.is_active ? 'Active' : 'Inactive' }}
+                  <span :class="userData?.status == 1 ? 'text-teal-600' : 'text-red-500'" class="font-semibold">
+                    {{ userData?.status == 1 ? 'Active' : 'Inactive' }}
                   </span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Verification</span>
-                  <span :class="currentUser?.is_verified ? 'text-teal-600' : 'text-amber-500'" class="font-semibold">
-                    {{ currentUser?.is_verified ? 'Verified' : 'Pending' }}
-                  </span>
+                  <span class="text-gray-500">Member Since</span>
+                  <span class="font-semibold text-gray-700 dark:text-gray-300">{{ formatDate(userData?.created_at) }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">2FA</span>
-                  <span :class="currentUser?.two_factor_enabled ? 'text-teal-600' : 'text-gray-400'" class="font-semibold">
-                    {{ currentUser?.two_factor_enabled ? 'Enabled' : 'Disabled' }}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Language</span>
-                  <span class="font-semibold text-gray-700 dark:text-gray-300">{{ currentUser?.preferred_language === 'bn' ? 'Bangla' : 'English' }}</span>
+                  <span class="text-gray-500">Border ID</span>
+                  <span class="font-semibold text-gray-700 dark:text-gray-300">{{ userData?.border_id || 'N/A' }}</span>
                 </div>
               </div>
             </div>
@@ -229,26 +181,24 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import axios from 'axios'
+import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
+import { authAPI } from '../services/api'
 import { User, CheckCircle2, AlertCircle, Clock } from 'lucide-vue-next'
 
+const router = useRouter()
 const fileInput = ref(null)
 const profileImage = ref('')
 const loading = ref(true)
-const users = ref([])
+const userData = ref(null)
 const successMessage = ref('')
 const errorMessage = ref('')
 
 const formData = reactive({
   name: '',
   email: '',
-  phone: '',
-  dob: '',
-  address: '',
-  university: '',
-  department: ''
+  phone: ''
 })
 
 const passwordForm = reactive({
@@ -257,103 +207,104 @@ const passwordForm = reactive({
   confirm: ''
 })
 
-// Get current user from localStorage
-const currentUser = computed(() => {
-  const stored = localStorage.getItem('user')
-  if (stored) {
-    try {
-      return JSON.parse(stored)
-    } catch {
-      return null
-    }
-  }
-  return null
+const userInitial = computed(() => {
+  const name = formData.name || userData.value?.name || 'User'
+  return name.charAt(0).toUpperCase()
 })
 
-const userInitial = computed(() => formData.name ? formData.name.charAt(0).toUpperCase() : 'U')
-const userName = computed(() => formData.name || 'User')
-const userEmail = computed(() => formData.email || 'user@sylhetstay.com')
-
-// Clear messages after timeout
 const clearMessages = () => {
   setTimeout(() => {
     successMessage.value = ''
     errorMessage.value = ''
-  }, 3000)
+  }, 5000)
 }
 
-// Fetch user data
-async function fetchUserData() {
+// Function to get full image URL
+const getImageUrl = (path) => {
+  if (!path) return null
+  
+  // If it's already a full URL, return it
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path
+  }
+  
+  // If it's a data URL (base64), return it
+  if (path.startsWith('data:image')) {
+    return path
+  }
+  
+  // If it starts with /storage, it's a storage path
+  if (path.startsWith('/storage')) {
+    // Use the backend URL for storage
+    return `http://localhost:8000${path}`
+  }
+  
+  // If it's a relative path from the API
+  if (path.startsWith('border-users/')) {
+    return `http://localhost:8000/storage/${path}`
+  }
+  
+  // If it's just a filename
+  if (!path.includes('/')) {
+    return `http://localhost:8000/storage/border-users/${path}`
+  }
+  
+  return path
+}
+
+// Fetch user profile from API
+async function fetchUserProfile() {
   loading.value = true
+  errorMessage.value = ''
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/Abhishek213-013/dummyJson/refs/heads/main/users.json')
-    users.value = response.data
+    const response = await authAPI.getUser()
+    console.log('User profile response:', response.data)
     
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser)
-      const userId = localStorage.getItem('currentUserId')
+    let user = null
+    if (response.data && response.data.data) {
+      user = response.data.data
+    } else if (response.data) {
+      user = response.data
+    }
+    
+    if (user) {
+      userData.value = user
       
-      if (userId) {
-        const matchedUser = users.value.find(u => u.id === parseInt(userId))
-        if (matchedUser) {
-          // Update localStorage with full user data from JSON
-          localStorage.setItem('user', JSON.stringify({
-            id: matchedUser.id,
-            name: matchedUser.name,
-            email: matchedUser.email,
-            phone: matchedUser.phone || '',
-            avatar: matchedUser.avatar || '',
-            role: matchedUser.role,
-            university: matchedUser.university || '',
-            department: matchedUser.department || '',
-            address: matchedUser.address || '',
-            dob: matchedUser.dob || '',
-            is_verified: matchedUser.is_verified,
-            is_active: matchedUser.is_active,
-            two_factor_enabled: matchedUser.two_factor_enabled,
-            preferred_language: matchedUser.preferred_language
-          }))
-          
-          // Dispatch event for Header to update
-          window.dispatchEvent(new Event('profileUpdated'))
-          
-          // Populate form
-          formData.name = matchedUser.name
-          formData.email = matchedUser.email
-          formData.phone = matchedUser.phone || ''
-          formData.dob = matchedUser.dob || ''
-          formData.address = matchedUser.address || ''
-          formData.university = matchedUser.university || ''
-          formData.department = matchedUser.department || ''
-          
-          // Set avatar
-          if (matchedUser.avatar && matchedUser.avatar.includes('unsplash')) {
-            profileImage.value = matchedUser.avatar
-          }
+      const storedUser = localStorage.getItem('user')
+      let existingUser = {}
+      if (storedUser) {
+        try {
+          existingUser = JSON.parse(storedUser)
+        } catch (e) {
+          console.error('Error parsing stored user:', e)
         }
-      } else {
-        // Use stored user data if no ID match
-        formData.name = parsed.name || ''
-        formData.email = parsed.email || ''
-        formData.phone = parsed.phone || ''
-        formData.address = parsed.address || ''
-        formData.dob = parsed.dob || ''
-        formData.university = parsed.university || ''
-        formData.department = parsed.department || ''
+      }
+      
+      const mergedUser = {
+        ...existingUser,
+        ...user
+      }
+      localStorage.setItem('user', JSON.stringify(mergedUser))
+      
+      formData.name = user.name || ''
+      formData.email = user.email || ''
+      formData.phone = user.phone || ''
+      
+      // Check if user has avatar - use full URL
+      if (user.img) {
+        const fullUrl = getImageUrl(user.img)
+        profileImage.value = fullUrl
+        localStorage.setItem('profileImage', fullUrl) // ADD THIS LINE
+        console.log('Profile image URL:', fullUrl)
+      } else if (user.avatar) {
+        const fullUrl = getImageUrl(user.avatar)
+        profileImage.value = fullUrl
+        localStorage.setItem('profileImage', fullUrl) // ADD THIS LINE
+        console.log('Profile image URL:', fullUrl)
       }
     }
   } catch (err) {
-    console.error('Error fetching user data:', err)
-    const stored = localStorage.getItem('user')
-    if (stored) {
-      const parsed = JSON.parse(stored)
-      formData.name = parsed.name || ''
-      formData.email = parsed.email || ''
-      formData.phone = parsed.phone || ''
-      formData.address = parsed.address || ''
-      formData.dob = parsed.dob || ''
-    }
+    // ... rest of error handling stays the same
   } finally {
     loading.value = false
   }
@@ -363,50 +314,106 @@ const triggerFileInput = () => {
   fileInput.value.click()
 }
 
-const handlePhotoUpload = (event) => {
+const handlePhotoUpload = async (event) => {
   const file = event.target.files[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      profileImage.value = e.target.result
-      localStorage.setItem('profileImage', e.target.result)
+  if (!file) return
+  
+  const uploadFormData = new FormData()
+  uploadFormData.append('avatar', file)
+  
+  try {
+    const response = await authAPI.updateAvatar(uploadFormData)
+    console.log('Avatar upload response:', response.data)
+    
+    let avatarUrl = null
+    if (response.data && response.data.data) {
+      avatarUrl = response.data.data.img || response.data.data.avatar || response.data.data.image
+    } else if (response.data) {
+      avatarUrl = response.data.img || response.data.avatar || response.data.image
+    }
+    
+    if (avatarUrl) {
+      const fullUrl = getImageUrl(avatarUrl)
+      profileImage.value = fullUrl
       
-      const stored = localStorage.getItem('user')
-      if (stored) {
-        const user = JSON.parse(stored)
-        user.avatar = e.target.result
-        localStorage.setItem('user', JSON.stringify(user))
+      // STORE IN LOCALSTORAGE FOR HEADER
+      localStorage.setItem('profileImage', fullUrl)
+      
+      if (userData.value) {
+        userData.value.img = avatarUrl
+        userData.value.avatar = avatarUrl
+        localStorage.setItem('user', JSON.stringify(userData.value))
       }
       
-      // Dispatch custom event for Header sync
       window.dispatchEvent(new Event('profileUpdated'))
-      
       successMessage.value = 'Profile photo updated successfully!'
-      clearMessages()
+    } else {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        profileImage.value = e.target.result
+        
+        // STORE IN LOCALSTORAGE FOR HEADER
+        localStorage.setItem('profileImage', e.target.result)
+        
+        if (userData.value) {
+          userData.value.img = e.target.result
+          userData.value.avatar = e.target.result
+          localStorage.setItem('user', JSON.stringify(userData.value))
+        }
+        window.dispatchEvent(new Event('profileUpdated'))
+        successMessage.value = 'Profile photo updated successfully!'
+        clearMessages()
+      }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file)
+    clearMessages()
+  } catch (err) {
+    console.error('Error uploading photo:', err)
+    errorMessage.value = err.response?.data?.message || 'Failed to upload photo. Please try again.'
+    clearMessages()
   }
 }
 
-const saveProfile = () => {
-  const stored = localStorage.getItem('user')
-  if (stored) {
-    const user = JSON.parse(stored)
-    user.name = formData.name
-    user.phone = formData.phone
-    user.dob = formData.dob
-    user.address = formData.address
-    localStorage.setItem('user', JSON.stringify(user))
+const saveProfile = async () => {
+  try {
+    const updateData = {
+      name: formData.name,
+      phone: formData.phone
+    }
     
-    // Dispatch custom event for Header sync
-    window.dispatchEvent(new Event('profileUpdated'))
+    const response = await authAPI.updateProfile(updateData)
+    console.log('Profile update response:', response.data)
+    
+    let updatedUser = null
+    if (response.data && response.data.data) {
+      updatedUser = response.data.data
+    } else if (response.data) {
+      updatedUser = response.data
+    }
+    
+    if (updatedUser) {
+      userData.value = updatedUser
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+      window.dispatchEvent(new Event('profileUpdated'))
+    } else {
+      if (userData.value) {
+        userData.value.name = formData.name
+        userData.value.phone = formData.phone
+        localStorage.setItem('user', JSON.stringify(userData.value))
+        window.dispatchEvent(new Event('profileUpdated'))
+      }
+    }
+    
+    successMessage.value = 'Profile updated successfully!'
+    clearMessages()
+  } catch (err) {
+    console.error('Error saving profile:', err)
+    errorMessage.value = err.response?.data?.message || 'Failed to save profile. Please try again.'
+    clearMessages()
   }
-  
-  successMessage.value = 'Profile updated successfully!'
-  clearMessages()
 }
 
-const changePassword = () => {
+const changePassword = async () => {
   if (!passwordForm.current) {
     errorMessage.value = 'Please enter your current password.'
     clearMessages()
@@ -423,17 +430,43 @@ const changePassword = () => {
     return
   }
   
-  successMessage.value = 'Password changed successfully!'
-  clearMessages()
-  passwordForm.current = ''
-  passwordForm.new = ''
-  passwordForm.confirm = ''
+  try {
+    const response = await authAPI.resetPassword({
+      current_password: passwordForm.current,
+      password: passwordForm.new,
+      password_confirmation: passwordForm.confirm
+    })
+    
+    console.log('Password change response:', response.data)
+    successMessage.value = 'Password changed successfully!'
+    clearMessages()
+    passwordForm.current = ''
+    passwordForm.new = ''
+    passwordForm.confirm = ''
+  } catch (err) {
+    console.error('Error changing password:', err)
+    errorMessage.value = err.response?.data?.message || 'Failed to change password. Please try again.'
+    clearMessages()
+  }
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A'
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  } catch {
+    return dateString
+  }
 }
 
 onMounted(() => {
-  fetchUserData()
+  if (!localStorage.getItem('isAuthenticated')) {
+    router.push('/login')
+    return
+  }
+  fetchUserProfile()
   
-  // Load stored profile image
   const storedImage = localStorage.getItem('profileImage')
   if (storedImage) {
     profileImage.value = storedImage

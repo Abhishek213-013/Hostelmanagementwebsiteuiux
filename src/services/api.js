@@ -104,16 +104,14 @@ export const clearCacheForUrl = (url) => {
 export const authAPI = {
   register: (userData) => apiClient.post('/auth/register', userData),
   login: (credentials) => apiClient.post('/auth/login', credentials),
-  logout: () => {
-    clearCache()
-    return apiClient.post('/auth/logout')
-  },
-  getUser: () => apiClient.get('/user', { params: { noCache: true } }),
-  updateProfile: (userData) => {
-    clearCacheForUrl('/user')
-    return apiClient.put('/user', userData)
-  },
+  logout: () => apiClient.post('/auth/logout'),
+  getUser: () => apiClient.get('/border_user'), // Removed 'auth/' prefix
+  updateProfile: (userData) => apiClient.put('/border_user', userData),
+  updateAvatar: (formData) => apiClient.post('/border_user/updte_img', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   resetPassword: (data) => apiClient.post('/auth/reset-password', data),
+  refresh: () => apiClient.post('/auth/refresh')
 }
 
 // Location APIs - With caching
