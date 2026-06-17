@@ -108,8 +108,8 @@
       <section v-if="roomTypesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(roomType, i) in roomTypesList.slice(0, 3)" :key="i">
-              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+            <AnimatedSection v-for="(roomType, i) in roomTypesList.slice(0, 3)" :key="i" class="h-full">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col">
                 <div class="flex items-start justify-between mb-6">
                   <div class="p-4 rounded-2xl bg-teal-600">
                     <component :is="getRoomTypeIcon(roomType.room_type_title)" class="w-7 h-7 text-white" />
@@ -118,14 +118,14 @@
                     {{ roomType.room_type_price ? 'Premium' : 'Standard' }}
                   </span>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black mb-2 text-teal-600 break-words">{{ roomType.room_type_title || 'Room Type' }}</h3>
-                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 break-words">{{ roomType.room_type_details || 'Comfortable accommodation with modern amenities' }}</p>
-                <div class="flex items-center justify-between">
+                <h3 class="text-xl sm:text-2xl font-black mb-2 text-teal-600 break-words line-clamp-2">{{ roomType.room_type_title || 'Room Type' }}</h3>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 break-words flex-grow line-clamp-4">{{ roomType.room_type_details || 'Comfortable accommodation with modern amenities' }}</p>
+                <div class="flex items-center justify-between mt-auto">
                   <div class="text-xl sm:text-2xl font-black text-teal-600 break-words">
                     ৳{{ (roomType.room_type_price || 0).toLocaleString() }}
                     <span class="text-sm font-normal">/mo</span>
                   </div>
-                  <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors">
+                  <router-link to="/rooms" class="w-12 h-12 rounded-full flex items-center justify-center bg-teal-600 hover:bg-teal-700 transition-colors flex-shrink-0">
                     <ArrowRight class="w-6 h-6 text-white" />
                   </router-link>
                 </div>
