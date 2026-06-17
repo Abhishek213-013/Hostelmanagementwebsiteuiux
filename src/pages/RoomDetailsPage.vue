@@ -76,7 +76,7 @@
               <div class="flex flex-wrap gap-3">
                 <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <Sparkles class="w-5 h-5 text-teal-600" />
-                  <span class="text-sm font-bold tracking-wide text-teal-600 capitalize">{{ room.room_type?.name || 'Standard' }}</span>
+                  <span class="text-sm font-bold tracking-wide text-teal-600 capitalize">{{ room.room_type?.room_type_title || room.room_type?.name || 'Standard' }}</span>
                 </div>
               </div>
 
@@ -139,7 +139,7 @@
               </div>
 
               <!-- Check-in / Check-out Date Selection for Availability -->
-              <div class="grid grid-cols-2 gap-4">
+              <!-- <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-bold text-teal-600 mb-2">Check-in Date</label>
                   <input type="date" v-model="checkInDate" @change="checkAvailability" 
@@ -150,10 +150,10 @@
                   <input type="date" v-model="checkOutDate" @change="checkAvailability" 
                          class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all" />
                 </div>
-              </div>
+              </div> -->
 
               <!-- Room Features -->
-              <div class="space-y-3">
+              <!-- <div class="space-y-3">
                 <h3 class="text-lg font-bold text-teal-600">Room Features</h3>
                 <div class="grid grid-cols-2 gap-3">
                   <div v-for="feature in getRoomFeatures(room.room_type?.name)" :key="feature" class="flex items-center gap-2">
@@ -161,7 +161,7 @@
                     <span class="text-sm text-gray-700 dark:text-gray-300">{{ feature }}</span>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <button 
                 @click="handleBookNow" 
@@ -176,17 +176,17 @@
             </div>
           </div>
 
-          <!-- Amenities Section -->
+          <!-- Room Amenities Section - Now uses dynamic data from room features -->
           <div class="mt-16 mb-10">
             <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Amenities</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="(amenity, i) in amenities" :key="i" 
+              <div v-for="(feature, i) in displayFeatures" :key="i" 
                    class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-teal-600 group-hover:bg-white/20 transition-colors duration-500">
-                  <component :is="amenity.icon" class="w-6 h-6 text-white" />
+                  <component :is="getFeatureIcon(feature)" class="w-6 h-6 text-white" />
                 </div>
                 <div class="flex-1">
-                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500">{{ amenity.label }}</span>
+                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500">{{ feature }}</span>
                 </div>
                 <CheckCircle2 class="w-5 h-5 text-teal-500 flex-shrink-0 group-hover:text-white transition-colors duration-500" />
               </div>
@@ -327,7 +327,7 @@ import { roomAPI } from '../services/api'
 import { 
   ArrowLeft, Users, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, 
   Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
-  Star, ThumbsUp, Clock, MapPin, Bath, Maximize2
+  Star, ThumbsUp, Clock, MapPin, Bath, Maximize2, Tv, Gamepad2, Refrigerator
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -363,6 +363,30 @@ const isRoomAvailable = computed(() => {
          availabilityData.value.available_seats?.length > 0
 })
 
+// Get room features based on room type
+const displayFeatures = computed(() => {
+  return getRoomFeatures(room.value?.room_type?.name)
+})
+
+// Map features to icons
+const getFeatureIcon = (feature) => {
+  const featureLower = feature.toLowerCase()
+  if (featureLower.includes('wifi') || featureLower.includes('internet')) return Wifi
+  if (featureLower.includes('ac') || featureLower.includes('air') || featureLower.includes('conditioning')) return Wind
+  if (featureLower.includes('kitchen') || featureLower.includes('food')) return Utensils
+  if (featureLower.includes('coffee') || featureLower.includes('tea')) return Coffee
+  if (featureLower.includes('gym') || featureLower.includes('fitness')) return Dumbbell
+  if (featureLower.includes('parking') || featureLower.includes('car')) return Car
+  if (featureLower.includes('study') || featureLower.includes('desk') || featureLower.includes('book')) return BookOpen
+  if (featureLower.includes('security') || featureLower.includes('cctv') || featureLower.includes('guard')) return Shield
+  if (featureLower.includes('tv') || featureLower.includes('television')) return Tv
+  if (featureLower.includes('game') || featureLower.includes('play')) return Gamepad2
+  if (featureLower.includes('fridge') || featureLower.includes('refrigerator')) return Refrigerator
+  if (featureLower.includes('bath') || featureLower.includes('shower') || featureLower.includes('toilet')) return Bath
+  if (featureLower.includes('bed') || featureLower.includes('mattress')) return Bed
+  return CheckCircle2
+}
+
 // Helper functions for UI display
 const getCapacityFromType = (roomTypeName) => {
   const capacities = {
@@ -395,17 +419,6 @@ const getRoomFeatures = (roomTypeName) => {
   }
   return features[roomTypeName?.toLowerCase()] || features.standard
 }
-
-const amenities = [
-  { icon: Wifi, label: 'High-Speed WiFi' },
-  { icon: Wind, label: 'Air Conditioning' },
-  { icon: Shield, label: '24/7 Security' },
-  { icon: Car, label: 'Parking Space' },
-  { icon: Utensils, label: 'Dining Hall' },
-  { icon: BookOpen, label: 'Study Lounge' },
-  { icon: Dumbbell, label: 'Fitness Center' },
-  { icon: Coffee, label: 'Common Room' }
-]
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A'

@@ -300,13 +300,16 @@ const roomTypes = computed(() => {
   
   if (apiRoomTypes.value && apiRoomTypes.value.length > 0) {
     apiRoomTypes.value.forEach(type => {
+      // Try different possible field names for the room type name
+      const typeName = type.room_type_title || type.name || type.title || type.type || 'Unknown'
       types.push({
         value: type.id.toString(),
-        label: type.name
+        label: typeName
       })
     })
   }
   
+  console.log('Room types for filters:', types)
   return types
 })
 
@@ -326,6 +329,7 @@ const filteredRooms = computed(() => {
   
   if (selectedType.value !== 'all') {
     result = result.filter(room => {
+      // Filter by room type ID
       return room.room_type_id?.toString() === selectedType.value || 
              room.room_type?.id?.toString() === selectedType.value
     })
@@ -344,7 +348,7 @@ async function fetchRoomsData() {
     
     // STEP 1: Load room types first (for filters)
     await fetchRoomTypes()
-    console.log('✅ Room types loaded:', apiRoomTypes.value.length)
+    console.log('✅ Room types loaded:', apiRoomTypes.value)
     
     // STEP 2: Load rooms (critical)
     await fetchRooms()
