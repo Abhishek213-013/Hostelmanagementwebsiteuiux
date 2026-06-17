@@ -1,22 +1,44 @@
 <template>
-  <!-- Step 4: Booking Confirmed -->
+  <!-- Step 4: Booking Confirmed (Under Approval) -->
   <div v-if="step === 4" class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <AnimatedSection>
       <div class="relative text-center max-w-lg">
         <div class="inline-block mb-8">
-          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-teal-600">
-            <CheckCircle2 class="w-16 h-16 text-white drop-shadow-lg" />
+          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-amber-500">
+            <Clock class="w-16 h-16 text-white drop-shadow-lg" />
           </div>
         </div>
-        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-teal-600">Booking Confirmed!</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your room has been reserved successfully.</p>
+        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-amber-600">Booking Under Approval</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your booking has been submitted for review.</p>
         <p class="text-gray-700 dark:text-gray-300 mb-4">
-           A confirmation email has been sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email_number }}</span>
+          A confirmation email has been sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email_number }}</span>
         </p>
 
         <div v-if="currentBooking?.id" class="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow border border-gray-200 dark:border-gray-700">
-          <p class="text-sm text-teal-600 mb-1">Booking ID</p>
+          <p class="text-sm text-amber-600 mb-1">Booking ID</p>
           <p class="font-mono font-bold text-gray-800 dark:text-white text-lg">{{ currentBooking.id }}</p>
+          <div class="mt-4 flex items-center justify-center gap-2">
+            <span class="inline-block w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="text-amber-600 font-semibold">Status: Pending Approval</span>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 mb-8">
+          <h3 class="text-lg font-bold text-amber-800 dark:text-amber-200 mb-2">What's Next?</h3>
+          <ul class="text-sm text-amber-700 dark:text-amber-300 space-y-2 text-left">
+            <li class="flex items-center gap-2">
+              <Clock class="w-4 h-4 flex-shrink-0" />
+              Your booking is being reviewed by our team
+            </li>
+            <li class="flex items-center gap-2">
+              <CheckCircle2 class="w-4 h-4 flex-shrink-0" />
+              You'll receive confirmation within 24 hours
+            </li>
+            <li class="flex items-center gap-2">
+              <Phone class="w-4 h-4 flex-shrink-0" />
+              We may contact you for verification
+            </li>
+          </ul>
         </div>
 
         <div class="flex flex-wrap gap-4 justify-center">
@@ -105,7 +127,7 @@
                       </div>
                       <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Failed</h3>
                       <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentStatus.message }}</p>
-                      <button @click="paymentStatus = null" class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all" style="background: #0d9488">
+                      <button @click="paymentStatus = null" class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all bg-teal-600">
                         Try Again
                       </button>
                     </div>
@@ -127,7 +149,7 @@
                             ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/50 dark:border-teal-400'
                             : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 bg-white dark:bg-gray-700',
                           'disabled:opacity-50']">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg bg-teal-600">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg" :style="{ background: method.color }">
                           <component :is="method.icon" class="w-6 h-6 text-white" />
                         </div>
                         <div class="text-left flex-1">
@@ -140,7 +162,8 @@
                       </button>
                     </div>
 
-                    <button @click="confirmPayment"
+                    <!-- Payment Gateway Modal Trigger -->
+                    <button @click="initiatePayment"
                       :disabled="!selectedPayment || isProcessing || submittingBooking"
                       :class="['w-full py-5 rounded-2xl font-bold text-white text-lg shadow transition-all flex items-center justify-center gap-3',
                         selectedPayment && !isProcessing && !submittingBooking
@@ -155,7 +178,7 @@
                         {{ submittingBooking ? 'Creating Booking...' : 'Processing...' }}
                       </template>
                       <template v-else>
-                        <CheckCircle2 class="w-6 h-6" />
+                        <CreditCard class="w-6 h-6" />
                         Pay Now ৳{{ selectedRoom ? Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() : '' }}
                       </template>
                     </button>
@@ -164,6 +187,288 @@
               </div>
             </div>
           </AnimatedSection>
+
+          <!-- Payment Gateway Modal -->
+          <Teleport to="body">
+            <div v-if="showPaymentModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <AnimatedSection>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+                  <!-- SSLCommerz Style Header -->
+                  <div v-if="selectedPayment === 'sslcommerz'" class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                          <Shield class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 class="font-black text-gray-800 dark:text-white">SSLCommerz</h3>
+                          <p class="text-xs text-gray-500">Secure Payment Gateway</p>
+                        </div>
+                      </div>
+                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <X class="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
+                      <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                      </div>
+                      <div class="text-xs text-gray-500">Transaction ID: {{ generatedTranId }}</div>
+                    </div>
+
+                    <!-- SSLCommerz Payment Form -->
+                    <form @submit.prevent="processSSLCommerzPayment" class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
+                        <div class="relative">
+                          <input type="text" v-model="sslForm.cardNumber" @input="formatCardNumber" maxlength="19" placeholder="1234 5678 9012 3456"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                          <div class="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 opacity-50" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-4 opacity-50" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry Date</label>
+                          <input type="text" v-model="sslForm.expiry" @input="formatExpiry" maxlength="5" placeholder="MM/YY"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                        </div>
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
+                          <input type="password" v-model="sslForm.cvv" maxlength="4" placeholder="***"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Holder Name</label>
+                        <input type="text" v-model="sslForm.cardHolder" placeholder="John Doe"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
+                      </div>
+
+                      <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <Lock class="w-4 h-4" />
+                        <span>Secured by SSLCommerz. Your data is encrypted.</span>
+                      </div>
+
+                      <button type="submit" :disabled="sslProcessing"
+                        class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                        <template v-if="sslProcessing">
+                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                          </svg>
+                          Processing...
+                        </template>
+                        <template v-else>
+                          <Lock class="w-5 h-5" />
+                          Pay Securely
+                        </template>
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- Mobile Banking Modal -->
+                  <div v-else-if="selectedPayment === 'mobile-banking'" class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
+                          <Smartphone class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 class="font-black text-gray-800 dark:text-white">Mobile Banking</h3>
+                          <p class="text-xs text-gray-500">bKash, Nagad, Rocket</p>
+                        </div>
+                      </div>
+                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <X class="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
+                      <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                      </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                      <button @click="mobileProvider = 'bkash'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                        mobileProvider === 'bkash' ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20' : 'border-gray-200 dark:border-gray-600']">
+                        <div class="w-10 h-10 rounded-lg bg-pink-500 flex items-center justify-center flex-shrink-0">
+                          <span class="text-white font-black text-sm">bKash</span>
+                        </div>
+                        <span class="font-bold text-gray-800 dark:text-white">bKash</span>
+                      </button>
+                      <button @click="mobileProvider = 'nagad'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                        mobileProvider === 'nagad' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-600']">
+                        <div class="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
+                          <span class="text-white font-black text-sm">Nagad</span>
+                        </div>
+                        <span class="font-bold text-gray-800 dark:text-white">Nagad</span>
+                      </button>
+                      <button @click="mobileProvider = 'rocket'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                        mobileProvider === 'rocket' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-600']">
+                        <div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center flex-shrink-0">
+                          <span class="text-white font-black text-sm">Rocket</span>
+                        </div>
+                        <span class="font-bold text-gray-800 dark:text-white">Rocket</span>
+                      </button>
+                    </div>
+
+                    <form @submit.prevent="processMobilePayment" class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Mobile Number</label>
+                        <input type="tel" v-model="mobileForm.number" placeholder="01XXXXXXXXX"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">PIN</label>
+                        <input type="password" v-model="mobileForm.pin" maxlength="5" placeholder="*****"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
+                      </div>
+                      <button type="submit" :disabled="!mobileProvider || sslProcessing" :class="['w-full py-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50',
+                        mobileProvider === 'bkash' ? 'bg-pink-500 hover:bg-pink-600' :
+                        mobileProvider === 'nagad' ? 'bg-red-500 hover:bg-red-600' :
+                        mobileProvider === 'rocket' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-300']">
+                        <template v-if="sslProcessing">
+                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                          </svg>
+                          Processing...
+                        </template>
+                        <template v-else>
+                          <Smartphone class="w-5 h-5" />
+                          Pay with {{ mobileProvider || 'Mobile' }}
+                        </template>
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- Credit/Debit Card Modal -->
+                  <div v-else-if="selectedPayment === 'credit-card'" class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                          <CreditCard class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 class="font-black text-gray-800 dark:text-white">Credit/Debit Card</h3>
+                          <p class="text-xs text-gray-500">Visa, MasterCard, Amex</p>
+                        </div>
+                      </div>
+                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <X class="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
+                      <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                      </div>
+                    </div>
+
+                    <form @submit.prevent="processCardPayment" class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
+                        <input type="text" v-model="sslForm.cardNumber" @input="formatCardNumber" maxlength="19" placeholder="1234 5678 9012 3456"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                      </div>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry</label>
+                          <input type="text" v-model="sslForm.expiry" @input="formatExpiry" maxlength="5" placeholder="MM/YY"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                        </div>
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
+                          <input type="password" v-model="sslForm.cvv" maxlength="4" placeholder="***"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Holder</label>
+                        <input type="text" v-model="sslForm.cardHolder" placeholder="John Doe"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
+                      </div>
+                      <button type="submit" :disabled="sslProcessing"
+                        class="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                        <template v-if="sslProcessing">
+                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                          </svg>
+                          Processing...
+                        </template>
+                        <template v-else>
+                          <CreditCard class="w-5 h-5" />
+                          Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
+                        </template>
+                      </button>
+                    </form>
+                  </div>
+
+                  <!-- Net Banking Modal -->
+                  <div v-else-if="selectedPayment === 'net-banking'" class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center">
+                          <Building2 class="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 class="font-black text-gray-800 dark:text-white">Net Banking</h3>
+                          <p class="text-xs text-gray-500">All Major Banks</p>
+                        </div>
+                      </div>
+                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <X class="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
+                      <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount</span>
+                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                      </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                      <button v-for="bank in banks" :key="bank.id" @click="selectedBank = bank.id"
+                        :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                          selectedBank === bank.id ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-600']">
+                        <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
+                          <Building2 class="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                        </div>
+                        <span class="font-bold text-gray-800 dark:text-white">{{ bank.name }}</span>
+                      </button>
+                    </div>
+
+                    <button @click="processNetBanking" :disabled="!selectedBank || sslProcessing"
+                      class="w-full py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                      <template v-if="sslProcessing">
+                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        Processing...
+                      </template>
+                      <template v-else>
+                        <Building2 class="w-5 h-5" />
+                        Proceed to Net Banking
+                      </template>
+                    </button>
+                  </div>
+                </div>
+              </AnimatedSection>
+            </div>
+          </Teleport>
         </div>
 
         <!-- Step 2: Booking Form -->
@@ -187,7 +492,6 @@
                         formErrors.check_out_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
                     <p v-if="formErrors.check_out_date" class="text-red-500 text-sm mt-1">{{ formErrors.check_out_date }}</p>
                   </div>
-                  <!-- Add this after the check-out date fields -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label class="block text-sm font-bold text-teal-600 mb-3">Select Seat</label>
@@ -341,7 +645,7 @@
                     class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400 resize-none h-36"></textarea>
                 </div>
 
-                <button type="submit" :disabled="submittingBooking" class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed" style="background: #0d9488">
+                <button type="submit" :disabled="submittingBooking" class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed bg-teal-600">
                   <template v-if="submittingBooking">
                     <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -358,13 +662,6 @@
             </div>
           </AnimatedSection>
         </div>
-        <!-- Debug Section -->
-        <div v-if="selectedRoom" class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-xs overflow-auto">
-          <details>
-            <summary class="font-bold cursor-pointer">Debug: Booking Payload</summary>
-            <pre class="mt-2">{{ JSON.stringify(bookingData, null, 2) }}</pre>
-          </details>
-        </div>
       </div>
     </div>
     <Footer />
@@ -376,28 +673,57 @@ import { ref, onMounted } from 'vue'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Smartphone, Building2 } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Smartphone, Building2, Clock, Phone, Lock, Shield } from 'lucide-vue-next'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
 import { useRooms } from '../composables/useRooms'
 import { useBookings } from '../composables/useBookings'
 import { useLocations } from '../composables/useLocations'
-// Import roomAPI directly if needed, or use the composable method
-import { roomAPI } from '../services/api'  // <-- ADD THIS IMPORT
+import { roomAPI } from '../services/api'
 
 const route = useRoute()
 const router = useRouter()
 const step = ref(2)
 
-// Add a new state for available seats
+// Payment modal state
+const showPaymentModal = ref(false)
+const sslProcessing = ref(false)
+const generatedTranId = ref('')
+const mobileProvider = ref('')
+const selectedBank = ref('')
+
+// SSLCommerz form
+const sslForm = ref({
+  cardNumber: '',
+  expiry: '',
+  cvv: '',
+  cardHolder: ''
+})
+
+// Mobile banking form
+const mobileForm = ref({
+  number: '',
+  pin: ''
+})
+
+// Banks list
+const banks = [
+  { id: 'dutch-bangla', name: 'Dutch-Bangla Bank' },
+  { id: 'brac', name: 'BRAC Bank' },
+  { id: 'city', name: 'City Bank' },
+  { id: 'eastern', name: 'Eastern Bank' },
+  { id: 'ucb', name: 'United Commercial Bank' },
+  { id: 'prime', name: 'Prime Bank' },
+  { id: 'one', name: 'ONE Bank' },
+  { id: 'mutual-trust', name: 'Mutual Trust Bank' }
+]
+
 const availableSeats = ref([])
 const selectedSeatId = ref(null)
 
-// Use composables
 const { rooms, roomTypes, loading: roomsLoading, error: roomsError, fetchRooms, fetchRoomDetails, checkRoomAvailability } = useRooms()
 const { createBooking, currentBooking, loading: bookingLoading, error: bookingError, updateBookingStatus } = useBookings()
 const { divisions, districts, upazilas, unions, loading: locationLoading, fetchDivisions, fetchDistricts, fetchUpazilas, fetchUnions } = useLocations()
 
-// Component state
 const selectedPayment = ref('')
 const isProcessing = ref(false)
 const submittingBooking = ref(false)
@@ -431,36 +757,56 @@ const bookingData = ref({
   check_in_date: '',
   check_out_date: '',
   billing_amount: 0,
-  status: 2,
+  status: 2, // 2 = pending
   notes: ''
 })
 
 const paymentMethods = [
-  { id: 'sslcommerz', title: 'SSLCommerz', desc: 'Pay securely with SSLCOMMERZ gateway', icon: CreditCard },
-  { id: 'credit-card', title: 'Credit/Debit Card', desc: 'Visa, MasterCard, American Express', icon: CreditCard },
-  { id: 'mobile-banking', title: 'Mobile Banking', desc: 'bKash, Nagad, Rocket, Upay', icon: Smartphone },
-  { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2 }
+  { id: 'sslcommerz', title: 'SSLCommerz', desc: 'Pay securely with SSLCOMMERZ gateway (Bangla)', icon: Shield, color: '#0d9488' },
+  { id: 'credit-card', title: 'Credit/Debit Card', desc: 'Visa, MasterCard, American Express', icon: CreditCard, color: '#3b82f6' },
+  { id: 'mobile-banking', title: 'Mobile Banking', desc: 'bKash, Nagad, Rocket, Upay', icon: Smartphone, color: '#ec4899' },
+  { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2, color: '#4b5563' }
 ]
 
-// Fix: Use checkRoomAvailability from useRooms instead of direct roomAPI call
+// Generate random transaction ID
+const generateTranId = () => {
+  const timestamp = Date.now().toString(36).toUpperCase()
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase()
+  return `SSL${timestamp}${random}`
+}
+
+// Format card number with spaces
+const formatCardNumber = (e) => {
+  let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '')
+  if (value.length > 16) value = value.slice(0, 16)
+  const parts = value.match(/.{1,4}/g)
+  sslForm.value.cardNumber = parts ? parts.join(' ') : value
+}
+
+// Format expiry date
+const formatExpiry = (e) => {
+  let value = e.target.value.replace(/[^0-9]/g, '')
+  if (value.length > 4) value = value.slice(0, 4)
+  if (value.length > 2) {
+    value = value.slice(0, 2) + '/' + value.slice(2)
+  }
+  sslForm.value.expiry = value
+}
+
+// Fetch available seats
 const fetchAvailableSeats = async (roomId) => {
   try {
-    // Use the composable method instead of direct roomAPI
     const availability = await checkRoomAvailability(roomId)
-    console.log('Availability response:', availability)
-    
     let availData = availability
     if (availData && availData.data) availData = availData.data
     
     if (availData && availData.available_seats) {
       availableSeats.value = availData.available_seats
-      // Auto-select the first available seat if any
       if (availableSeats.value.length > 0) {
         selectedSeatId.value = availableSeats.value[0].id
         bookingData.value.seat_id = selectedSeatId.value
       }
     } else if (availData && availData.data && availData.data.available_seats) {
-      // Handle nested response structure
       availableSeats.value = availData.data.available_seats
       if (availableSeats.value.length > 0) {
         selectedSeatId.value = availableSeats.value[0].id
@@ -469,7 +815,6 @@ const fetchAvailableSeats = async (roomId) => {
     }
   } catch (err) {
     console.error('Failed to fetch available seats:', err)
-    // If there's an error, create a default seat option
     availableSeats.value = [{ id: 1, seat_description: 'Default Seat' }]
     selectedSeatId.value = 1
     bookingData.value.seat_id = 1
@@ -495,37 +840,10 @@ onMounted(async () => {
       bookingData.value.branch_id = room.branch_id
       bookingData.value.billing_amount = room.room_price
       
-      // Fetch available seats for this room
       await fetchAvailableSeats(roomId)
-      
-      console.log('Selected room:', {
-        id: room.id,
-        branch_id: room.branch_id,
-        room_price: room.room_price,
-        available_seats: availableSeats.value
-      })
     } catch (error) {
       console.error('Failed to fetch room details:', error)
     }
-  }
-
-  // Check for payment status in URL
-  const urlParams = new URLSearchParams(window.location.search)
-  const paymentStatusParam = urlParams.get('status')
-  const tranId = urlParams.get('tran_id')
-
-  if (paymentStatusParam && tranId) {
-    if (paymentStatusParam === 'success') {
-      paymentStatus.value = { status: 'success', transactionId: tranId, message: 'Payment successful!' }
-      step.value = 4
-    } else if (paymentStatusParam === 'failed') {
-      paymentStatus.value = { status: 'failed', message: 'Payment failed. Please try again.' }
-      step.value = 3
-    } else if (paymentStatusParam === 'canceled') {
-      paymentStatus.value = { status: 'canceled', message: 'Payment was canceled.' }
-      step.value = 3
-    }
-    window.history.replaceState({}, document.title, window.location.pathname)
   }
 })
 
@@ -573,13 +891,11 @@ const validateForm = () => {
 const confirmBooking = async () => {
   if (!validateForm()) return
   
-  // Make sure we have a seat selected
   if (!bookingData.value.seat_id) {
     formErrors.value.seat = 'Please select a seat'
     return
   }
   
-  // Make sure we have the room_id and branch_id
   if (!bookingData.value.room_id) {
     formErrors.value.submit = 'Room information is missing. Please go back and select a room.'
     return
@@ -587,7 +903,6 @@ const confirmBooking = async () => {
   
   submittingBooking.value = true
   
-  // Prepare booking data matching the exact format from your API spec
   const bookingPayload = {
     branch_id: parseInt(bookingData.value.branch_id),
     room_id: parseInt(bookingData.value.room_id),
@@ -613,11 +928,9 @@ const confirmBooking = async () => {
     check_in_date: bookingData.value.check_in_date,
     check_out_date: bookingData.value.check_out_date,
     billing_amount: parseFloat(bookingData.value.billing_amount),
-    status: parseInt(bookingData.value.status),
+    status: 2, // Pending status
     notes: bookingData.value.notes || ""
   }
-  
-  console.log('Sending booking payload:', JSON.stringify(bookingPayload, null, 2))
   
   try {
     const booking = await createBooking(bookingPayload)
@@ -626,8 +939,6 @@ const confirmBooking = async () => {
     }
   } catch (error) {
     console.error('Failed to create booking:', error)
-    
-    // Display detailed error message
     if (error.response?.data?.message) {
       formErrors.value.submit = error.response.data.message
     } else if (error.response?.data?.error) {
@@ -646,34 +957,150 @@ const selectPayment = (method) => {
   selectedPayment.value = method
 }
 
-const confirmPayment = async () => {
+// Open payment modal
+const initiatePayment = () => {
   if (!selectedPayment.value) return
-  paymentStatus.value = null
-  isProcessing.value = true
+  
+  generatedTranId.value = generateTranId()
+  showPaymentModal.value = true
+  
+  // Reset forms
+  sslForm.value = { cardNumber: '', expiry: '', cvv: '', cardHolder: '' }
+  mobileForm.value = { number: '', pin: '' }
+  mobileProvider.value = ''
+  selectedBank.value = ''
+}
 
-  try {
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
+// Process SSLCommerz payment
+const processSSLCommerzPayment = async () => {
+  sslProcessing.value = true
+  
+  // Simulate payment processing
+  await new Promise(resolve => setTimeout(resolve, 2500))
+  
+  // Simulate success (90% success rate)
+  const isSuccess = Math.random() > 0.1
+  
+  if (isSuccess) {
+    showPaymentModal.value = false
+    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
     
-    // Note: The booking status update is handled by admin only
-    // In a real application, the payment gateway would handle this
+    // Update booking status to pending (2)
+    if (currentBooking.value?.id) {
+      try {
+        await updateBookingStatus(currentBooking.value.id, 2)
+      } catch (err) {
+        console.error('Failed to update booking status:', err)
+      }
+    }
     
-    paymentStatus.value = { status: 'success', message: 'Payment successful!' }
     step.value = 4
-  } catch (error) {
+  } else {
     paymentStatus.value = { status: 'failed', message: 'Payment failed. Please try again.' }
-    console.error('Payment failed:', error)
-  } finally {
-    isProcessing.value = false
+    showPaymentModal.value = false
   }
+  
+  sslProcessing.value = false
+}
+
+// Process mobile banking payment
+const processMobilePayment = async () => {
+  if (!mobileProvider.value) return
+  
+  sslProcessing.value = true
+  
+  await new Promise(resolve => setTimeout(resolve, 2500))
+  
+  const isSuccess = Math.random() > 0.1
+  
+  if (isSuccess) {
+    showPaymentModal.value = false
+    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
+    
+    if (currentBooking.value?.id) {
+      try {
+        await updateBookingStatus(currentBooking.value.id, 2)
+      } catch (err) {
+        console.error('Failed to update booking status:', err)
+      }
+    }
+    
+    step.value = 4
+  } else {
+    paymentStatus.value = { status: 'failed', message: 'Mobile payment failed. Please try again.' }
+    showPaymentModal.value = false
+  }
+  
+  sslProcessing.value = false
+}
+
+// Process card payment
+const processCardPayment = async () => {
+  sslProcessing.value = true
+  
+  await new Promise(resolve => setTimeout(resolve, 2500))
+  
+  const isSuccess = Math.random() > 0.1
+  
+  if (isSuccess) {
+    showPaymentModal.value = false
+    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
+    
+    if (currentBooking.value?.id) {
+      try {
+        await updateBookingStatus(currentBooking.value.id, 2)
+      } catch (err) {
+        console.error('Failed to update booking status:', err)
+      }
+    }
+    
+    step.value = 4
+  } else {
+    paymentStatus.value = { status: 'failed', message: 'Card payment failed. Please try again.' }
+    showPaymentModal.value = false
+  }
+  
+  sslProcessing.value = false
+}
+
+// Process net banking payment
+const processNetBanking = async () => {
+  if (!selectedBank.value) return
+  
+  sslProcessing.value = true
+  
+  await new Promise(resolve => setTimeout(resolve, 2500))
+  
+  const isSuccess = Math.random() > 0.1
+  
+  if (isSuccess) {
+    showPaymentModal.value = false
+    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
+    
+    if (currentBooking.value?.id) {
+      try {
+        await updateBookingStatus(currentBooking.value.id, 2)
+      } catch (err) {
+        console.error('Failed to update booking status:', err)
+      }
+    }
+    
+    step.value = 4
+  } else {
+    paymentStatus.value = { status: 'failed', message: 'Net banking payment failed. Please try again.' }
+    showPaymentModal.value = false
+  }
+  
+  sslProcessing.value = false
 }
 
 const resetBooking = () => {
   step.value = 2
   paymentStatus.value = null
   selectedPayment.value = ''
+  showPaymentModal.value = false
   bookingData.value = {
-    branch_id: selectedRoom.value?.branch_id || 1,  // Use room's branch_id
+    branch_id: selectedRoom.value?.branch_id || 1,
     room_id: selectedRoom.value?.id,
     seat_id: null,
     billing_type_id: 1,
@@ -708,3 +1135,22 @@ const retryFetch = () => {
   fetchRooms()
 }
 </script>
+
+<style scoped>
+.animate-gradient-shift {
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+</style>
