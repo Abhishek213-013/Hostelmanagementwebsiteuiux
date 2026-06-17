@@ -285,6 +285,15 @@
               </div>
             </div>
           </div>
+
+          <!-- Add this for when there are no reviews -->
+          <div v-else-if="!loading && room" class="mt-16 mb-10 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+              <Star class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+              <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Reviews Yet</h3>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">Be the first to review this room!</p>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />

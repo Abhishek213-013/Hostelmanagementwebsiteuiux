@@ -1,6 +1,7 @@
 // src/composables/useRooms.js
 import { ref } from 'vue'
 import { roomAPI } from '../services/api'
+import { reviewsAPI } from '../services/api'
 
 export function useRooms() {
   const rooms = ref([])
@@ -9,6 +10,53 @@ export function useRooms() {
   const loading = ref(false)
   const error = ref(null)
   const currentRoom = ref(null)
+
+  // Cache for review data to avoid repeated API calls
+  const reviewCache = new Map()
+  const REVIEW_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+  const fetchRoomReviews = async (roomId) => {
+    // Check cache first
+    const cacheKey = `room_${roomId}_reviews`
+    if (reviewCache.has(cacheKey)) {
+      const cached = reviewCache.get(cacheKey)
+      if (Date.now() - cached.timestamp < REVIEW_CACHE_DURATION) {
+        return cached.data
+      }
+    }
+
+    try {
+      const response = await reviewsAPI.getReviews({ room_id: roomId })
+      
+      let reviewsData = []
+      if (response.data && response.data.data) {
+        reviewsData = response.data.data
+      } else if (Array.isArray(response.data)) {
+        reviewsData = response.data
+      }
+
+      let averageRating = 0
+      let reviewCount = 0
+      
+      if (reviewsData.length > 0) {
+        const total = reviewsData.reduce((sum, r) => sum + (r.rating || 0), 0)
+        averageRating = parseFloat((total / reviewsData.length).toFixed(1))
+        reviewCount = reviewsData.length
+      }
+
+      const result = { averageRating, reviewCount }
+      
+      reviewCache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now()
+      })
+
+      return result
+    } catch (err) {
+      console.error(`Failed to fetch reviews for room ${roomId}:`, err)
+      return { averageRating: 0, reviewCount: 0 }
+    }
+  }
 
   const fetchRooms = async (all = 1) => {
     loading.value = true
@@ -26,21 +74,27 @@ export function useRooms() {
       }
       
       // Set rooms immediately without availability (faster initial load)
-      rooms.value = roomsData.map(room => ({ ...room, status: 'checking', available_seats: 0 }))
+      rooms.value = roomsData.map(room => ({ 
+        ...room, 
+        status: 'checking', 
+        available_seats: 0,
+        rating: 0,
+        review_count: 0
+      }))
       
-      // Then fetch availability in parallel with individual timeout
-      const availabilityPromises = roomsData.map(async (room) => {
+      // Fetch availability and reviews in parallel
+      const roomPromises = roomsData.map(async (room) => {
+        // Fetch availability
+        let status = 'unknown'
+        let available_seats = 0
+        
         try {
-          // Create a promise with timeout for each room
           const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Timeout')), 10000) // 10 second timeout per room
+            setTimeout(() => reject(new Error('Timeout')), 10000)
           })
           
           const availabilityPromise = roomAPI.getRoomAvailability(room.id)
           const availability = await Promise.race([availabilityPromise, timeoutPromise])
-          
-          let status = 'unknown'
-          let available_seats = 0
           
           if (availability && availability.data) {
             let availData = availability.data
@@ -49,31 +103,55 @@ export function useRooms() {
             status = availData.is_available && availData.available_count > 0 ? 'available' : 'booked'
             available_seats = availData.available_count || 0
           }
-          
-          return { roomId: room.id, status, available_seats }
         } catch (err) {
           console.warn(`Failed to fetch availability for room ${room.id}:`, err.message)
-          return { roomId: room.id, status: 'unknown', available_seats: 0 }
+        }
+
+        // Fetch reviews for rating
+        let rating = 0
+        let reviewCount = 0
+        try {
+          const reviews = await fetchRoomReviews(room.id)
+          rating = reviews.averageRating
+          reviewCount = reviews.reviewCount
+        } catch (err) {
+          console.warn(`Failed to fetch reviews for room ${room.id}:`, err.message)
+        }
+        
+        return { 
+          roomId: room.id, 
+          status, 
+          available_seats,
+          rating,
+          reviewCount
         }
       })
       
-      // Wait for all availability checks to complete (or timeout)
-      const availabilityResults = await Promise.allSettled(availabilityPromises)
+      // Wait for all promises to complete
+      const results = await Promise.allSettled(roomPromises)
       
-      // Update rooms with availability data
+      // Update rooms with availability and review data
       rooms.value = roomsData.map(room => {
-        const result = availabilityResults.find(r => r.value?.roomId === room.id)
+        const result = results.find(r => r.value?.roomId === room.id)
         if (result && result.value) {
           return {
             ...room,
             status: result.value.status,
-            available_seats: result.value.available_seats
+            available_seats: result.value.available_seats,
+            rating: result.value.rating,
+            review_count: result.value.reviewCount
           }
         }
-        return { ...room, status: 'unknown', available_seats: 0 }
+        return { 
+          ...room, 
+          status: 'unknown', 
+          available_seats: 0,
+          rating: 0,
+          review_count: 0
+        }
       })
       
-      console.log('Rooms with availability:', rooms.value)
+      console.log('Rooms with availability and ratings:', rooms.value)
       return response.data
     } catch (err) {
       console.error('Error fetching rooms:', err)
@@ -84,6 +162,7 @@ export function useRooms() {
     }
   }
 
+  // Add this function - it was missing
   const fetchRoomTypes = async (all = 1) => {
     loading.value = true
     error.value = null
@@ -121,7 +200,6 @@ export function useRooms() {
     try {
       console.log(`Fetching room details for ID: ${id}`)
       
-      // Fetch room details and availability in parallel with timeout
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Request timeout')), 15000)
       })
@@ -137,7 +215,6 @@ export function useRooms() {
       console.log('Room details response:', roomResponse.data)
       console.log('Room availability response:', availabilityResponse.data)
       
-      // Handle different response structures
       let roomData = null
       if (roomResponse.data && roomResponse.data.data) {
         roomData = roomResponse.data.data
@@ -155,8 +232,15 @@ export function useRooms() {
         roomData.available_seats_list = availData.available_seats || []
       }
       
+      // Fetch reviews for this room
+      if (roomData) {
+        const reviews = await fetchRoomReviews(id)
+        roomData.rating = reviews.averageRating
+        roomData.review_count = reviews.reviewCount
+      }
+      
       currentRoom.value = roomData
-      console.log('Room data with availability:', currentRoom.value)
+      console.log('Room data with availability and rating:', currentRoom.value)
       return roomData
     } catch (err) {
       console.error('Error fetching room details:', err)
@@ -222,7 +306,7 @@ export function useRooms() {
     error,
     currentRoom,
     fetchRooms,
-    fetchRoomTypes,
+    fetchRoomTypes, // Make sure this is included in the return
     fetchRoomDetails,
     fetchSeats,
     checkRoomAvailability

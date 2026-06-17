@@ -101,7 +101,9 @@
                   <h3 class="text-2xl font-black text-teal-600">{{ room.room_number || 'Room ' + room.id }}</h3>
                   <div class="flex items-center gap-1">
                     <Star class="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ room.rating || 4.5 }}</span>
+                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
+                      {{ room.rating ? room.rating.toFixed(1) : 'N/A' }}
+                    </span>
                     <span class="text-xs text-gray-500">({{ room.review_count || 0 }})</span>
                   </div>
                 </div>

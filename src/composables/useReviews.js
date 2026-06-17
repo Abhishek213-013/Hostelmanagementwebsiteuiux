@@ -28,11 +28,12 @@ export function useReviews() {
       const params = { page }
       if (roomId) params.room_id = roomId
       
-      console.log('Fetching reviews from API with params:', params)
+      console.log('📝 Fetching reviews from API with params:', params)
       const response = await reviewsAPI.getReviews(params)
-      console.log('Reviews response:', response.data)
+      console.log('📝 Reviews response:', response.data)
       
       let reviewsData = []
+      // Handle different response structures
       if (response.data && response.data.data) {
         reviewsData = response.data.data
         pagination.value = {
@@ -43,7 +44,11 @@ export function useReviews() {
         }
       } else if (Array.isArray(response.data)) {
         reviewsData = response.data
+      } else {
+        reviewsData = []
       }
+      
+      console.log('📝 Raw reviews data:', reviewsData)
       
       // Transform data to match frontend expected structure
       reviews.value = reviewsData.map(item => {
@@ -51,20 +56,20 @@ export function useReviews() {
         let userName = 'Anonymous User'
         let userAvatar = 'https://ui-avatars.com/api/?background=0d9488&color=fff&name=User'
         
-        // Check different possible structures for user name
-        if (item.user) {
+        // Check if the review has user data
+        if (item.border_user) {
+          userName = item.border_user.name || 'User'
+          userAvatar = item.border_user.avatar || userAvatar
+        } else if (item.user) {
           userName = item.user.name || item.user.username || item.user.email || 'User'
           userAvatar = item.user.avatar || item.user.profile_image || userAvatar
         } else if (item.user_name) {
           userName = item.user_name
         } else if (item.name) {
           userName = item.name
-        } else if (item.reviewer_name) {
-          userName = item.reviewer_name
         }
         
         // Create avatar URL with user's name initial
-        const nameInitial = userName.charAt(0).toUpperCase()
         const avatarUrl = userAvatar !== 'https://ui-avatars.com/api/?background=0d9488&color=fff&name=User' 
           ? userAvatar 
           : `https://ui-avatars.com/api/?background=0d9488&color=fff&name=${encodeURIComponent(userName)}`
@@ -78,7 +83,7 @@ export function useReviews() {
           cons: item.cons || [],
           tags: item.tags || [],
           user: {
-            id: item.user_id || item.user?.id,
+            id: item.border_user_id || item.user_id || item.user?.id,
             name: userName,
             avatar: avatarUrl,
             email: item.user_email || item.user?.email
@@ -86,7 +91,7 @@ export function useReviews() {
           stay_duration: item.stay_duration || '',
           stay_period: item.stay_period || '',
           helpful_count: item.helpful_count || 0,
-          verified: item.is_verified || item.verified || false,
+          verified: item.status == 1 || item.is_verified || item.verified || false,
           response: item.management_response || item.response ? {
             from: 'Management',
             message: item.management_response || item.response
@@ -95,16 +100,19 @@ export function useReviews() {
         }
       })
       
+      console.log('📝 Processed reviews:', reviews.value)
+      
       // Calculate stats if this is for a specific room
       if (roomId && reviewsData.length > 0) {
         calculateStats(reviews.value)
+      } else if (reviewsData.length > 0) {
+        calculateStats(reviews.value)
       }
       
-      console.log('Processed reviews:', reviews.value)
       return reviewsData
     } catch (err) {
+      console.error('❌ Error fetching reviews:', err)
       error.value = err.response?.data?.message || 'Failed to fetch reviews'
-      console.error('Error fetching reviews:', err)
       throw err
     } finally {
       loading.value = false
@@ -120,7 +128,9 @@ export function useReviews() {
     
     const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
     reviewsList.forEach(r => {
-      if (distribution[r.rating]) distribution[r.rating]++
+      if (distribution[r.rating] !== undefined) {
+        distribution[r.rating]++
+      }
     })
     
     stats.value = {
@@ -128,6 +138,8 @@ export function useReviews() {
       total_reviews: total,
       rating_distribution: distribution
     }
+    
+    console.log('📊 Review stats:', stats.value)
   }
 
   const getRatingPercentage = (rating) => {
@@ -152,7 +164,6 @@ export function useReviews() {
         newReview = response.data
       }
       
-      // Add to list if successful
       if (newReview) {
         reviews.value.unshift(newReview)
         calculateStats(reviews.value)
@@ -181,7 +192,6 @@ export function useReviews() {
         updatedReview = response.data
       }
       
-      // Update in list
       if (updatedReview) {
         const index = reviews.value.findIndex(r => r.id === id)
         if (index !== -1) {
@@ -206,7 +216,6 @@ export function useReviews() {
     try {
       await reviewsAPI.deleteReview(id)
       
-      // Remove from list
       reviews.value = reviews.value.filter(r => r.id !== id)
       calculateStats(reviews.value)
       
