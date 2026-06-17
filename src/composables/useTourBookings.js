@@ -15,11 +15,65 @@ export function useTourBookings() {
     total: 0
   })
 
+  // Get current user email
+  const getCurrentUserEmail = () => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        return user.email || ''
+      } catch (e) {
+        console.error('Error parsing user data:', e)
+      }
+    }
+    return ''
+  }
+
+  // Fetch user's own tour bookings by fetching individual tours from stored IDs
+  const fetchUserTourBookings = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log('Fetching user tour bookings from stored IDs...')
+      const email = getCurrentUserEmail()
+      
+      if (!email) {
+        console.warn('No user email found, cannot fetch tour bookings')
+        tourBookings.value = []
+        return []
+      }
+
+      // Fetch tours from stored IDs and filter by email
+      const bookingsData = await fetchStoredTourBookings()
+      
+      // Filter by email to ensure we only show the current user's tours
+      const filteredBookings = bookingsData.filter(tour => {
+        const tourEmail = tour.email || tour.user_email || tour.border_email
+        return tourEmail === email
+      })
+      
+      // Sort by created date (newest first)
+      filteredBookings.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      
+      tourBookings.value = filteredBookings
+      console.log('User tour bookings loaded:', filteredBookings.length, 'tours found')
+      return filteredBookings
+    } catch (err) {
+      error.value = 'Failed to fetch tour bookings'
+      console.error('Error fetching user tour bookings:', err)
+      tourBookings.value = []
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Fetch all tour bookings (admin use only)
   const fetchTourBookings = async () => {
     loading.value = true
     error.value = null
     try {
-      console.log('Fetching tour bookings from API...')
+      console.log('Fetching all tour bookings from API...')
       const response = await tourBookingsAPI.getTourBookings()
       console.log('Tour bookings response:', response.data)
       
@@ -48,84 +102,7 @@ export function useTourBookings() {
     }
   }
 
-  // Fetch user's own tour bookings by email
-  const fetchUserTourBookings = async () => {
-    loading.value = true
-    error.value = null
-    try {
-      console.log('Fetching user tour bookings by email...')
-      
-      // Get current user email from localStorage
-      const storedUser = localStorage.getItem('user')
-      let currentUserEmail = ''
-      
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser)
-          currentUserEmail = user.email
-          console.log('Current user email:', currentUserEmail)
-        } catch (e) {
-          console.error('Error parsing user data:', e)
-        }
-      }
-      
-      let bookingsData = []
-      
-      // Try to fetch all tour bookings and filter by email
-      try {
-        const response = await tourBookingsAPI.getTourBookings()
-        console.log('All tour bookings response:', response.data)
-        
-        let allBookings = []
-        if (response.data && response.data.data) {
-          allBookings = response.data.data
-        } else if (Array.isArray(response.data)) {
-          allBookings = response.data
-        }
-        
-        // Filter by email if we have a user email
-        if (currentUserEmail && allBookings.length > 0) {
-          bookingsData = allBookings.filter(tour => {
-            // Try multiple possible email field names
-            const tourEmail = tour.email || tour.user_email || tour.border_email
-            return tourEmail === currentUserEmail
-          })
-          console.log(`Filtered ${bookingsData.length} tours for email: ${currentUserEmail}`)
-        } else {
-          bookingsData = allBookings
-        }
-      } catch (err) {
-        console.error('Error fetching tour bookings from API:', err)
-        // If the list endpoint fails (403), fall back to stored IDs
-        console.log('Falling back to stored tour IDs...')
-        bookingsData = await fetchStoredTourBookings()
-      }
-      
-      // If we still have no bookings, try stored IDs as fallback
-      if (bookingsData.length === 0) {
-        console.log('No bookings found from API, checking stored IDs...')
-        const storedBookings = await fetchStoredTourBookings()
-        if (storedBookings.length > 0) {
-          bookingsData = storedBookings
-        }
-      }
-      
-      // Sort by created date (newest first)
-      bookingsData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      
-      tourBookings.value = bookingsData
-      console.log('Processed user tour bookings:', tourBookings.value.length, 'bookings found')
-      return bookingsData
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to fetch user tour bookings'
-      console.error('Error fetching user tour bookings:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // Helper: Fetch stored tour bookings from localStorage
+  // Helper: Fetch stored tour bookings from localStorage by individual IDs
   const fetchStoredTourBookings = async () => {
     const bookingsData = []
     
@@ -136,11 +113,11 @@ export function useTourBookings() {
         const tourIds = JSON.parse(storedTourIds)
         console.log('Found stored tour IDs:', tourIds)
         
-        // Fetch each tour individually
+        // Fetch each tour individually (this endpoint works for regular users)
         for (const tourId of tourIds) {
           try {
             const response = await tourBookingsAPI.getTourBookingDetails(tourId)
-            console.log(`Tour ${tourId} details:`, response.data)
+            console.log(`Tour ${tourId} details fetched successfully`)
             
             let tourData = null
             if (response.data && response.data.data) {
@@ -154,9 +131,11 @@ export function useTourBookings() {
             }
           } catch (err) {
             console.error(`Failed to fetch tour ${tourId}:`, err)
-            // If a tour fails, remove it from storage
-            const updatedIds = tourIds.filter(id => id !== tourId)
-            localStorage.setItem('userTourIds', JSON.stringify(updatedIds))
+            // If a tour fails with 404, remove it from storage
+            if (err.response?.status === 404) {
+              const updatedIds = tourIds.filter(id => id !== tourId)
+              localStorage.setItem('userTourIds', JSON.stringify(updatedIds))
+            }
           }
         }
       } catch (e) {
@@ -164,7 +143,7 @@ export function useTourBookings() {
       }
     }
     
-    // Also check stored tour bookings directly
+    // Also check stored tour bookings directly (as backup)
     const storedTours = localStorage.getItem('userTourBookings')
     if (storedTours) {
       try {
@@ -200,38 +179,9 @@ export function useTourBookings() {
       
       currentTourBooking.value = booking
       
-      // Store the tour ID in localStorage as backup
+      // Store the booking in localStorage
       if (booking && booking.id) {
-        const storedTourIds = localStorage.getItem('userTourIds')
-        let tourIds = []
-        if (storedTourIds) {
-          try {
-            tourIds = JSON.parse(storedTourIds)
-          } catch (e) {
-            console.error('Error parsing tour IDs:', e)
-          }
-        }
-        if (!tourIds.includes(booking.id)) {
-          tourIds.push(booking.id)
-          localStorage.setItem('userTourIds', JSON.stringify(tourIds))
-        }
-        
-        // Also store the full booking data
-        const storedTours = localStorage.getItem('userTourBookings')
-        let tours = []
-        if (storedTours) {
-          try {
-            tours = JSON.parse(storedTours)
-          } catch (e) {
-            console.error('Error parsing stored tours:', e)
-          }
-        }
-        tours = tours.filter(t => t.id !== booking.id)
-        tours.push(booking)
-        localStorage.setItem('userTourBookings', JSON.stringify(tours))
-        
-        // Update the current list
-        tourBookings.value = tours
+        storeTourBooking(booking)
       }
       
       return booking
@@ -242,6 +192,41 @@ export function useTourBookings() {
     } finally {
       submitting.value = false
     }
+  }
+
+  // Helper: Store tour booking in localStorage
+  const storeTourBooking = (booking) => {
+    // Store ID
+    const storedTourIds = localStorage.getItem('userTourIds')
+    let tourIds = []
+    if (storedTourIds) {
+      try {
+        tourIds = JSON.parse(storedTourIds)
+      } catch (e) {
+        console.error('Error parsing tour IDs:', e)
+      }
+    }
+    if (!tourIds.includes(booking.id)) {
+      tourIds.push(booking.id)
+      localStorage.setItem('userTourIds', JSON.stringify(tourIds))
+    }
+    
+    // Store full booking data
+    const storedTours = localStorage.getItem('userTourBookings')
+    let tours = []
+    if (storedTours) {
+      try {
+        tours = JSON.parse(storedTours)
+      } catch (e) {
+        console.error('Error parsing stored tours:', e)
+      }
+    }
+    tours = tours.filter(t => t.id !== booking.id)
+    tours.push(booking)
+    localStorage.setItem('userTourBookings', JSON.stringify(tours))
+    
+    // Update the current list
+    tourBookings.value = tours
   }
 
   const getTourBookingDetails = async (id) => {
@@ -316,7 +301,7 @@ export function useTourBookings() {
     currentTourBooking.value = null
   }
 
-  // Helper to manually add a tour ID (useful if user has existing tours)
+  // Helper to manually add a tour ID (useful for testing or manual addition)
   const addTourId = (tourId) => {
     const storedTourIds = localStorage.getItem('userTourIds')
     let tourIds = []

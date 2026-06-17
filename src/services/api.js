@@ -296,8 +296,11 @@ export const contactAPI = {
 
 // Tour Bookings API
 export const tourBookingsAPI = {
-  getTourBookings: () => apiClient.get('/tour-bookings'),
+  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }), // Add params support
   getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
+  getTourBookingsByEmail: (email) => apiClient.get('/tour-bookings', { 
+    params: { email: email } // Pass email as query parameter
+  }),
   createTourBooking: (bookingData) => {
     clearCacheForUrl('/tour-bookings')
     return apiClient.post('/tour-bookings', bookingData)
