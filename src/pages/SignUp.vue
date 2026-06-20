@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <div class="w-full max-w-6xl">
       <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
         <ArrowLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -120,14 +120,26 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
 import { authAPI } from '../services/api'
 import { Building2, Mail, Lock, User, Phone, ArrowLeft, ArrowRight, ChevronRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff } from 'lucide-vue-next'
+
+useHead({
+  title: 'Create Account - SylhetStay | Student Accommodation',
+  meta: [
+    { name: 'description', content: 'Create your SylhetStay account to book premium student accommodation in Sylhet, Bangladesh. Join our community of happy students today!' },
+    { name: 'keywords', content: 'sign up, register, create account, SylhetStay registration, student accommodation booking' },
+    { property: 'og:title', content: 'Create Account - SylhetStay' },
+    { property: 'og:description', content: 'Join SylhetStay and book your premium student accommodation in Sylhet today.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 const router = useRouter()
 const isLoading = ref(false)

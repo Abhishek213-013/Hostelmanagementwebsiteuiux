@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading contact information...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
         <!-- Header -->
@@ -356,12 +356,13 @@
       </div>
       <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
       <Footer />
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import axios from 'axios'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -374,6 +375,17 @@ import {
   Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, 
   Sparkles, Linkedin, X, Award, Shield, Users, Star, Target, Eye, TrendingUp
 } from 'lucide-vue-next'
+
+useHead({
+  title: 'Contact Us - SylhetStay | Premium Student Accommodation',
+  meta: [
+    { name: 'description', content: 'Get in touch with SylhetStay. Contact us for inquiries, bookings, or to schedule a tour of our premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'contact SylhetStay, student accommodation inquiry, Sylhet student housing, book a tour, SylhetStay contact' },
+    { property: 'og:title', content: 'Contact Us - SylhetStay' },
+    { property: 'og:description', content: 'Reach out to SylhetStay for any inquiries about our premium student accommodation in Sylhet.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 // Use composables
 const { sending, error: sendError, success, sendEnquiry, reset } = useContact()

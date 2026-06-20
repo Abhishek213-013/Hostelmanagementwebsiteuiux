@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading profile...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
         <div class="mb-12">
@@ -199,17 +199,30 @@
         </div>
       </div>
       <Footer />
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { authAPI } from '../services/api'
 import { User, CheckCircle2, AlertCircle, Clock, Eye, EyeOff } from 'lucide-vue-next'
+
+useHead({
+  title: 'Profile Management - SylhetStay',
+  meta: [
+    { name: 'description', content: 'Manage your SylhetStay account profile, update personal information, change password, and upload profile photo.' },
+    { name: 'keywords', content: 'profile management, SylhetStay account, update profile, change password' },
+    { property: 'og:title', content: 'Profile Management - SylhetStay' },
+    { property: 'og:description', content: 'Manage your SylhetStay student accommodation account settings.' },
+    { property: 'og:type', content: 'website' },
+    { name: 'robots', content: 'noindex, nofollow' },
+  ]
+})
 
 const router = useRouter()
 const fileInput = ref(null)

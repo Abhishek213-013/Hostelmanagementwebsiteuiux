@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading room details...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Room Not Found -->
-    <div v-else-if="!room" class="min-h-[60vh] flex items-center justify-center">
+    <main v-else-if="!room" class="min-h-[60vh] flex items-center justify-center">
       <div class="text-center">
         <h1 class="text-6xl font-black text-teal-600 mb-4">Room Not Found</h1>
         <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">The room you're looking for doesn't exist.</p>
@@ -29,10 +29,10 @@
           View All Rooms
         </router-link>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="relative">
         <!-- Back Button -->
@@ -297,12 +297,13 @@
         </div>
       </div>
       <Footer />
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -320,6 +321,17 @@ import {
 const route = useRoute()
 const router = useRouter()
 const { fetchRoomDetails, loading: roomsLoading, error: roomsError, currentRoom } = useRooms()
+
+useHead({
+  title: () => currentRoom.value ? `Room ${currentRoom.value.room_number || currentRoom.value.id} - SylhetStay` : 'Room Details - SylhetStay',
+  meta: () => currentRoom.value ? [
+    { name: 'description', content: `Book ${currentRoom.value.room_number || 'this room'} at SylhetStay. ${currentRoom.value.room_description || 'Premium student accommodation in Sylhet, Bangladesh.'} ৳${(currentRoom.value.room_price || 0).toLocaleString()}/month.` },
+    { name: 'keywords', content: `room ${currentRoom.value.room_number}, student room Sylhet, accommodation, ${currentRoom.value.room_type?.room_type_title || 'student housing'}` },
+    { property: 'og:title', content: `Room ${currentRoom.value.room_number || currentRoom.value.id} - SylhetStay` },
+    { property: 'og:description', content: `${currentRoom.value.room_description || 'Premium student accommodation in Sylhet.'} Starting at ৳${(currentRoom.value.room_price || 0).toLocaleString()}/month.` },
+    { property: 'og:type', content: 'website' },
+  ] : []
+})
 const { 
   reviews: roomReviews, 
   stats: reviewStats, 

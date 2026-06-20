@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading about page...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
         <!-- Hero Section / About Us -->
@@ -349,12 +349,13 @@
         <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
       </div>
       <Footer />
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import TourBookingModal from '../components/TourBookingModal.vue'
@@ -366,6 +367,17 @@ import {
   Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
   Eye, Mail, Globe, Facebook, Linkedin
 } from 'lucide-vue-next'
+
+useHead({
+  title: 'About Us - SylhetStay | Premium Student Accommodation',
+  meta: [
+    { name: 'description', content: 'Learn about SylhetStay - our mission, vision, and journey in providing premium student accommodation in Sylhet, Bangladesh. Meet our team and discover our core values.' },
+    { name: 'keywords', content: 'about SylhetStay, student accommodation Sylhet, our mission, team, student housing Bangladesh' },
+    { property: 'og:title', content: 'About Us - SylhetStay | Premium Student Accommodation' },
+    { property: 'og:description', content: 'Discover the story behind SylhetStay and our commitment to providing the best student living experience in Sylhet.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 // Use composables
 const { teamMembers, loading: teamLoading, error: teamError, fetchFirstTeamMembers } = useTeam()

@@ -670,6 +670,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -679,6 +680,17 @@ import { useRooms } from '../composables/useRooms'
 import { useBookings } from '../composables/useBookings'
 import { useLocations } from '../composables/useLocations'
 import { roomAPI } from '../services/api'
+
+useHead({
+  title: 'Book a Room - SylhetStay | Student Accommodation Booking',
+  meta: [
+    { name: 'description', content: 'Book your premium student accommodation at SylhetStay in Sylhet, Bangladesh. Easy online booking process with multiple payment options.' },
+    { name: 'keywords', content: 'book room Sylhet, student accommodation booking, SylhetStay booking, reserve room, student housing' },
+    { property: 'og:title', content: 'Book a Room - SylhetStay' },
+    { property: 'og:description', content: 'Complete your booking for premium student accommodation in Sylhet. Secure online payment available.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 const route = useRoute()
 const router = useRouter()

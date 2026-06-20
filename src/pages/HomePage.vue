@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading content...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else class="relative">
+    <main v-else class="relative">
       <Header />
 
       <!-- Vibrant Hero Section -->
@@ -394,13 +394,14 @@
         <span class="hidden sm:inline">{{ pageData.stickyButton.text }}</span>
         <ArrowRight class="w-5 h-5 sm:w-6 sm:h-6" />
       </router-link>
-    </div>
+    </main>
     <Footer />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import {
@@ -416,6 +417,21 @@ import { useGallery } from '../composables/useGallery'
 import { useTestimonials } from '../composables/useTestimonials'
 import { useRoomTypes } from '../composables/useRoomTypes'
 import { usePages } from '../composables/usePages'
+
+useHead({
+  title: 'SylhetStay - Premium Student Accommodation in Sylhet',
+  meta: [
+    { name: 'description', content: 'Find premium student accommodation in Sylhet, Bangladesh. Modern amenities, secure living, and comfortable rooms for university students. Book your perfect room today!' },
+    { name: 'keywords', content: 'student accommodation Sylhet, student housing, SylhetStay, premium student living, university accommodation, rooms for students, Sylhet Bangladesh' },
+    { property: 'og:title', content: 'SylhetStay - Premium Student Accommodation in Sylhet' },
+    { property: 'og:description', content: 'Find your perfect student living space with modern amenities, secure environment, and comfortable rooms in Sylhet.' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: 'https://sylhetstay.com' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'SylhetStay - Premium Student Accommodation' },
+    { name: 'twitter:description', content: 'Find your perfect student living space with modern amenities in Sylhet.' },
+  ]
+})
 
 const router = useRouter()
 const { rooms, fetchRooms } = useRooms()

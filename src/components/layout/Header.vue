@@ -37,7 +37,7 @@
           
           <!-- Authenticated User Dropdown -->
           <div v-if="isAuthenticated" class="relative" ref="profileDropdownRef">
-            <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <button @click="profileOpen = !profileOpen" aria-label="User menu" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <div class="w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-bold">
                 <img v-if="profileImage" :src="profileImage" alt="Profile" class="w-full h-full object-cover" />
                 <span v-else>{{ userInitial }}</span>
@@ -106,7 +106,7 @@
         </div>
 
         <!-- Mobile Menu Toggle -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300">
+        <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle navigation menu" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300">
           <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
           <X v-else class="w-5 h-5" />
         </button>

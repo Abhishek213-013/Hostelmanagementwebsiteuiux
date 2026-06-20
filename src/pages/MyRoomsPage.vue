@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading your data...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
         
@@ -243,7 +243,7 @@
       </div>
       <TourBookingModal :isOpen="isTourModalOpen" @close="closeTourModal" />
       <Footer />
-    </div>
+    </main>
 
     <!-- Tour Details Modal -->
     <div v-if="selectedTour" class="fixed inset-0 z-50 overflow-y-auto">
@@ -344,6 +344,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -351,6 +352,18 @@ import { useBookings } from '../composables/useBookings'
 import { useTourBookings } from '../composables/useTourBookings'
 import TourBookingModal from '../components/TourBookingModal.vue'
 import { Building2, Calendar, Clock, Phone, User, Bed, CreditCard, MapPin, Mail, X } from 'lucide-vue-next'
+
+useHead({
+  title: 'My Rooms - SylhetStay | Manage Bookings',
+  meta: [
+    { name: 'description', content: 'View and manage your booked rooms and scheduled tours at SylhetStay premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'my bookings, my rooms, manage bookings, SylhetStay bookings, student accommodation' },
+    { property: 'og:title', content: 'My Rooms - SylhetStay' },
+    { property: 'og:description', content: 'Manage your room bookings and tours at SylhetStay student accommodation.' },
+    { property: 'og:type', content: 'website' },
+    { name: 'robots', content: 'noindex, nofollow' },
+  ]
+})
 
 const router = useRouter()
 const { bookings, fetchAllBookings, cancelBooking: cancelBookingAPI, loading: bookingsLoading, error: bookingsError } = useBookings()

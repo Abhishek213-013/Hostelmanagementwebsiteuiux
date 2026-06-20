@@ -167,10 +167,22 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
 import { useGallery } from '../composables/useGallery'
+
+useHead({
+  title: 'Gallery - SylhetStay | Photo Tour of Student Accommodation',
+  meta: [
+    { name: 'description', content: 'Take a visual tour of SylhetStay premium student accommodation. Browse photos of rooms, common areas, dining facilities, and more in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'SylhetStay gallery, student accommodation photos, room images, facilities photos, Sylhet student housing tour' },
+    { property: 'og:title', content: 'Gallery - SylhetStay | Photo Tour' },
+    { property: 'og:description', content: 'Explore our beautiful student living spaces through our photo gallery. See what awaits you at SylhetStay.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 const { galleryItems, loading, error, fetchGallery } = useGallery()
 

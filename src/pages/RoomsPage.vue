@@ -1,15 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
+    <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600 dark:text-gray-400">Loading rooms...</p>
       </div>
-    </div>
+    </main>
 
     <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
+    <main v-else-if="error" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md">
           <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -18,10 +18,10 @@
           </button>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Main Content -->
-    <div v-else>
+    <main v-else>
       <Header />
       <div class="max-w-7xl mx-auto px-6 py-16">
         <!-- Header Section -->
@@ -255,18 +255,30 @@
         </div>
       </div>
       <Footer />
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath } from 'lucide-vue-next'
 import { useRooms } from '../composables/useRooms'
 import { useRoomTypes } from '../composables/useRoomTypes'
+
+useHead({
+  title: 'Rooms - SylhetStay | Student Accommodation in Sylhet',
+  meta: [
+    { name: 'description', content: 'Browse our range of premium student rooms in Sylhet. Choose from shared, semi-private, premium, and standard rooms with modern amenities. Find your perfect space today!' },
+    { name: 'keywords', content: 'student rooms Sylhet, accommodation rooms, shared rooms, private rooms, premium student rooms, SylhetStay rooms' },
+    { property: 'og:title', content: 'Rooms - SylhetStay | Student Accommodation' },
+    { property: 'og:description', content: 'Explore our range of thoughtfully designed student rooms in Sylhet with modern amenities and flexible options.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 const route = useRoute()
 const router = useRouter()

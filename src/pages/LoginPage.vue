@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <div class="w-full max-w-6xl">
       <router-link to="/" class="group flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-500 dark:hover:text-emerald-200 mb-8 font-medium transition-colors">
         <ArrowLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -90,14 +90,26 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useHead } from '@vueuse/head'
 import { useRouter, useRoute } from 'vue-router'
 import { authAPI } from '../services/api'
 import { Building2, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, ChevronRight, Sparkles, AlertCircle, CheckCircle2, Loader2 } from 'lucide-vue-next'
+
+useHead({
+  title: 'Sign In - SylhetStay | Student Accommodation',
+  meta: [
+    { name: 'description', content: 'Sign in to your SylhetStay account to manage bookings, payments, and profile. Premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'sign in, login, SylhetStay account, student accommodation login' },
+    { property: 'og:title', content: 'Sign In - SylhetStay' },
+    { property: 'og:description', content: 'Access your SylhetStay account to manage your student accommodation bookings.' },
+    { property: 'og:type', content: 'website' },
+  ]
+})
 
 const router = useRouter()
 const route = useRoute()
