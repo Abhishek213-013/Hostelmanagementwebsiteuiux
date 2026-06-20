@@ -347,55 +347,47 @@ const triggerFileInput = () => {
 const handlePhotoUpload = async (event) => {
   const file = event.target.files[0]
   if (!file) return
-  
+
+  // 1) Immediately show local preview in DOM
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    profileImage.value = e.target.result
+    localStorage.setItem('profileImage', e.target.result)
+    window.dispatchEvent(new Event('profileUpdated'))
+  }
+  reader.readAsDataURL(file)
+
+  // 2) Upload to API
   const uploadFormData = new FormData()
   uploadFormData.append('avatar', file)
-  
+
   try {
     const response = await authAPI.updateAvatar(uploadFormData)
     console.log('Avatar upload response:', response.data)
-    
+
     let avatarUrl = null
     if (response.data && response.data.data) {
       avatarUrl = response.data.data.img || response.data.data.avatar || response.data.data.image
     } else if (response.data) {
       avatarUrl = response.data.img || response.data.avatar || response.data.image
     }
-    
+
+    // 3) Validate with server response
     if (avatarUrl) {
       const fullUrl = getImageUrl(avatarUrl)
       profileImage.value = fullUrl
-      
-      // STORE IN LOCALSTORAGE FOR HEADER
       localStorage.setItem('profileImage', fullUrl)
-      
+
       if (userData.value) {
         userData.value.img = avatarUrl
         userData.value.avatar = avatarUrl
         localStorage.setItem('user', JSON.stringify(userData.value))
       }
-      
+
       window.dispatchEvent(new Event('profileUpdated'))
-      successMessage.value = 'Profile photo updated successfully!'
-    } else {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        profileImage.value = e.target.result
-        
-        // STORE IN LOCALSTORAGE FOR HEADER
-        localStorage.setItem('profileImage', e.target.result)
-        
-        if (userData.value) {
-          userData.value.img = e.target.result
-          userData.value.avatar = e.target.result
-          localStorage.setItem('user', JSON.stringify(userData.value))
-        }
-        window.dispatchEvent(new Event('profileUpdated'))
-        successMessage.value = 'Profile photo updated successfully!'
-        clearMessages()
-      }
-      reader.readAsDataURL(file)
     }
+
+    successMessage.value = 'Profile photo updated successfully!'
     clearMessages()
   } catch (err) {
     console.error('Error uploading photo:', err)
