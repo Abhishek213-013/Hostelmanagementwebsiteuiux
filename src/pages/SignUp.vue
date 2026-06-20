@@ -40,7 +40,7 @@
 
           <form @submit.prevent="handleRegister" class="space-y-6">
             <div class="group">
-              <label class="block text-sm font-bold text-teal-600 mb-3">Full Name</label>
+              <label class="block text-sm font-bold text-teal-600 mb-3">Full Name <span class="text-red-500">*</span></label>
               <div class="relative">
                 <User class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
                 <input type="text" placeholder="Enter your full name" v-model="formData.name" 
@@ -50,7 +50,7 @@
             </div>
 
             <div class="group">
-              <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
+              <label class="block text-sm font-bold text-teal-600 mb-3">Email Address <span class="text-red-500">*</span></label>
               <div class="relative">
                 <Mail class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
                 <input type="email" placeholder="Enter your email" v-model="formData.email" 
@@ -60,7 +60,7 @@
             </div>
 
             <div class="group">
-              <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
+              <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number <span class="text-red-500">*</span></label>
               <div class="relative">
                 <Phone class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
                 <input type="tel" placeholder="Enter your phone number" v-model="formData.phone" 
@@ -70,22 +70,30 @@
             </div>
 
             <div class="group">
-              <label class="block text-sm font-bold text-teal-600 mb-3">Password</label>
+              <label class="block text-sm font-bold text-teal-600 mb-3">Password <span class="text-red-500">*</span></label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                <input type="password" placeholder="Create a password" v-model="formData.password" 
-                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                <input :type="showPassword ? 'text' : 'password'" placeholder="Create a password" v-model="formData.password" 
+                       class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
                        required />
+                <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-600 transition-colors">
+                  <Eye v-if="!showPassword" class="w-5 h-5" />
+                  <EyeOff v-else class="w-5 h-5" />
+                </button>
               </div>
             </div>
 
             <div class="group">
-              <label class="block text-sm font-bold text-teal-600 mb-3">Confirm Password</label>
+              <label class="block text-sm font-bold text-teal-600 mb-3">Confirm Password <span class="text-red-500">*</span></label>
               <div class="relative">
                 <Lock class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-teal-400" />
-                <input type="password" placeholder="Confirm your password" v-model="formData.password_confirmation" 
-                       class="w-full pl-14 pr-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
+                <input :type="showConfirmPassword ? 'text' : 'password'" placeholder="Confirm your password" v-model="formData.password_confirmation" 
+                       class="w-full pl-14 pr-14 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200"
                        required />
+                <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-600 transition-colors">
+                  <Eye v-if="!showConfirmPassword" class="w-5 h-5" />
+                  <EyeOff v-else class="w-5 h-5" />
+                </button>
               </div>
             </div>
 
@@ -119,12 +127,15 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI } from '../services/api'
-import { Building2, Mail, Lock, User, Phone, ArrowLeft, ArrowRight, ChevronRight, AlertCircle, CheckCircle2, Loader2 } from 'lucide-vue-next'
+import { Building2, Mail, Lock, User, Phone, ArrowLeft, ArrowRight, ChevronRight, AlertCircle, CheckCircle2, Loader2, Eye, EyeOff } from 'lucide-vue-next'
 
 const router = useRouter()
 const isLoading = ref(false)
 const registerError = ref(null)
 const registerSuccess = ref('')
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const formData = ref({
   name: '',
@@ -138,6 +149,19 @@ const handleRegister = async () => {
   registerError.value = null
   registerSuccess.value = ''
   isLoading.value = true
+
+  if (formData.value.password !== formData.value.password_confirmation) {
+    registerError.value = { password: ['Password and Confirm Password do not match.'] }
+    isLoading.value = false
+    return
+  }
+
+  const phoneRegex = /^(?:\+8801|01)\d{9}$/
+  if (!phoneRegex.test(formData.value.phone)) {
+    registerError.value = { phone: ['Invalid phone number. Must be like 01********* or +8801*********.'] }
+    isLoading.value = false
+    return
+  }
 
   try {
     const response = await authAPI.register(formData.value)
