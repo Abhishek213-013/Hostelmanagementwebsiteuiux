@@ -118,36 +118,54 @@
               <form @submit.prevent="changePassword" class="space-y-4" autocomplete="off">
                 <div>
                   <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
-                  <input 
-                    v-model="passwordForm.current" 
-                    type="password" 
-                    autocomplete="new-password"
-                    name="current-password"
-                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
-                    placeholder="Enter current password" 
-                  />
+                  <div class="relative">
+                    <input 
+                      v-model="passwordForm.current" 
+                      :type="showPassword.current ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      name="current-password"
+                      class="w-full px-3 py-2 pr-10 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
+                      placeholder="Enter current password" 
+                    />
+                    <button type="button" @click="showPassword.current = !showPassword.current" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <Eye v-if="!showPassword.current" class="w-4 h-4" />
+                      <EyeOff v-else class="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">New Password</label>
-                  <input 
-                    v-model="passwordForm.new" 
-                    type="password" 
-                    autocomplete="new-password"
-                    name="new-password"
-                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
-                    placeholder="Enter new password" 
-                  />
+                  <div class="relative">
+                    <input 
+                      v-model="passwordForm.new" 
+                      :type="showPassword.new ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      name="new-password"
+                      class="w-full px-3 py-2 pr-10 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
+                      placeholder="Enter new password" 
+                    />
+                    <button type="button" @click="showPassword.new = !showPassword.new" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <Eye v-if="!showPassword.new" class="w-4 h-4" />
+                      <EyeOff v-else class="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
-                  <input 
-                    v-model="passwordForm.confirm" 
-                    type="password" 
-                    autocomplete="new-password"
-                    name="confirm-password"
-                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
-                    placeholder="Confirm new password" 
-                  />
+                  <div class="relative">
+                    <input 
+                      v-model="passwordForm.confirm" 
+                      :type="showPassword.confirm ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      name="confirm-password"
+                      class="w-full px-3 py-2 pr-10 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200 transition-colors text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400" 
+                      placeholder="Confirm new password" 
+                    />
+                    <button type="button" @click="showPassword.confirm = !showPassword.confirm" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <Eye v-if="!showPassword.confirm" class="w-4 h-4" />
+                      <EyeOff v-else class="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <button type="submit" class="w-full py-2.5 bg-teal-600 text-white rounded-lg font-bold text-sm hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1">
@@ -191,7 +209,7 @@ import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { authAPI } from '../services/api'
-import { User, CheckCircle2, AlertCircle, Clock } from 'lucide-vue-next'
+import { User, CheckCircle2, AlertCircle, Clock, Eye, EyeOff } from 'lucide-vue-next'
 
 const router = useRouter()
 const fileInput = ref(null)
@@ -211,6 +229,12 @@ const passwordForm = reactive({
   current: '',
   new: '',
   confirm: ''
+})
+
+const showPassword = reactive({
+  current: false,
+  new: false,
+  confirm: false
 })
 
 const userInitial = computed(() => {
