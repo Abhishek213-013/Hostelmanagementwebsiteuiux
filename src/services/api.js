@@ -1,7 +1,11 @@
 // src/services/api.js
 import axios from 'axios'
 
-const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions/api'
+// Use the production URL when not in development
+const API_BASE_URL = import.meta.env.DEV 
+  ? '/api'  // In development, use Vite proxy
+  : 'https://dev.hostel.accounting.itlab.solutions/api'  // Production URL
+
 const TENANT_API_KEY = 'hotelA123'
 
 // Create a cache for GET requests
@@ -19,8 +23,6 @@ const apiClient = axios.create({
   timeout: 15000, // Reduced from 60s to 15s
   maxRedirects: 3,
   maxContentLength: 10 * 1024 * 1024, // 10MB limit
-  // Add withCredentials if your API requires cookies/sessions
-  withCredentials: false, // Set to true if you're using cookie-based auth
 })
 
 // Request interceptor - Optimized
@@ -41,7 +43,7 @@ apiClient.interceptors.request.use(
     
     // Log only in development
     if (import.meta.env.DEV) {
-      console.log(`🚀 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`)
+      console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`)
     }
     
     return config
@@ -78,11 +80,6 @@ apiClient.interceptors.response.use(
       return Promise.reject(new Error('Network error. Please check your connection.'))
     }
     
-    // Handle CORS errors
-    if (error.message.includes('Network Error')) {
-      console.error('CORS or Network Error - Check if the API server allows requests from your origin')
-    }
-    
     // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem('isAuthenticated')
@@ -112,7 +109,7 @@ export const authAPI = {
   register: (userData) => apiClient.post('/auth/register', userData),
   login: (credentials) => apiClient.post('/auth/login', credentials),
   logout: () => apiClient.post('/auth/logout'),
-  getUser: () => apiClient.get('/border_user'),
+  getUser: () => apiClient.get('/border_user'), // Removed 'auth/' prefix
   updateProfile: (userData) => apiClient.put('/border_user', userData),
   updateAvatar: (formData) => apiClient.post('/border_user/updte_img', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -303,10 +300,10 @@ export const contactAPI = {
 
 // Tour Bookings API
 export const tourBookingsAPI = {
-  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }),
+  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }), // Add params support
   getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
   getTourBookingsByEmail: (email) => apiClient.get('/tour-bookings', { 
-    params: { email: email }
+    params: { email: email } // Pass email as query parameter
   }),
   createTourBooking: (bookingData) => {
     clearCacheForUrl('/tour-bookings')
