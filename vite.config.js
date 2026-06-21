@@ -1,3 +1,4 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
@@ -42,6 +43,22 @@ export default defineConfig({
           proxy.on('proxyReq', (proxyReq, req, res) => {
             console.log('Proxying:', req.method, req.url, '→', proxyReq.path);
           });
+        }
+      }
+    }
+  },
+  // Add base URL for production deployment
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router', 'pinia'],
+          axios: ['axios']
         }
       }
     }

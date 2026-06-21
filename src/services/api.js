@@ -1,10 +1,10 @@
 // src/services/api.js
 import axios from 'axios'
 
-// Use the production URL when not in development
-const API_BASE_URL = import.meta.env.DEV 
-  ? '/api'  // In development, use Vite proxy
-  : 'https://dev.hostel.accounting.itlab.solutions/api'  // Production URL
+// Update API base URL based on environment
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://dev.hostel.accounting.itlab.solutions/api'  // Production URL
+  : '/api'  // Development (uses Vite proxy)
 
 const TENANT_API_KEY = 'hotelA123'
 
@@ -20,7 +20,7 @@ const apiClient = axios.create({
     'Accept': 'application/json',
     'X-API-KEY': TENANT_API_KEY
   },
-  timeout: 15000, // Reduced from 60s to 15s
+  timeout: 15000,
   maxRedirects: 3,
   maxContentLength: 10 * 1024 * 1024, // 10MB limit
 })
@@ -109,7 +109,7 @@ export const authAPI = {
   register: (userData) => apiClient.post('/auth/register', userData),
   login: (credentials) => apiClient.post('/auth/login', credentials),
   logout: () => apiClient.post('/auth/logout'),
-  getUser: () => apiClient.get('/border_user'), // Removed 'auth/' prefix
+  getUser: () => apiClient.get('/border_user'),
   updateProfile: (userData) => apiClient.put('/border_user', userData),
   updateAvatar: (formData) => apiClient.post('/border_user/updte_img', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -300,10 +300,10 @@ export const contactAPI = {
 
 // Tour Bookings API
 export const tourBookingsAPI = {
-  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }), // Add params support
+  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }),
   getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
   getTourBookingsByEmail: (email) => apiClient.get('/tour-bookings', { 
-    params: { email: email } // Pass email as query parameter
+    params: { email: email }
   }),
   createTourBooking: (bookingData) => {
     clearCacheForUrl('/tour-bookings')
