@@ -227,13 +227,13 @@
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(room, i) in homepageRooms" :key="room.id">
-              <div class="relative">
+            <AnimatedSection v-for="(room, i) in homepageRooms" :key="room.id" className="h-full">
+              <div class="relative h-full">
                 <div v-if="room.is_popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-2 sm:py-2.5 text-white rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600 whitespace-nowrap">
                   <Star class="w-4 h-4 fill-current" />
                   Most Popular
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 h-full flex flex-col">
                   <div class="relative h-48 sm:h-64 overflow-hidden">
                     <img :src="getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
@@ -246,10 +246,10 @@
                       </span>
                     </div>
                   </div>
-                  <div class="p-4 sm:p-6">
+                  <div class="p-4 sm:p-6 flex flex-col flex-grow">
                     <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.room_number || `Room ${room.id}` }}</h3>
                     <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
-                    <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+                    <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
                       <div v-for="(feature, j) in getRoomFeatures(room.room_type?.name).slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
                         <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                           <CheckCircle2 class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />

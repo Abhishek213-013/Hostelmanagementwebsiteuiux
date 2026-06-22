@@ -56,11 +56,11 @@
 
         <!-- Room Cards -->
         <div v-if="filteredRooms.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          <div v-for="room in filteredRooms" :key="room.id" 
-               class="group"
+           <div v-for="room in filteredRooms" :key="room.id" 
+                class="group h-full"
                @mouseenter="hoveredRoom = room.id"
                @mouseleave="hoveredRoom = null">
-            <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
               <div class="relative h-72 overflow-hidden">
                 <img :src="room.image || getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
@@ -96,7 +96,7 @@
                 </div>
               </div>
               
-              <div class="p-8">
+              <div class="p-8 flex flex-col flex-grow">
                 <div class="flex items-center justify-between mb-3">
                   <h3 class="text-2xl font-black text-teal-600">{{ room.room_number || 'Room ' + room.id }}</h3>
                   <div class="flex items-center gap-1">
@@ -124,7 +124,7 @@
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
                 
                 <!-- Dynamic Features/Services Section -->
-                <div v-if="getRoomServices(room).length > 0" class="space-y-3 mb-8">
+                <div v-if="getRoomServices(room).length > 0" class="space-y-3 mb-8 flex-grow">
                   <div v-for="(service, i) in getRoomServices(room).slice(0, 5)" :key="i" class="flex items-center gap-3">
                     <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
                       <component :is="getServiceIcon(service)" class="w-4 h-4 text-teal-600 dark:text-teal-400" />
@@ -134,7 +134,7 @@
                 </div>
                 
                 <!-- Fallback to hardcoded features if no services available -->
-                <div v-else class="space-y-3 mb-8">
+                <div v-else class="space-y-3 mb-8 flex-grow">
                   <div v-for="(feature, i) in getRoomFeatures(room.room_type?.name).slice(0, 5)" :key="i" class="flex items-center gap-3">
                     <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
                       <CheckCircle2 class="w-4 h-4 text-teal-600 dark:text-teal-400" />
@@ -154,6 +154,7 @@
                       <span v-else-if="room.status === 'booked'">Booked</span>
                       <span v-else>Unknown</span>
                     </span>
+                    <span v-if="room.status === 'booked'" class="text-xs text-red-500 font-medium ml-1">No seat is available for Booked Room</span>
                   </div>
                   
                   <!-- Floor & Wing Info -->
