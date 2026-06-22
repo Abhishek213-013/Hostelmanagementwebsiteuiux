@@ -79,7 +79,7 @@
 
         <!-- Room Cards -->
         <div v-if="filteredRooms.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-           <div v-for="room in filteredRooms" :key="room.id" 
+           <div v-for="room in paginatedRooms" :key="room.id" 
                 class="group h-full"
                @mouseenter="hoveredRoom = room.id"
                @mouseleave="hoveredRoom = null">
@@ -210,6 +210,29 @@
           </div>
         </div>
 
+        <!-- Pagination -->
+        <div v-if="filteredRooms.length > 0" class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-12">
+          <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <span>Show</span>
+            <select v-model.number="perPage" class="px-3 py-2 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:border-teal-500 focus:outline-none transition-all font-semibold">
+              <option v-for="opt in perPageOptions" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+            <span>of {{ filteredRooms.length }} rooms</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1" class="px-4 py-2 rounded-xl font-bold transition-all text-sm border-2 border-gray-200 dark:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed" :class="currentPage === 1 ? 'bg-gray-100 dark:bg-gray-800 text-gray-400' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow'">
+              Prev
+            </button>
+            <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="['px-4 py-2 rounded-xl font-bold transition-all text-sm', page === currentPage ? 'text-white shadow' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow border-2 border-gray-200 dark:border-gray-600']" :style="page === currentPage ? { background: '#0d9488' } : {}">
+              {{ page }}
+            </button>
+            <button @click="currentPage = Math.min(totalPages, currentPage + 1)" :disabled="currentPage === totalPages" class="px-4 py-2 rounded-xl font-bold transition-all text-sm border-2 border-gray-200 dark:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed" :class="currentPage === totalPages ? 'bg-gray-100 dark:bg-gray-800 text-gray-400' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow'">
+              Next
+            </button>
+          </div>
+        </div>
+
         <!-- No Results -->
         <div v-else class="text-center py-20">
           <Building2 class="w-16 h-16 mx-auto mb-4 text-gray-400" />
@@ -317,6 +340,19 @@ const selectedStatus = ref('all')
 const searchQuery = ref('')
 const priceRange = ref([0, 100000])
 const hoveredRoom = ref(null)
+const currentPage = ref(1)
+const perPage = ref(9)
+const perPageOptions = [6, 9, 12, 18, 24]
+
+const totalPages = computed(() => Math.ceil(filteredRooms.value.length / perPage.value))
+
+const paginatedRooms = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value
+  return filteredRooms.value.slice(start, start + perPage.value)
+})
+
+watch(perPage, () => { currentPage.value = 1 })
+watch([selectedType, selectedStatus, searchQuery, priceRange], () => { currentPage.value = 1 }, { deep: true })
 
 const statusOptions = [
   { value: 'all', label: 'All', color: '#0d9488' },
