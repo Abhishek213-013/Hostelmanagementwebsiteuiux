@@ -378,4 +378,32 @@ export const sectionItemsAPI = {
   }
 }
 
+// Border APIs
+export const borderAPI = {
+  // Get current border profile (uses the same endpoint as authAPI.getUser)
+  getCurrentBorder: () => apiClient.get('/border_user'),
+  
+  // Get all borders (admin)
+  getAllBorders: (params = {}) => apiClient.get('/borders', { params }),
+  
+  // Get border by ID
+  getBorderById: (id) => apiClient.get(`/borders/${id}`),
+  
+  // Create border profile
+  createBorder: (borderData) => {
+    clearCacheForUrl('/borders')
+    return apiClient.post('/borders', borderData)
+  },
+  
+  // Get borders by room
+  getBordersByRoom: (roomId) => apiClient.get('/borders', { 
+    params: { room_id: roomId } 
+  }),
+  
+  // Get border booking history
+  getBorderBookings: (borderId) => apiClient.get(`/borders/${borderId}/bookings`),
+  
+  // Get border reviews
+  getBorderReviews: (borderId) => apiClient.get(`/borders/${borderId}/reviews`),
+}
 export default apiClient

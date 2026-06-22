@@ -169,9 +169,77 @@
             </div>
           </div>
 
+          <!-- Write a Review Section -->
+          <div class="mt-16 mb-8 text-center">
+            <button v-if="!showReviewForm" @click="handleWriteReview" 
+                    :class="['inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold shadow transition-all',
+                      canWriteReview && !hasUserReviewed
+                        ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-xl hover:scale-105' 
+                        : 'bg-gray-400 text-white cursor-pointer']">
+              <Star class="w-5 h-5" />
+              <span v-if="!isAuthenticated">Login to Write a Review</span>
+              <span v-else-if="!canWriteReview">Write a Review</span>
+              <span v-else-if="hasUserReviewed">Review Already Submitted</span>
+              <span v-else>Write a Review</span>
+            </button>
+
+            <!-- Review Form Modal -->
+            <div v-if="showReviewForm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click.self="showReviewForm = false">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-10 shadow-2xl border border-gray-200 dark:border-gray-700 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-8">
+                  <h3 class="text-2xl font-black text-teal-600">{{ isEditingReview ? 'Edit Review' : 'Write a Review' }}</h3>
+                  <button @click="showReviewForm = false" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <X class="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
+
+                <form @submit.prevent="submitReview" class="space-y-7">
+                  <!-- Rating -->
+                  <div>
+                    <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Rating</label>
+                    <div class="flex items-center gap-1">
+                      <Star v-for="n in 5" :key="n" @click="reviewForm.rating = n"
+                            :class="['w-10 h-10 cursor-pointer transition-all hover:scale-110', 
+                              n <= reviewForm.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300']" />
+                      <span class="ml-3 text-base text-gray-500">({{ reviewForm.rating }}/5)</span>
+                    </div>
+                  </div>
+
+                  <!-- Title -->
+                  <div>
+                    <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Title</label>
+                    <input v-model="reviewForm.title" type="text" placeholder="Summary of your experience"
+                           class="w-full px-5 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all" />
+                  </div>
+
+                  <!-- Comment -->
+                  <div>
+                    <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Comment</label>
+                    <textarea v-model="reviewForm.comment" rows="5" placeholder="Share your experience..."
+                              class="w-full px-5 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none"></textarea>
+                  </div>
+
+                  <!-- Error Message -->
+                  <p v-if="reviewErrors" class="text-red-500 text-sm font-medium">{{ reviewErrors }}</p>
+
+                  <!-- Submit Button -->
+                  <button type="submit" :disabled="submittingReview"
+                          :class="['w-full py-4 rounded-xl font-bold text-white transition-all text-lg', 
+                            submittingReview ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg']">
+                    <span v-if="submittingReview" class="flex items-center justify-center gap-2">
+                      <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Submitting...
+                    </span>
+                    <span v-else>{{ isEditingReview ? 'Update Review' : 'Submit Review' }}</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
           <!-- Reviews Section -->
-          <div v-if="roomReviews.length > 0" class="mt-16 mb-10">
-            <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Guest Reviews</h2>
+          <div v-if="roomReviews.length > 0" class="mb-10">
+            <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Borders Reviews</h2>
             
             <!-- Review Summary -->
             <div class="max-w-3xl mx-auto mb-8">
@@ -223,6 +291,26 @@
                       ✓ Verified
                     </span>
                     <span class="text-xs text-gray-400">{{ formatDate(review.created_at) }}</span>
+                    <div v-if="review.user.id === currentUserId" class="flex items-center gap-1 ml-2">
+                      <button @click="handleWriteReview(review)" 
+                              class="p-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900/30 text-teal-600 transition-colors" 
+                              title="Edit review">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                      </button>
+                      <button @click="deleteUserReview(review.id)" 
+                              class="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 transition-colors" 
+                              title="Delete review">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                          <line x1="10" y1="11" x2="10" y2="17"/>
+                          <line x1="14" y1="11" x2="14" y2="17"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -231,36 +319,6 @@
                 
                 <!-- Review Comment -->
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">{{ review.comment }}</p>
-
-                <!-- Pros & Cons -->
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                  <div v-if="review.pros && review.pros.length > 0">
-                    <h6 class="text-xs font-bold text-teal-600 mb-2">Pros</h6>
-                    <ul class="space-y-1">
-                      <li v-for="pro in review.pros.slice(0, 3)" :key="pro" class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
-                        <CheckCircle2 class="w-3 h-3 text-teal-600 flex-shrink-0" />
-                        {{ pro }}
-                      </li>
-                    </ul>
-                  </div>
-                  <div v-if="review.cons && review.cons.length > 0">
-                    <h6 class="text-xs font-bold text-red-500 mb-2">Cons</h6>
-                    <ul class="space-y-1">
-                      <li v-for="con in review.cons.slice(0, 3)" :key="con" class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
-                        <X class="w-3 h-3 text-red-500 flex-shrink-0" />
-                        {{ con }}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Tags -->
-                <div class="flex flex-wrap gap-1 mb-4">
-                  <span v-for="tag in review.tags?.slice(0, 3)" :key="tag" 
-                        class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-400">
-                    #{{ tag }}
-                  </span>
-                </div>
 
                 <!-- Stay Info -->
                 <div class="flex items-center justify-between text-xs text-gray-400 mb-4">
@@ -287,7 +345,7 @@
           </div>
 
           <!-- Add this for when there are no reviews -->
-          <div v-else-if="!loading && room" class="mt-16 mb-10 text-center">
+          <div v-if="!loading && room && roomReviews.length === 0" class="mt-16 mb-10 text-center">
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
               <Star class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
               <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Reviews Yet</h3>
@@ -305,11 +363,12 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRooms } from '../composables/useRooms'
 import { useReviews } from '../composables/useReviews'
-import { roomAPI } from '../services/api'
+import { roomAPI, bookingAPI, authAPI } from '../services/api'
 import { 
   ArrowLeft, Users, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, 
   Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
@@ -332,12 +391,16 @@ useHead({
     { property: 'og:type', content: 'website' },
   ] : []
 })
+
 const { 
   reviews: roomReviews, 
   stats: reviewStats, 
   fetchReviews, 
   getRatingPercentage, 
   getRatingCount,
+  createReview,
+  updateReview,
+  deleteReview,
   clearReviews,
   loading: reviewsLoading
 } = useReviews()
@@ -347,6 +410,44 @@ const availabilityData = ref(null)
 const checkInDate = ref('')
 const checkOutDate = ref('')
 const checkingAvailability = ref(false)
+
+// Border verification state
+const isBorderOfRoom = ref(false)
+const currentBorderId = ref(null)
+const currentUserId = ref(null)
+const debugInfo = ref([]) // For debugging
+
+// Review form state
+const showReviewForm = ref(false)
+const submittingReview = ref(false)
+const isEditingReview = ref(false)
+const editingReviewId = ref(null)
+const reviewForm = ref({
+  rating: 5,
+  title: '',
+  comment: ''
+})
+const reviewErrors = ref('')
+
+// Check if current user is authenticated
+const isAuthenticated = computed(() => {
+  const auth = localStorage.getItem('isAuthenticated') === 'true' || !!localStorage.getItem('auth_token')
+  return auth
+})
+
+// Check if current user is a border of this room
+const canWriteReview = computed(() => {
+  return isAuthenticated.value && isBorderOfRoom.value
+})
+
+// Check if user has already reviewed
+const hasUserReviewed = computed(() => {
+  if (!currentUserId.value) return false
+  return roomReviews.value.some(review => {
+    const reviewUserId = review.user?.id || review.user_id || review.border_user_id
+    return reviewUserId == currentUserId.value
+  })
+})
 
 // Combined loading state
 const loading = ref(true)
@@ -366,7 +467,6 @@ const isRoomAvailable = computed(() => {
 const displayServices = computed(() => {
   const services = []
   
-  // Get services from room_type (service_on_room_type)
   if (room.value?.room_type?.service_on_room_type) {
     room.value.room_type.service_on_room_type.forEach(item => {
       if (item.service) {
@@ -378,11 +478,9 @@ const displayServices = computed(() => {
     })
   }
   
-  // Get services directly from room (service_on_room)
   if (room.value?.service_on_room) {
     room.value.service_on_room.forEach(item => {
       if (item.service) {
-        // Check if service already exists (avoid duplicates)
         const exists = services.some(s => s.id === item.service.id)
         if (!exists) {
           services.push({
@@ -444,20 +542,214 @@ const getDefaultDescription = (roomTypeName) => {
   return descriptions[roomTypeName?.toLowerCase()] || 'Comfortable room with modern amenities for a pleasant stay.'
 }
 
-const getRoomFeatures = (roomTypeName) => {
-  const features = {
-    'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
-    'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
-    'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'],
-    'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan']
-  }
-  return features[roomTypeName?.toLowerCase()] || features.standard
-}
-
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A'
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+/**
+ * Show SweetAlert for non-border users
+ */
+const showNotBorderAlert = () => {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Access Restricted',
+    text: 'You are not a border of this room! Only borders can write reviews.',
+    confirmButtonColor: '#0d9488',
+    confirmButtonText: 'OK',
+    footer: '<a href="/rooms" class="text-teal-600 hover:text-teal-700">Browse other rooms</a>'
+  })
+}
+
+/**
+ * Show SweetAlert for unauthenticated users
+ */
+const showLoginRequiredAlert = () => {
+  Swal.fire({
+    icon: 'info',
+    title: 'Login Required',
+    text: 'Please login to write a review.',
+    confirmButtonColor: '#0d9488',
+    confirmButtonText: 'Login',
+    showCancelButton: true,
+    cancelButtonText: 'Cancel',
+    cancelButtonColor: '#6b7280',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      router.push({ path: '/login', query: { redirect: `/rooms/${route.params.id}` } })
+    }
+  })
+}
+
+/**
+ * Show SweetAlert for already reviewed
+ */
+const showAlreadyReviewedAlert = () => {
+  Swal.fire({
+    icon: 'info',
+    title: 'Review Already Submitted',
+    text: 'You have already submitted a review for this room. You can edit or delete your existing review.',
+    confirmButtonColor: '#0d9488',
+    confirmButtonText: 'OK',
+  })
+}
+
+/**
+ * Verify if the current authenticated user is a border of this room
+ */
+const verifyBorderStatus = async () => {
+  debugInfo.value = []
+  
+  if (!isAuthenticated.value || !room.value?.id) {
+    debugInfo.value.push('❌ Not authenticated or no room ID')
+    isBorderOfRoom.value = false
+    return
+  }
+  
+  try {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    const authToken = localStorage.getItem('auth_token')
+    
+    debugInfo.value.push(`Room ID: ${room.value.id}`)
+    debugInfo.value.push(`User ID: ${userData.id || 'not found'}`)
+    debugInfo.value.push(`Auth Token: ${authToken ? 'Present' : 'Missing'}`)
+    
+    currentUserId.value = userData.id || userData.user_id || userData.border_id || null
+    debugInfo.value.push(`Current User ID: ${currentUserId.value}`)
+    
+    // METHOD 1: Try getting border profile via /border_user endpoint
+    debugInfo.value.push('--- Method 1: Get border profile ---')
+    try {
+      const borderResponse = await authAPI.getUser()
+      const borderData = borderResponse.data?.data || borderResponse.data
+      debugInfo.value.push(`Border API Response keys: ${Object.keys(borderData).join(', ')}`)
+      
+      if (borderData && borderData.id) {
+        currentBorderId.value = borderData.id
+        debugInfo.value.push(`Border ID: ${borderData.id}`)
+        
+        const borderRoomId = borderData.room_id 
+          || borderData.room?.id 
+          || borderData.current_room_id
+          || borderData.active_room_id
+          || borderData.roomId
+        debugInfo.value.push(`Border Room ID (all checks): ${borderRoomId}`)
+        
+        if (borderRoomId == room.value.id) {
+          isBorderOfRoom.value = true
+          debugInfo.value.push('✅ MATCH! User is border of this room')
+          return
+        }
+        
+        debugInfo.value.push('⚠️ No room_id in border profile, checking bookings...')
+      } else {
+        debugInfo.value.push('No border profile found')
+      }
+    } catch (err) {
+      debugInfo.value.push(`Method 1 Error: ${err.message}`)
+    }
+    
+    // METHOD 2: Check bookings for this room
+    debugInfo.value.push('--- Method 2: Check bookings ---')
+    try {
+      const bookingsResponse = await bookingAPI.getAllBookings()
+      const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
+      
+      debugInfo.value.push(`Total bookings found: ${bookings.length}`)
+      
+      const roomBookings = bookings.filter(booking => {
+        const bookingRoomId = booking.room_id || booking.room?.id
+        const bookingUserId = booking.user_id 
+          || booking.border_user_id 
+          || booking.border_id 
+          || booking.user?.id
+          || booking.customer_id
+        
+        debugInfo.value.push(`Booking #${booking.id}: room=${bookingRoomId}, user=${bookingUserId}, status=${booking.status}`)
+        
+        return bookingRoomId == room.value.id
+      })
+      
+      debugInfo.value.push(`Bookings for this room: ${roomBookings.length}`)
+      
+      if (roomBookings.length > 0) {
+        const activeBooking = roomBookings.find(b => b.status === 1 || b.status === '1' || b.status === 'active')
+        
+        if (activeBooking) {
+          isBorderOfRoom.value = true
+          debugInfo.value.push('✅ MATCH! Room has active booking')
+          return
+        } else {
+          debugInfo.value.push('⚠️ Room has bookings but none are active (status=1)')
+        }
+      } else {
+        debugInfo.value.push('❌ No bookings found for this room')
+      }
+    } catch (err) {
+      debugInfo.value.push(`Method 2 Error: ${err.message}`)
+    }
+    
+    // METHOD 3: Check if user is any border and room has active bookings
+    debugInfo.value.push('--- Method 3: Border + Active Bookings ---')
+    if (currentBorderId.value) {
+      debugInfo.value.push(`User is a border (ID: ${currentBorderId.value})`)
+      
+      try {
+        const bookingsResponse = await bookingAPI.getAllBookings()
+        const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
+        
+        const roomHasActiveBookings = bookings.some(b => {
+          const bookingRoomId = b.room_id || b.room?.id
+          const isActive = b.status === 1 || b.status === '1' || b.status === 'active'
+          return bookingRoomId == room.value.id && isActive
+        })
+        
+        if (roomHasActiveBookings) {
+          isBorderOfRoom.value = true
+          debugInfo.value.push('✅ MATCH! Room has active bookings and user is a border')
+          return
+        } else {
+          debugInfo.value.push('❌ Room has no active bookings')
+        }
+      } catch (err) {
+        debugInfo.value.push(`Error: ${err.message}`)
+      }
+    } else {
+      debugInfo.value.push('User is NOT a border (no border profile)')
+    }
+    
+    // METHOD 4: Any booking for this room
+    debugInfo.value.push('--- Method 4: Any booking for this room ---')
+    try {
+      const bookingsResponse = await bookingAPI.getAllBookings()
+      const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
+      
+      const hasAnyBooking = bookings.some(b => {
+        const bookingRoomId = b.room_id || b.room?.id
+        return bookingRoomId == room.value.id
+      })
+      
+      if (hasAnyBooking) {
+        isBorderOfRoom.value = true
+        debugInfo.value.push('✅ MATCH! Room has bookings (any status)')
+        return
+      } else {
+        debugInfo.value.push('❌ No bookings at all for this room')
+      }
+    } catch (err) {
+      debugInfo.value.push(`Error: ${err.message}`)
+    }
+    
+    // If all methods fail
+    isBorderOfRoom.value = false
+    debugInfo.value.push('❌ ALL METHODS FAILED - User cannot review this room')
+    
+  } catch (err) {
+    console.error('❌ Error verifying border status:', err)
+    debugInfo.value.push(`Fatal Error: ${err.message}`)
+    isBorderOfRoom.value = false
+  }
 }
 
 const checkAvailability = async () => {
@@ -466,10 +758,7 @@ const checkAvailability = async () => {
   checkingAvailability.value = true
   try {
     const response = await roomAPI.getRoomAvailability(room.value.id)
-    console.log('Availability response:', response.data)
-    
     availabilityData.value = response.data?.data || response.data
-    console.log('Availability data:', availabilityData.value)
   } catch (err) {
     console.error('Error checking availability:', err)
   } finally {
@@ -480,7 +769,6 @@ const checkAvailability = async () => {
 // Progressive fetch - Load critical content first
 const fetchRoomData = async () => {
   const roomId = route.params.id
-  console.log('Fetching room with ID:', roomId)
   
   if (!roomId) {
     loading.value = false
@@ -491,11 +779,8 @@ const fetchRoomData = async () => {
   error.value = ''
   
   try {
-    console.log('🚀 Starting progressive loading for Room Details...')
-    
     // STEP 1: Load room details (critical)
     const roomData = await fetchRoomDetails(roomId)
-    console.log('✅ Room details loaded:', roomData)
     
     if (!roomData) {
       error.value = 'Room not found'
@@ -503,10 +788,8 @@ const fetchRoomData = async () => {
       return
     }
     
-    // Set initial image
     currentImage.value = roomData.image || getRoomImage(roomData.room_type?.name)
     
-    // Set default dates (today and tomorrow)
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -514,15 +797,14 @@ const fetchRoomData = async () => {
     checkInDate.value = today.toISOString().split('T')[0]
     checkOutDate.value = tomorrow.toISOString().split('T')[0]
     
-    // STEP 2: Check availability (important for booking)
+    // STEP 2: Verify border status
+    await verifyBorderStatus()
+    
+    // STEP 3: Check availability
     await checkAvailability()
-    console.log('✅ Availability checked')
     
-    // STEP 3: Load reviews (optional, can load in background)
+    // STEP 4: Load reviews
     await fetchReviews(roomId)
-    console.log('✅ Reviews loaded:', roomReviews.value.length)
-    
-    console.log('✅ All content loaded!')
     
   } catch (err) {
     console.error('Error fetching room data:', err)
@@ -543,7 +825,7 @@ const getRoomImage = (roomTypeName) => {
 }
 
 const handleBookNow = () => {
-  if (!localStorage.getItem('isAuthenticated')) {
+  if (!isAuthenticated.value) {
     router.push({ path: '/login', query: { redirect: `/rooms/${route.params.id}` } })
     return
   }
@@ -564,6 +846,177 @@ const handleBookNow = () => {
   }
   
   router.push(`/booking?roomId=${route.params.id}`)
+}
+
+/**
+ * Handle review button click with SweetAlert for non-borders
+ */
+const handleWriteReview = (review = null) => {
+  // Check authentication first
+  if (!isAuthenticated.value) {
+    showLoginRequiredAlert()
+    return
+  }
+  
+  // Check if user is a border of this room
+  if (!isBorderOfRoom.value) {
+    showNotBorderAlert()
+    return
+  }
+  
+  // Check if user has already reviewed (only for new reviews, not edits)
+  if (!review && hasUserReviewed.value) {
+    showAlreadyReviewedAlert()
+    return
+  }
+  
+  reviewErrors.value = ''
+  
+  if (review) {
+    // Editing existing review
+    isEditingReview.value = true
+    editingReviewId.value = review.id
+    reviewForm.value = {
+      rating: review.rating || 5,
+      title: review.title || '',
+      comment: review.comment || ''
+    }
+  } else {
+    // New review
+    isEditingReview.value = false
+    editingReviewId.value = null
+    reviewForm.value = { 
+      rating: 5, 
+      title: '', 
+      comment: '' 
+    }
+  }
+  
+  showReviewForm.value = true
+}
+
+/**
+ * Submit review (create or update)
+ */
+const submitReview = async () => {
+  reviewErrors.value = ''
+  
+  // Validation
+  if (!reviewForm.value.title.trim()) {
+    reviewErrors.value = 'Title is required'
+    return
+  }
+  if (!reviewForm.value.comment.trim()) {
+    reviewErrors.value = 'Comment is required'
+    return
+  }
+  if (reviewForm.value.rating < 1 || reviewForm.value.rating > 5) {
+    reviewErrors.value = 'Rating must be between 1 and 5'
+    return
+  }
+  
+  submittingReview.value = true
+  
+  try {
+    const reviewData = {
+      room_id: room.value.id,
+      border_id: currentBorderId.value,
+      rating: reviewForm.value.rating,
+      title: reviewForm.value.title.trim(),
+      comment: reviewForm.value.comment.trim()
+    }
+    
+    if (isEditingReview.value && editingReviewId.value) {
+      await updateReview(editingReviewId.value, reviewData)
+      
+      // Show success alert
+      Swal.fire({
+        icon: 'success',
+        title: 'Review Updated!',
+        text: 'Your review has been updated successfully.',
+        confirmButtonColor: '#0d9488',
+        timer: 2000,
+        showConfirmButton: true
+      })
+    } else {
+      await createReview(reviewData)
+      
+      // Show success alert
+      Swal.fire({
+        icon: 'success',
+        title: 'Review Submitted!',
+        text: 'Thank you for your review!',
+        confirmButtonColor: '#0d9488',
+        timer: 2000,
+        showConfirmButton: true
+      })
+    }
+    
+    showReviewForm.value = false
+    isEditingReview.value = false
+    editingReviewId.value = null
+    
+    await fetchReviews(room.value.id)
+    
+  } catch (err) {
+    console.error('❌ Error submitting review:', err)
+    const errorMessage = err.response?.data?.message 
+      || err.response?.data?.error 
+      || err.message 
+      || 'Failed to submit review. Please try again.'
+    reviewErrors.value = errorMessage
+    
+    // Show error alert
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: errorMessage,
+      confirmButtonColor: '#0d9488'
+    })
+  } finally {
+    submittingReview.value = false
+  }
+}
+
+/**
+ * Delete user's review with SweetAlert confirmation
+ */
+const deleteUserReview = async (reviewId) => {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Delete Review?',
+    text: 'Are you sure you want to delete your review? This action cannot be undone.',
+    showCancelButton: true,
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#6b7280',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await deleteReview(reviewId)
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Your review has been deleted.',
+          confirmButtonColor: '#0d9488',
+          timer: 2000
+        })
+        
+        await fetchReviews(room.value.id)
+      } catch (err) {
+        console.error('❌ Error deleting review:', err)
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete review. Please try again.',
+          confirmButtonColor: '#0d9488'
+        })
+      }
+    }
+  })
 }
 
 // Watch for room ID changes
