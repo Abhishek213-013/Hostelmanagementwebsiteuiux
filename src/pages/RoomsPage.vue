@@ -54,6 +54,29 @@
           </button>
         </div>
 
+        <!-- Advanced Filters -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search -->
+            <div class="relative">
+              <input v-model="searchQuery" type="text" placeholder="Search rooms..." class="w-full px-4 py-3 pl-10 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:border-teal-500 focus:outline-none transition-all" />
+              <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            </div>
+
+            <!-- Status Filter -->
+            <div class="flex gap-2">
+              <button v-for="opt in statusOptions" :key="opt.value" @click="selectedStatus = opt.value" :class="['px-4 py-2 rounded-xl font-bold transition-all text-sm flex-1', selectedStatus === opt.value ? 'text-white shadow' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600']" :style="selectedStatus === opt.value ? { background: opt.color } : {}">{{ opt.label }}</button>
+            </div>
+
+            <!-- Price Range -->
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-semibold text-gray-600 dark:text-gray-400 whitespace-nowrap">Price:</span>
+              <input type="range" :min="0" :max="maxRoomPrice" v-model.number="priceRange[1]" class="w-full accent-teal-600" />
+              <span class="text-sm font-bold text-gray-800 dark:text-gray-200 whitespace-nowrap min-w-[80px] text-right">৳{{ priceRange[1].toLocaleString() }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Room Cards -->
         <div v-if="filteredRooms.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
            <div v-for="room in filteredRooms" :key="room.id" 
@@ -266,7 +289,7 @@ import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath } from 'lucide-vue-next'
+import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath, Search } from 'lucide-vue-next'
 import { useRooms } from '../composables/useRooms'
 import { useRoomTypes } from '../composables/useRoomTypes'
 
@@ -290,7 +313,16 @@ const { rooms, loading: roomsLoading, error: roomsError, fetchRooms } = useRooms
 const { roomTypes: apiRoomTypes, loading: roomTypesLoading, fetchRoomTypes } = useRoomTypes()
 
 const selectedType = ref('all')
+const selectedStatus = ref('all')
+const searchQuery = ref('')
+const priceRange = ref([0, 100000])
 const hoveredRoom = ref(null)
+
+const statusOptions = [
+  { value: 'all', label: 'All', color: '#0d9488' },
+  { value: 'available', label: 'Available', color: '#10b981' },
+  { value: 'booked', label: 'Booked', color: '#ef4444' }
+]
 
 // Combined loading state
 const loading = ref(true)
@@ -450,6 +482,12 @@ const allUniqueServices = computed(() => {
 // Remove the old hardcoded amenities constant (it's now replaced by defaultAmenities and allUniqueServices)
 // const amenities = [...] // DELETE THIS
 
+const maxRoomPrice = computed(() => {
+  if (rooms.value.length === 0) return 100000
+  const max = Math.max(...rooms.value.map(r => r.room_price || 0))
+  return max || 100000
+})
+
 const filteredRooms = computed(() => {
   let result = rooms.value
   
@@ -459,6 +497,31 @@ const filteredRooms = computed(() => {
              room.room_type?.id?.toString() === selectedType.value
     })
   }
+  
+  if (selectedStatus.value !== 'all') {
+    result = result.filter(room => room.status === selectedStatus.value)
+  }
+  
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.trim().toLowerCase()
+    result = result.filter(room =>
+      room.room_number?.toLowerCase().includes(q) ||
+      room.room_type?.room_type_title?.toLowerCase().includes(q) ||
+      room.room_type?.name?.toLowerCase().includes(q)
+    )
+  }
+  
+  result = result.filter(room => {
+    const price = room.room_price || 0
+    return price >= priceRange.value[0] && price <= priceRange.value[1]
+  })
+  
+  const statusOrder = { available: 0, checking: 1, unknown: 2, booked: 3 }
+  result = [...result].sort((a, b) => {
+    const orderA = statusOrder[a.status] ?? 99
+    const orderB = statusOrder[b.status] ?? 99
+    return orderA - orderB
+  })
   
   return result
 })
@@ -476,6 +539,10 @@ async function fetchRoomsData() {
     
     await fetchRooms()
     console.log('✅ Rooms loaded:', rooms.value.length)
+    
+    if (maxRoomPrice.value > priceRange.value[1]) {
+      priceRange.value = [0, maxRoomPrice.value]
+    }
     
     // Log services summary
     console.log('✅ Unique services across all rooms:', allUniqueServices.value.length)
