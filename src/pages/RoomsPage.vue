@@ -85,7 +85,7 @@
                @mouseleave="hoveredRoom = null">
             <div class="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
               <div class="relative h-72 overflow-hidden">
-                <img :src="room.image || getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
+                <img :src="room.image || getRoomImage(room.room_type?.name)" :alt="'Room ' + room.room_number" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
                 
                 <!-- Capacity Badge -->
@@ -121,7 +121,7 @@
               
               <div class="p-8 flex flex-col flex-grow">
                 <div class="flex items-center justify-between mb-3">
-                  <h3 class="text-2xl font-black text-teal-600">{{ room.room_number || 'Room ' + room.id }}</h3>
+                  <h3 class="text-2xl font-black text-teal-600">{{ room.room_number ? 'Room ' + room.room_number : 'Room ' + room.id }}</h3>
                   <div class="flex items-center gap-1">
                     <Star class="w-4 h-4 fill-amber-400 text-amber-400" />
                     <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
