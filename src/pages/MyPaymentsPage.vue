@@ -160,7 +160,7 @@
 
       <!-- Receipt Modal -->
       <div v-if="showReceipt && selectedPayment" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
           <!-- Modal Header -->
           <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
             <h3 class="text-lg font-black text-teal-600">Payment Receipt</h3>
@@ -172,7 +172,7 @@
           <!-- Receipt Content -->
           <div class="overflow-y-auto flex-1 p-4">
             <div id="receipt-content">
-              <div class="receipt-container mx-auto" style="width: 100%; max-width: 420px; aspect-ratio: 2/1; border: 2px solid #0d9488; padding: 16px; background: white;">
+              <div class="receipt-container mx-auto" style="width: 100%; max-width: 480px; aspect-ratio: 2/1; border: 2px solid #0d9488; padding: 20px; background: white;">
                 <!-- Receipt Header -->
                 <div class="flex items-center justify-between mb-2 pb-2 border-b-2 border-teal-600">
                   <div class="flex items-center gap-2">
