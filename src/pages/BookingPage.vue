@@ -81,7 +81,7 @@
               <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-2">
                   <div class="relative min-h-[500px] lg:min-h-0">
-                    <img :src="selectedRoom.image || '/default-room.jpg'" :alt="selectedRoom.title" class="w-full h-full object-cover" />
+                    <img :src="selectedRoom.image || getRoomImage(selectedRoom.room_type?.name)" :alt="selectedRoom.title" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent"></div>
                     <div class="absolute bottom-8 left-8 right-8">
                       <div class="inline-block px-4 py-2 rounded-xl text-white font-black shadow-xl mb-4 bg-teal-600">
@@ -834,6 +834,16 @@ const paymentMethods = [
   { id: 'mobile-banking', title: 'Mobile Banking', desc: 'bKash, Nagad, Rocket, Upay', icon: Smartphone, color: '#ec4899' },
   { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2, color: '#4b5563' }
 ]
+
+const getRoomImage = (roomTypeName) => {
+  const images = {
+    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
+    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
+    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
+    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
+  }
+  return images[roomTypeName?.toLowerCase()] || images.standard
+}
 
 // Generate random transaction ID
 const generateTranId = () => {
