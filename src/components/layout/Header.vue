@@ -11,27 +11,27 @@
         </router-link>
 
         <div class="hidden lg:flex items-center gap-6">
-          <router-link to="/" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
+            <router-link to="/" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Home
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+            <span class="absolute -bottom-1 left-0 h-0.5 transition-all duration-500 ease-out" :class="isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'" :style="{ background: isDark ? 'linear-gradient(to right, #cbd5e1, #f8fafc)' : 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
           <router-link to="/rooms" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Rooms
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+            <span class="absolute -bottom-1 left-0 h-0.5 transition-all duration-500 ease-out" :class="isActive('/rooms') ? 'w-full' : 'w-0 group-hover:w-full'" :style="{ background: isDark ? 'linear-gradient(to right, #cbd5e1, #f8fafc)' : 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
           <router-link to="/facilities" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Facilities
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+            <span class="absolute -bottom-1 left-0 h-0.5 transition-all duration-500 ease-out" :class="isActive('/facilities') ? 'w-full' : 'w-0 group-hover:w-full'" :style="{ background: isDark ? 'linear-gradient(to right, #cbd5e1, #f8fafc)' : 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
           <router-link to="/gallery" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             Gallery
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+            <span class="absolute -bottom-1 left-0 h-0.5 transition-all duration-500 ease-out" :class="isActive('/gallery') ? 'w-full' : 'w-0 group-hover:w-full'" :style="{ background: isDark ? 'linear-gradient(to right, #cbd5e1, #f8fafc)' : 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
           <router-link to="/about" class="relative text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-300 group">
             About
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-500 ease-out" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
+            <span class="absolute -bottom-1 left-0 h-0.5 transition-all duration-500 ease-out" :class="isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'" :style="{ background: isDark ? 'linear-gradient(to right, #cbd5e1, #f8fafc)' : 'linear-gradient(to right, #1a1a1a, #525252)' }"></span>
           </router-link>
-          <router-link to="/contact" class="relative px-5 py-2 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
+          <router-link to="/contact" class="relative px-5 py-2 text-white rounded-2xl font-bold overflow-hidden group shadow-lg transition-all duration-300" :class="isActive('/contact') ? 'ring-2 ring-slate-400 ring-offset-2' : ''" :style="{ background: 'linear-gradient(to right, #1a1a1a, #525252, #1c1917)' }">
             <span class="relative z-10">Contact Us</span>
           </router-link>
           
@@ -94,7 +94,7 @@
           </div>
           
           <!-- Login Button (when not authenticated) -->
-          <router-link v-else to="/login" class="px-6 py-2.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-2xl font-bold overflow-hidden group shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300">
+          <router-link v-else to="/login" class="px-6 py-2.5 rounded-2xl font-bold overflow-hidden group shadow-lg border-2 transition-all duration-300" :class="isActive('/login') ? 'bg-slate-200 dark:bg-white text-slate-600 dark:text-slate-900 border-slate-300 dark:border-white' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white border-slate-200 dark:border-slate-700'">
             <span class="relative z-10">Login / Sign Up</span>
           </router-link>
           
@@ -116,12 +116,12 @@
     <!-- Mobile Menu -->
     <div v-if="mobileMenuOpen" class="lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-t border-slate-200/50 dark:border-slate-700/50">
       <div class="px-6 py-4 space-y-2">
-        <router-link to="/" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Home</router-link>
-        <router-link to="/rooms" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Rooms</router-link>
-        <router-link to="/facilities" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Facilities</router-link>
-        <router-link to="/gallery" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Gallery</router-link>
-        <router-link to="/about" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">About</router-link>
-        <router-link to="/contact" class="block py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">Contact</router-link>
+        <router-link to="/" class="block py-2.5 font-semibold transition-colors" :class="isActive('/') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">Home</router-link>
+        <router-link to="/rooms" class="block py-2.5 font-semibold transition-colors" :class="isActive('/rooms') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">Rooms</router-link>
+        <router-link to="/facilities" class="block py-2.5 font-semibold transition-colors" :class="isActive('/facilities') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">Facilities</router-link>
+        <router-link to="/gallery" class="block py-2.5 font-semibold transition-colors" :class="isActive('/gallery') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">Gallery</router-link>
+        <router-link to="/about" class="block py-2.5 font-semibold transition-colors" :class="isActive('/about') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">About</router-link>
+        <router-link to="/contact" class="block py-2.5 font-semibold transition-colors" :class="isActive('/contact') ? 'text-teal-600' : 'text-slate-700 dark:text-slate-300 hover:text-teal-600'" @click="mobileMenuOpen = false">Contact</router-link>
         
         <!-- Theme Toggle Mobile -->
         <button @click="toggleThemeAndClose" class="flex items-center gap-3 py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors w-full">
@@ -161,7 +161,7 @@
         </div>
         
         <!-- Login Button Mobile -->
-        <router-link v-else to="/login" class="block py-2.5 px-6 mt-2 text-center bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-xl font-bold border-2 border-slate-200 dark:border-slate-700 hover:border-teal-500 transition-colors" @click="mobileMenuOpen = false">Login / Sign Up</router-link>
+        <router-link v-else to="/login" class="block py-2.5 px-6 mt-2 text-center rounded-xl font-bold border-2 transition-colors" :class="isActive('/login') ? 'bg-slate-200 dark:bg-white text-slate-600 dark:text-slate-900 border-slate-300 dark:border-white' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white border-slate-200 dark:border-slate-700 hover:border-teal-500'" @click="mobileMenuOpen = false">Login / Sign Up</router-link>
       </div>
     </div>
   </nav>
@@ -198,6 +198,8 @@ let scrollHandler = null
 const userName = computed(() => userData.value.name || 'User')
 const userEmail = computed(() => userData.value.email || '')
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase())
+
+const isActive = (path) => route.path === path
 
 // Check authentication and load user data from localStorage
 const checkAuth = () => {
