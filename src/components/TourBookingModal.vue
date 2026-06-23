@@ -31,15 +31,6 @@
         
         <!-- Form -->
         <div class="px-6 pb-6">
-          <!-- Error Message -->
-          <div v-if="submitError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
-            {{ submitError }}
-          </div>
-
-          <!-- Success Message -->
-          <div v-if="submitSuccess" class="mb-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm">
-            {{ submitSuccess }}
-          </div>
           
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <!-- Name -->
@@ -158,6 +149,7 @@
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { Calendar, X } from 'lucide-vue-next'
 import { useTourBookings } from '../composables/useTourBookings'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   isOpen: Boolean
@@ -165,7 +157,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const { createTourBooking, submitting: isSubmitting, error: submitError, success: submitSuccess } = useTourBookings()
+const { createTourBooking, submitting: isSubmitting, error: submitError } = useTourBookings()
 
 const form = ref({
   name: '',
@@ -309,10 +301,8 @@ const handleSubmit = async () => {
   if (!validateForm()) return
   
   try {
-    // Convert time to 24-hour format for API
     const time24h = convertTo24Hour(form.value.preferred_time)
     
-    // Format data for API
     const bookingData = {
       name: form.value.name,
       email: form.value.email,
@@ -322,12 +312,9 @@ const handleSubmit = async () => {
       message: form.value.message || ''
     }
     
-    console.log('Submitting tour booking:', bookingData)
-    
     await createTourBooking(bookingData)
     submitted.value = true
     
-    // Reset form after successful submission
     form.value = {
       name: '',
       email: '',
@@ -338,14 +325,27 @@ const handleSubmit = async () => {
     }
     formErrors.value = {}
     
-    // Close modal after delay
-    setTimeout(() => {
-      closeModal()
-    }, 2000)
+    closeModal()
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Booking Submitted!',
+      text: 'Your tour booking request has been received. We will confirm your appointment via email and WhatsApp.',
+      confirmButtonColor: '#0d9488',
+      confirmButtonText: 'OK',
+      timer: 3000,
+      timerProgressBar: true
+    })
     
   } catch (err) {
     console.error('Failed to submit tour booking:', err)
-    // Error is handled by the composable
+    Swal.fire({
+      icon: 'error',
+      title: 'Submission Failed',
+      text: submitError.value || 'Failed to submit your booking. Please try again.',
+      confirmButtonColor: '#0d9488',
+      confirmButtonText: 'OK'
+    })
   }
 }
 
