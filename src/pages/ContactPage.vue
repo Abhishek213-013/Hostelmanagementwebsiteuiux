@@ -23,7 +23,7 @@
     <!-- Main Content -->
     <main v-else>
       <Header />
-      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 lg:pt-28 pb-20">
         <!-- Header -->
         <div v-if="pageData.contact" class="text-center mb-12">
           <div class="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
