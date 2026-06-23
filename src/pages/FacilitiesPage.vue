@@ -23,7 +23,7 @@
     <!-- Main Content -->
     <main v-else>
       <Header />
-      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-16">
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 sm:pt-28 pb-16">
         <!-- Header -->
         <div class="text-center mb-12">
           <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">

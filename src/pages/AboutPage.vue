@@ -23,7 +23,7 @@
     <!-- Main Content -->
     <main v-else>
       <Header />
-      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-20">
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 lg:pt-28 pb-20">
         <!-- Hero Section / About Us -->
         <div v-if="pageData.about" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
           <div class="space-y-8">
