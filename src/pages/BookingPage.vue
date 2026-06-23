@@ -474,190 +474,228 @@
         <!-- Step 2: Booking Form -->
         <div v-else class="relative max-w-2xl mx-auto">
           <AnimatedSection>
-            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-10 border-2 border-gray-200 dark:border-gray-700">
-              <h2 class="text-3xl font-black mb-8 text-teal-600">Booking Information</h2>
-              <form @submit.prevent="confirmBooking" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="group">
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Check-in Date</label>
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 border-2 border-gray-200 dark:border-gray-700">
+              <h2 class="text-3xl font-black mb-6 text-teal-600">Booking Information</h2>
+
+              <!-- Tab Navigation -->
+              <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+                <button v-for="(tab, i) in tabs" :key="i" @click="currentTab = i" type="button"
+                  :class="['px-4 py-3 text-sm font-bold transition-all border-b-2 whitespace-nowrap',
+                    currentTab === i
+                      ? 'border-teal-600 text-teal-600'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300']">
+                  {{ tab }}
+                </button>
+              </div>
+
+              <form @submit.prevent="confirmBooking">
+                <!-- Tab 1: Booking Info -->
+                <div v-show="currentTab === 0" class="space-y-5">
+                  <div>
+                    <label class="block text-sm font-bold text-teal-600 mb-2">Check-in Date <span class="text-red-500">*</span></label>
                     <input type="date" v-model="bookingData.check_in_date"
-                      :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
-                        formErrors.check_in_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" required />
+                      :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
+                        formErrors.check_in_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
                     <p v-if="formErrors.check_in_date" class="text-red-500 text-sm mt-1">{{ formErrors.check_in_date }}</p>
                   </div>
                   <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Check-out Date</label>
-                    <input type="date" v-model="bookingData.check_out_date"
-                      :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
-                        formErrors.check_out_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                    <p v-if="formErrors.check_out_date" class="text-red-500 text-sm mt-1">{{ formErrors.check_out_date }}</p>
+                    <label class="block text-sm font-bold text-teal-600 mb-2">Select Seat <span class="text-red-500">*</span></label>
+                    <select v-model="selectedSeatId" @change="bookingData.seat_id = selectedSeatId"
+                      :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
+                        formErrors.seat ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']">
+                      <option value="">Select a seat</option>
+                      <option v-for="seat in availableSeats" :key="seat.id" :value="seat.id">
+                        Seat {{ seat.id }} - {{ seat.seat_description || 'Available' }}
+                      </option>
+                    </select>
+                    <p v-if="availableSeats.length === 0 && selectedRoom" class="text-red-500 text-sm mt-1">
+                      No seats available for this room
+                    </p>
+                    <p v-if="formErrors.seat" class="text-red-500 text-sm mt-1">{{ formErrors.seat }}</p>
+                  </div>
+                </div>
+
+                <!-- Tab 2: Boarder Info -->
+                <div v-show="currentTab === 1" class="space-y-5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Boarder Name <span class="text-red-500">*</span></label>
+                      <input type="text" placeholder="Enter your full name" v-model="bookingData.party_name"
+                        :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                          formErrors.party_name ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
+                      <p v-if="formErrors.party_name" class="text-red-500 text-sm mt-1">{{ formErrors.party_name }}</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Boarder Name (Bangla)</label>
+                      <input type="text" placeholder="আপনার নাম লিখুন" v-model="bookingData.party_name_bn"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-3">Select Seat</label>
-                      <select v-model="selectedSeatId" @change="bookingData.seat_id = selectedSeatId"
-                        class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
-                        <option value="">Select a seat</option>
-                        <option v-for="seat in availableSeats" :key="seat.id" :value="seat.id">
-                          Seat {{ seat.id }} - {{ seat.seat_description || 'Available' }}
-                        </option>
-                      </select>
-                      <p v-if="availableSeats.length === 0 && selectedRoom" class="text-red-500 text-sm mt-1">
-                        No seats available for this room
-                      </p>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Boarder Mobile Number <span class="text-red-500">*</span></label>
+                      <input type="tel" placeholder="Enter mobile number" v-model="bookingData.mobile_number"
+                        :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                          formErrors.mobile_number ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
+                      <p v-if="formErrors.mobile_number" class="text-red-500 text-sm mt-1">{{ formErrors.mobile_number }}</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Boarder Whatsapp Number <span class="text-gray-400 text-xs">(Optional)</span></label>
+                      <input type="tel" placeholder="WhatsApp number" v-model="bookingData.whats_app"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
                     </div>
                   </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="group">
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Party Name</label>
-                    <input type="text" placeholder="Enter your full name" v-model="bookingData.party_name"
-                      :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
-                        formErrors.party_name ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                    <p v-if="formErrors.party_name" class="text-red-500 text-sm mt-1">{{ formErrors.party_name }}</p>
-                  </div>
                   <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Party Name (Bangla)</label>
-                    <input type="text" placeholder="আপনার নাম লিখুন" v-model="bookingData.party_name_bn"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Mobile Number</label>
-                    <input type="tel" placeholder="Enter mobile number" v-model="bookingData.mobile_number"
-                      :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
-                        formErrors.mobile_number ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
-                    <p v-if="formErrors.mobile_number" class="text-red-500 text-sm mt-1">{{ formErrors.mobile_number }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Phone Number</label>
-                    <input type="tel" placeholder="Enter phone number" v-model="bookingData.phone_number"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">WhatsApp</label>
-                    <input type="tel" placeholder="WhatsApp number" v-model="bookingData.whats_app"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Email Address</label>
+                    <label class="block text-sm font-bold text-teal-600 mb-2">Boarder Email <span class="text-red-500">*</span></label>
                     <input type="email" placeholder="Enter email address" v-model="bookingData.email_number"
-                      :class="['w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
-                        formErrors.email_number ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-teal-500 focus:ring-teal-500/20']" required />
+                      :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                        formErrors.email_number ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
                     <p v-if="formErrors.email_number" class="text-red-500 text-sm mt-1">{{ formErrors.email_number }}</p>
                   </div>
                 </div>
 
-                <!-- Address Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">House</label>
-                    <input type="text" placeholder="House number/name" v-model="bookingData.house"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <!-- Tab 3: Guardian Info & Address -->
+                <div v-show="currentTab === 2" class="space-y-5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Guardian Phone Number <span class="text-red-500">*</span></label>
+                      <input type="tel" placeholder="Enter guardian phone number" v-model="bookingData.phone_number"
+                        :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400',
+                          formErrors.phone_number ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
+                      <p v-if="formErrors.phone_number" class="text-red-500 text-sm mt-1">{{ formErrors.phone_number }}</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">House</label>
+                      <input type="text" placeholder="House number/name" v-model="bookingData.house"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
                   </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Street</label>
-                    <input type="text" placeholder="Street name" v-model="bookingData.street"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Street</label>
+                      <input type="text" placeholder="Street name" v-model="bookingData.street"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Division</label>
+                      <select v-model="selectedDivisionId" @change="onDivisionChange"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
+                        <option value="">Select Division</option>
+                        <option v-for="div in divisions" :key="div.id" :value="div.id">{{ div.name }}</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Division</label>
-                    <select v-model="selectedDivisionId" @change="onDivisionChange"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
-                      <option value="">Select Division</option>
-                      <option v-for="div in divisions" :key="div.id" :value="div.id">{{ div.name }}</option>
-                    </select>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">District</label>
+                      <select v-model="bookingData.district_id" @change="onDistrictChange"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
+                        <option value="">Select District</option>
+                        <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Upazila</label>
+                      <select v-model="bookingData.upazila_id" @change="onUpazilaChange"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
+                        <option value="">Select Upazila</option>
+                        <option v-for="upa in upazilas" :key="upa.id" :value="upa.id">{{ upa.name }}</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">District</label>
-                    <select v-model="bookingData.district_id" @change="onDistrictChange"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
-                      <option value="">Select District</option>
-                      <option v-for="dist in districts" :key="dist.id" :value="dist.id">{{ dist.name }}</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Upazila</label>
-                    <select v-model="bookingData.upazila_id" @change="onUpazilaChange"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
-                      <option value="">Select Upazila</option>
-                      <option v-for="upa in upazilas" :key="upa.id" :value="upa.id">{{ upa.name }}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Union</label>
-                    <select v-model="bookingData.union_id"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
-                      <option value="">Select Union</option>
-                      <option v-for="uni in unions" :key="uni.id" :value="uni.id">{{ uni.name }}</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Social Media Links -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Facebook</label>
-                    <input type="url" placeholder="Facebook profile URL" v-model="bookingData.fb"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Twitter/X</label>
-                    <input type="url" placeholder="Twitter/X profile URL" v-model="bookingData.twiter"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Union</label>
+                      <select v-model="bookingData.union_id"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
+                        <option value="">Select Union</option>
+                        <option v-for="uni in unions" :key="uni.id" :value="uni.id">{{ uni.name }}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">Instagram</label>
-                    <input type="url" placeholder="Instagram profile URL" v-model="bookingData.instagram"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <!-- Tab 4: Social Media Links -->
+                <div v-show="currentTab === 3" class="space-y-5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Facebook</label>
+                      <input type="url" placeholder="Facebook profile URL" v-model="bookingData.fb"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Twitter/X</label>
+                      <input type="url" placeholder="Twitter/X profile URL" v-model="bookingData.twiter"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Instagram</label>
+                      <input type="url" placeholder="Instagram profile URL" v-model="bookingData.instagram"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">LinkedIn</label>
+                      <input type="url" placeholder="LinkedIn profile URL" v-model="bookingData.linked_in"
+                        class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    </div>
                   </div>
                   <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-3">LinkedIn</label>
-                    <input type="url" placeholder="LinkedIn profile URL" v-model="bookingData.linked_in"
-                      class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                    <label class="block text-sm font-bold text-teal-600 mb-2">YouTube</label>
+                    <input type="url" placeholder="YouTube channel URL" v-model="bookingData.youtube"
+                      class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-bold text-teal-600 mb-2">Notes <span class="text-gray-400 text-xs">(Optional)</span></label>
+                    <textarea placeholder="Any special requirements or preferences..." v-model="bookingData.notes"
+                      class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400 resize-none h-28"></textarea>
+                  </div>
+                  <!-- Terms & Conditions -->
+                  <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                      <input type="checkbox" v-model="termsAccepted"
+                        class="mt-0.5 w-5 h-5 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500 focus:ring-2 transition-all cursor-pointer" />
+                      <span class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
+                        I agree to the
+                        <router-link to="/terms" class="text-teal-600 font-bold hover:underline">Terms & Conditions</router-link>
+                        and
+                        <router-link to="/privacy" class="text-teal-600 font-bold hover:underline">Privacy Policy</router-link>
+                        <span class="text-red-500">*</span>
+                      </span>
+                    </label>
+                    <p v-if="formErrors.terms" class="text-red-500 text-sm mt-1">{{ formErrors.terms }}</p>
                   </div>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-3">YouTube</label>
-                  <input type="url" placeholder="YouTube channel URL" v-model="bookingData.youtube"
-                    class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                <!-- Tab Navigation Buttons -->
+                <div class="flex justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <button type="button" @click="prevTab" v-if="currentTab > 0"
+                    class="px-6 py-3 rounded-2xl font-bold text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 transition-all flex items-center gap-2">
+                    <ChevronRight class="w-5 h-5 rotate-180" />
+                    Previous
+                  </button>
+                  <div v-else></div>
+                  <button type="button" v-if="currentTab < tabs.length - 1" @click="nextTab"
+                    class="px-6 py-3 rounded-2xl font-bold text-white bg-teal-600 hover:bg-teal-700 transition-all flex items-center gap-2">
+                    Next
+                    <ChevronRight class="w-5 h-5" />
+                  </button>
+                  <button type="submit" v-else :disabled="submittingBooking"
+                    class="px-8 py-3 rounded-2xl font-bold text-white bg-teal-600 hover:bg-teal-700 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <template v-if="submittingBooking">
+                      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </template>
+                    <template v-else>
+                      Continue to Payment
+                      <ChevronRight class="w-5 h-5" />
+                    </template>
+                  </button>
                 </div>
-
-                <div>
-                  <label class="block text-sm font-bold text-teal-600 mb-3">Notes (Optional)</label>
-                  <textarea placeholder="Any special requirements or preferences..." v-model="bookingData.notes"
-                    class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400 resize-none h-36"></textarea>
-                </div>
-
-                <button type="submit" :disabled="submittingBooking" class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed bg-teal-600">
-                  <template v-if="submittingBooking">
-                    <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </template>
-                  <template v-else>
-                    Continue to Payment
-                    <ChevronRight class="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                  </template>
-                </button>
               </form>
             </div>
           </AnimatedSection>
@@ -695,6 +733,8 @@ useHead({
 const route = useRoute()
 const router = useRouter()
 const step = ref(2)
+const currentTab = ref(0)
+const tabs = ['Booking Info', 'Boarder Info', 'Guardian Info & Address', 'Social Media Links']
 
 // Payment modal state
 const showPaymentModal = ref(false)
@@ -744,6 +784,22 @@ const formErrors = ref({})
 const selectedDivisionId = ref('')
 const selectedRoom = ref(null)
 
+const termsAccepted = ref(false)
+
+const autofillFromUserData = () => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser)
+      if (user.name) bookingData.value.party_name = user.name
+      if (user.phone) bookingData.value.mobile_number = user.phone
+      if (user.email) bookingData.value.email_number = user.email
+    } catch (e) {
+      console.error('Error parsing user data for autofill:', e)
+    }
+  }
+}
+
 const bookingData = ref({
   branch_id: 1,
   room_id: null,
@@ -767,7 +823,6 @@ const bookingData = ref({
   linked_in: '',
   youtube: '',
   check_in_date: '',
-  check_out_date: '',
   billing_amount: 0,
   status: 2, // 2 = pending
   notes: ''
@@ -840,6 +895,8 @@ onMounted(async () => {
     return
   }
 
+  autofillFromUserData()
+
   await fetchDivisions()
 
   const roomId = route.query.roomId
@@ -884,24 +941,49 @@ const onUpazilaChange = async () => {
   }
 }
 
-const validateForm = () => {
+const validateCurrentTab = () => {
   const errors = {}
-  if (!bookingData.value.party_name.trim()) errors.party_name = 'Name is required'
-  if (!bookingData.value.email_number.trim()) errors.email_number = 'Email is required'
-  else if (!/\S+@\S+\.\S+/.test(bookingData.value.email_number)) errors.email_number = 'Email is invalid'
-  if (!bookingData.value.mobile_number.trim()) errors.mobile_number = 'Mobile number is required'
-  if (!bookingData.value.check_in_date) errors.check_in_date = 'Check-in date is required'
-  if (!bookingData.value.check_out_date) errors.check_out_date = 'Check-out date is required'
-  if (bookingData.value.check_in_date && bookingData.value.check_out_date && 
-      bookingData.value.check_in_date >= bookingData.value.check_out_date) {
-    errors.check_out_date = 'Check-out must be after check-in'
+  if (currentTab.value === 0) {
+    if (!bookingData.value.check_in_date) errors.check_in_date = 'Check-in date is required'
+    if (!selectedSeatId.value) errors.seat = 'Please select a seat'
+  } else if (currentTab.value === 1) {
+    if (!bookingData.value.party_name.trim()) errors.party_name = 'Boarder name is required'
+    if (!bookingData.value.mobile_number.trim()) errors.mobile_number = 'Mobile number is required'
+    if (!bookingData.value.email_number.trim()) errors.email_number = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(bookingData.value.email_number)) errors.email_number = 'Email is invalid'
+  } else if (currentTab.value === 2) {
+    if (!bookingData.value.phone_number.trim()) errors.phone_number = 'Guardian phone number is required'
   }
   formErrors.value = errors
   return Object.keys(errors).length === 0
 }
 
+const validateAllTabs = () => {
+  const errors = {}
+  if (!bookingData.value.check_in_date) errors.check_in_date = 'Check-in date is required'
+  if (!selectedSeatId.value) errors.seat = 'Please select a seat'
+  if (!bookingData.value.party_name.trim()) errors.party_name = 'Boarder name is required'
+  if (!bookingData.value.mobile_number.trim()) errors.mobile_number = 'Mobile number is required'
+  if (!bookingData.value.email_number.trim()) errors.email_number = 'Email is required'
+  else if (!/\S+@\S+\.\S+/.test(bookingData.value.email_number)) errors.email_number = 'Email is invalid'
+  if (!bookingData.value.phone_number.trim()) errors.phone_number = 'Guardian phone number is required'
+  if (!termsAccepted.value) errors.terms = 'You must agree to the terms & conditions'
+  formErrors.value = errors
+  return Object.keys(errors).length === 0
+}
+
+const nextTab = () => {
+  if (validateCurrentTab()) {
+    currentTab.value++
+  }
+}
+
+const prevTab = () => {
+  currentTab.value--
+}
+
 const confirmBooking = async () => {
-  if (!validateForm()) return
+  if (!validateAllTabs()) return
   
   if (!bookingData.value.seat_id) {
     formErrors.value.seat = 'Please select a seat'
@@ -938,7 +1020,6 @@ const confirmBooking = async () => {
     linked_in: bookingData.value.linked_in || "",
     youtube: bookingData.value.youtube || "",
     check_in_date: bookingData.value.check_in_date,
-    check_out_date: bookingData.value.check_out_date,
     billing_amount: parseFloat(bookingData.value.billing_amount),
     status: 2, // Pending status
     notes: bookingData.value.notes || ""
@@ -1134,12 +1215,13 @@ const resetBooking = () => {
     linked_in: '',
     youtube: '',
     check_in_date: '',
-    check_out_date: '',
     billing_amount: selectedRoom.value?.room_price || 0,
     status: 2,
     notes: ''
   }
+  termsAccepted.value = false
   formErrors.value = {}
+  autofillFromUserData()
 }
 
 const retryFetch = () => {
