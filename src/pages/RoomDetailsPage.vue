@@ -748,20 +748,23 @@ const fetchRoomServices = async () => {
     console.log('Extra Services (service_type_id=2):', extraServices.value.length, 'items')
     extraServices.value.forEach(s => console.log('  -', s.service_name, '৳' + (s.service_price || 0)))
     
-    // Mark already subscribed/assigned services
-    subscribedServiceIds.value = [...serviceReceipts.value.map(r => r.service_id)]
+    // FIXED: Only use localStorage receipts to determine which services are subscribed
+    // This prevents showing services subscribed by OTHER borders as subscribed for the current user
+    subscribedServiceIds.value = serviceReceipts.value.map(r => r.service_id)
     
-    // Also add selected services from API as subscribed
-    selectedServicesData.forEach(service => {
-      if (service && service.id && !subscribedServiceIds.value.includes(service.id)) {
-        // Only mark type-2 services as "subscribed" (type-1 are amenities)
-        if (service.service_type_id === 2 || service.service_type?.id === 2) {
-          subscribedServiceIds.value.push(service.id)
-        }
-      }
-    })
+    console.log('Subscribed Service IDs (from receipts only):', subscribedServiceIds.value)
     
-    console.log('Final subscribed service IDs:', subscribedServiceIds.value)
+    // REMOVED: The code that was adding all selectedServicesData to subscribedServiceIds
+    // This was causing the bug where subscribing to one service made others appear subscribed
+    // 
+    // OLD CODE (REMOVED):
+    // selectedServicesData.forEach(service => {
+    //   if (service && service.id && !subscribedServiceIds.value.includes(service.id)) {
+    //     if (service.service_type_id === 2 || service.service_type?.id === 2) {
+    //       subscribedServiceIds.value.push(service.id)
+    //     }
+    //   }
+    // })
     
   } catch (err) {
     console.error('Error fetching room services:', err)
