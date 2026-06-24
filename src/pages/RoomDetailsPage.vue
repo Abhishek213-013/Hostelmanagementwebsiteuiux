@@ -82,7 +82,7 @@
 
               <h1 class="text-3xl lg:text-4xl font-black text-teal-600">{{ room.room_number || 'Room ' + room.id }}</h1>
 
-              <!-- Availability Status based on API data -->
+              <!-- Availability Status -->
               <div class="flex items-center gap-3">
                 <div :class="['w-4 h-4 rounded-full', isRoomAvailable ? 'bg-teal-500' : 'bg-red-500']"></div>
                 <span class="text-lg font-bold text-gray-800 dark:text-gray-200">
@@ -151,21 +151,112 @@
             </div>
           </div>
 
-          <!-- Room Services/Amenities Section - From API -->
-          <div v-if="displayServices.length > 0" class="mt-16 mb-10">
-            <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Services & Amenities</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="(service, i) in displayServices" :key="i" 
+          <!-- ==================== ROOM AMENITIES SECTION (service_type_id = 1) ==================== -->
+          <div v-if="roomAmenities.length > 0" class="mt-16 mb-10">
+            <h2 class="text-2xl lg:text-3xl font-black mb-12 text-center text-teal-600">Room Amenities</h2>
+            
+            <div v-if="loadingServices" class="flex justify-center py-8">
+              <div class="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div v-for="(service, i) in roomAmenities" :key="'amenity-' + i" 
                    class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:bg-teal-600 hover:text-white hover:shadow-lg hover:-translate-y-2 hover:border-teal-600 transition-all duration-500 flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-teal-600 group-hover:bg-white/20 transition-colors duration-500">
                   <component :is="getServiceIcon(service)" class="w-6 h-6 text-white" />
                 </div>
-                <div class="flex-1">
-                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500">{{ service.service_name }}</span>
-                  <p v-if="service.service_description" class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-white/80 transition-colors duration-500 mt-1">{{ service.service_description }}</p>
+                <div class="flex-1 min-w-0">
+                  <span class="text-gray-800 dark:text-gray-200 font-semibold group-hover:text-white transition-colors duration-500 block truncate">{{ service.service_name }}</span>
+                  <p v-if="service.service_description" class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-white/80 transition-colors duration-500 mt-1 line-clamp-2">{{ service.service_description }}</p>
                 </div>
                 <CheckCircle2 class="w-5 h-5 text-teal-500 flex-shrink-0 group-hover:text-white transition-colors duration-500" />
               </div>
+            </div>
+          </div>
+
+          <div v-else-if="!loadingServices && room" class="mt-16 mb-10 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+              <CheckCircle2 class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+              <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Amenities Listed</h3>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">Amenities for this room will be added soon.</p>
+            </div>
+          </div>
+
+          <!-- ==================== EXTRA SERVICES SECTION (service_type_id = 2) ==================== -->
+          <div v-if="extraServices.length > 0" class="mt-16 mb-10">
+            <div class="text-center mb-12">
+              <h2 class="text-2xl lg:text-3xl font-black text-teal-600 mb-4">Extra Services</h2>
+              <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Enhance your stay with these premium add-on services. Available exclusively for current boarders of this room.
+              </p>
+              <div v-if="!isBorderOfRoom" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <Shield class="w-4 h-4 text-amber-600" />
+                <span class="text-sm text-amber-700 dark:text-amber-400">Only current boarders can subscribe to these services</span>
+              </div>
+            </div>
+            
+            <div v-if="loadingServices" class="flex justify-center py-8">
+              <div class="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div v-for="(service, i) in extraServices" :key="'extra-' + i" 
+                   :class="['group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border transition-all duration-500',
+                     subscribedServiceIds.includes(service.id) 
+                       ? 'border-teal-500 dark:border-teal-400 ring-2 ring-teal-500/20' 
+                       : 'border-gray-200 dark:border-gray-700 hover:border-teal-300 hover:shadow-lg hover:-translate-y-1']">
+                
+                <div class="flex items-start gap-4 mb-4">
+                  <div :class="['w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-500',
+                    subscribedServiceIds.includes(service.id) 
+                      ? 'bg-teal-600 text-white' 
+                      : 'bg-gray-100 dark:bg-gray-700 text-teal-600 group-hover:bg-teal-600 group-hover:text-white']">
+                    <component :is="getServiceIcon(service)" class="w-7 h-7" />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 text-lg">{{ service.service_name }}</h3>
+                    <p v-if="service.service_description" class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ service.service_description }}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-2xl font-black text-teal-600">৳{{ (service.service_price || 0).toLocaleString() }}</span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">/mo</span>
+                  </div>
+                  
+                  <button 
+                    v-if="!subscribedServiceIds.includes(service.id)"
+                    @click="subscribeToService(service.id)"
+                    :disabled="!isBorderOfRoom || subscribingService"
+                    :class="['px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
+                      isBorderOfRoom && !subscribingService
+                        ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-md active:scale-95'
+                        : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed']">
+                    <span v-if="subscribingService && subscribingServiceId === service.id" class="flex items-center gap-2">
+                      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Processing...
+                    </span>
+                    <span v-else>Subscribe</span>
+                  </button>
+                  
+                  <button 
+                    v-else
+                    @click="viewServiceReceipt(service.id)"
+                    class="px-5 py-2.5 rounded-xl font-bold text-sm bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-900/50 transition-colors flex items-center gap-2">
+                    <CheckCircle2 class="w-4 h-4" />
+                    Subscribed
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else-if="!loadingServices && room" class="mt-16 mb-10 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+              <Sparkles class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+              <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Extra Services Available</h3>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">Check back later for premium add-on services.</p>
             </div>
           </div>
 
@@ -194,7 +285,6 @@
                 </div>
 
                 <form @submit.prevent="submitReview" class="space-y-7">
-                  <!-- Rating -->
                   <div>
                     <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Rating</label>
                     <div class="flex items-center gap-1">
@@ -205,24 +295,20 @@
                     </div>
                   </div>
 
-                  <!-- Title -->
                   <div>
                     <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Title</label>
                     <input v-model="reviewForm.title" type="text" placeholder="Summary of your experience"
                            class="w-full px-5 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all" />
                   </div>
 
-                  <!-- Comment -->
                   <div>
                     <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Comment</label>
                     <textarea v-model="reviewForm.comment" rows="5" placeholder="Share your experience..."
                               class="w-full px-5 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none"></textarea>
                   </div>
 
-                  <!-- Error Message -->
                   <p v-if="reviewErrors" class="text-red-500 text-sm font-medium">{{ reviewErrors }}</p>
 
-                  <!-- Submit Button -->
                   <button type="submit" :disabled="submittingReview"
                           :class="['w-full py-4 rounded-xl font-bold text-white transition-all text-lg', 
                             submittingReview ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg']">
@@ -241,7 +327,6 @@
           <div v-if="roomReviews.length > 0" class="mb-10">
             <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Borders Reviews</h2>
             
-            <!-- Review Summary -->
             <div class="max-w-3xl mx-auto mb-8">
               <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
@@ -256,7 +341,6 @@
                   </div>
                 </div>
                 
-                <!-- Rating Bars -->
                 <div class="space-y-2">
                   <div v-for="rating in [5,4,3,2,1]" :key="rating" class="flex items-center gap-3">
                     <span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-4">{{ rating }}</span>
@@ -270,11 +354,9 @@
               </div>
             </div>
 
-            <!-- Review Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               <div v-for="review in roomReviews.slice(0, 4)" :key="review.id" 
                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
-                <!-- Review Header -->
                 <div class="flex items-start justify-between mb-4">
                   <div class="flex items-center gap-3">
                     <img :src="review.user.avatar" :alt="review.user.name" 
@@ -314,19 +396,14 @@
                   </div>
                 </div>
 
-                <!-- Review Title -->
                 <h5 class="font-bold text-gray-800 dark:text-gray-200 mb-2">{{ review.title }}</h5>
-                
-                <!-- Review Comment -->
                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">{{ review.comment }}</p>
 
-                <!-- Stay Info -->
                 <div class="flex items-center justify-between text-xs text-gray-400 mb-4">
                   <span>{{ review.stay_duration }}</span>
                   <span>{{ review.stay_period }}</span>
                 </div>
 
-                <!-- Management Response -->
                 <div v-if="review.response" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div class="flex items-center gap-2 mb-2">
                     <Shield class="w-4 h-4 text-teal-600" />
@@ -335,7 +412,6 @@
                   <p class="text-xs text-gray-600 dark:text-gray-400">{{ review.response.message }}</p>
                 </div>
 
-                <!-- Helpful Count -->
                 <div v-if="review.helpful_count > 0" class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <ThumbsUp class="w-4 h-4 text-gray-400" />
                   <span class="text-xs text-gray-500">{{ review.helpful_count }} found this helpful</span>
@@ -344,7 +420,6 @@
             </div>
           </div>
 
-          <!-- Add this for when there are no reviews -->
           <div v-if="!loading && room && roomReviews.length === 0" class="mt-16 mb-10 text-center">
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
               <Star class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
@@ -356,6 +431,16 @@
       </div>
       <Footer />
     </main>
+
+    <!-- Service Subscription Receipt Modal -->
+    <ServiceReceiptModal 
+      v-if="showServiceReceipt"
+      :service-receipt="selectedServiceReceipt"
+      :room="room"
+      :user="currentUser"
+      @close="showServiceReceipt = false"
+      @print="printServiceReceipt"
+    />
   </div>
 </template>
 
@@ -366,9 +451,11 @@ import { useRoute, useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
+import ServiceReceiptModal from '../components/rooms/ServiceReceiptModal.vue'
 import { useRooms } from '../composables/useRooms'
 import { useReviews } from '../composables/useReviews'
 import { roomAPI, bookingAPI, authAPI } from '../services/api'
+import apiClient from '../services/api'
 import { 
   ArrowLeft, Users, Bed, CheckCircle2, Wifi, Wind, Utensils, Coffee, 
   Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
@@ -411,13 +498,12 @@ const checkInDate = ref('')
 const checkOutDate = ref('')
 const checkingAvailability = ref(false)
 
-// Border verification state
 const isBorderOfRoom = ref(false)
 const currentBorderId = ref(null)
 const currentUserId = ref(null)
-const debugInfo = ref([]) // For debugging
+const debugInfo = ref([])
+const currentUser = ref({})
 
-// Review form state
 const showReviewForm = ref(false)
 const submittingReview = ref(false)
 const isEditingReview = ref(false)
@@ -429,18 +515,29 @@ const reviewForm = ref({
 })
 const reviewErrors = ref('')
 
-// Check if current user is authenticated
+const roomAmenities = ref([])
+const extraServices = ref([])
+const loadingServices = ref(false)
+const subscribingService = ref(false)
+const subscribingServiceId = ref(null)
+const subscribedServiceIds = ref([])
+
+// Service Receipt state
+const showServiceReceipt = ref(false)
+const selectedServiceReceipt = ref(null)
+
+// Service subscription receipts storage (in localStorage for persistence)
+const serviceReceipts = ref([])
+
 const isAuthenticated = computed(() => {
   const auth = localStorage.getItem('isAuthenticated') === 'true' || !!localStorage.getItem('auth_token')
   return auth
 })
 
-// Check if current user is a border of this room
 const canWriteReview = computed(() => {
   return isAuthenticated.value && isBorderOfRoom.value
 })
 
-// Check if user has already reviewed
 const hasUserReviewed = computed(() => {
   if (!currentUserId.value) return false
   return roomReviews.value.some(review => {
@@ -449,28 +546,205 @@ const hasUserReviewed = computed(() => {
   })
 })
 
-// Combined loading state
 const loading = ref(true)
 const error = ref('')
 
-// Current room from API
 const room = computed(() => currentRoom.value)
 
-// Check if room is available based on availability API
 const isRoomAvailable = computed(() => {
   if (!availabilityData.value) return false
   return availabilityData.value.is_available === true && 
          availabilityData.value.available_seats?.length > 0
 })
 
-// Get services from room_type and room
-const displayServices = computed(() => {
-  const services = []
+// Load user data
+const loadUserData = () => {
+  try {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    currentUser.value = userData
+    currentUserId.value = userData.id || userData.user_id || userData.border_id || null
+  } catch (e) {
+    console.error('Error loading user data:', e)
+  }
+}
+
+// Load service receipts from localStorage
+const loadServiceReceipts = () => {
+  try {
+    const receipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
+    serviceReceipts.value = receipts
+    
+    // Update subscribedServiceIds based on receipts
+    subscribedServiceIds.value = receipts.map(r => r.service_id)
+  } catch (e) {
+    console.error('Error loading service receipts:', e)
+    serviceReceipts.value = []
+  }
+}
+
+// Save service receipts to localStorage
+const saveServiceReceipts = () => {
+  try {
+    localStorage.setItem('serviceReceipts', JSON.stringify(serviceReceipts.value))
+  } catch (e) {
+    console.error('Error saving service receipts:', e)
+  }
+}
+
+// Generate a unique receipt number
+const generateReceiptNumber = () => {
+  const timestamp = Date.now().toString(36).toUpperCase()
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
+  return `SRV-${timestamp}-${random}`
+}
+
+// Generate receipt for service subscription
+const generateServiceReceipt = (service, subscriptionResponse) => {
+  const receipt = {
+    id: generateReceiptNumber(),
+    service_id: service.id,
+    service_name: service.service_name,
+    service_description: service.service_description,
+    service_price: service.service_price || 0,
+    room_id: room.value.id,
+    room_number: room.value.room_number,
+    room_type: room.value.room_type?.room_type_title || room.value.room_type?.name || 'Standard',
+    border_id: currentBorderId.value,
+    border_name: currentUser.value?.name || 'N/A',
+    border_email: currentUser.value?.email || 'N/A',
+    border_phone: currentUser.value?.phone || currentUser.value?.mobile_number || 'N/A',
+    subscription_date: new Date().toISOString(),
+    subscription_response: subscriptionResponse,
+    status: 'active'
+  }
+  
+  // Add to receipts array
+  serviceReceipts.value.unshift(receipt)
+  saveServiceReceipts()
+  
+  // Update subscribed service IDs
+  if (!subscribedServiceIds.value.includes(service.id)) {
+    subscribedServiceIds.value.push(service.id)
+  }
+  
+  return receipt
+}
+
+const fetchRoomServices = async () => {
+  if (!room.value?.id) return
+  
+  loadingServices.value = true
+  try {
+    const response = await apiClient.get(`/room-available-services/${room.value.id}`)
+    
+    console.log('Raw API Response for room services:', response.data)
+    
+    // Handle the specific API response structure:
+    // { available_services: [...], selected_services: [...] }
+    let servicesData = []
+    
+    if (response.data) {
+      // Check for available_services array
+      if (Array.isArray(response.data.available_services)) {
+        servicesData = response.data.available_services
+        console.log('Found available_services array with', servicesData.length, 'items')
+      }
+      // Check for selected_services array  
+      else if (Array.isArray(response.data.selected_services)) {
+        servicesData = response.data.selected_services
+        console.log('Found selected_services array with', servicesData.length, 'items')
+      }
+      // Fallback checks for other possible structures
+      else if (Array.isArray(response.data.data)) {
+        servicesData = response.data.data
+      }
+      else if (Array.isArray(response.data)) {
+        servicesData = response.data
+      }
+      else {
+        console.warn('Unexpected response structure:', response.data)
+        servicesData = []
+      }
+    }
+    
+    // FINAL CHECK: Ensure servicesData is an array
+    if (!Array.isArray(servicesData)) {
+      console.warn('servicesData is not an array, forcing to empty array')
+      servicesData = []
+    }
+    
+    console.log('Parsed servicesData (array):', servicesData)
+    console.log('Number of services:', servicesData.length)
+    
+    // Log each service for debugging
+    servicesData.forEach((service, index) => {
+      console.log(`Service ${index + 1}:`, {
+        id: service.id,
+        name: service.service_name,
+        type_id: service.service_type_id,
+        type: service.service_type,
+        price: service.service_price
+      })
+    })
+    
+    // Now safely filter by service_type_id
+    // service_type_id = 1 -> Room Amenities (included in room)
+    roomAmenities.value = servicesData.filter(service => {
+      if (!service || typeof service !== 'object') return false
+      return service.service_type_id === 1 || service.service_type?.id === 1
+    })
+    
+    // service_type_id = 2 -> Extra Services (paid add-ons)
+    extraServices.value = servicesData.filter(service => {
+      if (!service || typeof service !== 'object') return false
+      return service.service_type_id === 2 || service.service_type?.id === 2
+    })
+    
+    console.log('Room Amenities (service_type_id=1):', roomAmenities.value.length, 'items')
+    console.log('Extra Services (service_type_id=2):', extraServices.value.length, 'items')
+    
+    // Handle selected_services for already subscribed services
+    if (Array.isArray(response.data.selected_services)) {
+      const selectedIds = response.data.selected_services
+        .filter(s => s && (s.id || s.service_id))
+        .map(s => s.id || s.service_id)
+      
+      console.log('Already selected service IDs from API:', selectedIds)
+      
+      // Merge with localStorage receipt subscriptions
+      selectedIds.forEach(id => {
+        if (!subscribedServiceIds.value.includes(id)) {
+          subscribedServiceIds.value.push(id)
+        }
+      })
+    }
+    
+    // Also mark subscribed from localStorage receipts
+    const receiptServiceIds = serviceReceipts.value.map(r => r.service_id)
+    receiptServiceIds.forEach(id => {
+      if (!subscribedServiceIds.value.includes(id)) {
+        subscribedServiceIds.value.push(id)
+      }
+    })
+    
+    console.log('Final subscribed service IDs:', subscribedServiceIds.value)
+    
+  } catch (err) {
+    console.error('Error fetching room services:', err)
+    console.log('Falling back to existing service data structure...')
+    fallbackToExistingServices()
+  } finally {
+    loadingServices.value = false
+  }
+}
+
+const fallbackToExistingServices = () => {
+  const allServices = []
   
   if (room.value?.room_type?.service_on_room_type) {
     room.value.room_type.service_on_room_type.forEach(item => {
       if (item.service) {
-        services.push({
+        allServices.push({
           ...item.service,
           source: 'room_type'
         })
@@ -481,9 +755,9 @@ const displayServices = computed(() => {
   if (room.value?.service_on_room) {
     room.value.service_on_room.forEach(item => {
       if (item.service) {
-        const exists = services.some(s => s.id === item.service.id)
+        const exists = allServices.some(s => s.id === item.service.id)
         if (!exists) {
-          services.push({
+          allServices.push({
             ...item.service,
             source: 'room'
           })
@@ -492,10 +766,148 @@ const displayServices = computed(() => {
     })
   }
   
-  return services
-})
+  roomAmenities.value = allServices.filter(service => 
+    service.service_type_id === 1 || service.service_type?.id === 1
+  )
+  
+  extraServices.value = allServices.filter(service => 
+    service.service_type_id === 2 || service.service_type?.id === 2
+  )
+}
 
-// Map service names to icons
+const subscribeToService = async (serviceId) => {
+  if (!isAuthenticated.value) {
+    showLoginRequiredAlert()
+    return
+  }
+  
+  if (!isBorderOfRoom.value) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Access Restricted',
+      text: 'Only current boarders can subscribe to extra services.',
+      confirmButtonColor: '#0d9488',
+      confirmButtonText: 'OK'
+    })
+    return
+  }
+  
+  const service = extraServices.value.find(s => s.id === serviceId)
+  if (!service) return
+  
+  // Show confirmation dialog with price
+  Swal.fire({
+    title: 'Subscribe to Service',
+    html: `
+      <div class="text-left">
+        <p class="mb-3"><strong>Service:</strong> ${service.service_name}</p>
+        <p class="mb-3"><strong>Price:</strong> ৳${(service.service_price || 0).toLocaleString()}/month</p>
+        ${service.service_description ? `<p class="mb-3"><strong>Description:</strong> ${service.service_description}</p>` : ''}
+      </div>
+      <p class="text-sm text-gray-500 mt-4">This service will be added to your monthly bill.</p>
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#0d9488',
+    cancelButtonColor: '#6b7280',
+    confirmButtonText: 'Subscribe Now',
+    cancelButtonText: 'Cancel'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      subscribingService.value = true
+      subscribingServiceId.value = serviceId
+      
+      try {
+        const response = await apiClient.post('/room-assign-services', {
+          room_id: room.value.id,
+          services: [serviceId]
+        })
+        
+        // Generate receipt for the subscription
+        const receipt = generateServiceReceipt(service, response.data)
+        
+        // Show the receipt
+        selectedServiceReceipt.value = receipt
+        showServiceReceipt.value = true
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Subscribed!',
+          text: `You have successfully subscribed to ${service.service_name}.`,
+          confirmButtonColor: '#0d9488',
+          timer: 2000,
+          showConfirmButton: true
+        })
+        
+      } catch (err) {
+        console.error('Error subscribing to service:', err)
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.response?.data?.message || 'Failed to subscribe to service. Please try again.',
+          confirmButtonColor: '#0d9488'
+        })
+      } finally {
+        subscribingService.value = false
+        subscribingServiceId.value = null
+      }
+    }
+  })
+}
+
+// View service receipt
+const viewServiceReceipt = (serviceId) => {
+  const receipt = serviceReceipts.value.find(r => r.service_id === serviceId)
+  if (receipt) {
+    selectedServiceReceipt.value = receipt
+    showServiceReceipt.value = true
+  } else {
+    // If receipt not found locally, show a message
+    Swal.fire({
+      icon: 'info',
+      title: 'Receipt Not Found',
+      text: 'The receipt for this service could not be found. It may have been cleared from your browser storage.',
+      confirmButtonColor: '#0d9488'
+    })
+  }
+}
+
+// Print service receipt
+const printServiceReceipt = () => {
+  const receiptContent = document.getElementById('service-receipt-content')
+  if (!receiptContent) return
+  
+  const printWindow = window.open('', '_blank', 'width=1000,height=800')
+  
+  const printHTML = [
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '<title>Service Subscription Receipt - SylhetStay</title>',
+    '<script src="https://cdn.tailwindcss.com"><' + '/script>',
+    '<style>',
+    '@media print {',
+    '  body { margin: 0; padding: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }',
+    '  @page { size: A4; margin: 15mm; }',
+    '}',
+    'body { display: flex; justify-content: center; min-height: 100vh; background: #f9fafb; font-family: system-ui, -apple-system, sans-serif; }',
+    '</style>',
+    '</head>',
+    '<body>',
+    '<div style="width: 100%; max-width: 800px; margin: 20px auto; background: white; padding: 20px;">',
+    receiptContent.innerHTML,
+    '</div>',
+    '<script>',
+    'window.onload = function() { setTimeout(function() { window.print(); }, 500); }',
+    '<' + '/script>',
+    '</body>',
+    '</html>'
+  ].join('\n')
+
+  printWindow.document.write(printHTML)
+  printWindow.document.close()
+}
+
 const getServiceIcon = (service) => {
   const name = service.service_name?.toLowerCase() || ''
   
@@ -519,7 +931,6 @@ const getServiceIcon = (service) => {
   return CheckCircle2
 }
 
-// Helper functions for UI display
 const getCapacityFromType = (roomTypeName) => {
   const capacities = {
     'shared': 4,
@@ -548,9 +959,6 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-/**
- * Show SweetAlert for non-border users
- */
 const showNotBorderAlert = () => {
   Swal.fire({
     icon: 'warning',
@@ -562,14 +970,11 @@ const showNotBorderAlert = () => {
   })
 }
 
-/**
- * Show SweetAlert for unauthenticated users
- */
 const showLoginRequiredAlert = () => {
   Swal.fire({
     icon: 'info',
     title: 'Login Required',
-    text: 'Please login to write a review.',
+    text: 'Please login to continue.',
     confirmButtonColor: '#0d9488',
     confirmButtonText: 'Login',
     showCancelButton: true,
@@ -582,9 +987,6 @@ const showLoginRequiredAlert = () => {
   })
 }
 
-/**
- * Show SweetAlert for already reviewed
- */
 const showAlreadyReviewedAlert = () => {
   Swal.fire({
     icon: 'info',
@@ -595,9 +997,6 @@ const showAlreadyReviewedAlert = () => {
   })
 }
 
-/**
- * Verify if the current authenticated user is a border of this room
- */
 const verifyBorderStatus = async () => {
   debugInfo.value = []
   
@@ -666,8 +1065,6 @@ const verifyBorderStatus = async () => {
           || booking.user?.id
           || booking.customer_id
         
-        debugInfo.value.push(`Booking #${booking.id}: room=${bookingRoomId}, user=${bookingUserId}, status=${booking.status}`)
-        
         return bookingRoomId == room.value.id
       })
       
@@ -680,80 +1077,22 @@ const verifyBorderStatus = async () => {
           isBorderOfRoom.value = true
           debugInfo.value.push('✅ MATCH! Room has active booking')
           return
-        } else {
-          debugInfo.value.push('⚠️ Room has bookings but none are active (status=1)')
         }
-      } else {
-        debugInfo.value.push('❌ No bookings found for this room')
       }
     } catch (err) {
       debugInfo.value.push(`Method 2 Error: ${err.message}`)
     }
     
-    // METHOD 3: Check if user is any border and room has active bookings
-    debugInfo.value.push('--- Method 3: Border + Active Bookings ---')
-    if (currentBorderId.value) {
-      debugInfo.value.push(`User is a border (ID: ${currentBorderId.value})`)
-      
-      try {
-        const bookingsResponse = await bookingAPI.getAllBookings()
-        const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
-        
-        const roomHasActiveBookings = bookings.some(b => {
-          const bookingRoomId = b.room_id || b.room?.id
-          const isActive = b.status === 1 || b.status === '1' || b.status === 'active'
-          return bookingRoomId == room.value.id && isActive
-        })
-        
-        if (roomHasActiveBookings) {
-          isBorderOfRoom.value = true
-          debugInfo.value.push('✅ MATCH! Room has active bookings and user is a border')
-          return
-        } else {
-          debugInfo.value.push('❌ Room has no active bookings')
-        }
-      } catch (err) {
-        debugInfo.value.push(`Error: ${err.message}`)
-      }
-    } else {
-      debugInfo.value.push('User is NOT a border (no border profile)')
-    }
-    
-    // METHOD 4: Any booking for this room
-    debugInfo.value.push('--- Method 4: Any booking for this room ---')
-    try {
-      const bookingsResponse = await bookingAPI.getAllBookings()
-      const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
-      
-      const hasAnyBooking = bookings.some(b => {
-        const bookingRoomId = b.room_id || b.room?.id
-        return bookingRoomId == room.value.id
-      })
-      
-      if (hasAnyBooking) {
-        isBorderOfRoom.value = true
-        debugInfo.value.push('✅ MATCH! Room has bookings (any status)')
-        return
-      } else {
-        debugInfo.value.push('❌ No bookings at all for this room')
-      }
-    } catch (err) {
-      debugInfo.value.push(`Error: ${err.message}`)
-    }
-    
-    // If all methods fail
     isBorderOfRoom.value = false
-    debugInfo.value.push('❌ ALL METHODS FAILED - User cannot review this room')
     
   } catch (err) {
     console.error('❌ Error verifying border status:', err)
-    debugInfo.value.push(`Fatal Error: ${err.message}`)
     isBorderOfRoom.value = false
   }
 }
 
 const checkAvailability = async () => {
-  if (!room.value?.id || !checkInDate.value || !checkOutDate.value) return
+  if (!room.value?.id) return
   
   checkingAvailability.value = true
   try {
@@ -766,7 +1105,6 @@ const checkAvailability = async () => {
   }
 }
 
-// Progressive fetch - Load critical content first
 const fetchRoomData = async () => {
   const roomId = route.params.id
   
@@ -779,7 +1117,9 @@ const fetchRoomData = async () => {
   error.value = ''
   
   try {
-    // STEP 1: Load room details (critical)
+    loadUserData()
+    loadServiceReceipts()
+    
     const roomData = await fetchRoomDetails(roomId)
     
     if (!roomData) {
@@ -797,14 +1137,10 @@ const fetchRoomData = async () => {
     checkInDate.value = today.toISOString().split('T')[0]
     checkOutDate.value = tomorrow.toISOString().split('T')[0]
     
-    // STEP 2: Verify border status
     await verifyBorderStatus()
-    
-    // STEP 3: Check availability
     await checkAvailability()
-    
-    // STEP 4: Load reviews
     await fetchReviews(roomId)
+    await fetchRoomServices()
     
   } catch (err) {
     console.error('Error fetching room data:', err)
@@ -848,23 +1184,17 @@ const handleBookNow = () => {
   router.push(`/booking?roomId=${route.params.id}`)
 }
 
-/**
- * Handle review button click with SweetAlert for non-borders
- */
 const handleWriteReview = (review = null) => {
-  // Check authentication first
   if (!isAuthenticated.value) {
     showLoginRequiredAlert()
     return
   }
   
-  // Check if user is a border of this room
   if (!isBorderOfRoom.value) {
     showNotBorderAlert()
     return
   }
   
-  // Check if user has already reviewed (only for new reviews, not edits)
   if (!review && hasUserReviewed.value) {
     showAlreadyReviewedAlert()
     return
@@ -873,7 +1203,6 @@ const handleWriteReview = (review = null) => {
   reviewErrors.value = ''
   
   if (review) {
-    // Editing existing review
     isEditingReview.value = true
     editingReviewId.value = review.id
     reviewForm.value = {
@@ -882,7 +1211,6 @@ const handleWriteReview = (review = null) => {
       comment: review.comment || ''
     }
   } else {
-    // New review
     isEditingReview.value = false
     editingReviewId.value = null
     reviewForm.value = { 
@@ -895,23 +1223,15 @@ const handleWriteReview = (review = null) => {
   showReviewForm.value = true
 }
 
-/**
- * Submit review (create or update)
- */
 const submitReview = async () => {
   reviewErrors.value = ''
   
-  // Validation
   if (!reviewForm.value.title.trim()) {
     reviewErrors.value = 'Title is required'
     return
   }
   if (!reviewForm.value.comment.trim()) {
     reviewErrors.value = 'Comment is required'
-    return
-  }
-  if (reviewForm.value.rating < 1 || reviewForm.value.rating > 5) {
-    reviewErrors.value = 'Rating must be between 1 and 5'
     return
   }
   
@@ -929,7 +1249,6 @@ const submitReview = async () => {
     if (isEditingReview.value && editingReviewId.value) {
       await updateReview(editingReviewId.value, reviewData)
       
-      // Show success alert
       Swal.fire({
         icon: 'success',
         title: 'Review Updated!',
@@ -941,7 +1260,6 @@ const submitReview = async () => {
     } else {
       await createReview(reviewData)
       
-      // Show success alert
       Swal.fire({
         icon: 'success',
         title: 'Review Submitted!',
@@ -966,7 +1284,6 @@ const submitReview = async () => {
       || 'Failed to submit review. Please try again.'
     reviewErrors.value = errorMessage
     
-    // Show error alert
     Swal.fire({
       icon: 'error',
       title: 'Error',
@@ -978,9 +1295,6 @@ const submitReview = async () => {
   }
 }
 
-/**
- * Delete user's review with SweetAlert confirmation
- */
 const deleteUserReview = async (reviewId) => {
   Swal.fire({
     icon: 'warning',
@@ -1019,9 +1333,10 @@ const deleteUserReview = async (reviewId) => {
   })
 }
 
-// Watch for room ID changes
 watch(() => route.params.id, (newId) => {
   if (newId) {
+    roomAmenities.value = []
+    extraServices.value = []
     clearReviews()
     fetchRoomData()
   }
@@ -1031,3 +1346,12 @@ onMounted(() => {
   fetchRoomData()
 })
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
