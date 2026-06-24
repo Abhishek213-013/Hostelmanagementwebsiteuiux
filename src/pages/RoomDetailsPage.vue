@@ -641,40 +641,82 @@ const fetchRoomServices = async () => {
     
     // Handle the specific API response structure:
     // { available_services: [...], selected_services: [...] }
-    let servicesData = []
+    let availableServicesData = []
+    let selectedServicesData = []
     
     if (response.data) {
-      // Check for available_services array
+      // Get available services (not yet assigned)
       if (Array.isArray(response.data.available_services)) {
-        servicesData = response.data.available_services
-        console.log('Found available_services array with', servicesData.length, 'items')
+        availableServicesData = response.data.available_services
+        console.log('Found available_services array with', availableServicesData.length, 'items')
       }
-      // Check for selected_services array  
-      else if (Array.isArray(response.data.selected_services)) {
-        servicesData = response.data.selected_services
-        console.log('Found selected_services array with', servicesData.length, 'items')
-      }
-      // Fallback checks for other possible structures
-      else if (Array.isArray(response.data.data)) {
-        servicesData = response.data.data
-      }
-      else if (Array.isArray(response.data)) {
-        servicesData = response.data
-      }
-      else {
-        console.warn('Unexpected response structure:', response.data)
-        servicesData = []
+      
+      // Get selected/assigned services (already assigned to room)
+      if (Array.isArray(response.data.selected_services)) {
+        selectedServicesData = response.data.selected_services
+        console.log('Found selected_services array with', selectedServicesData.length, 'items')
       }
     }
     
-    // FINAL CHECK: Ensure servicesData is an array
-    if (!Array.isArray(servicesData)) {
-      console.warn('servicesData is not an array, forcing to empty array')
-      servicesData = []
+    // Fetch assigned services from the room data as well (from service_on_rooms)
+    let assignedServicesFromRoom = []
+    
+    // The room object might have service_on_room data
+    if (room.value?.service_on_room && Array.isArray(room.value.service_on_room)) {
+      assignedServicesFromRoom = room.value.service_on_room
+        .filter(item => item.service)
+        .map(item => item.service)
+      console.log('Services from room.service_on_room:', assignedServicesFromRoom.length, 'items')
     }
     
-    console.log('Parsed servicesData (array):', servicesData)
-    console.log('Number of services:', servicesData.length)
+    // Also check room_type services
+    let roomTypeServices = []
+    if (room.value?.room_type?.service_on_room_type && Array.isArray(room.value.room_type.service_on_room_type)) {
+      roomTypeServices = room.value.room_type.service_on_room_type
+        .filter(item => item.service)
+        .map(item => item.service)
+      console.log('Services from room_type:', roomTypeServices.length, 'items')
+    }
+    
+    // Combine all services and remove duplicates by ID
+    const allServicesMap = new Map()
+    
+    // Add available services
+    availableServicesData.forEach(service => {
+      if (service && service.id) {
+        allServicesMap.set(service.id, service)
+      }
+    })
+    
+    // Add selected/assigned services
+    selectedServicesData.forEach(service => {
+      if (service && service.id) {
+        allServicesMap.set(service.id, service)
+      }
+    })
+    
+    // Add services from room data
+    assignedServicesFromRoom.forEach(service => {
+      if (service && service.id) {
+        allServicesMap.set(service.id, service)
+      }
+    })
+    
+    // Add room type services
+    roomTypeServices.forEach(service => {
+      if (service && service.id) {
+        // Only add if not already present
+        if (!allServicesMap.has(service.id)) {
+          allServicesMap.set(service.id, service)
+        }
+      }
+    })
+    
+    // Convert map back to array
+    const servicesData = Array.from(allServicesMap.values())
+    
+    console.log('Combined servicesData (array):', servicesData)
+    console.log('Number of total services:', servicesData.length)
     
     // Log each service for debugging
     servicesData.forEach((service, index) => {
@@ -701,29 +743,21 @@ const fetchRoomServices = async () => {
     })
     
     console.log('Room Amenities (service_type_id=1):', roomAmenities.value.length, 'items')
+    roomAmenities.value.forEach(s => console.log('  -', s.service_name))
+    
     console.log('Extra Services (service_type_id=2):', extraServices.value.length, 'items')
+    extraServices.value.forEach(s => console.log('  -', s.service_name, '৳' + (s.service_price || 0)))
     
-    // Handle selected_services for already subscribed services
-    if (Array.isArray(response.data.selected_services)) {
-      const selectedIds = response.data.selected_services
-        .filter(s => s && (s.id || s.service_id))
-        .map(s => s.id || s.service_id)
-      
-      console.log('Already selected service IDs from API:', selectedIds)
-      
-      // Merge with localStorage receipt subscriptions
-      selectedIds.forEach(id => {
-        if (!subscribedServiceIds.value.includes(id)) {
-          subscribedServiceIds.value.push(id)
+    // Mark already subscribed/assigned services
+    subscribedServiceIds.value = [...serviceReceipts.value.map(r => r.service_id)]
+    
+    // Also add selected services from API as subscribed
+    selectedServicesData.forEach(service => {
+      if (service && service.id && !subscribedServiceIds.value.includes(service.id)) {
+        // Only mark type-2 services as "subscribed" (type-1 are amenities)
+        if (service.service_type_id === 2 || service.service_type?.id === 2) {
+          subscribedServiceIds.value.push(service.id)
         }
-      })
-    }
-    
-    // Also mark subscribed from localStorage receipts
-    const receiptServiceIds = serviceReceipts.value.map(r => r.service_id)
-    receiptServiceIds.forEach(id => {
-      if (!subscribedServiceIds.value.includes(id)) {
-        subscribedServiceIds.value.push(id)
       }
     })
     
