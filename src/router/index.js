@@ -69,6 +69,16 @@ const routes = [
     name: 'ProfileManagement',
     component: () => import('@/pages/ProfileManagementPage.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: () => import('@/pages/TermsPage.vue')
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('@/pages/PrivacyPage.vue')
   }
 ]
 
