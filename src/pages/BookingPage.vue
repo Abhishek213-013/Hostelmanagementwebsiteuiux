@@ -1,42 +1,43 @@
 <template>
-  <!-- Step 4: Booking Confirmed (Under Approval) -->
+  <!-- Step 4: Booking Confirmed -->
   <div v-if="step === 4" class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <AnimatedSection>
       <div class="relative text-center max-w-lg">
         <div class="inline-block mb-8">
-          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-amber-500">
-            <Clock class="w-16 h-16 text-white drop-shadow-lg" />
+          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-green-500">
+            <CheckCircle2 class="w-16 h-16 text-white drop-shadow-lg" />
           </div>
         </div>
-        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-amber-600">Booking Under Approval</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your booking has been submitted for review.</p>
+        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-green-600">Booking Confirmed!</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your booking has been confirmed successfully.</p>
         <p class="text-gray-700 dark:text-gray-300 mb-4">
-          A confirmation email has been sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email_number }}</span>
+          A confirmation email will be sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email_number }}</span>
         </p>
 
         <div v-if="currentBooking?.id" class="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow border border-gray-200 dark:border-gray-700">
-          <p class="text-sm text-amber-600 mb-1">Booking ID</p>
+          <p class="text-sm text-green-600 mb-1">Booking ID</p>
           <p class="font-mono font-bold text-gray-800 dark:text-white text-lg">{{ currentBooking.id }}</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Transaction ID: {{ paymentTransactionId }}</p>
           <div class="mt-4 flex items-center justify-center gap-2">
-            <span class="inline-block w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
-            <span class="text-amber-600 font-semibold">Status: Pending Approval</span>
+            <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+            <span class="text-green-600 font-semibold">Status: Confirmed</span>
           </div>
         </div>
 
-        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 mb-8">
-          <h3 class="text-lg font-bold text-amber-800 dark:text-amber-200 mb-2">What's Next?</h3>
-          <ul class="text-sm text-amber-700 dark:text-amber-300 space-y-2 text-left">
-            <li class="flex items-center gap-2">
-              <Clock class="w-4 h-4 flex-shrink-0" />
-              Your booking is being reviewed by our team
-            </li>
+        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6 mb-8">
+          <h3 class="text-lg font-bold text-green-800 dark:text-green-200 mb-2">What's Next?</h3>
+          <ul class="text-sm text-green-700 dark:text-green-300 space-y-2 text-left">
             <li class="flex items-center gap-2">
               <CheckCircle2 class="w-4 h-4 flex-shrink-0" />
-              You'll receive confirmation within 24 hours
+              Your booking has been confirmed
             </li>
             <li class="flex items-center gap-2">
               <Phone class="w-4 h-4 flex-shrink-0" />
-              We may contact you for verification
+              We'll contact you with move-in details
+            </li>
+            <li class="flex items-center gap-2">
+              <Clock class="w-4 h-4 flex-shrink-0" />
+              Check-in date: {{ bookingData.check_in_date }}
             </li>
           </ul>
         </div>
@@ -74,7 +75,7 @@
       </div>
 
       <div v-else>
-        <!-- Step 3: Payment -->
+        <!-- Step 3: PayStation Payment -->
         <div v-if="step === 3 && selectedRoom">
           <AnimatedSection>
             <div class="relative">
@@ -96,379 +97,267 @@
                       <ArrowLeft class="w-4 h-4" />
                       Back to Booking
                     </button>
-                    <h2 class="text-xl font-black mb-8 text-teal-600">Select Payment Method</h2>
 
-                    <div class="mb-6 p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl border-2 border-gray-200 dark:border-gray-600">
-                      <h4 class="text-lg font-black text-gray-800 dark:text-white mb-4">Booking Summary</h4>
-                      <div class="space-y-3 text-gray-600 dark:text-gray-400">
-                        <div class="text-sm flex justify-between">
-                          <span>Room Type</span>
-                          <span class="font-bold text-gray-800 dark:text-white">{{ selectedRoom.room_type?.name || selectedRoom.title }}</span>
-                        </div>
-                        <div class="text-sm flex justify-between">
-                          <span>Monthly Rent</span>
-                          <span class="font-bold text-gray-800 dark:text-white">৳{{ (selectedRoom.room_price || selectedRoom.price).toLocaleString() }}</span>
-                        </div>
-                        <div class="text-sm flex justify-between">
-                          <span>Security Deposit</span>
-                          <span class="font-bold text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
-                        </div>
-                        <div class="text-sm border-t border-gray-300 pt-3 mt-3 flex justify-between">
-                          <span class="font-black text-lg text-gray-800 dark:text-white">Total to Pay</span>
-                          <span class="font-black text-2xl text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                    <!-- PayStation Payment Interface -->
+                    <div v-if="!payStationStep || payStationStep === 'method'">
+                      <h2 class="text-xl font-black mb-4 text-teal-600">PayStation Payment</h2>
+                      
+                      <!-- Booking Summary -->
+                      <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                        <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Booking Summary</h4>
+                        <div class="space-y-2 text-sm">
+                          <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Room</span>
+                            <span class="font-semibold text-gray-800 dark:text-white">{{ selectedRoom.room_type?.name || selectedRoom.title }}</span>
+                          </div>
+                          <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Transaction ID</span>
+                            <span class="font-mono text-xs text-gray-800 dark:text-white">{{ paymentTransactionId || 'Will be generated' }}</span>
+                          </div>
+                          <div class="border-t pt-2 mt-2 flex justify-between">
+                            <span class="font-bold text-gray-800 dark:text-white">Total Amount</span>
+                            <span class="font-black text-lg text-teal-600">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
+                          </div>
                         </div>
                       </div>
+
+                      <!-- Payment Method Selection -->
+                      <div class="space-y-3 mb-6">
+                        <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Select Payment Method</h3>
+                        
+                        <!-- bKash -->
+                        <button @click="selectPaymentMethod('bkash')" 
+                          :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                            selectedMethod === 'bkash' ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-pink-300']">
+                          <div class="w-10 h-10 rounded-lg bg-pink-500 flex items-center justify-center">
+                            <span class="text-white font-black text-xs">bK</span>
+                          </div>
+                          <div class="text-left">
+                            <p class="font-bold text-gray-800 dark:text-white">bKash</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Pay with bKash mobile wallet</p>
+                          </div>
+                        </button>
+
+                        <!-- Nagad -->
+                        <button @click="selectPaymentMethod('nagad')"
+                          :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                            selectedMethod === 'nagad' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-red-300']">
+                          <div class="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center">
+                            <span class="text-white font-black text-xs">N</span>
+                          </div>
+                          <div class="text-left">
+                            <p class="font-bold text-gray-800 dark:text-white">Nagad</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Pay with Nagad mobile wallet</p>
+                          </div>
+                        </button>
+
+                        <!-- Rocket -->
+                        <button @click="selectPaymentMethod('rocket')"
+                          :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                            selectedMethod === 'rocket' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-purple-300']">
+                          <div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center">
+                            <span class="text-white font-black text-xs">R</span>
+                          </div>
+                          <div class="text-left">
+                            <p class="font-bold text-gray-800 dark:text-white">Rocket</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Pay with Rocket mobile wallet</p>
+                          </div>
+                        </button>
+
+                        <!-- Card Payment -->
+                        <button @click="selectPaymentMethod('card')"
+                          :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
+                            selectedMethod === 'card' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-blue-300']">
+                          <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                            <CreditCard class="w-5 h-5 text-white" />
+                          </div>
+                          <div class="text-left">
+                            <p class="font-bold text-gray-800 dark:text-white">Credit/Debit Card</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Visa, MasterCard, Amex</p>
+                          </div>
+                        </button>
+                      </div>
+
+                      <button @click="proceedToPayment" :disabled="!selectedMethod"
+                        :class="['w-full py-4 rounded-2xl font-bold text-white transition-all',
+                          selectedMethod ? 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg' : 'bg-gray-300 cursor-not-allowed']">
+                        Proceed to Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
+                      </button>
                     </div>
 
-                    <!-- Payment Status Messages -->
-                    <div v-if="paymentStatus?.status === 'failed'" class="text-center py-6 mb-6">
-                      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                        <X class="w-8 h-8 text-red-600" />
+                    <!-- bKash Payment Form -->
+                    <div v-if="payStationStep === 'bkash-form'" class="space-y-4">
+                      <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-lg bg-pink-500 flex items-center justify-center">
+                            <span class="text-white font-black text-xs">bK</span>
+                          </div>
+                          <h3 class="font-black text-gray-800 dark:text-white">bKash Payment</h3>
+                        </div>
+                        <button @click="payStationStep = 'method'" class="text-gray-400 hover:text-gray-600">
+                          <X class="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <div class="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl p-3 mb-4">
+                        <p class="text-xs text-pink-700 dark:text-pink-300">
+                          <strong>Sandbox Test:</strong> Use 01929918378 | PIN: 12121 | OTP: 123456
+                        </p>
+                      </div>
+
+                      <form @submit.prevent="processPayment" class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">bKash Account Number</label>
+                          <input type="tel" v-model="paymentForm.phone" placeholder="01XXXXXXXXX"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all" />
+                        </div>
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">PIN</label>
+                          <input type="password" v-model="paymentForm.pin" maxlength="5" placeholder="*****"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all" />
+                        </div>
+                        <button type="submit" :disabled="processingPayment"
+                          class="w-full py-4 bg-pink-500 text-white rounded-xl font-bold hover:bg-pink-600 transition-all disabled:opacity-50">
+                          <template v-if="processingPayment">
+                            <span class="flex items-center justify-center gap-2">
+                              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                              </svg>
+                              Processing...
+                            </span>
+                          </template>
+                          <template v-else>
+                            Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
+                          </template>
+                        </button>
+                      </form>
+                    </div>
+
+                    <!-- Card Payment Form -->
+                    <div v-if="payStationStep === 'card-form'" class="space-y-4">
+                      <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                            <CreditCard class="w-5 h-5 text-white" />
+                          </div>
+                          <h3 class="font-black text-gray-800 dark:text-white">Card Payment</h3>
+                        </div>
+                        <button @click="payStationStep = 'method'" class="text-gray-400 hover:text-gray-600">
+                          <X class="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 mb-4">
+                        <p class="text-xs text-blue-700 dark:text-blue-300">
+                          <strong>Test Card:</strong> 4111 1111 1111 1111 | Exp: 12/25 | CVV: 123
+                        </p>
+                      </div>
+
+                      <form @submit.prevent="processPayment" class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
+                          <input type="text" v-model="paymentForm.cardNumber" placeholder="4111 1111 1111 1111"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                          <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry</label>
+                            <input type="text" v-model="paymentForm.expiry" placeholder="MM/YY" maxlength="5"
+                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
+                          </div>
+                          <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
+                            <input type="password" v-model="paymentForm.cvv" placeholder="123" maxlength="4"
+                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
+                          </div>
+                        </div>
+                        <button type="submit" :disabled="processingPayment"
+                          class="w-full py-4 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition-all disabled:opacity-50">
+                          <template v-if="processingPayment">
+                            <span class="flex items-center justify-center gap-2">
+                              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                              </svg>
+                              Processing...
+                            </span>
+                          </template>
+                          <template v-else>
+                            Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
+                          </template>
+                        </button>
+                      </form>
+                    </div>
+
+                    <!-- OTP Verification -->
+                    <div v-if="payStationStep === 'otp'" class="space-y-4">
+                      <div class="text-center mb-4">
+                        <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-teal-100 flex items-center justify-center">
+                          <Shield class="w-8 h-8 text-teal-600" />
+                        </div>
+                        <h3 class="font-black text-gray-800 dark:text-white">Verify OTP</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Enter the OTP sent to {{ paymentForm.phone }}</p>
+                        <p class="text-xs text-amber-600 dark:text-amber-400 mt-2">Sandbox OTP: 123456</p>
+                      </div>
+
+                      <form @submit.prevent="verifyOTP" class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">OTP Code</label>
+                          <input type="text" v-model="paymentForm.otp" maxlength="6" placeholder="123456"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all text-center text-2xl font-mono tracking-widest" />
+                        </div>
+                        <button type="submit" :disabled="processingPayment"
+                          class="w-full py-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all disabled:opacity-50">
+                          <template v-if="processingPayment">
+                            <span class="flex items-center justify-center gap-2">
+                              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                              </svg>
+                              Verifying...
+                            </span>
+                          </template>
+                          <template v-else>
+                            Verify & Pay
+                          </template>
+                        </button>
+                        <button type="button" @click="goBackToPaymentForm"
+                          class="w-full py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-sm">
+                          Back to Payment
+                        </button>
+                      </form>
+                    </div>
+
+                    <!-- Payment Success -->
+                    <div v-if="payStationStep === 'success'" class="text-center py-6">
+                      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                        <CheckCircle2 class="w-10 h-10 text-green-600" />
+                      </div>
+                      <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Successful!</h3>
+                      <p class="text-gray-600 dark:text-gray-400 mb-2">Transaction ID: {{ paymentTransactionId }}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Your booking has been confirmed</p>
+                      <button @click="completePayment" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
+                        View Booking Confirmation
+                      </button>
+                    </div>
+
+                    <!-- Payment Failed -->
+                    <div v-if="payStationStep === 'failed'" class="text-center py-6">
+                      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                        <X class="w-10 h-10 text-red-600" />
                       </div>
                       <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Failed</h3>
-                      <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentStatus.message }}</p>
-                      <button @click="paymentStatus = null" class="px-6 py-3 text-white rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all bg-teal-600">
+                      <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentError }}</p>
+                      <button @click="payStationStep = 'method'" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
                         Try Again
                       </button>
                     </div>
-
-                    <div v-else-if="paymentStatus?.status === 'canceled'" class="text-center py-6 mb-6">
-                      <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-4">Payment Canceled</h3>
-                      <p class="text-gray-600 dark:text-gray-400 mb-4">{{ paymentStatus.message }}</p>
-                      <button @click="paymentStatus = null" class="px-6 py-3 rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all bg-gray-100 dark:bg-gray-700">
-                        Go Back
-                      </button>
-                    </div>
-
-                    <div v-else class="space-y-4 mb-8">
-                      <button v-for="method in paymentMethods" :key="method.id"
-                        @click="selectPayment(method.id)"
-                        :disabled="isProcessing"
-                        :class="['w-full p-5 rounded-2xl border-2 transition-all flex items-center gap-4',
-                          selectedPayment === method.id
-                            ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/50 dark:border-teal-400'
-                            : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 bg-white dark:bg-gray-700',
-                          'disabled:opacity-50']">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg" :style="{ background: method.color }">
-                          <component :is="method.icon" class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="text-left flex-1">
-                          <h4 class="text-lg font-black text-gray-800 dark:text-white">{{ method.title }}</h4>
-                          <p class="text-sm text-gray-600 dark:text-gray-400">{{ method.desc }}</p>
-                        </div>
-                        <div v-if="selectedPayment === method.id" class="w-6 h-6 rounded-full flex items-center justify-center bg-teal-600">
-                          <CheckCircle2 class="w-4 h-4 text-white" />
-                        </div>
-                      </button>
-                    </div>
-
-                    <!-- Payment Gateway Modal Trigger -->
-                    <button @click="initiatePayment"
-                      :disabled="!selectedPayment || isProcessing || submittingBooking"
-                      :class="['w-full py-5 rounded-2xl font-bold text-white text-lg shadow transition-all flex items-center justify-center gap-3',
-                        selectedPayment && !isProcessing && !submittingBooking
-                          ? 'hover:shadow-xl hover:scale-[1.02]'
-                          : 'bg-gray-300 cursor-not-allowed']"
-                      :style="selectedPayment && !isProcessing && !submittingBooking ? { background: '#0d9488' } : {}">
-                      <template v-if="isProcessing || submittingBooking">
-                        <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {{ submittingBooking ? 'Creating Booking...' : 'Processing...' }}
-                      </template>
-                      <template v-else>
-                        <CreditCard class="w-6 h-6" />
-                        Pay Now ৳{{ selectedRoom ? Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() : '' }}
-                      </template>
-                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </AnimatedSection>
-
-          <!-- Payment Gateway Modal -->
-          <Teleport to="body">
-            <div v-if="showPaymentModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <AnimatedSection>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                  <!-- SSLCommerz Style Header -->
-                  <div v-if="selectedPayment === 'sslcommerz'" class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
-                          <Shield class="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h3 class="font-black text-gray-800 dark:text-white">SSLCommerz</h3>
-                          <p class="text-xs text-gray-500">Secure Payment Gateway</p>
-                        </div>
-                      </div>
-                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <X class="w-6 h-6" />
-                      </button>
-                    </div>
-
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
-                      <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
-                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
-                      </div>
-                      <div class="text-xs text-gray-500">Transaction ID: {{ generatedTranId }}</div>
-                    </div>
-
-                    <!-- SSLCommerz Payment Form -->
-                    <form @submit.prevent="processSSLCommerzPayment" class="space-y-4">
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
-                        <div class="relative">
-                          <input type="text" v-model="sslForm.cardNumber" @input="formatCardNumber" maxlength="19" placeholder="1234 5678 9012 3456"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                          <div class="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 opacity-50" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-4 opacity-50" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry Date</label>
-                          <input type="text" v-model="sslForm.expiry" @input="formatExpiry" maxlength="5" placeholder="MM/YY"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                        </div>
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
-                          <input type="password" v-model="sslForm.cvv" maxlength="4" placeholder="***"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Holder Name</label>
-                        <input type="text" v-model="sslForm.cardHolder" placeholder="John Doe"
-                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
-                      </div>
-
-                      <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                        <Lock class="w-4 h-4" />
-                        <span>Secured by SSLCommerz. Your data is encrypted.</span>
-                      </div>
-
-                      <button type="submit" :disabled="sslProcessing"
-                        class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                        <template v-if="sslProcessing">
-                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                          </svg>
-                          Processing...
-                        </template>
-                        <template v-else>
-                          <Lock class="w-5 h-5" />
-                          Pay Securely
-                        </template>
-                      </button>
-                    </form>
-                  </div>
-
-                  <!-- Mobile Banking Modal -->
-                  <div v-else-if="selectedPayment === 'mobile-banking'" class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center">
-                          <Smartphone class="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h3 class="font-black text-gray-800 dark:text-white">Mobile Banking</h3>
-                          <p class="text-xs text-gray-500">bKash, Nagad, Rocket</p>
-                        </div>
-                      </div>
-                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <X class="w-6 h-6" />
-                      </button>
-                    </div>
-
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
-                      <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
-                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
-                      </div>
-                    </div>
-
-                    <div class="space-y-3 mb-6">
-                      <button @click="mobileProvider = 'bkash'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
-                        mobileProvider === 'bkash' ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20' : 'border-gray-200 dark:border-gray-600']">
-                        <div class="w-10 h-10 rounded-lg bg-pink-500 flex items-center justify-center flex-shrink-0">
-                          <span class="text-white font-black text-sm">bKash</span>
-                        </div>
-                        <span class="font-bold text-gray-800 dark:text-white">bKash</span>
-                      </button>
-                      <button @click="mobileProvider = 'nagad'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
-                        mobileProvider === 'nagad' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-600']">
-                        <div class="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
-                          <span class="text-white font-black text-sm">Nagad</span>
-                        </div>
-                        <span class="font-bold text-gray-800 dark:text-white">Nagad</span>
-                      </button>
-                      <button @click="mobileProvider = 'rocket'" :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
-                        mobileProvider === 'rocket' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-600']">
-                        <div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center flex-shrink-0">
-                          <span class="text-white font-black text-sm">Rocket</span>
-                        </div>
-                        <span class="font-bold text-gray-800 dark:text-white">Rocket</span>
-                      </button>
-                    </div>
-
-                    <form @submit.prevent="processMobilePayment" class="space-y-4">
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Mobile Number</label>
-                        <input type="tel" v-model="mobileForm.number" placeholder="01XXXXXXXXX"
-                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
-                      </div>
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">PIN</label>
-                        <input type="password" v-model="mobileForm.pin" maxlength="5" placeholder="*****"
-                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
-                      </div>
-                      <button type="submit" :disabled="!mobileProvider || sslProcessing" :class="['w-full py-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50',
-                        mobileProvider === 'bkash' ? 'bg-pink-500 hover:bg-pink-600' :
-                        mobileProvider === 'nagad' ? 'bg-red-500 hover:bg-red-600' :
-                        mobileProvider === 'rocket' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-300']">
-                        <template v-if="sslProcessing">
-                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                          </svg>
-                          Processing...
-                        </template>
-                        <template v-else>
-                          <Smartphone class="w-5 h-5" />
-                          Pay with {{ mobileProvider || 'Mobile' }}
-                        </template>
-                      </button>
-                    </form>
-                  </div>
-
-                  <!-- Credit/Debit Card Modal -->
-                  <div v-else-if="selectedPayment === 'credit-card'" class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                          <CreditCard class="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h3 class="font-black text-gray-800 dark:text-white">Credit/Debit Card</h3>
-                          <p class="text-xs text-gray-500">Visa, MasterCard, Amex</p>
-                        </div>
-                      </div>
-                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <X class="w-6 h-6" />
-                      </button>
-                    </div>
-
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
-                      <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount to Pay</span>
-                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
-                      </div>
-                    </div>
-
-                    <form @submit.prevent="processCardPayment" class="space-y-4">
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
-                        <input type="text" v-model="sslForm.cardNumber" @input="formatCardNumber" maxlength="19" placeholder="1234 5678 9012 3456"
-                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                      </div>
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry</label>
-                          <input type="text" v-model="sslForm.expiry" @input="formatExpiry" maxlength="5" placeholder="MM/YY"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                        </div>
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
-                          <input type="password" v-model="sslForm.cvv" maxlength="4" placeholder="***"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all font-mono" />
-                        </div>
-                      </div>
-                      <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Holder</label>
-                        <input type="text" v-model="sslForm.cardHolder" placeholder="John Doe"
-                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all" />
-                      </div>
-                      <button type="submit" :disabled="sslProcessing"
-                        class="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                        <template v-if="sslProcessing">
-                          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                          </svg>
-                          Processing...
-                        </template>
-                        <template v-else>
-                          <CreditCard class="w-5 h-5" />
-                          Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
-                        </template>
-                      </button>
-                    </form>
-                  </div>
-
-                  <!-- Net Banking Modal -->
-                  <div v-else-if="selectedPayment === 'net-banking'" class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                      <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center">
-                          <Building2 class="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <h3 class="font-black text-gray-800 dark:text-white">Net Banking</h3>
-                          <p class="text-xs text-gray-500">All Major Banks</p>
-                        </div>
-                      </div>
-                      <button @click="showPaymentModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <X class="w-6 h-6" />
-                      </button>
-                    </div>
-
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-6">
-                      <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Amount</span>
-                        <span class="text-2xl font-black text-gray-800 dark:text-white">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
-                      </div>
-                    </div>
-
-                    <div class="space-y-3 mb-6">
-                      <button v-for="bank in banks" :key="bank.id" @click="selectedBank = bank.id"
-                        :class="['w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3',
-                          selectedBank === bank.id ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20' : 'border-gray-200 dark:border-gray-600']">
-                        <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
-                          <Building2 class="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                        </div>
-                        <span class="font-bold text-gray-800 dark:text-white">{{ bank.name }}</span>
-                      </button>
-                    </div>
-
-                    <button @click="processNetBanking" :disabled="!selectedBank || sslProcessing"
-                      class="w-full py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                      <template v-if="sslProcessing">
-                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        Processing...
-                      </template>
-                      <template v-else>
-                        <Building2 class="w-5 h-5" />
-                        Proceed to Net Banking
-                      </template>
-                    </button>
-                  </div>
-                </div>
-              </AnimatedSection>
-            </div>
-          </Teleport>
         </div>
 
         <!-- Step 2: Booking Form -->
@@ -712,20 +601,19 @@ import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Smartphone, Building2, Clock, Phone, Lock, Shield } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Clock, Phone, Shield } from 'lucide-vue-next'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
 import { useRooms } from '../composables/useRooms'
 import { useBookings } from '../composables/useBookings'
 import { useLocations } from '../composables/useLocations'
-import { roomAPI } from '../services/api'
 
 useHead({
   title: 'Book a Room - SylhetStay | Student Accommodation Booking',
   meta: [
-    { name: 'description', content: 'Book your premium student accommodation at SylhetStay in Sylhet, Bangladesh. Easy online booking process with multiple payment options.' },
+    { name: 'description', content: 'Book your premium student accommodation at SylhetStay in Sylhet, Bangladesh. Easy online booking process with PayStation payment.' },
     { name: 'keywords', content: 'book room Sylhet, student accommodation booking, SylhetStay booking, reserve room, student housing' },
     { property: 'og:title', content: 'Book a Room - SylhetStay' },
-    { property: 'og:description', content: 'Complete your booking for premium student accommodation in Sylhet. Secure online payment available.' },
+    { property: 'og:description', content: 'Complete your booking for premium student accommodation in Sylhet. Secure payment via PayStation.' },
     { property: 'og:type', content: 'website' },
   ]
 })
@@ -736,54 +624,32 @@ const step = ref(2)
 const currentTab = ref(0)
 const tabs = ['Booking Info', 'Boarder Info', 'Guardian Info & Address', 'Social Media Links']
 
-// Payment modal state
-const showPaymentModal = ref(false)
-const sslProcessing = ref(false)
-const generatedTranId = ref('')
-const mobileProvider = ref('')
-const selectedBank = ref('')
-
-// SSLCommerz form
-const sslForm = ref({
+// PayStation state
+const payStationStep = ref(null) // null, 'method', 'bkash-form', 'card-form', 'otp', 'success', 'failed'
+const selectedMethod = ref('')
+const paymentTransactionId = ref('')
+const processingPayment = ref(false)
+const paymentError = ref('')
+const paymentForm = ref({
+  phone: '',
+  pin: '',
+  otp: '',
   cardNumber: '',
   expiry: '',
-  cvv: '',
-  cardHolder: ''
+  cvv: ''
 })
-
-// Mobile banking form
-const mobileForm = ref({
-  number: '',
-  pin: ''
-})
-
-// Banks list
-const banks = [
-  { id: 'dutch-bangla', name: 'Dutch-Bangla Bank' },
-  { id: 'brac', name: 'BRAC Bank' },
-  { id: 'city', name: 'City Bank' },
-  { id: 'eastern', name: 'Eastern Bank' },
-  { id: 'ucb', name: 'United Commercial Bank' },
-  { id: 'prime', name: 'Prime Bank' },
-  { id: 'one', name: 'ONE Bank' },
-  { id: 'mutual-trust', name: 'Mutual Trust Bank' }
-]
 
 const availableSeats = ref([])
 const selectedSeatId = ref(null)
 
 const { rooms, roomTypes, loading: roomsLoading, error: roomsError, fetchRooms, fetchRoomDetails, checkRoomAvailability } = useRooms()
-const { createBooking, currentBooking, loading: bookingLoading, error: bookingError, updateBookingStatus } = useBookings()
+const { createBooking, currentBooking, loading: bookingLoading, error: bookingError } = useBookings()
 const { divisions, districts, upazilas, unions, loading: locationLoading, fetchDivisions, fetchDistricts, fetchUpazilas, fetchUnions } = useLocations()
 
-const selectedPayment = ref('')
-const isProcessing = ref(false)
 const submittingBooking = ref(false)
-const paymentStatus = ref(null)
 const formErrors = ref({})
 const selectedDivisionId = ref('')
 const selectedRoom = ref(null)
-
 const termsAccepted = ref(false)
 
 const autofillFromUserData = () => {
@@ -824,16 +690,9 @@ const bookingData = ref({
   youtube: '',
   check_in_date: '',
   billing_amount: 0,
-  status: 2, // 2 = pending
+  status: 1, // Auto-approved
   notes: ''
 })
-
-const paymentMethods = [
-  { id: 'sslcommerz', title: 'SSLCommerz', desc: 'Pay securely with SSLCOMMERZ gateway (Bangla)', icon: Shield, color: '#0d9488' },
-  { id: 'credit-card', title: 'Credit/Debit Card', desc: 'Visa, MasterCard, American Express', icon: CreditCard, color: '#3b82f6' },
-  { id: 'mobile-banking', title: 'Mobile Banking', desc: 'bKash, Nagad, Rocket, Upay', icon: Smartphone, color: '#ec4899' },
-  { id: 'net-banking', title: 'Net Banking', desc: 'All major banks supported', icon: Building2, color: '#4b5563' }
-]
 
 const getRoomImage = (roomTypeName) => {
   const images = {
@@ -845,29 +704,100 @@ const getRoomImage = (roomTypeName) => {
   return images[roomTypeName?.toLowerCase()] || images.standard
 }
 
-// Generate random transaction ID
-const generateTranId = () => {
+// Generate transaction ID
+const generateTransactionId = () => {
   const timestamp = Date.now().toString(36).toUpperCase()
   const random = Math.random().toString(36).substring(2, 8).toUpperCase()
-  return `SSL${timestamp}${random}`
+  return `PAY${timestamp}${random}`
 }
 
-// Format card number with spaces
-const formatCardNumber = (e) => {
-  let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '')
-  if (value.length > 16) value = value.slice(0, 16)
-  const parts = value.match(/.{1,4}/g)
-  sslForm.value.cardNumber = parts ? parts.join(' ') : value
+// Payment method selection
+const selectPaymentMethod = (method) => {
+  selectedMethod.value = method
 }
 
-// Format expiry date
-const formatExpiry = (e) => {
-  let value = e.target.value.replace(/[^0-9]/g, '')
-  if (value.length > 4) value = value.slice(0, 4)
-  if (value.length > 2) {
-    value = value.slice(0, 2) + '/' + value.slice(2)
+// Proceed to payment form
+const proceedToPayment = () => {
+  if (!selectedMethod.value) return
+  
+  // Generate transaction ID
+  paymentTransactionId.value = generateTransactionId()
+  
+  // Show appropriate payment form
+  if (selectedMethod.value === 'bkash' || selectedMethod.value === 'nagad' || selectedMethod.value === 'rocket') {
+    payStationStep.value = 'bkash-form'
+    // Pre-fill test credentials for sandbox
+    paymentForm.value.phone = '01929918378'
+    paymentForm.value.pin = '12121'
+    paymentForm.value.otp = '123456'
+  } else if (selectedMethod.value === 'card') {
+    payStationStep.value = 'card-form'
+    // Pre-fill test card details
+    paymentForm.value.cardNumber = '4111 1111 1111 1111'
+    paymentForm.value.expiry = '12/25'
+    paymentForm.value.cvv = '123'
   }
-  sslForm.value.expiry = value
+}
+
+// Go back to payment form from OTP
+const goBackToPaymentForm = () => {
+  if (selectedMethod.value === 'card') {
+    payStationStep.value = 'card-form'
+  } else {
+    payStationStep.value = 'bkash-form'
+  }
+}
+
+// Process payment (validate PIN or card)
+const processPayment = () => {
+  processingPayment.value = true
+  
+  // Simulate API call delay
+  setTimeout(() => {
+    if (selectedMethod.value === 'card') {
+      // Validate test card
+      if (paymentForm.value.cardNumber.replace(/\s/g, '') === '4111111111111111' && 
+          paymentForm.value.expiry === '12/25' && 
+          paymentForm.value.cvv === '123') {
+        // For card payments, go directly to success
+        payStationStep.value = 'success'
+      } else {
+        paymentError.value = 'Invalid card details. Please use test card: 4111 1111 1111 1111'
+        payStationStep.value = 'failed'
+      }
+    } else {
+      // Validate mobile banking test credentials
+      if (paymentForm.value.phone === '01929918378' && paymentForm.value.pin === '12121') {
+        payStationStep.value = 'otp'
+      } else {
+        paymentError.value = 'Invalid phone number or PIN. Please use: 01929918378 / 12121'
+        payStationStep.value = 'failed'
+      }
+    }
+    processingPayment.value = false
+  }, 1500)
+}
+
+// Verify OTP
+const verifyOTP = () => {
+  processingPayment.value = true
+  
+  // Simulate OTP verification
+  setTimeout(() => {
+    if (paymentForm.value.otp === '123456') {
+      payStationStep.value = 'success'
+    } else {
+      paymentError.value = 'Invalid OTP. Please use: 123456'
+      payStationStep.value = 'failed'
+    }
+    processingPayment.value = false
+  }, 1500)
+}
+
+// Complete payment - go to confirmation page
+const completePayment = () => {
+  // No API call needed - booking already created with approved status
+  step.value = 4
 }
 
 // Fetch available seats
@@ -906,7 +836,6 @@ onMounted(async () => {
   }
 
   autofillFromUserData()
-
   await fetchDivisions()
 
   const roomId = route.query.roomId
@@ -1031,7 +960,7 @@ const confirmBooking = async () => {
     youtube: bookingData.value.youtube || "",
     check_in_date: bookingData.value.check_in_date,
     billing_amount: parseFloat(bookingData.value.billing_amount),
-    status: 2, // Pending status
+    status: 1, // Auto-approved status
     notes: bookingData.value.notes || ""
   }
   
@@ -1039,6 +968,7 @@ const confirmBooking = async () => {
     const booking = await createBooking(bookingPayload)
     if (booking) {
       step.value = 3
+      payStationStep.value = 'method'
     }
   } catch (error) {
     console.error('Failed to create booking:', error)
@@ -1056,152 +986,13 @@ const confirmBooking = async () => {
   }
 }
 
-const selectPayment = (method) => {
-  selectedPayment.value = method
-}
-
-// Open payment modal
-const initiatePayment = () => {
-  if (!selectedPayment.value) return
-  
-  generatedTranId.value = generateTranId()
-  showPaymentModal.value = true
-  
-  // Reset forms
-  sslForm.value = { cardNumber: '', expiry: '', cvv: '', cardHolder: '' }
-  mobileForm.value = { number: '', pin: '' }
-  mobileProvider.value = ''
-  selectedBank.value = ''
-}
-
-// Process SSLCommerz payment
-const processSSLCommerzPayment = async () => {
-  sslProcessing.value = true
-  
-  // Simulate payment processing
-  await new Promise(resolve => setTimeout(resolve, 2500))
-  
-  // Simulate success (90% success rate)
-  const isSuccess = Math.random() > 0.1
-  
-  if (isSuccess) {
-    showPaymentModal.value = false
-    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
-    
-    // Update booking status to pending (2)
-    if (currentBooking.value?.id) {
-      try {
-        await updateBookingStatus(currentBooking.value.id, 2)
-      } catch (err) {
-        console.error('Failed to update booking status:', err)
-      }
-    }
-    
-    step.value = 4
-  } else {
-    paymentStatus.value = { status: 'failed', message: 'Payment failed. Please try again.' }
-    showPaymentModal.value = false
-  }
-  
-  sslProcessing.value = false
-}
-
-// Process mobile banking payment
-const processMobilePayment = async () => {
-  if (!mobileProvider.value) return
-  
-  sslProcessing.value = true
-  
-  await new Promise(resolve => setTimeout(resolve, 2500))
-  
-  const isSuccess = Math.random() > 0.1
-  
-  if (isSuccess) {
-    showPaymentModal.value = false
-    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
-    
-    if (currentBooking.value?.id) {
-      try {
-        await updateBookingStatus(currentBooking.value.id, 2)
-      } catch (err) {
-        console.error('Failed to update booking status:', err)
-      }
-    }
-    
-    step.value = 4
-  } else {
-    paymentStatus.value = { status: 'failed', message: 'Mobile payment failed. Please try again.' }
-    showPaymentModal.value = false
-  }
-  
-  sslProcessing.value = false
-}
-
-// Process card payment
-const processCardPayment = async () => {
-  sslProcessing.value = true
-  
-  await new Promise(resolve => setTimeout(resolve, 2500))
-  
-  const isSuccess = Math.random() > 0.1
-  
-  if (isSuccess) {
-    showPaymentModal.value = false
-    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
-    
-    if (currentBooking.value?.id) {
-      try {
-        await updateBookingStatus(currentBooking.value.id, 2)
-      } catch (err) {
-        console.error('Failed to update booking status:', err)
-      }
-    }
-    
-    step.value = 4
-  } else {
-    paymentStatus.value = { status: 'failed', message: 'Card payment failed. Please try again.' }
-    showPaymentModal.value = false
-  }
-  
-  sslProcessing.value = false
-}
-
-// Process net banking payment
-const processNetBanking = async () => {
-  if (!selectedBank.value) return
-  
-  sslProcessing.value = true
-  
-  await new Promise(resolve => setTimeout(resolve, 2500))
-  
-  const isSuccess = Math.random() > 0.1
-  
-  if (isSuccess) {
-    showPaymentModal.value = false
-    paymentStatus.value = { status: 'success', message: 'Payment successful! Your booking is under approval.' }
-    
-    if (currentBooking.value?.id) {
-      try {
-        await updateBookingStatus(currentBooking.value.id, 2)
-      } catch (err) {
-        console.error('Failed to update booking status:', err)
-      }
-    }
-    
-    step.value = 4
-  } else {
-    paymentStatus.value = { status: 'failed', message: 'Net banking payment failed. Please try again.' }
-    showPaymentModal.value = false
-  }
-  
-  sslProcessing.value = false
-}
-
 const resetBooking = () => {
   step.value = 2
-  paymentStatus.value = null
-  selectedPayment.value = ''
-  showPaymentModal.value = false
+  payStationStep.value = null
+  selectedMethod.value = ''
+  paymentTransactionId.value = ''
+  paymentForm.value = { phone: '', pin: '', otp: '', cardNumber: '', expiry: '', cvv: '' }
+  
   bookingData.value = {
     branch_id: selectedRoom.value?.branch_id || 1,
     room_id: selectedRoom.value?.id,
@@ -1226,7 +1017,7 @@ const resetBooking = () => {
     youtube: '',
     check_in_date: '',
     billing_amount: selectedRoom.value?.room_price || 0,
-    status: 2,
+    status: 1,
     notes: ''
   }
   termsAccepted.value = false
