@@ -98,6 +98,7 @@
                       Back to Booking
                     </button>
 
+
                     <!-- PayStation Payment Interface -->
                     <div v-if="!payStationStep || payStationStep === 'method'">
                       <h2 class="text-xl font-black mb-4 text-teal-600">PayStation Payment</h2>
@@ -178,46 +179,78 @@
                         </button>
                       </div>
 
-                      <button @click="proceedToPayment" :disabled="!selectedMethod"
+                      <button @click="startPayment" :disabled="!selectedMethod"
                         :class="['w-full py-4 rounded-2xl font-bold text-white transition-all',
                           selectedMethod ? 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg' : 'bg-gray-300 cursor-not-allowed']">
                         Proceed to Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
                       </button>
                     </div>
 
-                    <!-- bKash Payment Form -->
-                    <div v-if="payStationStep === 'bkash-form'" class="space-y-4">
-                      <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                          <div class="w-10 h-10 rounded-lg bg-pink-500 flex items-center justify-center">
-                            <span class="text-white font-black text-xs">bK</span>
-                          </div>
-                          <h3 class="font-black text-gray-800 dark:text-white">bKash Payment</h3>
+                    <!-- BKASH CHECKOUT FLOW - Step 1: Enter Number -->
+                    <div v-if="payStationStep === 'enter-number'" class="space-y-6">
+                      <div class="text-center mb-6">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pink-500 flex items-center justify-center">
+                          <span class="text-white font-black text-2xl">bK</span>
                         </div>
-                        <button @click="payStationStep = 'method'" class="text-gray-400 hover:text-gray-600">
-                          <X class="w-5 h-5" />
-                        </button>
+                        <h3 class="text-xl font-black text-gray-800 dark:text-white">bKash Payment</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your bKash account number</p>
                       </div>
 
                       <div class="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl p-3 mb-4">
                         <p class="text-xs text-pink-700 dark:text-pink-300">
-                          <strong>Sandbox Test:</strong> Use 01929918378 | PIN: 12121 | OTP: 123456
+                          <strong>Sandbox:</strong> 01929918378
                         </p>
                       </div>
 
-                      <form @submit.prevent="processPayment" class="space-y-4">
+                      <form @submit.prevent="confirmNumber" class="space-y-4">
                         <div>
                           <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">bKash Account Number</label>
-                          <input type="tel" v-model="paymentForm.phone" placeholder="01XXXXXXXXX"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all" />
+                          <div class="relative">
+                            <input 
+                              type="tel" 
+                              v-model="bkashFlow.number" 
+                              placeholder="01XXXXXXXXX"
+                              maxlength="11"
+                              class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all text-lg font-mono tracking-wider text-center" />
+                          </div>
+                          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                            Enter the bKash number you want to pay with
+                          </p>
                         </div>
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">PIN</label>
-                          <input type="password" v-model="paymentForm.pin" maxlength="5" placeholder="*****"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all" />
+
+                        <button type="submit" :disabled="!bkashFlow.number || bkashFlow.number.length < 11"
+                          :class="['w-full py-4 rounded-xl font-bold text-white transition-all',
+                            bkashFlow.number && bkashFlow.number.length >= 11 ? 'bg-pink-500 hover:bg-pink-600' : 'bg-gray-300 cursor-not-allowed']">
+                          Continue
+                        </button>
+
+                        <button type="button" @click="payStationStep = 'method'"
+                          class="w-full py-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm">
+                          Cancel
+                        </button>
+                      </form>
+                    </div>
+
+                    <!-- BKASH CHECKOUT FLOW - Step 2: Confirm Number -->
+                    <div v-if="payStationStep === 'confirm-number'" class="space-y-6">
+                      <div class="text-center mb-6">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pink-500 flex items-center justify-center">
+                          <span class="text-white font-black text-2xl">bK</span>
                         </div>
-                        <button type="submit" :disabled="processingPayment"
-                          class="w-full py-4 bg-pink-500 text-white rounded-xl font-bold hover:bg-pink-600 transition-all disabled:opacity-50">
+                        <h3 class="text-xl font-black text-gray-800 dark:text-white">Confirm Account</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Please confirm your bKash number</p>
+                      </div>
+
+                      <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 text-center">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">bKash Account</p>
+                        <p class="text-3xl font-black text-gray-800 dark:text-white font-mono tracking-wider">{{ formatPhoneNumber(bkashFlow.number) }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">Amount to Pay</p>
+                        <p class="text-2xl font-black text-pink-600">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</p>
+                      </div>
+
+                      <div class="flex gap-3">
+                        <button @click="requestOTP" :disabled="processingPayment"
+                          class="flex-1 py-4 rounded-xl font-bold text-white bg-pink-500 hover:bg-pink-600 transition-all disabled:opacity-50">
                           <template v-if="processingPayment">
                             <span class="flex items-center justify-center gap-2">
                               <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -228,103 +261,126 @@
                             </span>
                           </template>
                           <template v-else>
-                            Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
+                            Confirm & Get OTP
                           </template>
-                        </button>
-                      </form>
-                    </div>
-
-                    <!-- Card Payment Form -->
-                    <div v-if="payStationStep === 'card-form'" class="space-y-4">
-                      <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                          <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
-                            <CreditCard class="w-5 h-5 text-white" />
-                          </div>
-                          <h3 class="font-black text-gray-800 dark:text-white">Card Payment</h3>
-                        </div>
-                        <button @click="payStationStep = 'method'" class="text-gray-400 hover:text-gray-600">
-                          <X class="w-5 h-5" />
                         </button>
                       </div>
 
-                      <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 mb-4">
-                        <p class="text-xs text-blue-700 dark:text-blue-300">
-                          <strong>Test Card:</strong> 4111 1111 1111 1111 | Exp: 12/25 | CVV: 123
+                      <button @click="payStationStep = 'enter-number'"
+                        class="w-full py-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm">
+                        Change Number
+                      </button>
+                    </div>
+
+                    <!-- BKASH CHECKOUT FLOW - Step 3: Enter OTP -->
+                    <div v-if="payStationStep === 'enter-otp'" class="space-y-6">
+                      <div class="text-center mb-6">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pink-500 flex items-center justify-center">
+                          <span class="text-white font-black text-2xl">bK</span>
+                        </div>
+                        <h3 class="text-xl font-black text-gray-800 dark:text-white">Enter OTP</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          An OTP has been sent to {{ formatPhoneNumber(bkashFlow.number) }}
                         </p>
                       </div>
 
-                      <form @submit.prevent="processPayment" class="space-y-4">
+                      <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 mb-4">
+                        <p class="text-xs text-amber-700 dark:text-amber-300">
+                          <strong>Sandbox OTP:</strong> 123456
+                        </p>
+                      </div>
+
+                      <form @submit.prevent="confirmOTP" class="space-y-4">
                         <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Card Number</label>
-                          <input type="text" v-model="paymentForm.cardNumber" placeholder="4111 1111 1111 1111"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">OTP Code</label>
+                          <input 
+                            type="text" 
+                            v-model="bkashFlow.otp" 
+                            maxlength="6" 
+                            placeholder="••••••"
+                            class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all text-center text-2xl font-mono tracking-widest" />
+                          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                            Enter the 6-digit OTP sent to your bKash number
+                          </p>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                          <div>
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Expiry</label>
-                            <input type="text" v-model="paymentForm.expiry" placeholder="MM/YY" maxlength="5"
-                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
-                          </div>
-                          <div>
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">CVV</label>
-                            <input type="password" v-model="paymentForm.cvv" placeholder="123" maxlength="4"
-                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:outline-none transition-all font-mono" />
-                          </div>
-                        </div>
-                        <button type="submit" :disabled="processingPayment"
-                          class="w-full py-4 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition-all disabled:opacity-50">
-                          <template v-if="processingPayment">
-                            <span class="flex items-center justify-center gap-2">
-                              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                              </svg>
-                              Processing...
-                            </span>
-                          </template>
-                          <template v-else>
-                            Pay ৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}
-                          </template>
+
+                        <button type="submit" :disabled="!bkashFlow.otp || bkashFlow.otp.length < 6"
+                          :class="['w-full py-4 rounded-xl font-bold text-white transition-all',
+                            bkashFlow.otp && bkashFlow.otp.length >= 6 ? 'bg-pink-500 hover:bg-pink-600' : 'bg-gray-300 cursor-not-allowed']">
+                          Verify OTP
                         </button>
+
+                        <div class="text-center space-y-2">
+                          <button type="button" @click="resendOTP" class="text-pink-600 hover:text-pink-700 text-sm font-bold">
+                            Resend OTP
+                          </button>
+                          <br>
+                          <button type="button" @click="payStationStep = 'enter-number'"
+                            class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm">
+                            Change Number
+                          </button>
+                        </div>
                       </form>
                     </div>
 
-                    <!-- OTP Verification -->
-                    <div v-if="payStationStep === 'otp'" class="space-y-4">
-                      <div class="text-center mb-4">
-                        <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-teal-100 flex items-center justify-center">
-                          <Shield class="w-8 h-8 text-teal-600" />
+                    <!-- BKASH CHECKOUT FLOW - Step 4: Enter PIN -->
+                    <div v-if="payStationStep === 'enter-pin'" class="space-y-6">
+                      <div class="text-center mb-6">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pink-500 flex items-center justify-center">
+                          <Lock class="w-8 h-8 text-white" />
                         </div>
-                        <h3 class="font-black text-gray-800 dark:text-white">Verify OTP</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Enter the OTP sent to {{ paymentForm.phone }}</p>
-                        <p class="text-xs text-amber-600 dark:text-amber-400 mt-2">Sandbox OTP: 123456</p>
+                        <h3 class="text-xl font-black text-gray-800 dark:text-white">Enter PIN</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your bKash PIN to confirm payment</p>
                       </div>
 
-                      <form @submit.prevent="verifyOTP" class="space-y-4">
-                        <div>
-                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">OTP Code</label>
-                          <input type="text" v-model="paymentForm.otp" maxlength="6" placeholder="123456"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-teal-500 focus:outline-none transition-all text-center text-2xl font-mono tracking-widest" />
+                      <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 mb-4">
+                        <div class="flex justify-between items-center">
+                          <span class="text-sm text-gray-600 dark:text-gray-400">Amount</span>
+                          <span class="text-xl font-black text-pink-600">৳{{ Math.round((selectedRoom.room_price || selectedRoom.price) * 2).toLocaleString() }}</span>
                         </div>
-                        <button type="submit" :disabled="processingPayment"
-                          class="w-full py-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all disabled:opacity-50">
+                        <div class="flex justify-between items-center mt-2">
+                          <span class="text-sm text-gray-600 dark:text-gray-400">From</span>
+                          <span class="text-sm font-bold text-gray-800 dark:text-white">{{ formatPhoneNumber(bkashFlow.number) }}</span>
+                        </div>
+                      </div>
+
+                      <div class="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl p-3 mb-4">
+                        <p class="text-xs text-pink-700 dark:text-pink-300">
+                          <strong>Sandbox PIN:</strong> 12121
+                        </p>
+                      </div>
+
+                      <form @submit.prevent="processBKashPayment" class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Your bKash PIN</label>
+                          <input 
+                            type="password" 
+                            v-model="bkashFlow.pin" 
+                            maxlength="5" 
+                            placeholder="•••••"
+                            class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-pink-500 focus:outline-none transition-all text-center text-2xl font-mono tracking-widest" />
+                        </div>
+
+                        <button type="submit" :disabled="processingPayment || !bkashFlow.pin || bkashFlow.pin.length < 5"
+                          :class="['w-full py-4 rounded-xl font-bold text-white transition-all',
+                            !processingPayment && bkashFlow.pin && bkashFlow.pin.length >= 5 ? 'bg-pink-500 hover:bg-pink-600' : 'bg-gray-300 cursor-not-allowed']">
                           <template v-if="processingPayment">
                             <span class="flex items-center justify-center gap-2">
                               <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                               </svg>
-                              Verifying...
+                              Processing Payment...
                             </span>
                           </template>
                           <template v-else>
-                            Verify & Pay
+                            Confirm Payment
                           </template>
                         </button>
-                        <button type="button" @click="goBackToPaymentForm"
-                          class="w-full py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-sm">
-                          Back to Payment
+
+                        <button type="button" @click="payStationStep = 'enter-number'"
+                          class="w-full py-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm">
+                          Cancel
                         </button>
                       </form>
                     </div>
@@ -601,7 +657,7 @@ import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Clock, Phone, Shield } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, X, CreditCard, Clock, Phone, Shield, Lock } from 'lucide-vue-next'
 import AnimatedSection from '../components/ui/AnimatedSection.vue'
 import { useRooms } from '../composables/useRooms'
 import { useBookings } from '../composables/useBookings'
@@ -625,18 +681,24 @@ const currentTab = ref(0)
 const tabs = ['Booking Info', 'Boarder Info', 'Guardian Info & Address', 'Social Media Links']
 
 // PayStation state
-const payStationStep = ref(null) // null, 'method', 'bkash-form', 'card-form', 'otp', 'success', 'failed'
+const payStationStep = ref(null) // null, 'method', 'enter-number', 'confirm-number', 'enter-otp', 'enter-pin', 'card-form', 'success', 'failed'
 const selectedMethod = ref('')
 const paymentTransactionId = ref('')
 const processingPayment = ref(false)
 const paymentError = ref('')
-const paymentForm = ref({
-  phone: '',
-  pin: '',
-  otp: '',
+
+// Card payment form
+const cardForm = ref({
   cardNumber: '',
   expiry: '',
   cvv: ''
+})
+
+// bKash flow state
+const bkashFlow = ref({
+  number: '',
+  otp: '',
+  pin: ''
 })
 
 const availableSeats = ref([])
@@ -711,92 +773,123 @@ const generateTransactionId = () => {
   return `PAY${timestamp}${random}`
 }
 
+// Format phone number for display
+const formatPhoneNumber = (number) => {
+  if (!number) return ''
+  const cleaned = number.replace(/\D/g, '')
+  if (cleaned.length === 11) {
+    return `+88 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 7)} ${cleaned.slice(7)}`
+  }
+  return number
+}
+
 // Payment method selection
 const selectPaymentMethod = (method) => {
   selectedMethod.value = method
 }
 
-// Proceed to payment form
-const proceedToPayment = () => {
+// Start payment flow
+const startPayment = () => {
   if (!selectedMethod.value) return
   
-  // Generate transaction ID
   paymentTransactionId.value = generateTransactionId()
   
-  // Show appropriate payment form
-  if (selectedMethod.value === 'bkash' || selectedMethod.value === 'nagad' || selectedMethod.value === 'rocket') {
-    payStationStep.value = 'bkash-form'
-    // Pre-fill test credentials for sandbox
-    paymentForm.value.phone = '01929918378'
-    paymentForm.value.pin = '12121'
-    paymentForm.value.otp = '123456'
-  } else if (selectedMethod.value === 'card') {
-    payStationStep.value = 'card-form'
-    // Pre-fill test card details
-    paymentForm.value.cardNumber = '4111 1111 1111 1111'
-    paymentForm.value.expiry = '12/25'
-    paymentForm.value.cvv = '123'
-  }
-}
-
-// Go back to payment form from OTP
-const goBackToPaymentForm = () => {
   if (selectedMethod.value === 'card') {
     payStationStep.value = 'card-form'
+    cardForm.value.cardNumber = '4111 1111 1111 1111'
+    cardForm.value.expiry = '12/25'
+    cardForm.value.cvv = '123'
   } else {
-    payStationStep.value = 'bkash-form'
+    // Start bKash/mobile banking flow
+    bkashFlow.value.number = '01929918378'
+    payStationStep.value = 'enter-number'
   }
 }
 
-// Process payment (validate PIN or card)
-const processPayment = () => {
+// BKASH FLOW - Step 1: Confirm Number
+const confirmNumber = () => {
+  if (!bkashFlow.value.number || bkashFlow.value.number.length < 11) return
+  
+  if (bkashFlow.value.number === '01929918378') {
+    payStationStep.value = 'confirm-number'
+  } else {
+    paymentError.value = 'Please use test number: 01929918378'
+    payStationStep.value = 'failed'
+  }
+}
+
+// BKASH FLOW - Step 2: Request OTP
+const requestOTP = () => {
   processingPayment.value = true
   
-  // Simulate API call delay
   setTimeout(() => {
-    if (selectedMethod.value === 'card') {
-      // Validate test card
-      if (paymentForm.value.cardNumber.replace(/\s/g, '') === '4111111111111111' && 
-          paymentForm.value.expiry === '12/25' && 
-          paymentForm.value.cvv === '123') {
-        // For card payments, go directly to success
-        payStationStep.value = 'success'
-      } else {
-        paymentError.value = 'Invalid card details. Please use test card: 4111 1111 1111 1111'
-        payStationStep.value = 'failed'
-      }
-    } else {
-      // Validate mobile banking test credentials
-      if (paymentForm.value.phone === '01929918378' && paymentForm.value.pin === '12121') {
-        payStationStep.value = 'otp'
-      } else {
-        paymentError.value = 'Invalid phone number or PIN. Please use: 01929918378 / 12121'
-        payStationStep.value = 'failed'
-      }
-    }
     processingPayment.value = false
+    bkashFlow.value.otp = '123456'
+    payStationStep.value = 'enter-otp'
   }, 1500)
 }
 
-// Verify OTP
-const verifyOTP = () => {
+// BKASH FLOW - Step 3: Confirm OTP
+const confirmOTP = () => {
+  if (!bkashFlow.value.otp || bkashFlow.value.otp.length < 6) return
+  
+  if (bkashFlow.value.otp === '123456') {
+    payStationStep.value = 'enter-pin'
+  } else {
+    paymentError.value = 'Invalid OTP. Please use: 123456'
+    payStationStep.value = 'failed'
+  }
+}
+
+// BKASH FLOW - Resend OTP
+const resendOTP = () => {
+  bkashFlow.value.otp = ''
   processingPayment.value = true
   
-  // Simulate OTP verification
   setTimeout(() => {
-    if (paymentForm.value.otp === '123456') {
+    processingPayment.value = false
+    bkashFlow.value.otp = '123456'
+  }, 1000)
+}
+
+// BKASH FLOW - Step 4: Process Payment with PIN
+const processBKashPayment = () => {
+  if (!bkashFlow.value.pin || bkashFlow.value.pin.length < 5) return
+  
+  processingPayment.value = true
+  
+  setTimeout(() => {
+    processingPayment.value = false
+    
+    if (bkashFlow.value.pin === '12121') {
       payStationStep.value = 'success'
     } else {
-      paymentError.value = 'Invalid OTP. Please use: 123456'
+      paymentError.value = 'Invalid PIN. Please use: 12121'
       payStationStep.value = 'failed'
     }
+  }, 2000)
+}
+
+// Card payment processing
+const processCardPayment = () => {
+  processingPayment.value = true
+  
+  setTimeout(() => {
     processingPayment.value = false
-  }, 1500)
+    
+    if (cardForm.value.cardNumber.replace(/\s/g, '') === '4111111111111111' && 
+        cardForm.value.expiry === '12/25' && 
+        cardForm.value.cvv === '123') {
+      payStationStep.value = 'success'
+    } else {
+      paymentError.value = 'Invalid card details. Please use test card: 4111 1111 1111 1111, Exp: 12/25, CVV: 123'
+      payStationStep.value = 'failed'
+    }
+  }, 2000)
 }
 
 // Complete payment - go to confirmation page
 const completePayment = () => {
-  // No API call needed - booking already created with approved status
   step.value = 4
 }
 
@@ -991,7 +1084,8 @@ const resetBooking = () => {
   payStationStep.value = null
   selectedMethod.value = ''
   paymentTransactionId.value = ''
-  paymentForm.value = { phone: '', pin: '', otp: '', cardNumber: '', expiry: '', cvv: '' }
+  cardForm.value = { cardNumber: '', expiry: '', cvv: '' }
+  bkashFlow.value = { number: '', otp: '', pin: '' }
   
   bookingData.value = {
     branch_id: selectedRoom.value?.branch_id || 1,
