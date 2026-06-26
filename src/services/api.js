@@ -92,6 +92,7 @@ apiClient.interceptors.response.use(
 
 // Cache helper functions
 export const clearCache = () => cache.clear()
+
 export const clearCacheForUrl = (url) => {
   for (const [key, value] of cache.entries()) {
     if (key.includes(url)) {
@@ -100,12 +101,54 @@ export const clearCacheForUrl = (url) => {
   }
 }
 
+/**
+ * Clear all caches related to bookings and room availability
+ * Call this after creating/cancelling a booking
+ */
+export const clearBookingRelatedCaches = (roomId = null) => {
+  // Clear booking caches
+  clearCacheForUrl('/bookings')
+  clearCacheForUrl('/borders')
+  
+  // Clear room caches
+  clearCacheForUrl('/rooms')
+  clearCacheForUrl('/room-types')
+  clearCacheForUrl('/seats')
+  
+  // Clear specific room availability cache
+  if (roomId) {
+    clearCacheForUrl(`/rooms/${roomId}/availability`)
+    // Also clear session storage for this room
+    try {
+      sessionStorage.removeItem(`room_availability_${roomId}`)
+    } catch (e) {
+      // Ignore session storage errors
+    }
+  } else {
+    // Clear all availability caches
+    clearCacheForUrl('/availability')
+    // Clear all session storage availability
+    try {
+      const keys = Object.keys(sessionStorage)
+      keys.forEach(key => {
+        if (key.startsWith('room_availability_')) {
+          sessionStorage.removeItem(key)
+        }
+      })
+    } catch (e) {
+      // Ignore session storage errors
+    }
+  }
+  
+  console.log('🧹 Cleared booking-related caches' + (roomId ? ` for room ${roomId}` : ' for all rooms'))
+}
+
 // Authentication APIs - Optimized
 export const authAPI = {
   register: (userData) => apiClient.post('/auth/register', userData),
   login: (credentials) => apiClient.post('/auth/login', credentials),
   logout: () => apiClient.post('/auth/logout'),
-  getUser: () => apiClient.get('/border_user'), // Removed 'auth/' prefix
+  getUser: () => apiClient.get('/border_user'),
   updateProfile: (userData) => apiClient.put('/border_user', userData),
   updateAvatar: (formData) => apiClient.post('/border_user/updte_img', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -134,8 +177,27 @@ export const roomAPI = {
   getRoomTypes: (all = 1) => apiClient.get('/room-types', { params: { all } }),
   getRooms: (all = 1) => apiClient.get('/rooms', { params: { all } }),
   getRoomDetails: (id) => apiClient.get(`/rooms/${id}`),
-  getRoomAvailability: (id) => apiClient.get(`/rooms/${id}/availability`),
-  createRoom: (roomData) => apiClient.post('/rooms', roomData),
+  getRoomAvailability: (id) => {
+    // Add noCache param to always get fresh availability
+    return apiClient.get(`/rooms/${id}/availability`, { 
+      params: { 
+        _t: Date.now(),
+        noCache: true // Skip caching for availability
+      } 
+    })
+  },
+  createRoom: (roomData) => {
+    clearBookingRelatedCaches()
+    return apiClient.post('/rooms', roomData)
+  },
+  updateRoom: (id, roomData) => {
+    clearCacheForUrl(`/rooms/${id}`)
+    return apiClient.put(`/rooms/${id}`, roomData)
+  },
+  deleteRoom: (id) => {
+    clearBookingRelatedCaches(id)
+    return apiClient.delete(`/rooms/${id}`)
+  },
   getSeats: () => apiClient.get('/seats'),
   
   // Batch availability check - Optimized
@@ -163,22 +225,29 @@ export const roomAPI = {
   }
 }
 
-// Booking APIs
+// Booking APIs - Updated with comprehensive cache clearing
 export const bookingAPI = {
   createBooking: (bookingData) => {
-    clearCacheForUrl('/bookings')
+    // Clear all related caches
+    clearBookingRelatedCaches(bookingData.room_id)
     return apiClient.post('/bookings', bookingData)
   },
   getAllBookings: () => apiClient.get('/bookings'),
   getBookingDetails: (id) => apiClient.get(`/bookings/${id}`),
   cancelBooking: (id) => {
-    clearCacheForUrl('/bookings')
+    // First get the booking to know the room_id (if possible)
+    // Then clear caches
+    clearBookingRelatedCaches()
     return apiClient.put(`/bookings/${id}/cancel`)
   },
   updateBookingStatus: (id, status) => {
-    clearCacheForUrl('/bookings')
+    clearBookingRelatedCaches()
     return apiClient.put(`/bookings/${id}/status`, { status })
-  }
+  },
+  // Get bookings by room (useful for checking seat availability)
+  getBookingsByRoom: (roomId) => apiClient.get('/bookings', { 
+    params: { room_id: roomId }
+  })
 }
 
 // Facilities API
@@ -296,10 +365,10 @@ export const contactAPI = {
 
 // Tour Bookings API
 export const tourBookingsAPI = {
-  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }), // Add params support
+  getTourBookings: (params = {}) => apiClient.get('/tour-bookings', { params }),
   getTourBookingDetails: (id) => apiClient.get(`/tour-bookings/${id}`),
   getTourBookingsByEmail: (email) => apiClient.get('/tour-bookings', { 
-    params: { email: email } // Pass email as query parameter
+    params: { email: email }
   }),
   createTourBooking: (bookingData) => {
     clearCacheForUrl('/tour-bookings')
@@ -380,7 +449,7 @@ export const sectionItemsAPI = {
 
 // Border APIs
 export const borderAPI = {
-  // Get current border profile (uses the same endpoint as authAPI.getUser)
+  // Get current border profile
   getCurrentBorder: () => apiClient.get('/border_user'),
   
   // Get all borders (admin)
@@ -406,4 +475,5 @@ export const borderAPI = {
   // Get border reviews
   getBorderReviews: (borderId) => apiClient.get(`/borders/${borderId}/reviews`),
 }
+
 export default apiClient

@@ -640,7 +640,19 @@ const bkashFlow = ref({
 const availableSeats = ref([])
 const selectedSeatId = ref(null)
 
-const { rooms, roomTypes, loading: roomsLoading, error: roomsError, fetchRooms, fetchRoomDetails, checkRoomAvailability } = useRooms()
+// ===== UPDATED: Destructure new functions from useRooms =====
+const { 
+  rooms, 
+  roomTypes, 
+  loading: roomsLoading, 
+  error: roomsError, 
+  fetchRooms, 
+  fetchRoomDetails, 
+  checkRoomAvailability,
+  addBookedSeat,        // NEW
+  refreshRoomAvailability // NEW
+} = useRooms()
+
 const { createBooking, currentBooking, loading: bookingLoading, error: bookingError } = useBookings()
 const { divisions, districts, upazilas, unions, loading: locationLoading, fetchDivisions, fetchDistricts, fetchUpazilas, fetchUnions } = useLocations()
 
@@ -825,31 +837,51 @@ const processCardPayment = () => {
 
 // Complete payment - go to confirmation page
 const completePayment = () => {
+  // ===== NEW: Clear cached availability for this room =====
+  if (selectedRoom.value?.id) {
+    sessionStorage.removeItem(`room_availability_${selectedRoom.value.id}`)
+  }
+  
   step.value = 4
 }
 
-// Fetch available seats
+// ===== UPDATED: Fetch available seats with booking awareness =====
 const fetchAvailableSeats = async (roomId) => {
   try {
     const availability = await checkRoomAvailability(roomId)
     let availData = availability
     if (availData && availData.data) availData = availData.data
     
+    let allSeats = []
     if (availData && availData.available_seats) {
-      availableSeats.value = availData.available_seats
-      if (availableSeats.value.length > 0) {
-        selectedSeatId.value = availableSeats.value[0].id
-        bookingData.value.seat_id = selectedSeatId.value
-      }
+      allSeats = availData.available_seats
     } else if (availData && availData.data && availData.data.available_seats) {
-      availableSeats.value = availData.data.available_seats
-      if (availableSeats.value.length > 0) {
-        selectedSeatId.value = availableSeats.value[0].id
-        bookingData.value.seat_id = selectedSeatId.value
-      }
+      allSeats = availData.data.available_seats
     }
+    
+    // ===== NEW: Filter out already booked seats =====
+    const bookedSeatIds = useRooms().getBookedSeatIdsForRoom(roomId)
+    const actuallyAvailable = allSeats.filter(seat => {
+      const seatId = seat.id || seat.seat_id || seat
+      return !bookedSeatIds.includes(parseInt(seatId))
+    })
+    
+    availableSeats.value = actuallyAvailable
+    
+    if (availableSeats.value.length > 0) {
+      selectedSeatId.value = availableSeats.value[0].id || availableSeats.value[0].seat_id
+      bookingData.value.seat_id = selectedSeatId.value
+    } else {
+      // No seats available
+      selectedSeatId.value = null
+      bookingData.value.seat_id = null
+      console.warn('⚠️ No available seats for room', roomId)
+    }
+    
+    console.log(`🪑 Available seats for room ${roomId}:`, availableSeats.value.length)
   } catch (err) {
     console.error('Failed to fetch available seats:', err)
+    // Fallback: create a default seat
     availableSeats.value = [{ id: 1, seat_description: 'Default Seat' }]
     selectedSeatId.value = 1
     bookingData.value.seat_id = 1
@@ -949,6 +981,7 @@ const prevTab = () => {
   currentTab.value--
 }
 
+// ===== UPDATED: confirmBooking with seat tracking =====
 const confirmBooking = async () => {
   if (!validateAllTabs()) return
   
@@ -995,6 +1028,26 @@ const confirmBooking = async () => {
   try {
     const booking = await createBooking(bookingPayload)
     if (booking) {
+      // ===== NEW: Track the booked seat =====
+      const bookingId = booking.id || booking.booking_id || ('local_' + Date.now())
+      addBookedSeat(
+        parseInt(bookingData.value.seat_id),
+        parseInt(bookingData.value.room_id),
+        bookingId
+      )
+      
+      console.log('✅ Seat tracked:', {
+        seatId: bookingData.value.seat_id,
+        roomId: bookingData.value.room_id,
+        bookingId: bookingId
+      })
+      
+      // ===== NEW: Refresh room availability =====
+      await refreshRoomAvailability(bookingData.value.room_id)
+      
+      // Clear cached availability for this room
+      sessionStorage.removeItem(`room_availability_${bookingData.value.room_id}`)
+      
       step.value = 3
       payStationStep.value = 'method'
     }
@@ -1014,6 +1067,7 @@ const confirmBooking = async () => {
   }
 }
 
+// ===== UPDATED: resetBooking clears seat tracking for cancelled bookings =====
 const resetBooking = () => {
   step.value = 2
   payStationStep.value = null
