@@ -1054,59 +1054,83 @@ const subscribeToService = async (serviceId) => {
   const service = extraServices.value.find(s => s.id === serviceId)
   if (!service) return
   
-  Swal.fire({
-    title: 'Subscribe to Service',
+  const result = await Swal.fire({
+    title: '<span style="font-size: 1.3rem; font-weight: 800; color: #0d9488;">Subscribe to Service</span>',
     html: `
-      <div class="text-left">
-        <p class="mb-3"><strong>Service:</strong> ${service.service_name}</p>
-        <p class="mb-3"><strong>Price:</strong> ৳${(service.service_price || 0).toLocaleString()}/month</p>
-        ${service.service_description ? `<p class="mb-3"><strong>Description:</strong> ${service.service_description}</p>` : ''}
+      <div style="text-align: left; padding: 5px 0;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0;">
+          <div style="width: 44px; height: 44px; min-width: 44px; background: #0d9488; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 22px; line-height: 1;">✓</span>
+          </div>
+          <div>
+            <p style="font-weight: 600; color: #065f46; font-size: 15px; margin: 0;">${service.service_name}</p>
+            <p style="color: #0d9488; font-weight: 700; font-size: 18px; margin: 3px 0 0 0;">৳${(service.service_price || 0).toLocaleString()}<span style="font-size: 13px; font-weight: 400;">/month</span></p>
+          </div>
+        </div>
+        ${service.service_description ? `
+        <div style="margin-bottom: 16px; padding: 10px 12px; background: #f9fafb; border-radius: 8px;">
+          <p style="color: #6b7280; font-size: 12px; margin: 0 0 3px 0; font-weight: 600;">DESCRIPTION</p>
+          <p style="color: #374151; font-size: 14px; margin: 0; line-height: 1.5;">${service.service_description}</p>
+        </div>
+        ` : ''}
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">ℹ️</span>
+          <p style="color: #92400e; font-size: 13px; margin: 0;">This service will be added to your monthly bill.</p>
+        </div>
       </div>
-      <p class="text-sm text-gray-500 mt-4">This service will be added to your monthly bill.</p>
     `,
-    icon: 'question',
+    showIcon: false,
+    showCloseButton: false,
     showCancelButton: true,
+    confirmButtonText: 'Subscribe Now',
+    cancelButtonText: 'Cancel',
     confirmButtonColor: '#0d9488',
     cancelButtonColor: '#6b7280',
-    confirmButtonText: 'Subscribe Now',
-    cancelButtonText: 'Cancel'
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      subscribingService.value = true
-      subscribingServiceId.value = serviceId
-      
-      try {
-        const response = await apiClient.post('/room-assign-services', {
-          room_id: room.value.id,
-          services: [serviceId]
-        })
-        
-        const receipt = generateServiceReceipt(service, response.data)
-        selectedServiceReceipt.value = receipt
-        showServiceReceipt.value = true
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Subscribed!',
-          text: `You have successfully subscribed to ${service.service_name}.`,
-          confirmButtonColor: '#0d9488',
-          timer: 2000,
-          showConfirmButton: true
-        })
-      } catch (err) {
-        console.error('Error subscribing to service:', err)
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err.response?.data?.message || 'Failed to subscribe to service.',
-          confirmButtonColor: '#0d9488'
-        })
-      } finally {
-        subscribingService.value = false
-        subscribingServiceId.value = null
-      }
+    reverseButtons: false,
+    customClass: {
+      popup: 'swal-custom-popup',
+      title: 'swal-custom-title',
+      confirmButton: 'swal-custom-confirm',
+      cancelButton: 'swal-custom-cancel',
+      actions: 'swal-custom-actions'
     }
   })
+  
+  if (result.isConfirmed) {
+    subscribingService.value = true
+    subscribingServiceId.value = serviceId
+    
+    try {
+      const response = await apiClient.post('/room-assign-services', {
+        room_id: room.value.id,
+        services: [serviceId]
+      })
+      
+      const receipt = generateServiceReceipt(service, response.data)
+      selectedServiceReceipt.value = receipt
+      showServiceReceipt.value = true
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Subscribed!',
+        text: `You have successfully subscribed to ${service.service_name}.`,
+        confirmButtonColor: '#0d9488',
+        timer: 2000,
+        showConfirmButton: true
+      })
+    } catch (err) {
+      console.error('Error subscribing to service:', err)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data?.message || 'Failed to subscribe to service.',
+        confirmButtonColor: '#0d9488'
+      })
+    } finally {
+      subscribingService.value = false
+      subscribingServiceId.value = null
+    }
+  }
 }
 
 const viewServiceReceipt = (serviceId) => {
@@ -1437,6 +1461,64 @@ onMounted(() => {
 })
 </script>
 
+<style>
+/* SweetAlert2 Custom Styles - Must be global (not scoped) since SweetAlert2 renders outside component */
+
+.swal-custom-popup {
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  max-width: 440px !important;
+}
+
+.swal-custom-title {
+  padding: 0 0 0.5rem 0 !important;
+}
+
+.swal-custom-actions {
+  gap: 12px !important;
+  margin-top: 1.25rem !important;
+  width: 100% !important;
+  display: flex !important;
+}
+
+.swal-custom-actions button {
+  flex: 1 !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+  padding: 14px 20px !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.swal-custom-confirm {
+  background-color: #0d9488 !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2) !important;
+}
+
+.swal-custom-confirm:hover {
+  background-color: #0f766e !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 15px -3px rgba(13, 148, 136, 0.3) !important;
+}
+
+.swal-custom-cancel {
+  background-color: #6b7280 !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(107, 114, 128, 0.2) !important;
+}
+
+.swal-custom-cancel:hover {
+  background-color: #4b5563 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 15px -3px rgba(107, 114, 128, 0.3) !important;
+}
+</style>
+
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
@@ -1444,4 +1526,13 @@ onMounted(() => {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+</style>
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 </style>
