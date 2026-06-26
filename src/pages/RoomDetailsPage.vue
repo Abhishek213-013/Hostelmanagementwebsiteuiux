@@ -189,9 +189,24 @@
               <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                 Enhance your stay with these premium add-on services. Available exclusively for current boarders of this room.
               </p>
-              <div v-if="!isBorderOfRoom" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              
+              <!-- Show appropriate message based on user status -->
+              <div v-if="!isAuthenticated" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <Shield class="w-4 h-4 text-blue-600" />
+                <span class="text-sm text-blue-700 dark:text-blue-400">
+                  <button @click="showLoginRequiredAlert" class="underline hover:text-blue-800 dark:hover:text-blue-300">Login</button> 
+                  to subscribe to these services
+                </span>
+              </div>
+              
+              <div v-else-if="!isBorderOfRoom" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <Shield class="w-4 h-4 text-amber-600" />
                 <span class="text-sm text-amber-700 dark:text-amber-400">Only current boarders can subscribe to these services</span>
+              </div>
+              
+              <div v-else-if="isBorderOfRoom" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <CheckCircle2 class="w-4 h-4 text-green-600" />
+                <span class="text-sm text-green-700 dark:text-green-400">You are a boarder of this room - you can subscribe to extra services</span>
               </div>
             </div>
             
@@ -201,10 +216,11 @@
             
             <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div v-for="(service, i) in extraServices" :key="'extra-' + i" 
-                   :class="['group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border transition-all duration-500',
-                     subscribedServiceIds.includes(service.id) 
-                       ? 'border-teal-500 dark:border-teal-400 ring-2 ring-teal-500/20' 
-                       : 'border-gray-200 dark:border-gray-700 hover:border-teal-300 hover:shadow-lg hover:-translate-y-1']">
+                  :class="['group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border transition-all duration-500',
+                    subscribedServiceIds.includes(service.id) 
+                      ? 'border-teal-500 dark:border-teal-400 ring-2 ring-teal-500/20' 
+                      : 'border-gray-200 dark:border-gray-700 hover:border-teal-300 hover:shadow-lg hover:-translate-y-1',
+                    !isBorderOfRoom ? 'opacity-80' : '']">
                 
                 <div class="flex items-start gap-4 mb-4">
                   <div :class="['w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-500',
@@ -225,21 +241,28 @@
                     <span class="text-sm text-gray-500 dark:text-gray-400">/mo</span>
                   </div>
                   
+                  <!-- Subscribe Button - Only active for boarders -->
                   <button 
                     v-if="!subscribedServiceIds.includes(service.id)"
                     @click="subscribeToService(service.id)"
                     :disabled="!isBorderOfRoom || subscribingService"
+                    :title="!isBorderOfRoom ? 'Only available for current boarders' : 'Subscribe to this service'"
                     :class="['px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
                       isBorderOfRoom && !subscribingService
-                        ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-md active:scale-95'
+                        ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-md active:scale-95 cursor-pointer'
                         : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed']">
                     <span v-if="subscribingService && subscribingServiceId === service.id" class="flex items-center gap-2">
                       <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       Processing...
                     </span>
+                    <span v-else-if="!isBorderOfRoom">
+                      <Lock class="w-4 h-4 inline-block mr-1" />
+                      Boarders Only
+                    </span>
                     <span v-else>Subscribe</span>
                   </button>
                   
+                  <!-- Subscribed Button -->
                   <button 
                     v-else
                     @click="viewServiceReceipt(service.id)"
@@ -247,6 +270,12 @@
                     <CheckCircle2 class="w-4 h-4" />
                     Subscribed
                   </button>
+                </div>
+                
+                <!-- Non-border message overlay -->
+                <div v-if="!isBorderOfRoom && !subscribedServiceIds.includes(service.id)" 
+                    class="mt-2 text-xs text-center text-gray-500 dark:text-gray-400 italic">
+                  * Only current boarders of this room can subscribe
                 </div>
               </div>
             </div>
@@ -260,25 +289,60 @@
             </div>
           </div>
 
-          <!-- Write a Review Section -->
+          <!-- ==================== REVIEWS SECTION ==================== -->
+          <!-- Write a Review -->
           <div class="mt-16 mb-8 text-center">
-            <button v-if="!showReviewForm" @click="handleWriteReview" 
-                    :class="['inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold shadow transition-all',
-                      canWriteReview && !hasUserReviewed
-                        ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-xl hover:scale-105' 
-                        : 'bg-gray-400 text-white cursor-pointer']">
-              <Star class="w-5 h-5" />
-              <span v-if="!isAuthenticated">Login to Write a Review</span>
-              <span v-else-if="!canWriteReview">Write a Review</span>
-              <span v-else-if="hasUserReviewed">Review Already Submitted</span>
-              <span v-else>Write a Review</span>
-            </button>
+            <h2 class="text-2xl lg:text-3xl font-black mb-8 text-center text-teal-600">Share Your Experience</h2>
+            
+            <!-- Not logged in -->
+            <div v-if="!isAuthenticated" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg mb-4">
+              <Shield class="w-4 h-4 text-blue-600" />
+              <span class="text-sm text-blue-700 dark:text-blue-400">
+                <button @click="showLoginRequiredAlert" class="underline hover:text-blue-800 dark:hover:text-blue-300 font-medium">Login</button> 
+                to write a review
+              </span>
+            </div>
+            
+            <!-- Logged in but not a border -->
+            <div v-else-if="!isBorderOfRoom" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg mb-4">
+              <Lock class="w-4 h-4 text-amber-600" />
+              <span class="text-sm text-amber-700 dark:text-amber-400">Only current boarders of this room can write reviews</span>
+            </div>
+            
+            <!-- Is a border but already reviewed -->
+            <div v-else-if="isBorderOfRoom && hasUserReviewed" class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4">
+              <CheckCircle2 class="w-4 h-4 text-green-600" />
+              <span class="text-sm text-green-700 dark:text-green-400">You have already reviewed this room. You can edit or delete your review below.</span>
+            </div>
+            
+            <!-- Is a border and hasn't reviewed -->
+            <div v-else-if="isBorderOfRoom && !hasUserReviewed" class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4">
+              <Star class="w-4 h-4 text-green-600" />
+              <span class="text-sm text-green-700 dark:text-green-400">Share your experience with other potential boarders!</span>
+            </div>
+
+            <div class="mt-4">
+              <button v-if="!showReviewForm" @click="handleWriteReview" 
+                      :disabled="!canWriteReview && !hasUserReviewed"
+                      :class="['inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold shadow transition-all',
+                        canWriteReview && !hasUserReviewed
+                          ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-xl hover:scale-105' 
+                          : hasUserReviewed
+                            ? 'bg-amber-500 text-white hover:bg-amber-600 hover:shadow-xl hover:scale-105 cursor-pointer'
+                            : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed']">
+                <Star class="w-5 h-5" :class="{ 'fill-white': hasUserReviewed }" />
+                <span v-if="!isAuthenticated">Login to Write a Review</span>
+                <span v-else-if="!isBorderOfRoom">Write a Review (Boarders Only)</span>
+                <span v-else-if="hasUserReviewed">Edit Your Review</span>
+                <span v-else>Write a Review</span>
+              </button>
+            </div>
 
             <!-- Review Form Modal -->
             <div v-if="showReviewForm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click.self="showReviewForm = false">
               <div class="bg-white dark:bg-gray-800 rounded-2xl p-10 shadow-2xl border border-gray-200 dark:border-gray-700 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between mb-8">
-                  <h3 class="text-2xl font-black text-teal-600">{{ isEditingReview ? 'Edit Review' : 'Write a Review' }}</h3>
+                  <h3 class="text-2xl font-black text-teal-600">{{ isEditingReview ? 'Edit Your Review' : 'Write a Review' }}</h3>
                   <button @click="showReviewForm = false" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <X class="w-5 h-5 text-gray-500" />
                   </button>
@@ -303,31 +367,38 @@
 
                   <div>
                     <label class="block text-base font-bold text-gray-700 dark:text-gray-300 mb-3">Comment</label>
-                    <textarea v-model="reviewForm.comment" rows="5" placeholder="Share your experience..."
+                    <textarea v-model="reviewForm.comment" rows="5" placeholder="Share your experience living in this room..."
                               class="w-full px-5 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all resize-none"></textarea>
                   </div>
 
                   <p v-if="reviewErrors" class="text-red-500 text-sm font-medium">{{ reviewErrors }}</p>
 
-                  <button type="submit" :disabled="submittingReview"
-                          :class="['w-full py-4 rounded-xl font-bold text-white transition-all text-lg', 
-                            submittingReview ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg']">
-                    <span v-if="submittingReview" class="flex items-center justify-center gap-2">
-                      <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Submitting...
-                    </span>
-                    <span v-else>{{ isEditingReview ? 'Update Review' : 'Submit Review' }}</span>
-                  </button>
+                  <div class="flex gap-3">
+                    <button type="button" @click="showReviewForm = false"
+                            class="flex-1 py-4 rounded-xl font-bold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all text-lg">
+                      Cancel
+                    </button>
+                    <button type="submit" :disabled="submittingReview"
+                            :class="['flex-1 py-4 rounded-xl font-bold text-white transition-all text-lg', 
+                              submittingReview ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg']">
+                      <span v-if="submittingReview" class="flex items-center justify-center gap-2">
+                        <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Submitting...
+                      </span>
+                      <span v-else>{{ isEditingReview ? 'Update Review' : 'Submit Review' }}</span>
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
 
-          <!-- Reviews Section -->
-          <div v-if="roomReviews.length > 0" class="mb-10">
-            <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Borders Reviews</h2>
+          <!-- Review Stats & Cards -->
+          <div class="mb-10">
+            <h2 class="text-2xl lg:text-3xl font-black mb-4 text-center text-teal-600">Boarder Reviews</h2>
             
-            <div class="max-w-3xl mx-auto mb-8">
+            <!-- Review Stats -->
+            <div v-if="roomReviews.length > 0" class="max-w-3xl mx-auto mb-8">
               <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex items-center gap-4">
@@ -354,7 +425,8 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <!-- Review Cards -->
+            <div v-if="roomReviews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               <div v-for="review in roomReviews.slice(0, 4)" :key="review.id" 
                    class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700">
                 <div class="flex items-start justify-between mb-4">
@@ -370,29 +442,9 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <span v-if="review.verified" class="px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">
-                      ✓ Verified
+                      ✓ Verified Boarder
                     </span>
                     <span class="text-xs text-gray-400">{{ formatDate(review.created_at) }}</span>
-                    <div v-if="review.user.id === currentUserId" class="flex items-center gap-1 ml-2">
-                      <button @click="handleWriteReview(review)" 
-                              class="p-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900/30 text-teal-600 transition-colors" 
-                              title="Edit review">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                      </button>
-                      <button @click="deleteUserReview(review.id)" 
-                              class="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 transition-colors" 
-                              title="Delete review">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <polyline points="3 6 5 6 21 6"/>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                          <line x1="10" y1="11" x2="10" y2="17"/>
-                          <line x1="14" y1="11" x2="14" y2="17"/>
-                        </svg>
-                      </button>
-                    </div>
                   </div>
                 </div>
 
@@ -412,19 +464,45 @@
                   <p class="text-xs text-gray-600 dark:text-gray-400">{{ review.response.message }}</p>
                 </div>
 
+                <!-- Edit/Delete buttons - Only for the review owner -->
+                <div v-if="review.user.id === currentUserId" class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <button @click="handleWriteReview(review)" 
+                          class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/40 transition-colors text-xs font-medium" 
+                          title="Edit your review">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit
+                  </button>
+                  <button @click="deleteUserReview(review.id)" 
+                          class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors text-xs font-medium" 
+                          title="Delete your review">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+
                 <div v-if="review.helpful_count > 0" class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <ThumbsUp class="w-4 h-4 text-gray-400" />
                   <span class="text-xs text-gray-500">{{ review.helpful_count }} found this helpful</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div v-if="!loading && room && roomReviews.length === 0" class="mt-16 mb-10 text-center">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
-              <Star class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-              <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Reviews Yet</h3>
-              <p class="text-gray-500 dark:text-gray-400 text-sm">Be the first to review this room!</p>
+            <!-- No Reviews State -->
+            <div v-if="!loading && room && roomReviews.length === 0" class="text-center">
+              <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+                <Star class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+                <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Reviews Yet</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">
+                  <span v-if="isBorderOfRoom && !hasUserReviewed">Be the first to review this room!</span>
+                  <span v-else>No boarders have reviewed this room yet.</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -461,7 +539,7 @@ import {
   Dumbbell, Car, BookOpen, Shield, Sparkles, Building2, ArrowRight, X,
   Star, ThumbsUp, Clock, MapPin, Bath, Maximize2, Tv, Gamepad2, Refrigerator,
   WashingMachine, Music, Zap, Mic, Camera, Sun, Trees, Droplets, ShoppingBag,
-  Phone, Mail, MapPin as MapPinIcon, Home, Award
+  Phone, Mail, MapPin as MapPinIcon, Home, Award, Lock
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -522,11 +600,8 @@ const subscribingService = ref(false)
 const subscribingServiceId = ref(null)
 const subscribedServiceIds = ref([])
 
-// Service Receipt state
 const showServiceReceipt = ref(false)
 const selectedServiceReceipt = ref(null)
-
-// Service subscription receipts storage (in localStorage for persistence)
 const serviceReceipts = ref([])
 
 const isAuthenticated = computed(() => {
@@ -557,48 +632,70 @@ const isRoomAvailable = computed(() => {
          availabilityData.value.available_seats?.length > 0
 })
 
-// Load user data
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+// Helper function to safely convert debug info to string
+const debugInfoText = (info) => {
+  if (typeof info === 'string') return info
+  try {
+    return JSON.stringify(info, null, 2)
+  } catch (e) {
+    return String(info)
+  }
+}
+
+// Get user-specific localStorage key
+const getUserStorageKey = (baseKey) => {
+  const userId = currentUserId.value || 'anonymous'
+  return `${baseKey}_${userId}`
+}
+
+// ============================================
+// USER DATA & RECEIPTS
+// ============================================
+
 const loadUserData = () => {
   try {
     const userData = JSON.parse(localStorage.getItem('user') || '{}')
     currentUser.value = userData
     currentUserId.value = userData.id || userData.user_id || userData.border_id || null
+    console.log('Loaded user data - ID:', currentUserId.value, 'Name:', userData.name, 'Phone:', userData.phone)
   } catch (e) {
     console.error('Error loading user data:', e)
   }
 }
 
-// Load service receipts from localStorage
 const loadServiceReceipts = () => {
   try {
-    const receipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
+    const storageKey = getUserStorageKey('serviceReceipts')
+    const receipts = JSON.parse(localStorage.getItem(storageKey) || '[]')
     serviceReceipts.value = receipts
-    
-    // Update subscribedServiceIds based on receipts
     subscribedServiceIds.value = receipts.map(r => r.service_id)
+    console.log(`Loaded ${receipts.length} receipts for user ${currentUserId.value}`)
   } catch (e) {
     console.error('Error loading service receipts:', e)
     serviceReceipts.value = []
+    subscribedServiceIds.value = []
   }
 }
 
-// Save service receipts to localStorage
 const saveServiceReceipts = () => {
   try {
-    localStorage.setItem('serviceReceipts', JSON.stringify(serviceReceipts.value))
+    const storageKey = getUserStorageKey('serviceReceipts')
+    localStorage.setItem(storageKey, JSON.stringify(serviceReceipts.value))
   } catch (e) {
     console.error('Error saving service receipts:', e)
   }
 }
 
-// Generate a unique receipt number
 const generateReceiptNumber = () => {
   const timestamp = Date.now().toString(36).toUpperCase()
   const random = Math.random().toString(36).substring(2, 6).toUpperCase()
   return `SRV-${timestamp}-${random}`
 }
 
-// Generate receipt for service subscription
 const generateServiceReceipt = (service, subscriptionResponse) => {
   const receipt = {
     id: generateReceiptNumber(),
@@ -610,6 +707,7 @@ const generateServiceReceipt = (service, subscriptionResponse) => {
     room_number: room.value.room_number,
     room_type: room.value.room_type?.room_type_title || room.value.room_type?.name || 'Standard',
     border_id: currentBorderId.value,
+    user_id: currentUserId.value,
     border_name: currentUser.value?.name || 'N/A',
     border_email: currentUser.value?.email || 'N/A',
     border_phone: currentUser.value?.phone || currentUser.value?.mobile_number || 'N/A',
@@ -618,17 +716,236 @@ const generateServiceReceipt = (service, subscriptionResponse) => {
     status: 'active'
   }
   
-  // Add to receipts array
   serviceReceipts.value.unshift(receipt)
   saveServiceReceipts()
   
-  // Update subscribed service IDs
   if (!subscribedServiceIds.value.includes(service.id)) {
     subscribedServiceIds.value.push(service.id)
   }
   
   return receipt
 }
+
+// ============================================
+// BORDER VERIFICATION (FIXED - No backend changes needed)
+// ============================================
+
+/**
+ * Find the user's party_id by matching user details (name/phone/email) 
+ * against parties in the bookings for a specific room.
+ * 
+ * Logic:
+ * 1. Get all bookings for this room
+ * 2. For each booking, get the party_id
+ * 3. Fetch party details and match against current user's name/phone
+ * 4. Cache successful match in sessionStorage to avoid repeated API calls
+ */
+// Replace the findUserPartyIdForRoom function with this version
+const findUserPartyIdForRoom = async (roomId) => {
+  // Check cache first
+  const cacheKey = `party_match_${currentUserId.value}_${roomId}`
+  const cached = sessionStorage.getItem(cacheKey)
+  if (cached) {
+    console.log('Using cached party match:', cached)
+    return JSON.parse(cached)
+  }
+  
+  const userData = currentUser.value
+  const userName = (userData.name || '').toLowerCase().trim()
+  const userPhone = (userData.phone || userData.mobile_number || '').replace(/[^0-9]/g, '')
+  const userEmail = (userData.email || '').toLowerCase().trim()
+  
+  debugInfo.value.push(`Looking for user: name="${userName}", phone="${userPhone}", email="${userEmail}"`)
+  
+  if (!userName && !userPhone && !userEmail) {
+    debugInfo.value.push('❌ No user identity data available for matching')
+    return null
+  }
+  
+  try {
+    const bookingsResponse = await bookingAPI.getAllBookings()
+    const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
+    
+    // Find bookings for this room
+    const roomBookings = bookings.filter(b => (b.room_id || b.room?.id) == roomId)
+    debugInfo.value.push(`Bookings for room ${roomId}: ${roomBookings.length}`)
+    
+    // Check each booking for matching party data
+    for (const booking of roomBookings) {
+      debugInfo.value.push(`Checking booking #${booking.id}, party_id=${booking.party_id}`)
+      
+      // The booking response includes a 'party' object
+      if (booking.party && typeof booking.party === 'object') {
+        const party = booking.party
+        debugInfo.value.push(`  Party object keys: ${Object.keys(party).join(', ')}`)
+        
+        // Get party name - check multiple possible field names
+        const partyName = (party.party_name || party.name || party.full_name || '').toLowerCase().trim()
+        
+        // Get party phone - check multiple possible field names
+        let partyPhone = ''
+        if (party.phone || party.mobile || party.mobile_number) {
+          partyPhone = (party.phone || party.mobile || party.mobile_number || '').replace(/[^0-9]/g, '')
+        }
+        // Also check party_contact if it exists
+        if (!partyPhone && party.party_contact && typeof party.party_contact === 'object') {
+          partyPhone = (party.party_contact.phone || party.party_contact.mobile || '').replace(/[^0-9]/g, '')
+        }
+        
+        // Get party email
+        const partyEmail = (party.email || party.party_email || '').toLowerCase().trim()
+        
+        debugInfo.value.push(`  Party: name="${partyName}", phone="${partyPhone}", email="${partyEmail}"`)
+        
+        // Match by name
+        const nameMatch = userName && partyName && (
+          userName === partyName || 
+          partyName.includes(userName) || 
+          userName.includes(partyName)
+        )
+        
+        // Match by phone
+        const phoneMatch = userPhone && partyPhone && userPhone === partyPhone
+        
+        // Match by email
+        const emailMatch = userEmail && partyEmail && userEmail === partyEmail
+        
+        debugInfo.value.push(`  Name match: ${nameMatch}, Phone match: ${phoneMatch}, Email match: ${emailMatch}`)
+        
+        if (nameMatch || phoneMatch || emailMatch) {
+          const matchedBy = nameMatch ? 'name' : (phoneMatch ? 'phone' : 'email')
+          const result = { 
+            party_id: booking.party_id, 
+            matched_by: matchedBy 
+          }
+          
+          // Cache the result
+          sessionStorage.setItem(cacheKey, JSON.stringify(result))
+          sessionStorage.setItem(`user_party_map_${currentUserId.value}`, booking.party_id)
+          
+          debugInfo.value.push(`✅ MATCH! party_id=${booking.party_id} belongs to current user (matched by ${matchedBy})`)
+          return result
+        }
+      } else {
+        debugInfo.value.push(`  No party object in booking, trying direct API call...`)
+        
+        // Fallback: Try to get party data from a search endpoint
+        try {
+          // Try GET /search/parties or similar
+          const searchResponse = await apiClient.get('/search/parties', {
+            params: { 
+              name: userName,
+              phone: userPhone
+            }
+          })
+          
+          const parties = searchResponse.data?.data || searchResponse.data || []
+          debugInfo.value.push(`  Search found ${parties.length} parties`)
+          
+          if (parties.length > 0) {
+            // Check if any of these parties have a booking in this room
+            for (const party of parties) {
+              if (party.id == booking.party_id) {
+                const result = { party_id: party.id, matched_by: 'search' }
+                sessionStorage.setItem(cacheKey, JSON.stringify(result))
+                sessionStorage.setItem(`user_party_map_${currentUserId.value}`, party.id)
+                debugInfo.value.push(`✅ MATCH! Found party via search`)
+                return result
+              }
+            }
+          }
+        } catch (searchErr) {
+          debugInfo.value.push(`  Search failed: ${searchErr.message}`)
+        }
+      }
+    }
+    
+    // LAST RESORT: If we only have one booking for this room and the user is logged in,
+    // we can try to match by name similarity (less reliable)
+    if (roomBookings.length === 1) {
+      const booking = roomBookings[0]
+      debugInfo.value.push('Only one booking for this room - trying name similarity match')
+      
+      if (booking.party) {
+        const partyName = (booking.party.party_name || booking.party.name || '').toLowerCase().trim()
+        // Simple fuzzy match - check if names share significant parts
+        const userNameParts = userName.split(' ')
+        const partyNameParts = partyName.split(' ')
+        const commonParts = userNameParts.filter(part => 
+          part.length > 2 && partyNameParts.includes(part)
+        )
+        
+        debugInfo.value.push(`  Common name parts: ${commonParts.join(', ')} (${commonParts.length})`)
+        
+        if (commonParts.length >= 2 || (commonParts.length >= 1 && userNameParts.length === 1)) {
+          const result = { party_id: booking.party_id, matched_by: 'fuzzy_name' }
+          sessionStorage.setItem(cacheKey, JSON.stringify(result))
+          sessionStorage.setItem(`user_party_map_${currentUserId.value}`, booking.party_id)
+          debugInfo.value.push(`✅ MATCH! Fuzzy name match for single booking room`)
+          return result
+        }
+      }
+    }
+    
+    debugInfo.value.push('❌ No matching party found for current user')
+    return null
+  } catch (err) {
+    debugInfo.value.push(`Error finding party: ${err.message}`)
+    return null
+  }
+}
+
+const verifyBorderStatus = async () => {
+  debugInfo.value = []
+  
+  if (!isAuthenticated.value || !room.value?.id) {
+    debugInfo.value.push('❌ Not authenticated or no room ID')
+    isBorderOfRoom.value = false
+    return
+  }
+  
+  try {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    
+    debugInfo.value.push(`Room ID: ${room.value.id}`)
+    debugInfo.value.push(`User ID: ${userData.id}, Name: ${userData.name}`)
+    debugInfo.value.push(`Phone: ${userData.phone}, Email: ${userData.email}`)
+    
+    currentUserId.value = userData.id || userData.user_id || userData.border_id || null
+    
+    // Get border profile
+    try {
+      const borderResponse = await authAPI.getUser()
+      const borderData = borderResponse.data?.data || borderResponse.data
+      if (borderData?.id) {
+        currentBorderId.value = borderData.id
+        debugInfo.value.push(`Border profile ID: ${borderData.id}`)
+      }
+    } catch (err) {
+      debugInfo.value.push(`Border profile error: ${err.message}`)
+    }
+    
+    // Find matching party for this room
+    const partyMatch = await findUserPartyIdForRoom(room.value.id)
+    
+    if (partyMatch) {
+      isBorderOfRoom.value = true
+      debugInfo.value.push(`✅ FINAL: User IS a border of room ${room.value.id}`)
+    } else {
+      isBorderOfRoom.value = false
+      debugInfo.value.push(`❌ FINAL: User is NOT a border of room ${room.value.id}`)
+    }
+    
+  } catch (err) {
+    console.error('Error verifying border status:', err)
+    isBorderOfRoom.value = false
+    debugInfo.value.push(`Fatal error: ${err.message}`)
+  }
+}
+
+// ============================================
+// ROOM SERVICES
+// ============================================
 
 const fetchRoomServices = async () => {
   if (!room.value?.id) return
@@ -637,138 +954,55 @@ const fetchRoomServices = async () => {
   try {
     const response = await apiClient.get(`/room-available-services/${room.value.id}`)
     
-    console.log('Raw API Response for room services:', response.data)
-    
-    // Handle the specific API response structure:
-    // { available_services: [...], selected_services: [...] }
     let availableServicesData = []
     let selectedServicesData = []
     
     if (response.data) {
-      // Get available services (not yet assigned)
       if (Array.isArray(response.data.available_services)) {
         availableServicesData = response.data.available_services
-        console.log('Found available_services array with', availableServicesData.length, 'items')
       }
-      
-      // Get selected/assigned services (already assigned to room)
       if (Array.isArray(response.data.selected_services)) {
         selectedServicesData = response.data.selected_services
-        console.log('Found selected_services array with', selectedServicesData.length, 'items')
       }
     }
     
-    // Fetch assigned services from the room data as well (from service_on_rooms)
     let assignedServicesFromRoom = []
-    
-    // The room object might have service_on_room data
     if (room.value?.service_on_room && Array.isArray(room.value.service_on_room)) {
       assignedServicesFromRoom = room.value.service_on_room
         .filter(item => item.service)
         .map(item => item.service)
-      console.log('Services from room.service_on_room:', assignedServicesFromRoom.length, 'items')
     }
     
-    // Also check room_type services
     let roomTypeServices = []
     if (room.value?.room_type?.service_on_room_type && Array.isArray(room.value.room_type.service_on_room_type)) {
       roomTypeServices = room.value.room_type.service_on_room_type
         .filter(item => item.service)
         .map(item => item.service)
-      console.log('Services from room_type:', roomTypeServices.length, 'items')
     }
     
-    // Combine all services and remove duplicates by ID
     const allServicesMap = new Map()
+    availableServicesData.forEach(service => { if (service?.id) allServicesMap.set(service.id, service) })
+    selectedServicesData.forEach(service => { if (service?.id) allServicesMap.set(service.id, service) })
+    assignedServicesFromRoom.forEach(service => { if (service?.id) allServicesMap.set(service.id, service) })
+    roomTypeServices.forEach(service => { if (service?.id && !allServicesMap.has(service.id)) allServicesMap.set(service.id, service) })
     
-    // Add available services
-    availableServicesData.forEach(service => {
-      if (service && service.id) {
-        allServicesMap.set(service.id, service)
-      }
-    })
-    
-    // Add selected/assigned services
-    selectedServicesData.forEach(service => {
-      if (service && service.id) {
-        allServicesMap.set(service.id, service)
-      }
-    })
-    
-    // Add services from room data
-    assignedServicesFromRoom.forEach(service => {
-      if (service && service.id) {
-        allServicesMap.set(service.id, service)
-      }
-    })
-    
-    // Add room type services
-    roomTypeServices.forEach(service => {
-      if (service && service.id) {
-        // Only add if not already present
-        if (!allServicesMap.has(service.id)) {
-          allServicesMap.set(service.id, service)
-        }
-      }
-    })
-    
-    // Convert map back to array
     const servicesData = Array.from(allServicesMap.values())
     
-    console.log('Combined servicesData (array):', servicesData)
-    console.log('Number of total services:', servicesData.length)
+    roomAmenities.value = servicesData.filter(service => 
+      service && typeof service === 'object' && (service.service_type_id === 1 || service.service_type?.id === 1)
+    )
     
-    // Log each service for debugging
-    servicesData.forEach((service, index) => {
-      console.log(`Service ${index + 1}:`, {
-        id: service.id,
-        name: service.service_name,
-        type_id: service.service_type_id,
-        type: service.service_type,
-        price: service.service_price
-      })
-    })
+    extraServices.value = servicesData.filter(service => 
+      service && typeof service === 'object' && (service.service_type_id === 2 || service.service_type?.id === 2)
+    )
     
-    // Now safely filter by service_type_id
-    // service_type_id = 1 -> Room Amenities (included in room)
-    roomAmenities.value = servicesData.filter(service => {
-      if (!service || typeof service !== 'object') return false
-      return service.service_type_id === 1 || service.service_type?.id === 1
-    })
+    console.log('Room Amenities:', roomAmenities.value.length, 'Extra Services:', extraServices.value.length)
     
-    // service_type_id = 2 -> Extra Services (paid add-ons)
-    extraServices.value = servicesData.filter(service => {
-      if (!service || typeof service !== 'object') return false
-      return service.service_type_id === 2 || service.service_type?.id === 2
-    })
-    
-    console.log('Room Amenities (service_type_id=1):', roomAmenities.value.length, 'items')
-    roomAmenities.value.forEach(s => console.log('  -', s.service_name))
-    
-    console.log('Extra Services (service_type_id=2):', extraServices.value.length, 'items')
-    extraServices.value.forEach(s => console.log('  -', s.service_name, '৳' + (s.service_price || 0)))
-    
-    // FIXED: Only use localStorage receipts to determine which services are subscribed
-    // This prevents showing services subscribed by OTHER borders as subscribed for the current user
+    // Load user-specific subscribed services
     subscribedServiceIds.value = serviceReceipts.value.map(r => r.service_id)
-    
-    console.log('Subscribed Service IDs (from receipts only):', subscribedServiceIds.value)
-    
-    // REMOVED: The code that was adding all selectedServicesData to subscribedServiceIds
-    // This was causing the bug where subscribing to one service made others appear subscribed
-    // 
-    // OLD CODE (REMOVED):
-    // selectedServicesData.forEach(service => {
-    //   if (service && service.id && !subscribedServiceIds.value.includes(service.id)) {
-    //     if (service.service_type_id === 2 || service.service_type?.id === 2) {
-    //       subscribedServiceIds.value.push(service.id)
-    //     }
-    //   }
-    // })
     
   } catch (err) {
     console.error('Error fetching room services:', err)
-    console.log('Falling back to existing service data structure...')
     fallbackToExistingServices()
   } finally {
     loadingServices.value = false
@@ -780,25 +1014,14 @@ const fallbackToExistingServices = () => {
   
   if (room.value?.room_type?.service_on_room_type) {
     room.value.room_type.service_on_room_type.forEach(item => {
-      if (item.service) {
-        allServices.push({
-          ...item.service,
-          source: 'room_type'
-        })
-      }
+      if (item.service) allServices.push({ ...item.service, source: 'room_type' })
     })
   }
   
   if (room.value?.service_on_room) {
     room.value.service_on_room.forEach(item => {
-      if (item.service) {
-        const exists = allServices.some(s => s.id === item.service.id)
-        if (!exists) {
-          allServices.push({
-            ...item.service,
-            source: 'room'
-          })
-        }
+      if (item.service && !allServices.some(s => s.id === item.service.id)) {
+        allServices.push({ ...item.service, source: 'room' })
       }
     })
   }
@@ -806,7 +1029,6 @@ const fallbackToExistingServices = () => {
   roomAmenities.value = allServices.filter(service => 
     service.service_type_id === 1 || service.service_type?.id === 1
   )
-  
   extraServices.value = allServices.filter(service => 
     service.service_type_id === 2 || service.service_type?.id === 2
   )
@@ -832,7 +1054,6 @@ const subscribeToService = async (serviceId) => {
   const service = extraServices.value.find(s => s.id === serviceId)
   if (!service) return
   
-  // Show confirmation dialog with price
   Swal.fire({
     title: 'Subscribe to Service',
     html: `
@@ -860,10 +1081,7 @@ const subscribeToService = async (serviceId) => {
           services: [serviceId]
         })
         
-        // Generate receipt for the subscription
         const receipt = generateServiceReceipt(service, response.data)
-        
-        // Show the receipt
         selectedServiceReceipt.value = receipt
         showServiceReceipt.value = true
         
@@ -875,13 +1093,12 @@ const subscribeToService = async (serviceId) => {
           timer: 2000,
           showConfirmButton: true
         })
-        
       } catch (err) {
         console.error('Error subscribing to service:', err)
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: err.response?.data?.message || 'Failed to subscribe to service. Please try again.',
+          text: err.response?.data?.message || 'Failed to subscribe to service.',
           confirmButtonColor: '#0d9488'
         })
       } finally {
@@ -892,62 +1109,46 @@ const subscribeToService = async (serviceId) => {
   })
 }
 
-// View service receipt
 const viewServiceReceipt = (serviceId) => {
   const receipt = serviceReceipts.value.find(r => r.service_id === serviceId)
   if (receipt) {
+    if (receipt.user_id && receipt.user_id !== currentUserId.value) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Access Denied',
+        text: 'This receipt belongs to a different user.',
+        confirmButtonColor: '#0d9488'
+      })
+      return
+    }
     selectedServiceReceipt.value = receipt
     showServiceReceipt.value = true
   } else {
-    // If receipt not found locally, show a message
     Swal.fire({
       icon: 'info',
       title: 'Receipt Not Found',
-      text: 'The receipt for this service could not be found. It may have been cleared from your browser storage.',
+      text: 'The receipt for this service could not be found.',
       confirmButtonColor: '#0d9488'
     })
   }
 }
 
-// Print service receipt
 const printServiceReceipt = () => {
   const receiptContent = document.getElementById('service-receipt-content')
   if (!receiptContent) return
   
   const printWindow = window.open('', '_blank', 'width=1000,height=800')
-  
-  const printHTML = [
-    '<!DOCTYPE html>',
-    '<html>',
-    '<head>',
-    '<title>Service Subscription Receipt - SylhetStay</title>',
-    '<script src="https://cdn.tailwindcss.com"><' + '/script>',
-    '<style>',
-    '@media print {',
-    '  body { margin: 0; padding: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }',
-    '  @page { size: A4; margin: 15mm; }',
-    '}',
-    'body { display: flex; justify-content: center; min-height: 100vh; background: #f9fafb; font-family: system-ui, -apple-system, sans-serif; }',
-    '</style>',
-    '</head>',
-    '<body>',
-    '<div style="width: 100%; max-width: 800px; margin: 20px auto; background: white; padding: 20px;">',
-    receiptContent.innerHTML,
-    '</div>',
-    '<script>',
-    'window.onload = function() { setTimeout(function() { window.print(); }, 500); }',
-    '<' + '/script>',
-    '</body>',
-    '</html>'
-  ].join('\n')
-
+  const printHTML = `<!DOCTYPE html><html><head><title>Service Subscription Receipt - SylhetStay</title><script src="https://cdn.tailwindcss.com"><\/script><style>@media print{body{margin:0;padding:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:15mm}}body{display:flex;justify-content:center;min-height:100vh;background:#f9fafb;font-family:system-ui,-apple-system,sans-serif}</style></head><body><div style="width:100%;max-width:800px;margin:20px auto;background:white;padding:20px">${receiptContent.innerHTML}</div><script>window.onload=function(){setTimeout(function(){window.print()},500)}<\/script></body></html>`
   printWindow.document.write(printHTML)
   printWindow.document.close()
 }
 
+// ============================================
+// SERVICE ICON MAPPER
+// ============================================
+
 const getServiceIcon = (service) => {
   const name = service.service_name?.toLowerCase() || ''
-  
   if (name.includes('wifi') || name.includes('internet')) return Wifi
   if (name.includes('ac') || name.includes('air') || name.includes('conditioning')) return Wind
   if (name.includes('kitchen') || name.includes('food') || name.includes('meal')) return Utensils
@@ -964,17 +1165,15 @@ const getServiceIcon = (service) => {
   if (name.includes('power') || name.includes('electricity') || name.includes('backup')) return Zap
   if (name.includes('bath') || name.includes('shower') || name.includes('toilet') || name.includes('bathroom')) return Bath
   if (name.includes('bed') || name.includes('mattress') || name.includes('pillow')) return Bed
-  
   return CheckCircle2
 }
 
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
 const getCapacityFromType = (roomTypeName) => {
-  const capacities = {
-    'shared': 4,
-    'semi-private': 2,
-    'premium': 1,
-    'standard': 2
-  }
+  const capacities = { 'shared': 4, 'semi-private': 2, 'premium': 1, 'standard': 2 }
   return capacities[roomTypeName?.toLowerCase()] || 2
 }
 
@@ -992,9 +1191,22 @@ const getDefaultDescription = (roomTypeName) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
+
+const getRoomImage = (roomTypeName) => {
+  const images = {
+    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
+    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
+    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
+    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
+  }
+  return images[roomTypeName?.toLowerCase()] || images.standard
+}
+
+// ============================================
+// ALERT FUNCTIONS
+// ============================================
 
 const showNotBorderAlert = () => {
   Swal.fire({
@@ -1034,103 +1246,12 @@ const showAlreadyReviewedAlert = () => {
   })
 }
 
-const verifyBorderStatus = async () => {
-  debugInfo.value = []
-  
-  if (!isAuthenticated.value || !room.value?.id) {
-    debugInfo.value.push('❌ Not authenticated or no room ID')
-    isBorderOfRoom.value = false
-    return
-  }
-  
-  try {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}')
-    const authToken = localStorage.getItem('auth_token')
-    
-    debugInfo.value.push(`Room ID: ${room.value.id}`)
-    debugInfo.value.push(`User ID: ${userData.id || 'not found'}`)
-    debugInfo.value.push(`Auth Token: ${authToken ? 'Present' : 'Missing'}`)
-    
-    currentUserId.value = userData.id || userData.user_id || userData.border_id || null
-    debugInfo.value.push(`Current User ID: ${currentUserId.value}`)
-    
-    // METHOD 1: Try getting border profile via /border_user endpoint
-    debugInfo.value.push('--- Method 1: Get border profile ---')
-    try {
-      const borderResponse = await authAPI.getUser()
-      const borderData = borderResponse.data?.data || borderResponse.data
-      debugInfo.value.push(`Border API Response keys: ${Object.keys(borderData).join(', ')}`)
-      
-      if (borderData && borderData.id) {
-        currentBorderId.value = borderData.id
-        debugInfo.value.push(`Border ID: ${borderData.id}`)
-        
-        const borderRoomId = borderData.room_id 
-          || borderData.room?.id 
-          || borderData.current_room_id
-          || borderData.active_room_id
-          || borderData.roomId
-        debugInfo.value.push(`Border Room ID (all checks): ${borderRoomId}`)
-        
-        if (borderRoomId == room.value.id) {
-          isBorderOfRoom.value = true
-          debugInfo.value.push('✅ MATCH! User is border of this room')
-          return
-        }
-        
-        debugInfo.value.push('⚠️ No room_id in border profile, checking bookings...')
-      } else {
-        debugInfo.value.push('No border profile found')
-      }
-    } catch (err) {
-      debugInfo.value.push(`Method 1 Error: ${err.message}`)
-    }
-    
-    // METHOD 2: Check bookings for this room
-    debugInfo.value.push('--- Method 2: Check bookings ---')
-    try {
-      const bookingsResponse = await bookingAPI.getAllBookings()
-      const bookings = bookingsResponse.data?.data || bookingsResponse.data || []
-      
-      debugInfo.value.push(`Total bookings found: ${bookings.length}`)
-      
-      const roomBookings = bookings.filter(booking => {
-        const bookingRoomId = booking.room_id || booking.room?.id
-        const bookingUserId = booking.user_id 
-          || booking.border_user_id 
-          || booking.border_id 
-          || booking.user?.id
-          || booking.customer_id
-        
-        return bookingRoomId == room.value.id
-      })
-      
-      debugInfo.value.push(`Bookings for this room: ${roomBookings.length}`)
-      
-      if (roomBookings.length > 0) {
-        const activeBooking = roomBookings.find(b => b.status === 1 || b.status === '1' || b.status === 'active')
-        
-        if (activeBooking) {
-          isBorderOfRoom.value = true
-          debugInfo.value.push('✅ MATCH! Room has active booking')
-          return
-        }
-      }
-    } catch (err) {
-      debugInfo.value.push(`Method 2 Error: ${err.message}`)
-    }
-    
-    isBorderOfRoom.value = false
-    
-  } catch (err) {
-    console.error('❌ Error verifying border status:', err)
-    isBorderOfRoom.value = false
-  }
-}
+// ============================================
+// DATA FETCHING
+// ============================================
 
 const checkAvailability = async () => {
   if (!room.value?.id) return
-  
   checkingAvailability.value = true
   try {
     const response = await roomAPI.getRoomAvailability(room.value.id)
@@ -1144,11 +1265,7 @@ const checkAvailability = async () => {
 
 const fetchRoomData = async () => {
   const roomId = route.params.id
-  
-  if (!roomId) {
-    loading.value = false
-    return
-  }
+  if (!roomId) { loading.value = false; return }
   
   loading.value = true
   error.value = ''
@@ -1158,7 +1275,6 @@ const fetchRoomData = async () => {
     loadServiceReceipts()
     
     const roomData = await fetchRoomDetails(roomId)
-    
     if (!roomData) {
       error.value = 'Room not found'
       loading.value = false
@@ -1170,7 +1286,6 @@ const fetchRoomData = async () => {
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    
     checkInDate.value = today.toISOString().split('T')[0]
     checkOutDate.value = tomorrow.toISOString().split('T')[0]
     
@@ -1178,7 +1293,6 @@ const fetchRoomData = async () => {
     await checkAvailability()
     await fetchReviews(roomId)
     await fetchRoomServices()
-    
   } catch (err) {
     console.error('Error fetching room data:', err)
     error.value = err.message || 'Failed to load room details'
@@ -1187,15 +1301,9 @@ const fetchRoomData = async () => {
   }
 }
 
-const getRoomImage = (roomTypeName) => {
-  const images = {
-    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
-    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
-    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
-    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
-  }
-  return images[roomTypeName?.toLowerCase()] || images.standard
-}
+// ============================================
+// ACTIONS
+// ============================================
 
 const handleBookNow = () => {
   if (!isAuthenticated.value) {
@@ -1222,39 +1330,20 @@ const handleBookNow = () => {
 }
 
 const handleWriteReview = (review = null) => {
-  if (!isAuthenticated.value) {
-    showLoginRequiredAlert()
-    return
-  }
-  
-  if (!isBorderOfRoom.value) {
-    showNotBorderAlert()
-    return
-  }
-  
-  if (!review && hasUserReviewed.value) {
-    showAlreadyReviewedAlert()
-    return
-  }
+  if (!isAuthenticated.value) { showLoginRequiredAlert(); return }
+  if (!isBorderOfRoom.value) { showNotBorderAlert(); return }
+  if (!review && hasUserReviewed.value) { showAlreadyReviewedAlert(); return }
   
   reviewErrors.value = ''
   
   if (review) {
     isEditingReview.value = true
     editingReviewId.value = review.id
-    reviewForm.value = {
-      rating: review.rating || 5,
-      title: review.title || '',
-      comment: review.comment || ''
-    }
+    reviewForm.value = { rating: review.rating || 5, title: review.title || '', comment: review.comment || '' }
   } else {
     isEditingReview.value = false
     editingReviewId.value = null
-    reviewForm.value = { 
-      rating: 5, 
-      title: '', 
-      comment: '' 
-    }
+    reviewForm.value = { rating: 5, title: '', comment: '' }
   }
   
   showReviewForm.value = true
@@ -1262,15 +1351,8 @@ const handleWriteReview = (review = null) => {
 
 const submitReview = async () => {
   reviewErrors.value = ''
-  
-  if (!reviewForm.value.title.trim()) {
-    reviewErrors.value = 'Title is required'
-    return
-  }
-  if (!reviewForm.value.comment.trim()) {
-    reviewErrors.value = 'Comment is required'
-    return
-  }
+  if (!reviewForm.value.title.trim()) { reviewErrors.value = 'Title is required'; return }
+  if (!reviewForm.value.comment.trim()) { reviewErrors.value = 'Comment is required'; return }
   
   submittingReview.value = true
   
@@ -1285,48 +1367,20 @@ const submitReview = async () => {
     
     if (isEditingReview.value && editingReviewId.value) {
       await updateReview(editingReviewId.value, reviewData)
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Review Updated!',
-        text: 'Your review has been updated successfully.',
-        confirmButtonColor: '#0d9488',
-        timer: 2000,
-        showConfirmButton: true
-      })
+      Swal.fire({ icon: 'success', title: 'Review Updated!', text: 'Your review has been updated successfully.', confirmButtonColor: '#0d9488', timer: 2000 })
     } else {
       await createReview(reviewData)
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Review Submitted!',
-        text: 'Thank you for your review!',
-        confirmButtonColor: '#0d9488',
-        timer: 2000,
-        showConfirmButton: true
-      })
+      Swal.fire({ icon: 'success', title: 'Review Submitted!', text: 'Thank you for your review!', confirmButtonColor: '#0d9488', timer: 2000 })
     }
     
     showReviewForm.value = false
     isEditingReview.value = false
     editingReviewId.value = null
-    
     await fetchReviews(room.value.id)
-    
   } catch (err) {
-    console.error('❌ Error submitting review:', err)
-    const errorMessage = err.response?.data?.message 
-      || err.response?.data?.error 
-      || err.message 
-      || 'Failed to submit review. Please try again.'
+    const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to submit review.'
     reviewErrors.value = errorMessage
-    
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: errorMessage,
-      confirmButtonColor: '#0d9488'
-    })
+    Swal.fire({ icon: 'error', title: 'Error', text: errorMessage, confirmButtonColor: '#0d9488' })
   } finally {
     submittingReview.value = false
   }
@@ -1346,29 +1400,26 @@ const deleteUserReview = async (reviewId) => {
     if (result.isConfirmed) {
       try {
         await deleteReview(reviewId)
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'Your review has been deleted.',
-          confirmButtonColor: '#0d9488',
-          timer: 2000
-        })
-        
+        Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Your review has been deleted.', confirmButtonColor: '#0d9488', timer: 2000 })
         await fetchReviews(room.value.id)
       } catch (err) {
-        console.error('❌ Error deleting review:', err)
-        
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to delete review. Please try again.',
-          confirmButtonColor: '#0d9488'
-        })
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete review.', confirmButtonColor: '#0d9488' })
       }
     }
   })
 }
+
+// ============================================
+// WATCHERS & LIFECYCLE
+// ============================================
+
+watch(() => currentUserId.value, (newUserId, oldUserId) => {
+  if (oldUserId && newUserId !== oldUserId) {
+    console.log(`User changed from ${oldUserId} to ${newUserId}, reloading receipts...`)
+    loadServiceReceipts()
+    if (room.value?.id) fetchRoomServices()
+  }
+})
 
 watch(() => route.params.id, (newId) => {
   if (newId) {
@@ -1380,6 +1431,8 @@ watch(() => route.params.id, (newId) => {
 })
 
 onMounted(() => {
+  loadUserData()
+  loadServiceReceipts()
   fetchRoomData()
 })
 </script>
