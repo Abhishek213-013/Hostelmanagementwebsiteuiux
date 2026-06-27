@@ -570,24 +570,100 @@ const totalPaid = computed(() => {
 // Load service subscriptions from localStorage
 const loadServiceSubscriptions = () => {
   try {
-    const receipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
+    // Get current user data
     const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    const userId = userData.id || userData.user_id || userData.border_id || 'anonymous'
     const userEmail = userData.email || ''
-    const userId = userData.id || userData.user_id || userData.border_id || ''
     
-    // Filter receipts for current user
-    serviceSubscriptions.value = receipts.filter(receipt => {
+    // Use the SAME user-specific key pattern as RoomDetailsPage
+    const storageKey = `serviceReceipts_${userId}`
+    const receipts = JSON.parse(localStorage.getItem(storageKey) || '[]')
+    
+    // Also check the old non-user-specific key for backward compatibility
+    const oldReceipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
+    
+    // Merge receipts (user-specific takes priority)
+    const allReceipts = [...receipts]
+    
+    // Add old receipts that belong to this user
+    oldReceipts.forEach(oldReceipt => {
+      const isDuplicate = allReceipts.some(r => r.id === oldReceipt.id)
+      const belongsToUser = 
+        (oldReceipt.border_email === userEmail) || 
+        (oldReceipt.border_id == userId) ||
+        (oldReceipt.user_id == userId)
+      
+      if (!isDuplicate && belongsToUser) {
+        allReceipts.push(oldReceipt)
+      }
+    })
+    
+    // Filter receipts for current user (safety check)
+    serviceSubscriptions.value = allReceipts.filter(receipt => {
       return receipt.border_email === userEmail || 
-             receipt.border_id == userId
+             receipt.border_id == userId ||
+             receipt.user_id == userId
     })
     
     console.log('Loaded service subscriptions:', serviceSubscriptions.value)
+    console.log('Storage key used:', storageKey)
+    console.log('User ID:', userId, 'Email:', userEmail)
   } catch (e) {
     console.error('Error loading service subscriptions:', e)
     serviceSubscriptions.value = []
   }
 }
+// Add this function to migrate old receipts to the new user-specific format
+const migrateOldReceipts = () => {
+  try {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    const userId = userData.id || userData.user_id || userData.border_id || 'anonymous'
+    const userEmail = userData.email || ''
+    
+    const oldReceipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
+    
+    if (oldReceipts.length > 0) {
+      const storageKey = `serviceReceipts_${userId}`
+      const existingReceipts = JSON.parse(localStorage.getItem(storageKey) || '[]')
+      
+      // Find receipts that belong to this user but aren't in the new storage
+      const userReceipts = oldReceipts.filter(receipt => {
+        const belongsToUser = 
+          receipt.border_email === userEmail || 
+          receipt.border_id == userId ||
+          receipt.user_id == userId
+        const notDuplicated = !existingReceipts.some(r => r.id === receipt.id)
+        return belongsToUser && notDuplicated
+      })
+      
+      if (userReceipts.length > 0) {
+        // Merge and save to user-specific key
+        const merged = [...existingReceipts, ...userReceipts]
+        localStorage.setItem(storageKey, JSON.stringify(merged))
+        
+        // Remove migrated receipts from old key
+        const remainingOld = oldReceipts.filter(receipt => {
+          return !userReceipts.some(r => r.id === receipt.id)
+        })
+        localStorage.setItem('serviceReceipts', JSON.stringify(remainingOld))
+        
+        console.log(`Migrated ${userReceipts.length} receipts to ${storageKey}`)
+      }
+    }
+  } catch (e) {
+    console.error('Error migrating receipts:', e)
+  }
+}
 
+// Call this once on mount
+onMounted(() => {
+  if (!localStorage.getItem('isAuthenticated')) {
+    router.push('/login')
+    return
+  }
+  migrateOldReceipts() // Add this line
+  fetchAllData()
+})
 // Fetch booking payments from API
 async function fetchBookingPayments() {
   try {
