@@ -55,6 +55,11 @@ export function useGallery() {
       console.log('Processed gallery:', galleryItems.value.length, 'items found')
       return galleryData
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Gallery API not available (404), using empty state')
+        galleryItems.value = []
+        return []
+      }
       error.value = err.response?.data?.message || 'Failed to fetch gallery'
       console.error('Error fetching gallery:', err)
       throw err

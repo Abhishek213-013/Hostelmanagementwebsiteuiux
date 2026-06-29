@@ -276,13 +276,13 @@ const getImageUrl = (path) => {
     return path
   }
   if (path.startsWith('/storage')) {
-    return `http://localhost:8000${path}`
+    return `https://dev.hostel.accounting.itlab.solutions${path}`
   }
   if (path.startsWith('border-users/')) {
-    return `http://localhost:8000/storage/${path}`
+    return `https://dev.hostel.accounting.itlab.solutions/storage/${path}`
   }
   if (!path.includes('/')) {
-    return `http://localhost:8000/storage/border-users/${path}`
+    return `https://dev.hostel.accounting.itlab.solutions/storage/border-users/${path}`
   }
   return path
 }

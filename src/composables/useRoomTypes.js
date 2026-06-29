@@ -47,6 +47,11 @@ export function useRoomTypes() {
       
       return response.data
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Room types API not available (404), using empty state')
+        roomTypes.value = []
+        return []
+      }
       error.value = err.response?.data?.message || err.message || 'Failed to fetch room types'
       console.error('Error fetching room types:', err)
       throw err

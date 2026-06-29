@@ -279,17 +279,17 @@ const getImageUrl = (path) => {
   // If it starts with /storage, it's a storage path
   if (path.startsWith('/storage')) {
     // Use the backend URL for storage
-    return `http://localhost:8000${path}`
+    return `https://dev.hostel.accounting.itlab.solutions${path}`
   }
   
   // If it's a relative path from the API
   if (path.startsWith('border-users/')) {
-    return `http://localhost:8000/storage/${path}`
+    return `https://dev.hostel.accounting.itlab.solutions/storage/${path}`
   }
   
   // If it's just a filename
   if (!path.includes('/')) {
-    return `http://localhost:8000/storage/border-users/${path}`
+    return `https://dev.hostel.accounting.itlab.solutions/storage/border-users/${path}`
   }
   
   return path

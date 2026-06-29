@@ -497,7 +497,7 @@ const facilitiesLoaded = ref(false)
 const galleryLoaded = ref(false)
 const testimonialsLoaded = ref(false)
 
-// Get hero slides from API
+// Get hero slides from API with fallback
 const getHeroSlides = () => {
   const heroSection = pageSections.value.find(s => s.section_key === 'hero-slider')
   if (heroSection && heroSection.items && heroSection.items.length > 0) {
@@ -513,10 +513,45 @@ const getHeroSlides = () => {
       sort_order: item.sort_order
     }))
   }
-  return []
+  // Fallback slides when API is unavailable
+  return [
+    {
+      id: 1,
+      badge: 'Welcome to SylhetStay',
+      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920',
+      headline_part1: 'Premium Student',
+      headline_part2: 'Accommodation',
+      headline_part3: 'in Sylhet',
+      description_part1: 'modern amenities',
+      description_part2: 'comfortable spaces',
+      sort_order: 1
+    },
+    {
+      id: 2,
+      badge: 'Safe & Secure',
+      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1920',
+      headline_part1: 'Your Home',
+      headline_part2: 'Away from Home',
+      headline_part3: 'Safe & Secure',
+      description_part1: '24/7 security',
+      description_part2: 'a supportive community',
+      sort_order: 2
+    },
+    {
+      id: 3,
+      badge: 'Book Now',
+      image: 'https://images.unsplash.com/photo-1522771739015-7c3b617de5ed?w=1920',
+      headline_part1: 'Modern Living',
+      headline_part2: 'Spaces',
+      headline_part3: 'Designed for You',
+      description_part1: 'fully furnished rooms',
+      description_part2: 'premium facilities',
+      sort_order: 3
+    }
+  ]
 }
 
-// Get about section from API
+// Get about section from API with fallback
 const getAboutData = () => {
   const aboutSection = pageSections.value.find(s => s.section_key === 'about')
   if (aboutSection) {
@@ -564,7 +599,25 @@ const getAboutData = () => {
       images: images
     }
   }
-  return null
+  // Fallback about data when API is unavailable
+  return {
+    badge: 'About SylhetStay',
+    headline_part1: 'Welcome to',
+    headline_part2: 'SylhetStay',
+    description: 'SylhetStay provides premium student accommodation in Sylhet, Bangladesh. We offer modern, secure, and comfortable living spaces designed specifically for university students. Our properties feature high-speed WiFi, 24/7 security, study areas, and a vibrant community atmosphere.',
+    stats: [
+      { icon: 'Users', value: '150+', label: 'Happy Students' },
+      { icon: 'Star', value: '4.8/5', label: 'Rating' },
+      { icon: 'Building2', value: '50+', label: 'Room Options' },
+      { icon: 'Shield', value: '24/7', label: 'Security' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600', label: 'Modern Interiors' },
+      { src: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600', label: 'Cozy Rooms' },
+      { src: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600', label: 'Study Areas' },
+      { src: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600', label: 'Common Spaces' }
+    ]
+  }
 }
 
 // Get icon for room type card
@@ -637,42 +690,66 @@ async function fetchPageData() {
     // STEP 2: Show the page immediately
     loading.value = false
     
-    // STEP 3: Load ALL remaining sections
+    // STEP 3: Load ALL remaining sections (each independently wrapped)
     console.log('🔄 Loading remaining sections...')
     
     // Fetch about section
-    await fetchAboutSection(1)
-    const aboutData = getAboutData()
-    if (aboutData) {
-      pageData.value.about = aboutData
-      console.log('✅ About loaded')
+    try {
+      await fetchAboutSection(1)
+      const aboutData = getAboutData()
+      if (aboutData) {
+        pageData.value.about = aboutData
+        console.log('✅ About loaded')
+      }
+    } catch (e) {
+      console.warn('⚠️ About section failed to load:', e.message)
     }
     
     // Fetch facilities
-    await fetchFacilities()
-    facilitiesLoaded.value = true
-    console.log('✅ Facilities loaded:', facilitiesList.value.length)
+    try {
+      await fetchFacilities()
+      facilitiesLoaded.value = true
+      console.log('✅ Facilities loaded:', facilitiesList.value.length)
+    } catch (e) {
+      console.warn('⚠️ Facilities failed to load:', e.message)
+    }
     
     // Fetch gallery
-    await fetchGallery()
-    galleryLoaded.value = true
-    console.log('✅ Gallery loaded:', galleryItems.value.length)
+    try {
+      await fetchGallery()
+      galleryLoaded.value = true
+      console.log('✅ Gallery loaded:', galleryItems.value.length)
+    } catch (e) {
+      console.warn('⚠️ Gallery failed to load:', e.message)
+    }
     
     // Fetch testimonials
-    await fetchTestimonials()
-    testimonials.value = apiTestimonials.value.slice(0, 6)
-    testimonialsLoaded.value = true
-    console.log('✅ Testimonials loaded:', testimonials.value.length)
+    try {
+      await fetchTestimonials()
+      testimonials.value = apiTestimonials.value.slice(0, 6)
+      testimonialsLoaded.value = true
+      console.log('✅ Testimonials loaded:', testimonials.value.length)
+    } catch (e) {
+      console.warn('⚠️ Testimonials failed to load:', e.message)
+    }
     
     // Fetch room types
-    await fetchRoomTypes()
-    roomTypesList.value = apiRoomTypes.value
-    console.log('✅ Room types loaded:', roomTypesList.value.length)
+    try {
+      await fetchRoomTypes()
+      roomTypesList.value = apiRoomTypes.value
+      console.log('✅ Room types loaded:', roomTypesList.value.length)
+    } catch (e) {
+      console.warn('⚠️ Room types failed to load:', e.message)
+    }
     
     // Fetch rooms
-    await fetchRooms()
-    homepageRooms.value = rooms.value.slice(0, 3)
-    console.log('✅ Rooms loaded:', homepageRooms.value.length)
+    try {
+      await fetchRooms()
+      homepageRooms.value = rooms.value.slice(0, 3)
+      console.log('✅ Rooms loaded:', homepageRooms.value.length)
+    } catch (e) {
+      console.warn('⚠️ Rooms failed to load:', e.message)
+    }
     
     console.log('✅ All content loaded!')
     

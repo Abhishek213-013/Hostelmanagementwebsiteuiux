@@ -32,7 +32,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'https://dev.hostel.accounting.itlab.solutions',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path,

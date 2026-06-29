@@ -72,6 +72,10 @@ export function usePages() {
       console.log(`✅ Hero section loaded with ${items.length} slides`)
       return result
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Page sections API not available (404), using fallback content')
+        return null
+      }
       console.error('Error fetching hero section:', err)
       error.value = err.response?.data?.message || 'Failed to fetch hero section'
       throw err
@@ -118,6 +122,10 @@ export function usePages() {
       console.log(`✅ About section loaded`)
       return result
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('About section API not available (404), using fallback content')
+        return null
+      }
       console.error('Error fetching about section:', err)
       throw err
     } finally {
@@ -146,6 +154,10 @@ export function usePages() {
       pageSections.value = data
       return data
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Page sections API not available (404)')
+        return []
+      }
       console.error('Error fetching sections:', err)
       error.value = err.response?.data?.message || 'Failed to fetch page sections'
       throw err

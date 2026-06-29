@@ -545,8 +545,12 @@ async function fetchAllData() {
     console.log('✅ Stats loaded')
     
     // STEP 4: Load team members (visible on page)
-    await fetchFirstTeamMembers()
-    console.log('✅ Team members loaded:', teamMembers.value.length)
+    try {
+      await fetchFirstTeamMembers()
+      console.log('✅ Team members loaded:', teamMembers.value.length)
+    } catch (err) {
+      console.warn('Team data unavailable, continuing without team section:', err)
+    }
     
     // STEP 5: Parse remaining sections (mission, vision, values, timeline, achievements, universities)
     pageData.value.mission = parseMission()

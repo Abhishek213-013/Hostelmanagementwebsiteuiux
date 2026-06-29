@@ -42,6 +42,11 @@ export function useFacilities() {
       console.log('Processed facilities:', facilities.value.length, 'facilities found')
       return facilitiesData
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Facilities API not available (404), using empty state')
+        facilities.value = []
+        return []
+      }
       error.value = err.response?.data?.message || 'Failed to fetch facilities'
       console.error('Error fetching facilities:', err)
       throw err

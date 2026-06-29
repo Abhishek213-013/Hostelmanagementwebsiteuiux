@@ -65,6 +65,11 @@ export function useTestimonials() {
       console.log('Processed testimonials:', testimonials.value.length, 'testimonials found')
       return testimonialsData
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Testimonials API not available (404), using empty state')
+        testimonials.value = []
+        return []
+      }
       error.value = err.response?.data?.message || 'Failed to fetch testimonials'
       console.error('Error fetching testimonials:', err)
       throw err

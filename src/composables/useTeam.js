@@ -41,6 +41,11 @@ export function useTeam() {
       console.log('Processed teams:', teams.value.length, 'teams found')
       return teamsData
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Teams API not available (404), using fallback')
+        teams.value = []
+        return []
+      }
       error.value = err.response?.data?.message || 'Failed to fetch teams'
       console.error('Error fetching teams:', err)
       throw err
@@ -104,6 +109,12 @@ export function useTeam() {
       console.log('Processed team members:', teamMembers.value.length, 'members found')
       return teamData
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn(`Team details not found (404) for ID: ${teamId}`)
+        currentTeam.value = null
+        teamMembers.value = []
+        return null
+      }
       error.value = err.response?.data?.message || 'Failed to fetch team details'
       console.error('Error fetching team details:', err)
       throw err

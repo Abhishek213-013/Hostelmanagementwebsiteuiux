@@ -472,6 +472,11 @@ export function useRooms() {
       
       return response.data
     } catch (err) {
+      if (err.response?.status === 404) {
+        console.warn('Rooms API not available (404), using empty state')
+        rooms.value = []
+        return []
+      }
       console.error('❌ Error fetching rooms:', err)
       error.value = err.message || 'Failed to fetch rooms'
       throw err

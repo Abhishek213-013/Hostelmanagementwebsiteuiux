@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios'
 
-const API_BASE_URL = '/api'
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions/api'
 const TENANT_API_KEY = 'hotelA123'
 
 // Create a cache for GET requests
