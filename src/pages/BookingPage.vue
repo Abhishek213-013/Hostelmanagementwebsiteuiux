@@ -842,6 +842,7 @@ const completePayment = () => {
     sessionStorage.removeItem(`room_availability_${selectedRoom.value.id}`)
   }
   
+  console.log('Booking payment completed. Response:', JSON.stringify(currentBooking.value, null, 2))
   step.value = 4
 }
 
