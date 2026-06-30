@@ -199,135 +199,151 @@
           </div>
         </div>
 
-        <!-- Team Section -->
-        <div v-if="teamMembers.length > 0" class="mb-20">
-          <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <Users class="w-5 h-5 text-teal-600" />
-              <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>
-            </div>
-            <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Meet Our Team</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400">Dedicated professionals committed to your success</p>
+        <!-- Team Section (lazy loaded) -->
+        <div data-lazy-team class="mb-20">
+          <!-- Loading State -->
+          <div v-if="teamLoading" class="text-center py-20">
+            <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-gray-600 dark:text-gray-400">Loading team...</p>
           </div>
-          
-          <!-- Team Stats -->
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ teamMembers.length }}</div>
-              <div class="text-sm text-gray-500">Total Team</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ teamDepartments }}</div>
-              <div class="text-sm text-gray-500">Departments</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ teamExperience }}</div>
-              <div class="text-sm text-gray-500">Avg. Experience</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ activeMembers }}</div>
-              <div class="text-sm text-gray-500">Active Members</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
-              <div class="text-2xl font-black text-teal-600">{{ earliestJoinYear }}</div>
-              <div class="text-sm text-gray-500">Since</div>
+
+          <!-- Error State -->
+          <div v-else-if="teamError" class="text-center py-10">
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md mx-auto">
+              <p class="text-red-600 dark:text-red-400">{{ teamError }}</p>
             </div>
           </div>
 
-          <!-- Team Members Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div v-for="member in teamMembers" :key="member.id" 
-                 class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
-                 @click="selectedMember = selectedMember?.id === member.id ? null : member">
-              <div class="relative h-72 overflow-hidden">
-                <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                
-                <!-- Active/Inactive Badge -->
-                <div class="absolute top-4 right-4">
-                  <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
-                    member.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
-                    {{ member.is_active ? 'Active' : 'Inactive' }}
-                  </span>
-                </div>
-                
-                <!-- Contact Info Overlay -->
-                <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div class="flex gap-2">
-                    <a v-if="member.email" :href="`mailto:${member.email}`" 
-                       class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
-                       @click.stop>
-                      <Mail class="w-4 h-4 text-white" />
-                    </a>
-                    <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
-                       class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
-                       @click.stop>
-                      <Phone class="w-4 h-4 text-white" />
-                    </a>
-                  </div>
-                </div>
+          <!-- Team Content -->
+          <template v-else-if="teamMembers.length > 0">
+            <div class="text-center mb-10">
+              <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <Users class="w-5 h-5 text-teal-600" />
+                <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">The People</span>
               </div>
-              <div class="p-6">
-                <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
-                <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
-                
-                <!-- Short Bio -->
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
-                
-                <!-- Joined Date -->
-                <div class="flex items-center gap-1 text-xs text-gray-400">
-                  <Calendar class="w-3 h-3" />
-                  <span>Joined {{ formatDate(member.joining_date) }}</span>
-                </div>
+              <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Meet Our Team</h2>
+              <p class="text-lg text-gray-600 dark:text-gray-400">Dedicated professionals committed to your success</p>
+            </div>
+            
+            <!-- Team Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+                <div class="text-2xl font-black text-teal-600">{{ teamMembers.length }}</div>
+                <div class="text-sm text-gray-500">Total Team</div>
+              </div>
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+                <div class="text-2xl font-black text-teal-600">{{ teamDepartments }}</div>
+                <div class="text-sm text-gray-500">Departments</div>
+              </div>
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+                <div class="text-2xl font-black text-teal-600">{{ teamExperience }}</div>
+                <div class="text-sm text-gray-500">Avg. Experience</div>
+              </div>
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+                <div class="text-2xl font-black text-teal-600">{{ activeMembers }}</div>
+                <div class="text-sm text-gray-500">Active Members</div>
+              </div>
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+                <div class="text-2xl font-black text-teal-600">{{ earliestJoinYear }}</div>
+                <div class="text-sm text-gray-500">Since</div>
+              </div>
+            </div>
 
-                <!-- Expand Indicator -->
-                <div class="text-center mt-3">
-                  <ChevronDown :class="['w-5 h-5 text-teal-600 transition-transform mx-auto', 
-                    selectedMember?.id === member.id ? 'rotate-180' : '']" />
+            <!-- Team Members Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div v-for="member in teamMembers" :key="member.id" 
+                   class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
+                   @click="selectedMember = selectedMember?.id === member.id ? null : member">
+                <div class="relative h-72 overflow-hidden">
+                  <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                  
+                  <!-- Active/Inactive Badge -->
+                  <div class="absolute top-4 right-4">
+                    <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
+                      member.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
+                      {{ member.is_active ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                  
+                  <!-- Contact Info Overlay -->
+                  <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="flex gap-2">
+                      <a v-if="member.email" :href="`mailto:${member.email}`" 
+                         class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                         @click.stop>
+                        <Mail class="w-4 h-4 text-white" />
+                      </a>
+                      <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                         class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                         @click.stop>
+                        <Phone class="w-4 h-4 text-white" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <!-- Expanded Details -->
-              <div v-if="selectedMember?.id === member.id" 
-                   class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
-                <!-- Full Bio -->
-                <div>
-                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">About</h5>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
-                </div>
-                
-                <!-- Contact Info -->
-                <div>
-                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
-                  <div class="space-y-1">
-                    <a v-if="member.email" :href="`mailto:${member.email}`" 
-                       class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
-                      <Mail class="w-4 h-4" /> {{ member.email }}
-                    </a>
-                    <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
-                       class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
-                      <Phone class="w-4 h-4" /> {{ member.phone }}
-                    </a>
+                <div class="p-6">
+                  <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
+                  <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
+                  
+                  <!-- Short Bio -->
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
+                  
+                  <!-- Joined Date -->
+                  <div class="flex items-center gap-1 text-xs text-gray-400">
+                    <Calendar class="w-3 h-3" />
+                    <span>Joined {{ formatDate(member.joining_date) }}</span>
+                  </div>
+
+                  <!-- Expand Indicator -->
+                  <div class="text-center mt-3">
+                    <ChevronDown :class="['w-5 h-5 text-teal-600 transition-transform mx-auto', 
+                      selectedMember?.id === member.id ? 'rotate-180' : '']" />
                   </div>
                 </div>
                 
-                <!-- Social Links -->
-                <div v-if="member.social_links && Object.keys(member.social_links).filter(k => member.social_links[k]).length > 0">
-                  <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
-                  <div class="flex gap-2">
-                    <a v-if="member.social_links.facebook" :href="member.social_links.facebook" target="_blank" rel="noopener noreferrer"
-                       class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
-                      <Facebook class="w-4 h-4" />
-                    </a>
-                    <a v-if="member.social_links.linkedin" :href="member.social_links.linkedin" target="_blank" rel="noopener noreferrer"
-                       class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
-                      <Linkedin class="w-4 h-4" />
-                    </a>
+                <!-- Expanded Details -->
+                <div v-if="selectedMember?.id === member.id" 
+                     class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+                  <!-- Full Bio -->
+                  <div>
+                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">About</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
+                  </div>
+                  
+                  <!-- Contact Info -->
+                  <div>
+                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
+                    <div class="space-y-1">
+                      <a v-if="member.email" :href="`mailto:${member.email}`" 
+                         class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                        <Mail class="w-4 h-4" /> {{ member.email }}
+                      </a>
+                      <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                         class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                        <Phone class="w-4 h-4" /> {{ member.phone }}
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <!-- Social Links -->
+                  <div v-if="member.social_links && Object.keys(member.social_links).filter(k => member.social_links[k]).length > 0">
+                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
+                    <div class="flex gap-2">
+                      <a v-if="member.social_links.facebook" :href="member.social_links.facebook" target="_blank" rel="noopener noreferrer"
+                         class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                        <Facebook class="w-4 h-4" />
+                      </a>
+                      <a v-if="member.social_links.linkedin" :href="member.social_links.linkedin" target="_blank" rel="noopener noreferrer"
+                         class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                        <Linkedin class="w-4 h-4" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
         <!-- CTA Section -->
@@ -354,12 +370,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import TourBookingModal from '../components/TourBookingModal.vue'
 import { useTeam } from '../composables/useTeam'
+import { useLazyLoader } from '../composables/useLazyLoader'
 import { usePages } from '../composables/usePages'
 import { 
   Building2, Award, Sparkles, Users, Star, BookOpen, Shield, Wifi, Wind, 
@@ -382,6 +399,7 @@ useHead({
 // Use composables
 const { teamMembers, loading: teamLoading, error: teamError, fetchFirstTeamMembers } = useTeam()
 const { pageSections, fetchPageData: fetchPageSectionsData, loading: pagesLoading } = usePages()
+const lazyLoader = useLazyLoader()
 
 const activeMilestone = ref(null)
 const isTourModalOpen = ref(false)
@@ -521,6 +539,22 @@ const closeTourModal = () => {
   isTourModalOpen.value = false
 }
 
+function setupLazyTeamLoading() {
+  nextTick(() => {
+    const el = document.querySelector('[data-lazy-team]')
+    if (el) {
+      lazyLoader.observe(el, 'team-section', async () => {
+        try {
+          await fetchFirstTeamMembers()
+          console.log('✅ Team members lazily loaded:', teamMembers.value.length)
+        } catch (err) {
+          console.warn('Team data unavailable:', err)
+        }
+      })
+    }
+  })
+}
+
 // Progressive fetch - Load critical content first
 async function fetchAllData() {
   loading.value = true
@@ -544,15 +578,7 @@ async function fetchAllData() {
     pageData.value.stats = parseStats()
     console.log('✅ Stats loaded')
     
-    // STEP 4: Load team members (visible on page)
-    try {
-      await fetchFirstTeamMembers()
-      console.log('✅ Team members loaded:', teamMembers.value.length)
-    } catch (err) {
-      console.warn('Team data unavailable, continuing without team section:', err)
-    }
-    
-    // STEP 5: Parse remaining sections (mission, vision, values, timeline, achievements, universities)
+    // STEP 4: Parse remaining sections (mission, vision, values, timeline, achievements, universities)
     pageData.value.mission = parseMission()
     pageData.value.vision = parseVision()
     pageData.value.core_values = parseCoreValues()
@@ -609,8 +635,13 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
 }
 
-onMounted(() => {
-  fetchAllData()
+onMounted(async () => {
+  await fetchAllData()
+  setupLazyTeamLoading()
+})
+
+onUnmounted(() => {
+  lazyLoader.cleanup()
 })
 </script>
 
