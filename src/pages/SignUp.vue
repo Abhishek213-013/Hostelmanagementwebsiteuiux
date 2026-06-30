@@ -194,9 +194,15 @@ const handleRegister = async () => {
         localStorage.setItem('user', JSON.stringify(response.data.user))
       }
       
+      // Generate default avatar from name initial
+      const userName = formData.value.name || (response.data.data && response.data.data.name) || 'U'
+      const initial = userName.charAt(0).toUpperCase()
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs><circle cx="64" cy="64" r="64" fill="url(#g)"/><text x="64" y="82" font-size="56" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial,sans-serif">${initial}</text></svg>`
+      localStorage.setItem('profileImage', `data:image/svg+xml;base64,${btoa(svg)}`)
+
       // Dispatch event for Header to update
       window.dispatchEvent(new Event('profileUpdated'))
-      
+
       registerSuccess.value = 'Registration successful! Redirecting...'
       
       // Redirect to homepage after short delay
