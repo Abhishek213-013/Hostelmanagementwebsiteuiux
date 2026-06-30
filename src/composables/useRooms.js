@@ -366,99 +366,67 @@ export function useRooms() {
       // Sync booked seats from API
       await syncBookedSeatsFromAPI()
       
-      // Fetch availability and reviews in parallel
-      const roomPromises = roomsData.map(async (room) => {
-        let status = 'unknown'
-        let available_seats = 0
-        let total_seats = 0
-        
-        try {
-          // Get booked seat IDs for this room
-          const bookedSeatIds = await fetchBookedSeatIds(room.id)
-          
-          // Count total seats for this room
-          const roomSeats = seats.value.filter(s => s.room_id == room.id)
-          total_seats = roomSeats.length || 4 // Default to 4 if unknown
-          
-          // Try to get availability from API
-          try {
+      // Batch availability and review API calls
+      const [availResults, reviewResults] = await Promise.all([
+        Promise.allSettled(
+          roomsData.map(room => {
             const timeoutPromise = new Promise((_, reject) => {
               setTimeout(() => reject(new Error('Timeout')), 10000)
             })
-            
-            const availabilityPromise = roomAPI.getRoomAvailability(room.id)
-            const availability = await Promise.race([availabilityPromise, timeoutPromise])
-            
-            if (availability && availability.data) {
-              let availData = availability.data
-              if (availData.data) availData = availData.data
-              
-              // Get API available count
-              const apiAvailableCount = availData.available_count || 0
-              
-              // Calculate actual available by subtracting booked seats
-              available_seats = Math.max(0, apiAvailableCount - bookedSeatIds.length)
-              status = available_seats > 0 ? 'available' : 'booked'
-            }
-          } catch (err) {
-            // Fallback: calculate from total seats minus booked
-            available_seats = Math.max(0, total_seats - bookedSeatIds.length)
-            status = available_seats > 0 ? 'available' : 'booked'
-            console.warn(`⚠️ Availability API failed for room ${room.id}, calculated: ${available_seats}/${total_seats}`)
-          }
-          
-          console.log(`🏠 Room ${room.id}: ${total_seats} total, ${bookedSeatIds.length} booked, ${available_seats} available`)
-          
-        } catch (err) {
-          console.warn(`❌ Failed to process room ${room.id}:`, err.message)
-        }
+            return Promise.race([
+              roomAPI.getRoomAvailability(room.id),
+              timeoutPromise
+            ])
+          })
+        ),
+        Promise.allSettled(
+          roomsData.map(room => fetchRoomReviews(room.id))
+        )
+      ])
 
-        // Fetch reviews for rating
+      // Process all rooms at once using batched results
+      const bookedSeatsData = getBookedSeats()
+
+      rooms.value = roomsData.map((room, i) => {
+        const roomSeats = seats.value.filter(s => s.room_id == room.id)
+        const total_seats = roomSeats.length || 4
+        const bookedSeatIds = bookedSeatsData
+          .filter(bs => bs.room_id == room.id)
+          .map(bs => bs.seat_id)
+
+        let status = 'unknown'
+        let available_seats = 0
         let rating = 0
         let reviewCount = 0
-        try {
-          const reviews = await fetchRoomReviews(room.id)
-          rating = reviews.averageRating
-          reviewCount = reviews.reviewCount
-        } catch (err) {
-          console.warn(`Failed to fetch reviews for room ${room.id}:`, err.message)
+
+        // Process availability from batched results
+        const availResult = availResults[i]
+        if (availResult.status === 'fulfilled' && availResult.value?.data) {
+          let availData = availResult.value.data
+          if (availData.data) availData = availData.data
+          
+          const apiAvailableCount = availData.available_count || 0
+          available_seats = Math.max(0, apiAvailableCount - bookedSeatIds.length)
+          status = available_seats > 0 ? 'available' : 'booked'
+        } else {
+          available_seats = Math.max(0, total_seats - bookedSeatIds.length)
+          status = available_seats > 0 ? 'available' : 'booked'
         }
-        
-        return { 
-          roomId: room.id, 
-          status, 
+
+        // Process reviews from batched results
+        const reviewResult = reviewResults[i]
+        if (reviewResult.status === 'fulfilled' && reviewResult.value) {
+          rating = reviewResult.value.averageRating
+          reviewCount = reviewResult.value.reviewCount
+        }
+
+        return {
+          ...room,
+          status,
           available_seats,
           total_seats,
           rating,
-          reviewCount
-        }
-      })
-      
-      // Wait for all promises to complete
-      const results = await Promise.allSettled(roomPromises)
-      
-      // Update rooms with availability and review data
-      rooms.value = roomsData.map(room => {
-        const result = results.find(r => 
-          r.status === 'fulfilled' && r.value?.roomId === room.id
-        )
-        if (result && result.value) {
-          return {
-            ...room,
-            status: result.value.status,
-            available_seats: result.value.available_seats,
-            total_seats: result.value.total_seats,
-            rating: result.value.rating,
-            review_count: result.value.reviewCount
-          }
-        }
-        return { 
-          ...room, 
-          status: 'unknown', 
-          available_seats: 0,
-          total_seats: 0,
-          rating: 0,
-          review_count: 0
+          review_count: reviewCount
         }
       })
       
@@ -663,6 +631,142 @@ export function useRooms() {
   }
 
   // ============================================
+  // LAZY LOADING - Fast initial fetch + lazy availability/reviews
+  // ============================================
+
+  /**
+   * Fast initial fetch: loads rooms, seats, and syncs bookings
+   * but skips batch availability/reviews. Rooms get 'checking' status.
+   * Use loadRoomLazy(roomId) to lazily fetch availability per room.
+   */
+  const fetchRoomsFast = async (all = 1) => {
+    loading.value = true
+    error.value = null
+    try {
+      console.log('🚀 Fast-fetching rooms...')
+      const response = await roomAPI.getRooms(all)
+
+      let roomsData = []
+      if (response.data && response.data.data) {
+        roomsData = response.data.data
+      } else if (Array.isArray(response.data)) {
+        roomsData = response.data
+      }
+
+      rooms.value = roomsData.map(room => ({
+        ...room,
+        status: 'checking',
+        available_seats: 0,
+        total_seats: 0,
+        rating: 0,
+        review_count: 0
+      }))
+
+      try {
+        await fetchSeats()
+      } catch (err) {
+        console.warn('Could not fetch seats:', err.message)
+      }
+
+      await syncBookedSeatsFromAPI()
+
+      const bookedSeatsData = getBookedSeats()
+      rooms.value = roomsData.map(room => {
+        const roomSeats = seats.value.filter(s => s.room_id == room.id)
+        const total_seats = roomSeats.length || 4
+        const bookedSeatIds = bookedSeatsData
+          .filter(bs => bs.room_id == room.id)
+          .map(bs => bs.seat_id)
+        const available_seats = Math.max(0, total_seats - bookedSeatIds.length)
+
+        return {
+          ...room,
+          status: 'checking',
+          available_seats,
+          total_seats,
+          rating: 0,
+          review_count: 0
+        }
+      })
+
+      console.log(`✅ Fast-loaded ${rooms.value.length} rooms (availability lazy)`)
+      return response.data
+    } catch (err) {
+      if (err.response?.status === 404) {
+        rooms.value = []
+        return []
+      }
+      error.value = err.message || 'Failed to fetch rooms'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Lazy-load availability and reviews for a single room.
+   * Updates the room in the rooms array reactively.
+   */
+  const loadRoomLazy = async (roomId) => {
+    const index = rooms.value.findIndex(r => r.id == roomId)
+    if (index === -1) return
+
+    const room = rooms.value[index]
+    if (room.status !== 'checking') return // already resolved
+
+    console.log(`🔍 Lazy-loading availability for room ${roomId}...`)
+
+    try {
+      const [availResult, reviewResult] = await Promise.allSettled([
+        roomAPI.getRoomAvailability(roomId),
+        fetchRoomReviews(roomId)
+      ])
+
+      const bookedSeatsData = getBookedSeats()
+      const bookedSeatIds = bookedSeatsData
+        .filter(bs => bs.room_id == roomId)
+        .map(bs => bs.seat_id)
+
+      let status = 'unknown'
+      let available_seats = 0
+
+      if (availResult.status === 'fulfilled' && availResult.value?.data) {
+        let availData = availResult.value.data
+        if (availData.data) availData = availData.data
+        const apiAvailableCount = availData.available_count || 0
+        available_seats = Math.max(0, apiAvailableCount - bookedSeatIds.length)
+        status = available_seats > 0 ? 'available' : 'booked'
+      } else {
+        available_seats = Math.max(0, room.total_seats - bookedSeatIds.length)
+        status = available_seats > 0 ? 'available' : 'booked'
+      }
+
+      let rating = 0
+      let reviewCount = 0
+      if (reviewResult.status === 'fulfilled' && reviewResult.value) {
+        rating = reviewResult.value.averageRating
+        reviewCount = reviewResult.value.reviewCount
+      }
+
+      rooms.value[index] = {
+        ...rooms.value[index],
+        status,
+        available_seats,
+        rating,
+        review_count: reviewCount
+      }
+
+      console.log(`✅ Room ${roomId} resolved: ${status} (${available_seats} seats)`)
+    } catch (err) {
+      console.error(`❌ Failed lazy load for room ${roomId}:`, err)
+      rooms.value[index] = {
+        ...rooms.value[index],
+        status: 'unknown'
+      }
+    }
+  }
+
+  // ============================================
   // RETURN ALL FUNCTIONS AND STATE
   // ============================================
 
@@ -674,15 +778,19 @@ export function useRooms() {
     loading,
     error,
     currentRoom,
-    
+
     // Room fetching
     fetchRooms,
+    fetchRoomsFast,
     fetchRoomTypes,
     fetchRoomDetails,
     fetchSeats,
     checkRoomAvailability,
-    
-    // Seat tracking (NEW)
+
+    // Lazy loading
+    loadRoomLazy,
+
+    // Seat tracking
     addBookedSeat,
     removeBookedSeat,
     getBookedSeats,
