@@ -662,13 +662,17 @@ export function useRooms() {
         review_count: 0
       }))
 
-      try {
-        await fetchSeats()
-      } catch (err) {
-        console.warn('Could not fetch seats:', err.message)
-      }
+      const [seatsResult, syncResult] = await Promise.allSettled([
+        fetchSeats(),
+        syncBookedSeatsFromAPI()
+      ])
 
-      await syncBookedSeatsFromAPI()
+      if (seatsResult.status === 'rejected') {
+        console.warn('Could not fetch seats:', seatsResult.reason?.message)
+      }
+      if (syncResult.status === 'rejected') {
+        console.warn('Could not sync bookings:', syncResult.reason?.message)
+      }
 
       const bookedSeatsData = getBookedSeats()
       rooms.value = roomsData.map(room => {
@@ -681,7 +685,7 @@ export function useRooms() {
 
         return {
           ...room,
-          status: 'checking',
+          status: available_seats > 0 ? 'available' : 'booked',
           available_seats,
           total_seats,
           rating: 0,
@@ -689,7 +693,7 @@ export function useRooms() {
         }
       })
 
-      console.log(`✅ Fast-loaded ${rooms.value.length} rooms (availability lazy)`)
+      console.log(`✅ Fast-loaded ${rooms.value.length} rooms (availability computed, reviews lazy)`)
       return response.data
     } catch (err) {
       if (err.response?.status === 404) {
@@ -704,7 +708,7 @@ export function useRooms() {
   }
 
   /**
-   * Lazy-load availability and reviews for a single room.
+   * Lazy-load reviews for a single room (availability computed upfront in fetchRoomsFast).
    * Updates the room in the rooms array reactively.
    */
   const loadRoomLazy = async (roomId) => {
@@ -712,57 +716,29 @@ export function useRooms() {
     if (index === -1) return
 
     const room = rooms.value[index]
-    if (room.status !== 'checking') return // already resolved
+    if (room.review_count > 0) return
 
-    console.log(`🔍 Lazy-loading availability for room ${roomId}...`)
+    console.log(`🔍 Lazy-loading reviews for room ${roomId}...`)
 
     try {
-      const [availResult, reviewResult] = await Promise.allSettled([
-        roomAPI.getRoomAvailability(roomId),
-        fetchRoomReviews(roomId)
-      ])
-
-      const bookedSeatsData = getBookedSeats()
-      const bookedSeatIds = bookedSeatsData
-        .filter(bs => bs.room_id == roomId)
-        .map(bs => bs.seat_id)
-
-      let status = 'unknown'
-      let available_seats = 0
-
-      if (availResult.status === 'fulfilled' && availResult.value?.data) {
-        let availData = availResult.value.data
-        if (availData.data) availData = availData.data
-        const apiAvailableCount = availData.available_count || 0
-        available_seats = Math.max(0, apiAvailableCount - bookedSeatIds.length)
-        status = available_seats > 0 ? 'available' : 'booked'
-      } else {
-        available_seats = Math.max(0, room.total_seats - bookedSeatIds.length)
-        status = available_seats > 0 ? 'available' : 'booked'
-      }
+      const reviewResult = await fetchRoomReviews(roomId)
 
       let rating = 0
       let reviewCount = 0
-      if (reviewResult.status === 'fulfilled' && reviewResult.value) {
-        rating = reviewResult.value.averageRating
-        reviewCount = reviewResult.value.reviewCount
+      if (reviewResult) {
+        rating = reviewResult.averageRating
+        reviewCount = reviewResult.reviewCount
       }
 
       rooms.value[index] = {
         ...rooms.value[index],
-        status,
-        available_seats,
         rating,
         review_count: reviewCount
       }
 
-      console.log(`✅ Room ${roomId} resolved: ${status} (${available_seats} seats)`)
+      console.log(`✅ Room ${roomId} reviews loaded: ${rating} stars (${reviewCount} reviews)`)
     } catch (err) {
-      console.error(`❌ Failed lazy load for room ${roomId}:`, err)
-      rooms.value[index] = {
-        ...rooms.value[index],
-        status: 'unknown'
-      }
+      console.error(`❌ Failed lazy load reviews for room ${roomId}:`, err)
     }
   }
 

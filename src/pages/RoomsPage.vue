@@ -168,9 +168,15 @@
                     <div class="flex items-center gap-3 mb-4">
                       <div v-if="room.status === 'checking'" class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
                       <div v-else :class="['w-3 h-3 rounded-full', room.status === 'available' ? 'bg-teal-500' : 'bg-red-500']"></div>
-                      <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                        <span v-if="room.status === 'checking'">Checking availability...</span>
-                        <span v-else-if="room.status === 'available'">Available</span>
+                      <span v-if="room.status === 'checking'" class="text-sm font-bold inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg">
+                        <svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Checking availability...
+                      </span>
+                      <span v-else class="text-sm font-bold text-gray-700 dark:text-gray-300">
+                        <span v-if="room.status === 'available'">Available</span>
                         <span v-else-if="room.status === 'booked'">Booked</span>
                         <span v-else>Unknown</span>
                       </span>
