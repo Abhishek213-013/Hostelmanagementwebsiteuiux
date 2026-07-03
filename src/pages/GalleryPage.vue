@@ -91,36 +91,7 @@
             <p class="text-gray-500">Try selecting a different category</p>
           </div>
 
-          <!-- Visit Info Card -->
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 sm:p-10 md:p-16">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
-              <div>
-                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 text-teal-600 break-words">Visit Us Today</h2>
-                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 leading-relaxed break-words">
-                  Schedule a tour to see our beautiful facilities in person. We'd love to show you around!
-                </p>
-                <div class="space-y-4 sm:space-y-6">
-                  <div v-for="item in visitInfo" :key="item.label" class="flex items-center gap-3 sm:gap-4 hover:translate-x-2 transition-transform duration-300">
-                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg bg-teal-600 flex-shrink-0">
-                      <component :is="item.icon" class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
-                    </div>
-                    <div class="min-w-0">
-                      <p class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 break-words">{{ item.label }}</p>
-                      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">{{ item.value }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                <div v-for="item in amenities" :key="item.label" class="group flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-600">
-                  <div class="p-1.5 sm:p-2 rounded-xl shadow-lg bg-teal-600 flex-shrink-0">
-                    <component :is="item.icon" class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                  </div>
-                  <span class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 break-words">{{ item.label }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           <p class="text-center text-gray-600 dark:text-gray-400 mt-8 sm:mt-12 font-medium text-sm sm:text-base break-words">
             {{ filteredImages.length }} photo{{ filteredImages.length !== 1 ? 's' : '' }} {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel(selectedCategory) : 'total' }}
