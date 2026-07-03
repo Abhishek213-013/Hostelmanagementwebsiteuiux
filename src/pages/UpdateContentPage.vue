@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <!-- 1. Removed background from here entirely. This is now just a transparent spacer -->
+  <div class="min-h-screen flex flex-col">
+    
     <!-- Loading State -->
     <main v-if="loading" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
@@ -23,177 +25,185 @@
     </main>
 
     <!-- Main Content -->
-    <main v-else>
-      <Header />
-      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-32">
-        <!-- Page Header -->
-        <div class="mb-10">
-          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <PenSquare class="w-5 h-5 text-teal-600" />
-            <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Content Management</span>
-          </div>
-          <h1 class="text-3xl lg:text-4xl font-black mb-3 text-teal-600">Update Content</h1>
-          <p class="text-lg text-gray-600 dark:text-gray-400">Manage pages, sections, and section items for your website</p>
-        </div>
-
-        <!-- Success/Error Messages -->
-        <div v-if="successMessage" class="mb-6 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-2">
-          <CheckCircle2 class="w-5 h-5 flex-shrink-0" />
-          {{ successMessage }}
-        </div>
-        <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
-          <AlertCircle class="w-5 h-5 flex-shrink-0" />
-          {{ errorMessage }}
-        </div>
-
-        <!-- Page Selector -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 mb-8">
-          <div class="flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-              <FileText class="w-5 h-5 text-teal-600" />
-              <h2 class="text-lg font-black text-teal-600">Select Page</h2>
+    <main v-else class="flex-1 flex flex-col">
+      <!-- 2. Header gets its background -->
+      <div class="bg-gray-50 dark:bg-gray-900">
+        <Header />
+      </div>
+      
+      <!-- 3. Main wrapper gets the background, fills all empty space up to the footer -->
+      <div class="flex-1 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-16">
+          
+          <!-- Page Header -->
+          <div class="mb-10">
+            <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <PenSquare class="w-5 h-5 text-teal-600" />
+              <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Content Management</span>
             </div>
-            <div class="flex gap-3 flex-wrap">
-              <button
-                v-for="pg in pages"
-                :key="pg.id"
-                @click="selectPage(pg)"
-                class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
-                :class="selectedPage?.id === pg.id ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-              >
-                {{ pg.name || pg.title || `Page ${pg.id}` }}
+            <h1 class="text-3xl lg:text-4xl font-black mb-3 text-teal-600">Update Content</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Manage pages, sections, and section items for your website</p>
+          </div>
+
+          <!-- Success/Error Messages -->
+          <div v-if="successMessage" class="mb-6 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-600 dark:text-green-400 text-sm font-medium flex items-center gap-2">
+            <CheckCircle2 class="w-5 h-5 flex-shrink-0" />
+            {{ successMessage }}
+          </div>
+          <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2">
+            <AlertCircle class="w-5 h-5 flex-shrink-0" />
+            {{ errorMessage }}
+          </div>
+
+          <!-- Page Selector -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div class="flex items-center gap-3">
+                <FileText class="w-5 h-5 text-teal-600" />
+                <h2 class="text-lg font-black text-teal-600">Select Page</h2>
+              </div>
+              <div class="flex gap-3 flex-wrap">
+                <button
+                  v-for="pg in pages"
+                  :key="pg.id"
+                  @click="selectPage(pg)"
+                  class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+                  :class="selectedPage?.id === pg.id ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
+                >
+                  {{ pg.name || pg.title || `Page ${pg.id}` }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sections & Items for Selected Page -->
+          <div v-if="selectedPage">
+            <!-- Add New Section Button -->
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl font-black text-gray-800 dark:text-white">
+                  Sections for <span class="text-teal-600">{{ selectedPage.name || selectedPage.title || `Page ${selectedPage.id}` }}</span>
+                </h2>
+                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ sections.length }} total</span>
+              </div>
+              <button @click="openSectionModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <Plus class="w-4 h-4" />
+                Add Section
               </button>
             </div>
-          </div>
-        </div>
 
-        <!-- Sections & Items for Selected Page -->
-        <div v-if="selectedPage">
-          <!-- Add New Section Button -->
-          <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center gap-2">
-              <h2 class="text-xl font-black text-gray-800 dark:text-white">
-                Sections for <span class="text-teal-600">{{ selectedPage.name || selectedPage.title || `Page ${selectedPage.id}` }}</span>
-              </h2>
-              <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ sections.length }} total</span>
-            </div>
-            <button @click="openSectionModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-              <Plus class="w-4 h-4" />
-              Add Section
-            </button>
-          </div>
-
-          <!-- Sections List -->
-          <div v-if="sections.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <FileText class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400 font-medium">No sections found for this page.</p>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Section" to create one.</p>
-          </div>
-
-          <div v-for="(section, sIdx) in sections" :key="section.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
-            <!-- Section Header -->
-            <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-wrap gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center">
-                  <span class="text-sm font-bold text-teal-700 dark:text-teal-300">{{ sIdx + 1 }}</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-800 dark:text-white">{{ section.section_key || section.title || `Section #${section.id}` }}</h3>
-                  <p v-if="section.title" class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ section.section_key }}</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="section.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
-                  {{ section.status == 1 ? 'Active' : 'Inactive' }}
-                </span>
-                <button @click="openSectionDataModal(section)" class="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-blue-500 hover:text-blue-600" title="Edit Section Content">
-                  <FileEdit class="w-4 h-4" />
-                </button>
-                <button @click="openSectionModal(section)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 hover:text-teal-600" title="Edit Section Settings">
-                  <Settings2 class="w-4 h-4" />
-                </button>
-                <button @click="deleteSection(section)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-500 hover:text-red-600">
-                  <Trash2 class="w-4 h-4" />
-                </button>
-                <button @click="toggleSectionExpanded(section.id)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
-                  <ChevronDown class="w-4 h-4 transition-transform" :class="expandedSections[section.id] ? 'rotate-180' : ''" />
-                </button>
-              </div>
+            <!-- Sections List -->
+            <div v-if="sections.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <FileText class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p class="text-gray-500 dark:text-gray-400 font-medium">No sections found for this page.</p>
+              <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Section" to create one.</p>
             </div>
 
-            <!-- Section Content Preview -->
-            <div v-if="expandedSections[section.id]" class="px-5 py-4 bg-blue-50/50 dark:bg-blue-900/10 border-b border-gray-200 dark:border-gray-700">
-              <div class="flex items-center justify-between mb-2">
-                <h4 class="text-sm font-bold text-blue-700 dark:text-blue-300">Section Content</h4>
-                <button @click="openSectionDataModal(section)" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-                  <Edit3 class="w-3 h-3" /> Edit
-                </button>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                <div v-if="section.title" class="flex gap-2">
-                  <span class="font-medium text-gray-600 dark:text-gray-400">Badge:</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{ section.title }}</span>
+            <div v-for="(section, sIdx) in sections" :key="section.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
+              <!-- Section Header -->
+              <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center">
+                    <span class="text-sm font-bold text-teal-700 dark:text-teal-300">{{ sIdx + 1 }}</span>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-800 dark:text-white">{{ section.section_key || section.title || `Section #${section.id}` }}</h3>
+                    <p v-if="section.title" class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ section.section_key }}</p>
+                  </div>
                 </div>
-                <div v-if="section.subtitle" class="flex gap-2">
-                  <span class="font-medium text-gray-600 dark:text-gray-400">Subtitle:</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{ section.subtitle }}</span>
-                </div>
-                <div v-if="section.subtitle" class="flex gap-2">
-                  <span class="font-medium text-gray-600 dark:text-gray-400">Headline 1:</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part1 }}</span>
-                </div>
-                <div v-if="section.subtitle && getHeadlineParts(section).part2" class="flex gap-2">
-                  <span class="font-medium text-gray-600 dark:text-gray-400">Headline 2:</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part2 }}</span>
-                </div>
-                <div v-if="section.description" class="flex gap-2 col-span-full">
-                  <span class="font-medium text-gray-600 dark:text-gray-400">Description:</span>
-                  <span class="text-gray-800 dark:text-gray-200 truncate">{{ section.description }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section Items -->
-            <div v-if="expandedSections[section.id]" class="p-5 bg-gray-50 dark:bg-gray-900/50">
-              <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-2">
-                  <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300">Section Items</h4>
-                  <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium">{{ getSectionItems(section.id).length }}</span>
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="section.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                    {{ section.status == 1 ? 'Active' : 'Inactive' }}
+                  </span>
+                  <button @click="openSectionDataModal(section)" class="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-blue-500 hover:text-blue-600" title="Edit Section Content">
+                    <FileEdit class="w-4 h-4" />
+                  </button>
+                  <button @click="openSectionModal(section)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 hover:text-teal-600" title="Edit Section Settings">
+                    <Settings2 class="w-4 h-4" />
+                  </button>
+                  <button @click="deleteSection(section)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-500 hover:text-red-600">
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                  <button @click="toggleSectionExpanded(section.id)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
+                    <ChevronDown class="w-4 h-4 transition-transform" :class="expandedSections[section.id] ? 'rotate-180' : ''" />
+                  </button>
                 </div>
-                <button @click="openItemModal(null, section.id)" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-1.5">
-                  <Plus class="w-3.5 h-3.5" />
-                  Add Item
-                </button>
               </div>
 
-              <div v-if="getSectionItems(section.id).length === 0" class="text-center py-6">
-                <p class="text-sm text-gray-400 dark:text-gray-500">No items in this section.</p>
+              <!-- Section Content Preview -->
+              <div v-if="expandedSections[section.id]" class="px-5 py-4 bg-blue-50/50 dark:bg-blue-900/10 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="text-sm font-bold text-blue-700 dark:text-blue-300">Section Content</h4>
+                  <button @click="openSectionDataModal(section)" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+                    <Edit3 class="w-3 h-3" /> Edit
+                  </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                  <div v-if="section.title" class="flex gap-2">
+                    <span class="font-medium text-gray-600 dark:text-gray-400">Badge:</span>
+                    <span class="text-gray-800 dark:text-gray-200">{{ section.title }}</span>
+                  </div>
+                  <div v-if="section.subtitle" class="flex gap-2">
+                    <span class="font-medium text-gray-600 dark:text-gray-400">Subtitle:</span>
+                    <span class="text-gray-800 dark:text-gray-200">{{ section.subtitle }}</span>
+                  </div>
+                  <div v-if="section.subtitle" class="flex gap-2">
+                    <span class="font-medium text-gray-600 dark:text-gray-400">Headline 1:</span>
+                    <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part1 }}</span>
+                  </div>
+                  <div v-if="section.subtitle && getHeadlineParts(section).part2" class="flex gap-2">
+                    <span class="font-medium text-gray-600 dark:text-gray-400">Headline 2:</span>
+                    <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part2 }}</span>
+                  </div>
+                  <div v-if="section.description" class="flex gap-2 col-span-full">
+                    <span class="font-medium text-gray-600 dark:text-gray-400">Description:</span>
+                    <span class="text-gray-800 dark:text-gray-200 truncate">{{ section.description }}</span>
+                  </div>
+                </div>
               </div>
 
-              <div class="space-y-3">
-                <div v-for="(item, iIdx) in getSectionItems(section.id)" :key="item.id" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
-                  <div class="flex items-start justify-between gap-3">
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-bold text-gray-400 dark:text-gray-500">#{{ iIdx + 1 }}</span>
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="item.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
-                          {{ item.status == 1 ? 'Active' : 'Inactive' }}
-                        </span>
+              <!-- Section Items -->
+              <div v-if="expandedSections[section.id]" class="p-5 bg-gray-50 dark:bg-gray-900/50">
+                <div class="flex justify-between items-center mb-4">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300">Section Items</h4>
+                    <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium">{{ getSectionItems(section.id).length }}</span>
+                  </div>
+                  <button @click="openItemModal(null, section.id)" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-1.5">
+                    <Plus class="w-3.5 h-3.5" />
+                    Add Item
+                  </button>
+                </div>
+
+                <div v-if="getSectionItems(section.id).length === 0" class="text-center py-6">
+                  <p class="text-sm text-gray-400 dark:text-gray-500">No items in this section.</p>
+                </div>
+
+                <div class="space-y-3">
+                  <div v-for="(item, iIdx) in getSectionItems(section.id)" :key="item.id" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                          <span class="text-xs font-bold text-gray-400 dark:text-gray-500">#{{ iIdx + 1 }}</span>
+                          <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="item.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                            {{ item.status == 1 ? 'Active' : 'Inactive' }}
+                          </span>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ item.title || item.badge || item.headline_part1 || `Item #${item.id}` }}</p>
+                        <p v-if="item.subtitle || item.description" class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ item.subtitle || item.description }}</p>
+                        <div v-if="item.headline_part2 || item.headline_part3 || item.description_part1" class="flex flex-wrap gap-1.5 mt-2">
+                          <span v-if="item.headline_part2" class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs">{{ item.headline_part2 }}</span>
+                          <span v-if="item.headline_part3" class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded text-xs">{{ item.headline_part3 }}</span>
+                        </div>
                       </div>
-                      <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ item.title || item.badge || item.headline_part1 || `Item #${item.id}` }}</p>
-                      <p v-if="item.subtitle || item.description" class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ item.subtitle || item.description }}</p>
-                      <div v-if="item.headline_part2 || item.headline_part3 || item.description_part1" class="flex flex-wrap gap-1.5 mt-2">
-                        <span v-if="item.headline_part2" class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs">{{ item.headline_part2 }}</span>
-                        <span v-if="item.headline_part3" class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded text-xs">{{ item.headline_part3 }}</span>
+                      <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button @click="openItemModal(item, section.id)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
+                          <Edit3 class="w-3.5 h-3.5" />
+                        </button>
+                        <button @click="deleteItem(item)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                          <Trash2 class="w-3.5 h-3.5" />
+                        </button>
                       </div>
-                    </div>
-                    <div class="flex items-center gap-1.5 flex-shrink-0">
-                      <button @click="openItemModal(item, section.id)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
-                        <Edit3 class="w-3.5 h-3.5" />
-                      </button>
-                      <button @click="deleteItem(item)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
-                        <Trash2 class="w-3.5 h-3.5" />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -202,8 +212,10 @@
           </div>
         </div>
       </div>
-      <Footer />
     </main>
+
+    <!-- 4. Footer sits outside all bg layers, becomes the absolute bottom -->
+    <Footer />
 
     <!-- Section Data Modal -->
     <div v-if="showSectionDataModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeSectionDataModal">
