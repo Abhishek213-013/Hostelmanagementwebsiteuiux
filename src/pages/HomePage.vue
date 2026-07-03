@@ -40,11 +40,6 @@
                   <div class="absolute inset-0 bg-black/30"></div>
                 </div>
                 <div class="relative z-10 text-center text-white px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 w-full">
-                  <!-- <div class="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                    <div v-if="index === 0" class="w-2 h-2 sm:w-3 sm:h-3 bg-teal-400 rounded-full"></div>
-                    <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-teal-400" />
-                    <span class="text-xs sm:text-sm font-bold text-white tracking-wide">{{ slide.badge }}</span>
-                  </div> -->
                   <div class="space-y-4 sm:space-y-6">
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight break-words">
                       <span v-if="slide.headline_part1" class="block text-white">{{ slide.headline_part1 }}</span>
@@ -72,7 +67,7 @@
             </div>
           </div>
 
-          <!-- Search Widget - Dynamic from API -->
+          <!-- Search Widget -->
           <div class="w-full px-4 sm:px-6 lg:px-12 mt-8 sm:mt-12">
             <div class="max-w-[1400px] mx-auto">
               <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8 border border-gray-200 dark:border-gray-700">
@@ -104,7 +99,7 @@
         </div>
       </section>
 
-      <!-- Availability Cards - Dynamic from Room Types API -->
+      <!-- Availability Cards -->
       <section v-if="roomTypesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -135,7 +130,7 @@
         </div>
       </section>
 
-      <!-- About Section - Using mock data -->
+      <!-- About Section -->
       <section v-if="pageData.about" id="about" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -175,7 +170,7 @@
             <AnimatedSection>
               <div class="grid grid-cols-2 gap-4">
                 <div v-for="(item, i) in pageData.about.images" :key="i" class="relative rounded-2xl overflow-hidden shadow" :class="i % 2 === 1 ? 'mt-8' : ''">
-                  <img :src="item.src" :alt="item.label" class="w-full h-40 sm:h-60 object-cover" />
+                  <img :src="getFullImageUrl(item.src)" :alt="item.label" class="w-full h-40 sm:h-60 object-cover" />
                   <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
                     <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
                   </div>
@@ -186,7 +181,7 @@
         </div>
       </section>
 
-      <!-- Facilities - From Real API -->
+      <!-- Facilities -->
       <section id="facilities-section" v-if="facilitiesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -212,7 +207,7 @@
         </div>
       </section>
 
-      <!-- Rooms Section - From Real API -->
+      <!-- Rooms Section -->
       <section v-if="homepageRooms.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -237,8 +232,6 @@
                   <div class="relative h-48 sm:h-64 overflow-hidden">
                     <img :src="getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                    
-                    <!-- Availability Badge -->
                     <div class="absolute bottom-4 left-4 flex items-center gap-2">
                       <div :class="['w-2 h-2 rounded-full', room.status === 'available' ? 'bg-green-400' : 'bg-red-400']"></div>
                       <span class="text-white text-xs font-medium">
@@ -277,7 +270,7 @@
         </div>
       </section>
 
-      <!-- Gallery - From Real API -->
+      <!-- Gallery -->
       <section id="gallery-section" v-if="galleryItems.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -300,7 +293,7 @@
               class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
               :class="i % 2 === 1 ? 'mt-8' : ''"
             >
-              <img :src="item.src" :alt="item.title" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
+              <img :src="getFullImageUrl(item.src)" :alt="item.title" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
               <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
                 <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.title }}</span>
               </div>
@@ -315,7 +308,7 @@
         </div>
       </section>
 
-      <!-- Testimonials - From Real API -->
+      <!-- Testimonials -->
       <section id="testimonials-section" v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <AnimatedSection>
@@ -328,7 +321,6 @@
               <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 break-words">Hear from our happy residents across Sylhet's top universities</p>
             </div>
           </AnimatedSection>
-
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div v-for="testimonial in testimonials" :key="testimonial.id" 
                  class="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -345,7 +337,7 @@
                 </span>
               </div>
               <div class="flex items-center gap-3 sm:gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <img :src="testimonial.user.avatar" :alt="testimonial.user.name" 
+                <img :src="getFullImageUrl(testimonial.user.avatar)" :alt="testimonial.user.name" 
                      class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-teal-600 flex-shrink-0" />
                 <div class="flex-1 min-w-0">
                   <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white truncate">{{ testimonial.user.name }}</div>
@@ -369,7 +361,7 @@
         </div>
       </section>
 
-      <!-- CTA Section - Using mock data -->
+      <!-- CTA Section -->
       <section v-if="pageData.cta" class="py-12">
         <div class="bg-teal-600 rounded-2xl p-8 sm:p-12 md:p-20 text-white text-center mx-4 sm:mx-6 lg:mx-12">
           <h2 class="text-xl sm:text-2xl lg:text-3xl font-black mb-4 sm:mb-6 break-words">{{ pageData.cta.headline }}</h2>
@@ -400,12 +392,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 import {
-  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, MapPin, Phone, Mail, Menu, X, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, Download, TrendingUp, ChevronRight, ChevronLeft, ChevronDown, Clock, Bed, Bath, Tv, Gamepad2
+  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, Phone, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, TrendingUp, ChevronRight, Clock, Bed
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -418,18 +409,28 @@ import { useTestimonials } from '../composables/useTestimonials'
 import { useRoomTypes } from '../composables/useRoomTypes'
 import { usePages } from '../composables/usePages'
 
+// Base URL for storage
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
+// Helper function to convert relative image paths to full URLs
+const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
 useHead({
   title: 'SylhetStay - Premium Student Accommodation in Sylhet',
   meta: [
-    { name: 'description', content: 'Find premium student accommodation in Sylhet, Bangladesh. Modern amenities, secure living, and comfortable rooms for university students. Book your perfect room today!' },
-    { name: 'keywords', content: 'student accommodation Sylhet, student housing, SylhetStay, premium student living, university accommodation, rooms for students, Sylhet Bangladesh' },
+    { name: 'description', content: 'Find premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'student accommodation Sylhet, student housing, SylhetStay' },
     { property: 'og:title', content: 'SylhetStay - Premium Student Accommodation in Sylhet' },
-    { property: 'og:description', content: 'Find your perfect student living space with modern amenities, secure environment, and comfortable rooms in Sylhet.' },
+    { property: 'og:description', content: 'Find your perfect student living space in Sylhet.' },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://sylhetstay.com' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'SylhetStay - Premium Student Accommodation' },
-    { name: 'twitter:description', content: 'Find your perfect student living space with modern amenities in Sylhet.' },
   ]
 })
 
@@ -439,23 +440,18 @@ const { facilities: facilitiesList, fetchFacilities } = useFacilities()
 const { galleryItems, fetchGallery } = useGallery()
 const { testimonials: apiTestimonials, fetchTestimonials } = useTestimonials()
 const { roomTypes: apiRoomTypes, fetchRoomTypes } = useRoomTypes()
-const { pageSections, fetchHeroSection, fetchAboutSection, loading: pagesLoading } = usePages()
+const { pageSections, fetchHeroSection, fetchAboutSection } = usePages()
 
-// Icon mapping
 const iconMap = {
   Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, Utensils, Dumbbell,
   Award, Sparkles, Star, TrendingUp, Calendar, Phone, Home
 }
 
-// Room type options from API
 const roomTypeOptions = computed(() => {
   const options = [{ value: '', label: 'All Types' }]
-  if (apiRoomTypes.value && apiRoomTypes.value.length > 0) {
+  if (apiRoomTypes.value?.length > 0) {
     apiRoomTypes.value.forEach(type => {
-      options.push({
-        value: type.id,
-        label: type.room_type_title
-      })
+      options.push({ value: type.id, label: type.room_type_title })
     })
   }
   return options
@@ -475,7 +471,6 @@ const maxPriceOptions = [
   { value: '12000', label: '৳12,000/mo' },
 ]
 
-// State
 const pageData = ref({})
 const heroSlides = ref([])
 const testimonials = ref([])
@@ -489,362 +484,115 @@ const lightboxOpen = ref(false)
 const currentImageIndex = ref(0)
 const autoplayInterval = ref(null)
 
-// Progressive loading states
-const heroLoaded = ref(false)
-const aboutLoaded = ref(false)
-const roomsLoaded = ref(false)
-const facilitiesLoaded = ref(false)
-const galleryLoaded = ref(false)
-const testimonialsLoaded = ref(false)
-
-// Get hero slides from API with fallback
 const getHeroSlides = () => {
   const heroSection = pageSections.value.find(s => s.section_key === 'hero-slider')
-  if (heroSection && heroSection.items && heroSection.items.length > 0) {
-    return heroSection.items.map(item => ({
-      id: item.id,
-      badge: item.subtitle || 'Welcome',
-      image: item.image,
-      headline_part1: item.title?.split(' ').slice(0, 3).join(' ') || item.title || '',
-      headline_part2: item.title?.split(' ').slice(3).join(' ') || '',
-      headline_part3: '',
-      description_part1: 'modern amenities',
-      description_part2: 'comfortable spaces',
-      sort_order: item.sort_order
-    }))
+  if (heroSection?.items?.length > 0) {
+    return heroSection.items
+      .filter(item => item.status == 1)
+      .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+      .map(item => ({
+        id: item.id,
+        badge: item.subtitle || 'Welcome',
+        image: getFullImageUrl(item.image),
+        headline_part1: item.headline_part1 || item.title || '',
+        headline_part2: item.headline_part2 || '',
+        headline_part3: item.headline_part3 || '',
+        description_part1: item.description_part1 || 'modern amenities',
+        description_part2: item.description || 'comfortable spaces',
+        sort_order: item.sort_order
+      }))
   }
-  // Fallback slides when API is unavailable
   return [
-    {
-      id: 1,
-      badge: 'Welcome to SylhetStay',
-      image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920',
-      headline_part1: 'Premium Student',
-      headline_part2: 'Accommodation',
-      headline_part3: 'in Sylhet',
-      description_part1: 'modern amenities',
-      description_part2: 'comfortable spaces',
-      sort_order: 1
-    },
-    {
-      id: 2,
-      badge: 'Safe & Secure',
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1920',
-      headline_part1: 'Your Home',
-      headline_part2: 'Away from Home',
-      headline_part3: 'Safe & Secure',
-      description_part1: '24/7 security',
-      description_part2: 'a supportive community',
-      sort_order: 2
-    },
-    {
-      id: 3,
-      badge: 'Book Now',
-      image: 'https://images.unsplash.com/photo-1522771739015-7c3b617de5ed?w=1920',
-      headline_part1: 'Modern Living',
-      headline_part2: 'Spaces',
-      headline_part3: 'Designed for You',
-      description_part1: 'fully furnished rooms',
-      description_part2: 'premium facilities',
-      sort_order: 3
-    }
+    { id: 1, badge: 'Welcome to SylhetStay', image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920', headline_part1: 'Premium Student', headline_part2: 'Accommodation', headline_part3: 'in Sylhet', description_part1: 'modern amenities', description_part2: 'comfortable spaces', sort_order: 1 },
+    { id: 2, badge: 'Safe & Secure', image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1920', headline_part1: 'Your Home', headline_part2: 'Away from Home', headline_part3: 'Safe & Secure', description_part1: '24/7 security', description_part2: 'a supportive community', sort_order: 2 },
+    { id: 3, badge: 'Book Now', image: 'https://images.unsplash.com/photo-1522771739015-7c3b617de5ed?w=1920', headline_part1: 'Modern Living', headline_part2: 'Spaces', headline_part3: 'Designed for You', description_part1: 'fully furnished rooms', description_part2: 'premium facilities', sort_order: 3 }
   ]
 }
 
-// Get about section from API with fallback
 const getAboutData = () => {
   const aboutSection = pageSections.value.find(s => s.section_key === 'about')
-  if (aboutSection) {
-    const subtitle = aboutSection.subtitle || ''
-    const title = aboutSection.title || ''
-    
-    let headline_part1 = ''
-    let headline_part2 = ''
-    
-    if (subtitle) {
-      const subtitleParts = subtitle.split(' ')
-      
-      if (subtitleParts.length > 1) {
-        const toIndex = subtitleParts.indexOf('to')
-        if (toIndex !== -1 && toIndex < subtitleParts.length - 1) {
-          headline_part1 = subtitleParts.slice(0, toIndex + 1).join(' ')
-          headline_part2 = subtitleParts.slice(toIndex + 1).join(' ')
-        } else {
-          const mid = Math.ceil(subtitleParts.length / 2)
-          headline_part1 = subtitleParts.slice(0, mid).join(' ')
-          headline_part2 = subtitleParts.slice(mid).join(' ')
-        }
-      } else {
-        headline_part1 = subtitle
-        headline_part2 = ''
-      }
-    }
-    
-    const images = aboutSection.items?.map(item => ({
-      src: item.image,
-      label: item.title || 'Space'
-    })).filter(item => item.src) || []
-    
-    return {
-      badge: title || 'About Us',
-      headline_part1: headline_part1 || 'Welcome to',
-      headline_part2: headline_part2 || '',
-      description: aboutSection.description || '',
-      stats: [
-        { icon: 'Users', value: '150+', label: 'Happy Students' },
-        { icon: 'Star', value: '4.8/5', label: 'Rating' },
-        { icon: 'Building2', value: '50+', label: 'Room Options' },
-        { icon: 'Shield', value: '24/7', label: 'Security' }
-      ],
-      images: images
-    }
+  if (!aboutSection) return null
+  const subtitleText = aboutSection.subtitle || ''
+  let headline_part1 = '', headline_part2 = ''
+  if (subtitleText) {
+    const words = subtitleText.split(' ')
+    const midPoint = Math.ceil(words.length / 2)
+    headline_part1 = words.slice(0, midPoint).join(' ')
+    headline_part2 = words.slice(midPoint).join(' ')
   }
-  // Fallback about data when API is unavailable
+  const images = aboutSection.items?.map(item => ({
+    src: getFullImageUrl(item.image),
+    label: item.title || 'Space'
+  })).filter(item => item.src) || []
   return {
-    badge: 'About SylhetStay',
-    headline_part1: 'Welcome to',
-    headline_part2: 'SylhetStay',
-    description: 'SylhetStay provides premium student accommodation in Sylhet, Bangladesh. We offer modern, secure, and comfortable living spaces designed specifically for university students. Our properties feature high-speed WiFi, 24/7 security, study areas, and a vibrant community atmosphere.',
+    badge: aboutSection.title || '',
+    headline_part1, headline_part2,
+    description: aboutSection.description || '',
     stats: [
       { icon: 'Users', value: '150+', label: 'Happy Students' },
       { icon: 'Star', value: '4.8/5', label: 'Rating' },
-      { icon: 'Building2', value: '50+', label: 'Room Options' },
-      { icon: 'Shield', value: '24/7', label: 'Security' }
+      { icon: 'Shield', value: '50+', label: 'Room Options' },
+      { icon: 'Home', value: '24/7', label: 'Security' }
     ],
-    images: [
-      { src: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600', label: 'Modern Interiors' },
-      { src: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600', label: 'Cozy Rooms' },
-      { src: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600', label: 'Study Areas' },
-      { src: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600', label: 'Common Spaces' }
-    ]
+    images
   }
 }
 
-// Get icon for room type card
 const getRoomTypeIcon = (title) => {
-  const titleLower = title?.toLowerCase() || ''
-  if (titleLower.includes('shared')) return Users
-  if (titleLower.includes('premium')) return Star
-  if (titleLower.includes('single')) return Bed
+  const t = title?.toLowerCase() || ''
+  if (t.includes('shared')) return Users
+  if (t.includes('premium')) return Star
+  if (t.includes('single')) return Bed
   return Home
 }
 
-// Helper functions for room display
-const getRoomImage = (roomTypeName) => {
-  const images = {
-    'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800',
-    'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800',
-    'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800',
-    'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800'
-  }
-  return images[roomTypeName?.toLowerCase()] || images.standard
+const getRoomImage = (name) => {
+  const imgs = { 'shared': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800', 'semi-private': 'https://images.unsplash.com/photo-1771327811795-6197403af846?w=800', 'premium': 'https://images.unsplash.com/photo-1663811397091-9a13493eff11?w=800', 'standard': 'https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800' }
+  return imgs[name?.toLowerCase()] || imgs.standard
 }
 
-const getDefaultDescription = (roomTypeName) => {
-  const descriptions = {
-    'shared': 'Comfortable shared accommodation with modern amenities.',
-    'semi-private': 'Semi-private room offering privacy with shared common areas.',
-    'premium': 'Premium single room with attached bathroom and premium furnishings.',
-    'standard': 'Well-appointed standard room with essential amenities.'
-  }
-  return descriptions[roomTypeName?.toLowerCase()] || 'Comfortable room with modern amenities.'
+const getDefaultDescription = (name) => {
+  const d = { 'shared': 'Comfortable shared accommodation.', 'semi-private': 'Semi-private room with shared common areas.', 'premium': 'Premium single room with attached bathroom.', 'standard': 'Well-appointed standard room.' }
+  return d[name?.toLowerCase()] || 'Comfortable room with modern amenities.'
 }
 
-const getRoomFeatures = (roomTypeName) => {
-  const features = {
-    'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
-    'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'],
-    'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'],
-    'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan']
-  }
-  return features[roomTypeName?.toLowerCase()] || features.standard
+const getRoomFeatures = (name) => {
+  const f = { 'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'], 'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'], 'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'], 'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'] }
+  return f[name?.toLowerCase()] || f.standard
 }
 
 const getFacilityIcon = (iconName) => {
-  const iconMap = {
-    'ri-wifi-line': Wifi,
-    'ri-dumbbell-line': Dumbbell,
-    'ri-restaurant-line': Utensils,
-    'ri-book-open-line': BookOpen,
-    'ri-shield-line': Shield,
-    'ri-car-line': Car,
-    'ri-coffee-line': Coffee,
-  }
-  return iconMap[iconName] || Sparkles
+  const icons = { 'ri-wifi-line': Wifi, 'ri-dumbbell-line': Dumbbell, 'ri-restaurant-line': Utensils, 'ri-book-open-line': BookOpen, 'ri-shield-line': Shield, 'ri-car-line': Car, 'ri-coffee-line': Coffee }
+  return icons[iconName] || Sparkles
 }
 
-// Progressive fetch - Load critical content first
 async function fetchPageData() {
   loading.value = true
   error.value = ''
-  
   try {
-    console.log('🚀 Starting progressive loading...')
-    
-    // STEP 1: Load Hero section first (critical)
     await fetchHeroSection(1)
-    const slides = getHeroSlides()
-    heroSlides.value = slides
-    console.log('✅ Hero loaded:', heroSlides.value.length, 'slides')
-    
-    // STEP 2: Show the page immediately
+    heroSlides.value = getHeroSlides()
     loading.value = false
-    
-    // STEP 3: Load ALL remaining sections (each independently wrapped)
-    console.log('🔄 Loading remaining sections...')
-    
-    // Fetch about section
-    try {
-      await fetchAboutSection(1)
-      const aboutData = getAboutData()
-      if (aboutData) {
-        pageData.value.about = aboutData
-        console.log('✅ About loaded')
-      }
-    } catch (e) {
-      console.warn('⚠️ About section failed to load:', e.message)
-    }
-    
-    // Fetch facilities
-    try {
-      await fetchFacilities()
-      facilitiesLoaded.value = true
-      console.log('✅ Facilities loaded:', facilitiesList.value.length)
-    } catch (e) {
-      console.warn('⚠️ Facilities failed to load:', e.message)
-    }
-    
-    // Fetch gallery
-    try {
-      await fetchGallery()
-      galleryLoaded.value = true
-      console.log('✅ Gallery loaded:', galleryItems.value.length)
-    } catch (e) {
-      console.warn('⚠️ Gallery failed to load:', e.message)
-    }
-    
-    // Fetch testimonials
-    try {
-      await fetchTestimonials()
-      testimonials.value = apiTestimonials.value.slice(0, 6)
-      testimonialsLoaded.value = true
-      console.log('✅ Testimonials loaded:', testimonials.value.length)
-    } catch (e) {
-      console.warn('⚠️ Testimonials failed to load:', e.message)
-    }
-    
-    // Fetch room types
-    try {
-      await fetchRoomTypes()
-      roomTypesList.value = apiRoomTypes.value
-      console.log('✅ Room types loaded:', roomTypesList.value.length)
-    } catch (e) {
-      console.warn('⚠️ Room types failed to load:', e.message)
-    }
-    
-    // Fetch rooms
-    try {
-      await fetchRooms()
-      homepageRooms.value = rooms.value.slice(0, 3)
-      console.log('✅ Rooms loaded:', homepageRooms.value.length)
-    } catch (e) {
-      console.warn('⚠️ Rooms failed to load:', e.message)
-    }
-    
-    console.log('✅ All content loaded!')
-    
-    // Start autoplay
+
+    try { await fetchAboutSection(1); pageData.value.about = getAboutData() } catch (e) {}
+    try { await fetchFacilities() } catch (e) {}
+    try { await fetchGallery() } catch (e) {}
+    try { await fetchTestimonials(); testimonials.value = apiTestimonials.value.slice(0, 6) } catch (e) {}
+    try { await fetchRoomTypes(); roomTypesList.value = apiRoomTypes.value } catch (e) {}
+    try { await fetchRooms(); homepageRooms.value = rooms.value.slice(0, 3) } catch (e) {}
+
     if (heroSlides.value.length > 0) {
       if (autoplayInterval.value) clearInterval(autoplayInterval.value)
       autoplayInterval.value = setInterval(nextSlide, 5000)
     }
-    
   } catch (err) {
-    console.error('Error fetching homepage data:', err)
-    error.value = 'Failed to load content. Please check your connection and try again.'
+    error.value = 'Failed to load content.'
     loading.value = false
   }
 }
 
-// Update the Intersection Observer setup - FIXED
-// const setupIntersectionObserver = () => {
-//   if (!('IntersectionObserver' in window)) return
-  
-//   // Track loaded sections
-//   let facilitiesLoading = false
-//   let galleryLoading = false
-//   let testimonialsLoading = false
-  
-//   const sectionMap = {
-//     'facilities-section': async () => { 
-//       if (!facilitiesLoaded.value && !facilitiesLoading) {
-//         facilitiesLoading = true
-//         console.log('🔄 Loading facilities...')
-//         await fetchFacilities()
-//         facilitiesLoaded.value = true
-//         facilitiesLoading = false
-//         console.log('✅ Facilities lazy loaded:', facilitiesList.value.length)
-//       }
-//     },
-//     'gallery-section': async () => { 
-//       if (!galleryLoaded.value && !galleryLoading) {
-//         galleryLoading = true
-//         console.log('🔄 Loading gallery...')
-//         await fetchGallery()
-//         galleryLoaded.value = true
-//         galleryLoading = false
-//         console.log('✅ Gallery lazy loaded:', galleryItems.value.length)
-//       }
-//     },
-//     'testimonials-section': async () => { 
-//       if (!testimonialsLoaded.value && !testimonialsLoading) {
-//         testimonialsLoading = true
-//         console.log('🔄 Loading testimonials...')
-//         await fetchTestimonials()
-//         testimonials.value = apiTestimonials.value.slice(0, 6)
-//         testimonialsLoaded.value = true
-//         testimonialsLoading = false
-//         console.log('✅ Testimonials lazy loaded:', testimonials.value.length)
-//       }
-//     }
-//   }
-  
-//   const observer = new IntersectionObserver((entries) => {
-//     entries.forEach(entry => {
-//       if (entry.isIntersecting) {
-//         const sectionId = entry.target.id
-//         console.log(`👀 Section visible: ${sectionId}`)
-//         if (sectionMap[sectionId]) {
-//           sectionMap[sectionId]()
-//         }
-//       }
-//     })
-//   }, { rootMargin: '200px' }) // Reduced from 400px to 200px
-  
-//   // Observe sections
-//   const sectionIds = ['facilities-section', 'gallery-section', 'testimonials-section']
-//   sectionIds.forEach(id => {
-//     const element = document.getElementById(id)
-//     if (element) {
-//       console.log(`👀 Observing: ${id}`)
-//       observer.observe(element)
-//     } else {
-//       console.warn(`⚠️ Element not found: ${id}`)
-//     }
-//   })
-  
-//   return observer
-// }
-
-const goToSlide = (index) => {
-  currentSlide.value = index
-}
-
-const nextSlide = () => {
-  if (heroSlides.value.length > 0) {
-    currentSlide.value = (currentSlide.value + 1) % heroSlides.value.length
-  }
-}
+const goToSlide = (index) => { currentSlide.value = index }
+const nextSlide = () => { if (heroSlides.value.length > 0) currentSlide.value = (currentSlide.value + 1) % heroSlides.value.length }
 
 const handleSearch = () => {
   const params = new URLSearchParams()
@@ -854,38 +602,11 @@ const handleSearch = () => {
   router.push(`/rooms?${params.toString()}`)
 }
 
-const openLightbox = (index) => {
-  currentImageIndex.value = index
-  lightboxOpen.value = true
-}
+const openLightbox = (index) => { currentImageIndex.value = index; lightboxOpen.value = true }
+const closeLightbox = () => { lightboxOpen.value = false }
+const prevImage = () => { if (galleryItems.value.length > 0) currentImageIndex.value = currentImageIndex.value > 0 ? currentImageIndex.value - 1 : galleryItems.value.length - 1 }
+const nextImage = () => { if (galleryItems.value.length > 0) currentImageIndex.value = currentImageIndex.value < galleryItems.value.length - 1 ? currentImageIndex.value + 1 : 0 }
 
-const closeLightbox = () => {
-  lightboxOpen.value = false
-}
-
-const prevImage = () => {
-  if (galleryItems.value.length === 0) return
-  currentImageIndex.value = currentImageIndex.value > 0 ? currentImageIndex.value - 1 : galleryItems.value.length - 1
-}
-
-const nextImage = () => {
-  if (galleryItems.value.length === 0) return
-  currentImageIndex.value = currentImageIndex.value < galleryItems.value.length - 1 ? currentImageIndex.value + 1 : 0
-}
-
-// let observer = null
-
-onMounted(() => {
-  fetchPageData()
-  // observer = setupIntersectionObserver()
-})
-
-onUnmounted(() => {
-  if (autoplayInterval.value) {
-    clearInterval(autoplayInterval.value)
-  }
-  // if (observer) {
-  //   observer.disconnect()
-  // }
-})
+onMounted(() => { fetchPageData() })
+onUnmounted(() => { if (autoplayInterval.value) clearInterval(autoplayInterval.value) })
 </script>

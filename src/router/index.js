@@ -79,6 +79,11 @@ const routes = [
     path: '/privacy',
     name: 'Privacy',
     component: () => import('@/pages/PrivacyPage.vue')
+  },
+  {
+    path: '/update-content',
+    name: 'UpdateContent',
+    component: () => import('@/pages/UpdateContentPage.vue')
   }
 ]
 

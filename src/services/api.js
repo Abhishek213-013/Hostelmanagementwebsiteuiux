@@ -439,6 +439,7 @@ export const sectionItemsAPI = {
   },
   updateItem: (id, itemData) => {
     clearCacheForUrl('/page-section-items')
+    // Always use PUT for updates
     return apiClient.put(`/page-section-items/${id}`, itemData)
   },
   updateItemStatus: (id, status) => {
@@ -474,6 +475,13 @@ export const borderAPI = {
   
   // Get border reviews
   getBorderReviews: (borderId) => apiClient.get(`/borders/${borderId}/reviews`),
+}
+
+// Image Upload API
+export const uploadAPI = {
+  uploadImage: (formData) => apiClient.post('/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
 }
 
 export default apiClient

@@ -84,6 +84,12 @@
                 Profile Management
               </router-link>
               
+              <!-- Admin: Update Content -->
+              <router-link v-if="userEmail === 'admin@gmail.com'" to="/update-content" @click="profileOpen = false" class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                <PenSquare class="w-4 h-4 text-teal-600" />
+                Update Content
+              </router-link>
+              
               <div class="border-t border-slate-200 dark:border-slate-700 mt-1 pt-1">
                 <button @click="logout" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                   <LogOut class="w-4 h-4" />
@@ -154,6 +160,11 @@
             <User class="w-4 h-4" />
             Profile Management
           </router-link>
+          <!-- Admin: Update Content (Mobile) -->
+          <router-link v-if="userEmail === 'admin@gmail.com'" to="/update-content" class="flex items-center gap-3 py-2.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 font-semibold transition-colors" @click="mobileMenuOpen = false">
+            <PenSquare class="w-4 h-4" />
+            Update Content
+          </router-link>
           <button @click="logout" class="flex items-center gap-3 py-2.5 text-red-600 font-semibold transition-colors w-full">
             <LogOut class="w-4 h-4" />
             Logout
@@ -170,7 +181,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Menu, X, Sun, Moon, User, LogOut, CreditCard, Building2 } from 'lucide-vue-next'
+import { Menu, X, Sun, Moon, User, LogOut, CreditCard, Building2, PenSquare } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()

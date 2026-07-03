@@ -191,10 +191,6 @@
                 <h4 class="font-black text-teal-600">{{ uni.title }}</h4>
                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ uni.subtitle }}</p>
               </div>
-              <div class="text-right">
-                <div class="font-bold text-teal-600">{{ uni.distance || '2' }} km</div>
-                <div class="text-xs text-gray-500">{{ uni.time || '5' }} min</div>
-              </div>
             </div>
           </div>
         </div>
