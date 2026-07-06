@@ -852,7 +852,7 @@
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Subtitle</label>
             <input v-model="itemForm.subtitle" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Subtitle text" />
           </div>
-          <div>
+          <div v-if="sectionNeedsImage(itemSectionId)">
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Image</label>
             <div class="flex gap-2">
               <input v-model="itemForm.imageUrl" type="text" class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image URL or upload a file" />
@@ -1191,6 +1191,11 @@ import {
 } from 'lucide-vue-next'
 import { cropImageToAspectRatio } from '../utils/imageCropper'
 
+const SECTIONS_WITHOUT_IMAGE = [
+  'our-mission', 'our-vision', 'our-principles', 'our_story',
+  'recognition', 'prime-location', 'contact-us'
+]
+
 const SECTION_ASPECT_RATIOS = {
   'hero-slider': 16 / 9,
   'about': 5 / 4,
@@ -1202,6 +1207,15 @@ function getSectionAspectRatio(sectionId) {
     return SECTION_ASPECT_RATIOS[section.section_key]
   }
   return null
+}
+
+function sectionNeedsImage(sectionId) {
+  if (!sectionId) return true
+  const section = allSections.value.find(s => s.id === sectionId)
+  if (section && section.section_key && SECTIONS_WITHOUT_IMAGE.includes(section.section_key)) {
+    return false
+  }
+  return true
 }
 
 useHead({
@@ -1636,7 +1650,9 @@ const saveItem = async () => {
       formData.append('subtitle', itemForm.value.subtitle || '')
       formData.append('sort_order', itemForm.value.sort_order || 0)
       formData.append('status', itemForm.value.status || 1)
-      formData.append('image', selectedFile.value)
+      if (sectionNeedsImage(itemSectionId.value)) {
+        formData.append('image', selectedFile.value)
+      }
 
       if (editingItem.value) {
         formData.append('_method', 'PUT')
@@ -1660,13 +1676,14 @@ const saveItem = async () => {
         description_part1: itemForm.value.description_part1 || '',
         description: itemForm.value.description || '',
         subtitle: itemForm.value.subtitle || '',
-        image: itemForm.value.imageUrl || '',
         sort_order: itemForm.value.sort_order || 0,
         status: itemForm.value.status || 1
       }
-
-      if (editingItem.value && itemForm.value.imageUrl === editingItem.value.image) {
-        delete data.image
+      if (sectionNeedsImage(itemSectionId.value)) {
+        data.image = itemForm.value.imageUrl || ''
+        if (editingItem.value && itemForm.value.imageUrl === editingItem.value.image) {
+          delete data.image
+        }
       }
 
       if (editingItem.value) {
