@@ -123,7 +123,7 @@
             <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
           <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
-            <img :src="lightboxImage.src" :alt="lightboxImage.alt_text" class="w-full h-full object-contain rounded-2xl shadow-2xl" />
+            <img :src="getFullImageUrl(lightboxImage.src)" :alt="lightboxImage.alt_text" class="w-full h-full object-contain rounded-2xl shadow-2xl" @error="handleLightboxImageError" />
             <div class="text-center mt-4 sm:mt-6">
               <div class="flex flex-wrap justify-center gap-2 mb-2">
                 <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600 capitalize">
@@ -230,7 +230,11 @@ const openLightbox = (index) => {
 const closeLightbox = () => {
   isLightboxOpen.value = false
 }
-
+// Handle lightbox image loading errors
+const handleLightboxImageError = (event) => {
+  event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
+  event.target.onerror = null
+}
 const prevImage = () => {
   if (filteredImages.value.length === 0) return
   currentLightboxIndex.value = currentLightboxIndex.value > 0 
