@@ -16,13 +16,11 @@
             <!-- Receipt Header -->
             <div class="flex items-center justify-between mb-3 pb-3 border-b-2 border-teal-600">
               <div class="flex items-center gap-2">
-                <div class="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center">
-                  <Sparkles class="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p class="text-sm font-black text-teal-600">SylhetStay</p>
-                  <p class="text-2xs text-gray-500">Service Subscription</p>
-                </div>
+                <img 
+                  :src="logoUrl || defaultLogo" 
+                  alt="Logo" 
+                  class="h-10 lg:h-12 w-auto object-contain"
+                />
               </div>
               <div class="text-right">
                 <p class="text-2xs font-bold text-gray-500 uppercase">Receipt #</p>
@@ -148,7 +146,38 @@
 </template>
 
 <script setup>
-import { X, Printer, Sparkles, CheckCircle2 } from 'lucide-vue-next'
+import { ref, onMounted } from 'vue'
+import { X, Printer, CheckCircle2 } from 'lucide-vue-next'
+import { usePages } from '../../composables/usePages'
+import defaultLogo from '@/assets/logo/logo.png'
+
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+const logoUrl = ref('')
+
+const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
+const loadLogo = () => {
+  const { fetchHeaderLogo } = usePages()
+  fetchHeaderLogo(1).then(headerSection => {
+    if (headerSection?.items?.length > 0) {
+      const activeItem = headerSection.items.find(item => item.status == 1)
+      if (activeItem?.image) {
+        logoUrl.value = getFullImageUrl(activeItem.image)
+      }
+    }
+  }).catch(() => {})
+}
+
+onMounted(() => {
+  loadLogo()
+})
 
 const props = defineProps({
   serviceReceipt: {

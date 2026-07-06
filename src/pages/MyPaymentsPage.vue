@@ -262,7 +262,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
           <!-- Modal Header -->
           <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-            <h3 class="text-lg font-black text-teal-600">
+            <h3 class="text-lg font-black" :class="selectedPayment.type === 'service' ? 'text-purple-600' : 'text-teal-600'">
               {{ selectedPayment.type === 'service' ? 'Service Subscription Receipt' : 'Payment Receipt' }}
             </h3>
             <button @click="closeReceipt" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
@@ -276,14 +276,23 @@
               
               <!-- Service Subscription Receipt -->
               <div v-if="selectedPayment.type === 'service'" class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #7c3aed; padding: 20px; background: white;">
+                <!-- Receipt Header with Logo -->
                 <div class="flex items-center justify-between mb-3 pb-3 border-b-2 border-purple-600">
                   <div class="flex items-center gap-2">
-                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-                      <Sparkles class="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <p class="text-sm font-black text-purple-600">SylhetStay</p>
-                      <p class="text-2xs text-gray-500">Service Subscription</p>
+                    <img 
+                      :src="logoUrl || defaultLogo" 
+                      alt="SylhetStay Logo" 
+                      class="h-12 w-auto object-contain"
+                      @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
+                    />
+                    <div v-if="!logoUrl" class="flex items-center gap-2">
+                      <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <Sparkles class="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-black text-purple-600">SylhetStay</p>
+                        <p class="text-2xs text-gray-500">Service Subscription</p>
+                      </div>
                     </div>
                   </div>
                   <div class="text-right">
@@ -292,6 +301,7 @@
                   </div>
                 </div>
 
+                <!-- Subscriber & Subscription Details -->
                 <div class="grid grid-cols-2 gap-3 mb-3">
                   <div>
                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Subscriber</p>
@@ -307,12 +317,21 @@
                   </div>
                 </div>
 
+                <!-- Service Information -->
                 <div class="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
                   <p class="text-2xs font-bold text-purple-600 uppercase mb-1">Service Information</p>
-                  <p class="text-xs font-bold text-gray-800">{{ selectedPayment.service_name }}</p>
-                  <p v-if="selectedPayment.service_description" class="text-2xs text-gray-600 mt-0.5">{{ selectedPayment.service_description }}</p>
+                  <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 class="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-gray-800">{{ selectedPayment.service_name }}</p>
+                      <p v-if="selectedPayment.service_description" class="text-2xs text-gray-600 mt-0.5">{{ selectedPayment.service_description }}</p>
+                    </div>
+                  </div>
                 </div>
 
+                <!-- Pricing Table -->
                 <div class="mb-3">
                   <table class="w-full text-2xs">
                     <thead>
@@ -342,6 +361,20 @@
                   </table>
                 </div>
 
+                <!-- Billing Cycle -->
+                <div class="mb-3 p-2 bg-gray-50 rounded-lg">
+                  <p class="text-2xs text-gray-600">
+                    <span class="font-bold">Billing Cycle:</span> Monthly
+                  </p>
+                  <p class="text-2xs text-gray-600 mt-0.5">
+                    <span class="font-bold">Next Billing:</span> {{ getNextBillingDate(selectedPayment.subscription_date) }}
+                  </p>
+                  <p class="text-2xs text-gray-600 mt-0.5">
+                    <span class="font-bold">Payment Method:</span> Added to Monthly Bill
+                  </p>
+                </div>
+
+                <!-- Signature Area -->
                 <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
                   <div class="text-2xs text-gray-500">
                     <p class="mb-0.5"><span class="font-bold">Subscribed:</span> {{ formatDate(selectedPayment.subscription_date) }}</p>
@@ -357,18 +390,26 @@
                   </div>
                 </div>
 
+                <!-- Footer -->
                 <div class="text-center mt-3 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for subscribing!</p>
                   <p class="text-2xs text-gray-400 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated receipt</p>
                 </div>
               </div>
 
               <!-- Booking Payment Receipt -->
               <div v-else class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #0d9488; padding: 20px; background: white;">
+                <!-- Receipt Header with Logo -->
                 <div class="flex items-center justify-between mb-2 pb-2 border-b-2 border-teal-600">
                   <div class="flex items-center gap-2">
-                    <img src="@/assets/logo/logo.png" alt="SylhetStay Logo" class="w-19 h-16 object-contain" onerror="this.style.display='none'" />
-                    <div v-if="!logoLoaded" class="flex items-center">
+                    <img 
+                      :src="logoUrl || defaultLogo" 
+                      alt="SylhetStay Logo" 
+                      class="h-12 w-auto object-contain"
+                      @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
+                    />
+                    <div v-if="!logoUrl" class="flex items-center">
                       <span class="text-lg font-black text-teal-600">SylhetStay</span>
                     </div>
                   </div>
@@ -378,6 +419,7 @@
                   </div>
                 </div>
 
+                <!-- Bill To & Payment Details -->
                 <div class="grid grid-cols-2 gap-3 mb-3">
                   <div>
                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Bill To</p>
@@ -399,6 +441,7 @@
                   </div>
                 </div>
 
+                <!-- Booking Details -->
                 <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                   <p class="text-2xs font-bold text-gray-500 uppercase mb-1">Booking Details</p>
                   <p class="text-2xs text-gray-600">Check-in: {{ formatDate(selectedPayment.check_in_date) }}</p>
@@ -406,6 +449,7 @@
                   <p class="text-2xs text-gray-600">Room Type: {{ selectedPayment.room?.room_type?.room_type_title || 'Standard' }}</p>
                 </div>
 
+                <!-- Pricing Table -->
                 <div class="mb-3">
                   <table class="w-full text-2xs">
                     <thead>
@@ -434,6 +478,7 @@
                   </table>
                 </div>
 
+                <!-- Signature Area -->
                 <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
                   <div class="text-2xs text-gray-500">
                     <p class="mb-0.5"><span class="font-bold">Paid:</span> {{ formatDate(selectedPayment.created_at) }}</p>
@@ -449,9 +494,11 @@
                   </div>
                 </div>
 
+                <!-- Footer -->
                 <div class="text-center mt-2 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for your payment!</p>
                   <p class="text-2xs text-gray-400 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated receipt</p>
                 </div>
               </div>
             </div>
@@ -482,7 +529,9 @@ import { useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { useBookings } from '../composables/useBookings'
-import { CreditCard, X, Printer, Building2, Calendar, Clock, Sparkles, Home } from 'lucide-vue-next'
+import defaultLogo from '@/assets/logo/logo.png'
+import { usePages } from '../composables/usePages'
+import { CreditCard, X, Printer, Building2, Calendar, Clock, Sparkles, Home, CheckCircle2 } from 'lucide-vue-next'
 
 useHead({
   title: 'My Payments - SylhetStay | Payment History',
@@ -506,7 +555,35 @@ const error = ref('')
 const selectedPayment = ref(null)
 const showReceipt = ref(false)
 const logoLoaded = ref(true)
+const logoUrl = ref('')
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
 const activeTab = ref('all')
+
+const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
+const loadLogo = async () => {
+  try {
+    const { fetchHeaderLogo } = usePages()
+    const headerSection = await fetchHeaderLogo(1)
+    if (headerSection?.items?.length > 0) {
+      const activeItem = headerSection.items.find(item => item.status == 1)
+      if (activeItem?.image) {
+        logoUrl.value = getFullImageUrl(activeItem.image)
+        console.log('Logo loaded successfully:', logoUrl.value)
+      }
+    }
+  } catch (error) {
+    console.error('Error loading logo:', error)
+    // Fallback to default logo is handled in template
+  }
+}
 
 // Combine all payments
 const allPayments = computed(() => {
@@ -613,6 +690,7 @@ const loadServiceSubscriptions = () => {
     serviceSubscriptions.value = []
   }
 }
+
 // Add this function to migrate old receipts to the new user-specific format
 const migrateOldReceipts = () => {
   try {
@@ -655,15 +733,6 @@ const migrateOldReceipts = () => {
   }
 }
 
-// Call this once on mount
-onMounted(() => {
-  if (!localStorage.getItem('isAuthenticated')) {
-    router.push('/login')
-    return
-  }
-  migrateOldReceipts() // Add this line
-  fetchAllData()
-})
 // Fetch booking payments from API
 async function fetchBookingPayments() {
   try {
@@ -787,6 +856,17 @@ const printReceipt = () => {
   printWindow.document.close()
 }
 
+const getNextBillingDate = (subscriptionDate) => {
+  if (!subscriptionDate) return 'N/A'
+  const date = new Date(subscriptionDate)
+  date.setMonth(date.getMonth() + 1)
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  })
+}
+
 function getStatusBgClass(status) {
   const classes = {
     0: 'bg-yellow-500',
@@ -842,6 +922,8 @@ onMounted(() => {
     router.push('/login')
     return
   }
+  loadLogo()
+  migrateOldReceipts()
   fetchAllData()
 })
 </script>
