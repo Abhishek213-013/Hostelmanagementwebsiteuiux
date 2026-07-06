@@ -329,8 +329,13 @@
                       <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Successful!</h3>
                       <p class="text-gray-600 dark:text-gray-400 mb-2">Transaction ID: {{ paymentTransactionId }}</p>
                       <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Your booking has been confirmed</p>
-                      <button @click="completePayment" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
-                        View Booking Confirmation
+                      <button @click="completePayment" :disabled="submittingBooking"
+                        class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span v-if="submittingBooking" class="flex items-center gap-2">
+                          <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                          Finalizing...
+                        </span>
+                        <span v-else>View Booking Confirmation</span>
                       </button>
                     </div>
 
@@ -661,6 +666,7 @@ const formErrors = ref({})
 const selectedDivisionId = ref('')
 const selectedRoom = ref(null)
 const termsAccepted = ref(false)
+const pendingBookingPayload = ref(null)
 
 const autofillFromUserData = () => {
   const storedUser = localStorage.getItem('user')
@@ -835,15 +841,41 @@ const processCardPayment = () => {
   }, 2000)
 }
 
-// Complete payment - go to confirmation page
-const completePayment = () => {
-  // ===== NEW: Clear cached availability for this room =====
-  if (selectedRoom.value?.id) {
-    sessionStorage.removeItem(`room_availability_${selectedRoom.value.id}`)
+// Complete payment - create booking and go to confirmation page
+const completePayment = async () => {
+  if (!pendingBookingPayload.value) {
+    step.value = 4
+    return
   }
   
-  console.log('Booking payment completed. Response:', JSON.stringify(currentBooking.value, null, 2))
-  step.value = 4
+  submittingBooking.value = true
+  
+  try {
+    const booking = await createBooking(pendingBookingPayload.value)
+    if (booking) {
+      const bookingId = booking.id || booking.booking_id || ('local_' + Date.now())
+      addBookedSeat(
+        parseInt(pendingBookingPayload.value.seat_id),
+        parseInt(pendingBookingPayload.value.room_id),
+        bookingId
+      )
+      
+      await refreshRoomAvailability(pendingBookingPayload.value.room_id)
+      
+      if (selectedRoom.value?.id) {
+        sessionStorage.removeItem(`room_availability_${selectedRoom.value.id}`)
+      }
+      
+      console.log('Booking payment completed. Response:', JSON.stringify(booking, null, 2))
+      step.value = 4
+    }
+  } catch (error) {
+    console.error('Failed to create booking after payment:', error)
+    paymentError.value = error.response?.data?.message || error.message || 'Failed to complete booking. Please contact support.'
+    payStationStep.value = 'failed'
+  } finally {
+    submittingBooking.value = false
+  }
 }
 
 // ===== UPDATED: Fetch available seats with booking awareness =====
@@ -982,7 +1014,7 @@ const prevTab = () => {
   currentTab.value--
 }
 
-// ===== UPDATED: confirmBooking with seat tracking =====
+// ===== UPDATED: confirmBooking now only stores payload, booking happens after payment =====
 const confirmBooking = async () => {
   if (!validateAllTabs()) return
   
@@ -996,9 +1028,7 @@ const confirmBooking = async () => {
     return
   }
   
-  submittingBooking.value = true
-  
-  const bookingPayload = {
+  pendingBookingPayload.value = {
     branch_id: parseInt(bookingData.value.branch_id),
     room_id: parseInt(bookingData.value.room_id),
     seat_id: parseInt(bookingData.value.seat_id),
@@ -1022,50 +1052,12 @@ const confirmBooking = async () => {
     youtube: bookingData.value.youtube || "",
     check_in_date: bookingData.value.check_in_date,
     billing_amount: parseFloat(bookingData.value.billing_amount),
-    status: 1, // Auto-approved status
+    status: 1,
     notes: bookingData.value.notes || ""
   }
   
-  try {
-    const booking = await createBooking(bookingPayload)
-    if (booking) {
-      // ===== NEW: Track the booked seat =====
-      const bookingId = booking.id || booking.booking_id || ('local_' + Date.now())
-      addBookedSeat(
-        parseInt(bookingData.value.seat_id),
-        parseInt(bookingData.value.room_id),
-        bookingId
-      )
-      
-      console.log('✅ Seat tracked:', {
-        seatId: bookingData.value.seat_id,
-        roomId: bookingData.value.room_id,
-        bookingId: bookingId
-      })
-      
-      // ===== NEW: Refresh room availability =====
-      await refreshRoomAvailability(bookingData.value.room_id)
-      
-      // Clear cached availability for this room
-      sessionStorage.removeItem(`room_availability_${bookingData.value.room_id}`)
-      
-      step.value = 3
-      payStationStep.value = 'method'
-    }
-  } catch (error) {
-    console.error('Failed to create booking:', error)
-    if (error.response?.data?.message) {
-      formErrors.value.submit = error.response.data.message
-    } else if (error.response?.data?.error) {
-      formErrors.value.submit = error.response.data.error
-    } else if (error.message) {
-      formErrors.value.submit = error.message
-    } else {
-      formErrors.value.submit = 'Failed to create booking. Please try again.'
-    }
-  } finally {
-    submittingBooking.value = false
-  }
+  step.value = 3
+  payStationStep.value = 'method'
 }
 
 // ===== UPDATED: resetBooking clears seat tracking for cancelled bookings =====
@@ -1104,6 +1096,7 @@ const resetBooking = () => {
     status: 1,
     notes: ''
   }
+  pendingBookingPayload.value = null
   termsAccepted.value = false
   formErrors.value = {}
   autofillFromUserData()
