@@ -40,7 +40,7 @@
 
       <div class="border-t border-slate-800 dark:border-slate-700 pt-2 md:pt-3 text-center text-muted-foreground">
         <p>{{ copyrightText }}</p>
-        <p class="mt-1">Developed By - <a href="https://itlabsolutions.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-sky-500 transition-colors"><img src="@/assets/logo/itlabsolutions-bg-white.webp" alt="IT Lab Solutions" class="h-5 w-auto inline-block" /> IT Lab Solutions Ltd.</a></p>
+        <p class="mt-1 flex items-center justify-center gap-1 flex-wrap"><span>Developed By -</span><a href="https://itlabsolutions.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-sky-500 transition-colors"><img src="@/assets/logo/itlabsolutions-bg-white.webp" alt="IT Lab Solutions" class="h-5 w-auto" /> IT Lab Solutions Ltd.</a></p>
       </div>
     </div>
   </footer>
