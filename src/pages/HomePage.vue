@@ -242,7 +242,17 @@
                   <div class="p-4 sm:p-6 flex flex-col flex-grow">
                     <h3 class="text-xl sm:text-2xl font-black mb-2 sm:mb-3 text-teal-600 break-words">{{ room.room_number || `Room ${room.id}` }}</h3>
                     <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 break-words">{{ room.room_description || getDefaultDescription(room.room_type?.name) }}</p>
-                    <div class="space-y-2 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
+                    <!-- Dynamic Services -->
+                    <div v-if="getMemoizedServices(room).length > 0" class="space-y-2 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
+                      <div v-for="(service, j) in getMemoizedServices(room).slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
+                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
+                          <component :is="getServiceIcon(service)" class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600 dark:text-teal-400" />
+                        </div>
+                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium break-words">{{ service.service_name }}</span>
+                      </div>
+                    </div>
+                    <!-- Fallback Features -->
+                    <div v-else class="space-y-2 sm:space-y-3 mb-6 sm:mb-8 flex-grow">
                       <div v-for="(feature, j) in getRoomFeatures(room.room_type?.name).slice(0, 4)" :key="j" class="flex items-center gap-2 sm:gap-3">
                         <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                           <CheckCircle2 class="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
@@ -396,7 +406,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRouter } from 'vue-router'
 import {
-  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, Phone, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, TrendingUp, ChevronRight, Clock, Bed
+  Search, Users, Wifi, Wind, Coffee, Car, Shield, BookOpen, Phone, Home, Utensils, Dumbbell, Camera, CheckCircle2, Star, Sparkles, Award, ArrowRight, Calendar, TrendingUp, ChevronRight, Clock, Bed, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath
 } from 'lucide-vue-next'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -559,6 +569,68 @@ const getDefaultDescription = (name) => {
 const getRoomFeatures = (name) => {
   const f = { 'shared': ['4 Bunk Beds', 'Shared Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'], 'semi-private': ['2 Single Beds', 'Attached Bathroom', 'Study Desks', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'], 'premium': ['Private Room', 'Attached Bathroom', 'Air Conditioning', 'Premium Furniture', 'High-Speed WiFi', 'Mini Fridge'], 'standard': ['Comfortable Bed', 'Attached Bathroom', 'Study Desk', 'Wardrobe', 'High-Speed WiFi', 'Ceiling Fan'] }
   return f[name?.toLowerCase()] || f.standard
+}
+
+const getRoomServices = (room) => {
+  const services = []
+
+  if (room?.room_type?.service_on_room_type) {
+    room.room_type.service_on_room_type.forEach(item => {
+      if (item.service) {
+        services.push({
+          ...item.service,
+          source: 'room_type'
+        })
+      }
+    })
+  }
+
+  if (room?.service_on_room) {
+    room.service_on_room.forEach(item => {
+      if (item.service) {
+        const exists = services.some(s => s.id === item.service.id)
+        if (!exists) {
+          services.push({
+            ...item.service,
+            source: 'room'
+          })
+        }
+      }
+    })
+  }
+
+  return services
+}
+
+const servicesCache = new WeakMap()
+const getMemoizedServices = (room) => {
+  if (!servicesCache.has(room)) {
+    servicesCache.set(room, getRoomServices(room))
+  }
+  return servicesCache.get(room)
+}
+
+const getServiceIcon = (service) => {
+  const name = service.service_name?.toLowerCase() || ''
+
+  if (name.includes('wifi') || name.includes('internet')) return Wifi
+  if (name.includes('ac') || name.includes('air') || name.includes('conditioning')) return Wind
+  if (name.includes('kitchen') || name.includes('food') || name.includes('meal')) return Utensils
+  if (name.includes('coffee') || name.includes('tea')) return Coffee
+  if (name.includes('gym') || name.includes('fitness') || name.includes('exercise')) return Dumbbell
+  if (name.includes('parking') || name.includes('car') || name.includes('vehicle')) return Car
+  if (name.includes('study') || name.includes('desk') || name.includes('book') || name.includes('library')) return BookOpen
+  if (name.includes('security') || name.includes('cctv') || name.includes('guard') || name.includes('safety')) return Shield
+  if (name.includes('tv') || name.includes('television') || name.includes('entertainment')) return Tv
+  if (name.includes('game') || name.includes('play') || name.includes('console')) return Gamepad2
+  if (name.includes('fridge') || name.includes('refrigerator') || name.includes('cooler')) return Refrigerator
+  if (name.includes('wash') || name.includes('laundry') || name.includes('cleaning')) return WashingMachine
+  if (name.includes('music') || name.includes('audio') || name.includes('sound')) return Music
+  if (name.includes('power') || name.includes('electricity') || name.includes('backup')) return Zap
+  if (name.includes('bath') || name.includes('shower') || name.includes('toilet') || name.includes('bathroom')) return Bath
+  if (name.includes('bed') || name.includes('mattress') || name.includes('pillow')) return Bed
+
+  return CheckCircle2
 }
 
 const getFacilityIcon = (iconName) => {
