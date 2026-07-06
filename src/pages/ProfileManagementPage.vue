@@ -44,10 +44,6 @@
               <CheckCircle2 class="w-4 h-4 text-teal-600" />
               <span class="text-xs text-teal-600 font-semibold">Verified Account</span>
             </div>
-            <div v-else class="flex items-center gap-1 mb-1">
-              <Clock class="w-4 h-4 text-amber-500" />
-              <span class="text-xs text-amber-600 font-semibold">Pending Verification</span>
-            </div>
             
             <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ userData?.name || 'User' }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ userData?.email || '' }}</p>
