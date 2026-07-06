@@ -198,6 +198,48 @@ export function usePages() {
     }
   }
 
+  // NEW: Fetch footer section (site-footer) with its items
+  const fetchFooterSection = async (pageId = 1) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await pageSectionsAPI.getSections()
+
+      let allSections = []
+      if (response.data && response.data.data) {
+        allSections = response.data.data
+      } else if (Array.isArray(response.data)) {
+        allSections = response.data
+      }
+
+      const footerSection = allSections.find(
+        section => section.page_id === parseInt(pageId) && section.section_key === 'site-footer'
+      )
+
+      if (!footerSection) {
+        return null
+      }
+
+      const items = await fetchSectionItems(footerSection.id)
+
+      const result = {
+        ...footerSection,
+        items: items
+      }
+
+      return result
+    } catch (err) {
+      if (err.response?.status === 404) {
+        return null
+      }
+      console.error('Error fetching footer section:', err)
+      error.value = err.response?.data?.message || 'Failed to fetch footer section'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   // Fetch header logo section (site-header) with its items
   const fetchHeaderLogo = async (pageId = 1) => {
     loading.value = true
@@ -283,6 +325,7 @@ export function usePages() {
     fetchPageData,
     fetchHeroSection,
     fetchAboutSection,
-    fetchHeaderLogo
+    fetchHeaderLogo,
+    fetchFooterSection
   }
 }

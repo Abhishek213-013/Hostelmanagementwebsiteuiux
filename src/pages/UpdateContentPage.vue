@@ -62,6 +62,9 @@
             <button @click="activeTab = 'logo'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'logo' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
               <Image class="w-4 h-4" /> Logo
             </button>
+            <button @click="activeTab = 'footer'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'footer' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <FileText class="w-4 h-4" /> Footer
+            </button>
           </div>
 
           <!-- Success/Error Messages -->
@@ -577,6 +580,126 @@
                   >
                     <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
                     {{ saving ? 'Saving...' : 'Update Logo' }}
+                  </button>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- ===== FOOTER TAB ===== -->
+          <div v-if="activeTab === 'footer'">
+            <div class="flex items-center gap-2 mb-6">
+              <FileText class="w-5 h-5 text-teal-600" />
+              <h2 class="text-xl font-black text-gray-800 dark:text-white">Update Footer Content</h2>
+            </div>
+
+            <div class="space-y-6">
+              <div v-if="loadingFooter" class="flex items-center justify-center py-12">
+                <Loader2 class="w-8 h-8 animate-spin text-teal-600" />
+              </div>
+
+              <template v-else>
+                <!-- Footer Logo -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
+                  <h3 class="font-black text-gray-800 dark:text-white mb-4">Footer Logo</h3>
+                  <div class="mb-4">
+                    <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <img 
+                        v-if="footerLogoUrl" 
+                        :src="footerLogoUrl" 
+                        alt="Footer Logo" 
+                        class="h-20 w-auto object-contain rounded-lg border border-gray-200 dark:border-gray-700 p-2 bg-white dark:bg-gray-800" 
+                        @error="footerLogoUrl = ''"
+                      />
+                      <div v-else class="w-32 h-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                        <Image class="w-8 h-8" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <input 
+                      v-model="footerLogoForm.imageUrl" 
+                      type="text" 
+                      class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" 
+                      placeholder="Footer logo URL or upload a file" 
+                    />
+                    <button 
+                      type="button" 
+                      @click="triggerFooterLogoUpload" 
+                      :disabled="uploading" 
+                      class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                    >
+                      <Loader2 v-if="uploading" class="w-4 h-4 animate-spin" />
+                      <Upload v-else class="w-4 h-4" />
+                      {{ uploading ? 'Uploading...' : 'Upload' }}
+                    </button>
+                  </div>
+                  <input type="file" ref="footerLogoFileInput" @change="handleFooterLogoImageUpload" accept="image/*" class="hidden" />
+                  <div v-if="footerLogoImagePreview" class="mt-3 relative inline-block">
+                    <img :src="footerLogoImagePreview" class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-contain bg-white dark:bg-gray-800 p-2" alt="Preview" />
+                    <button 
+                      @click="footerLogoImagePreview = ''; footerLogoSelectedFile = null" 
+                      class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Social Links -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
+                  <h3 class="font-black text-gray-800 dark:text-white mb-4">Social Media Links</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Facebook URL</label>
+                      <input v-model="footerSocialLinks.facebook" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://facebook.com/..." />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
+                      <input v-model="footerSocialLinks.instagram" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://instagram.com/..." />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Twitter / X URL</label>
+                      <input v-model="footerSocialLinks.twitter" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://twitter.com/..." />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Youtube URL</label>
+                      <input v-model="footerSocialLinks.youtube" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://youtube.com/..." />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Footer Columns -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
+                  <h3 class="font-black text-gray-800 dark:text-white mb-4">Link Columns</h3>
+                  <div v-for="(col, idx) in footerColumnsForm" :key="idx" class="mb-6 last:mb-0 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300 mb-3">Column {{ idx + 1 }}</h4>
+                    <div class="mb-3">
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Column Heading</label>
+                      <input v-model="col.heading" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 placeholder-gray-400" :placeholder="['Quick Links', 'Information', 'Contact'][idx]" />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Links (one per line: Label|/path)</label>
+                      <textarea v-model="col.linksText" rows="5" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 placeholder-gray-400 font-mono" placeholder="Rooms|/rooms&#10;Facilities|/facilities"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
+                  <h3 class="font-black text-gray-800 dark:text-white mb-4">Copyright Text</h3>
+                  <input v-model="footerCopyrightText" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="&copy; 2026 SylhetStay Hostel. All rights reserved." />
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex gap-3 pt-2">
+                  <button 
+                    @click="saveFooter" 
+                    :disabled="saving" 
+                    class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+                    {{ saving ? 'Saving...' : 'Save Footer Changes' }}
                   </button>
                 </div>
               </template>
@@ -2031,6 +2154,28 @@ const logoFileInput = ref(null)
 const logoSelectedFile = ref(null)
 const logoImagePreview = ref('')
 
+// ── Footer State ──
+const loadingFooter = ref(false)
+const footerSectionId = ref(null)
+const footerLogoUrl = ref('')
+const footerLogoItemId = ref(null)
+const footerLogoForm = ref({ imageUrl: '' })
+const footerLogoFileInput = ref(null)
+const footerLogoSelectedFile = ref(null)
+const footerLogoImagePreview = ref('')
+const footerSocialLinks = ref({
+  facebook: '',
+  instagram: '',
+  twitter: '',
+  youtube: ''
+})
+const footerColumnsForm = ref([
+  { heading: 'Quick Links', linksText: 'Rooms|/rooms\nFacilities|/facilities\nGallery|/gallery\nAbout Us|/about' },
+  { heading: 'Information', linksText: 'Admission|/rooms\nPayment|/rooms\nFAQs|/about\nTerms|/about' },
+  { heading: 'Contact', linksText: '123 Akhalia Road|/contact\n+880 1711-123456|tel:+8801711123456\ninfo@sylhetstay.com|mailto:info@sylhetstay.com' }
+])
+const footerCopyrightText = ref('\u00a9 2026 SylhetStay Hostel. All rights reserved.')
+
 // ── Testimonials ──
 const testimonialsList = ref([])
 const {
@@ -2248,6 +2393,233 @@ const saveLogo = async () => {
   }
 }
 
+// ── Footer Functions ──
+const fetchFooterData = async () => {
+  loadingFooter.value = true
+  try {
+    const res = await pageSectionsAPI.getSections()
+    const extractData = (res) => {
+      if (res.data && res.data.data) return res.data.data
+      if (Array.isArray(res.data)) return res.data
+      return []
+    }
+    const allSections = extractData(res)
+    const footerSection = allSections.find(
+      section => section.page_id === 1 && section.section_key === 'site-footer'
+    )
+
+    if (!footerSection) {
+      footerSectionId.value = null
+      footerLogoUrl.value = ''
+      return
+    }
+
+    footerSectionId.value = footerSection.id
+
+    const itemsRes = await sectionItemsAPI.getItems()
+    const allFooterItems = extractData(itemsRes).filter(item => item.page_section_id === footerSection.id)
+
+    // Logo
+    const logoItem = allFooterItems.find(item => item.title === 'footer_logo')
+    if (logoItem?.image) {
+      footerLogoItemId.value = logoItem.id
+      const imgPath = logoItem.image
+      if (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:')) {
+        footerLogoUrl.value = imgPath
+      } else {
+        const cleanPath = imgPath.startsWith('/') ? imgPath.slice(1) : imgPath
+        footerLogoUrl.value = `${API_BASE_URL}/storage/${cleanPath}`
+      }
+      footerLogoForm.value.imageUrl = logoItem.image || ''
+    } else {
+      footerLogoItemId.value = null
+      footerLogoUrl.value = ''
+      footerLogoForm.value.imageUrl = ''
+    }
+
+    // Social links
+    const fbItem = allFooterItems.find(item => item.title === 'social_fb')
+    if (fbItem?.subtitle) footerSocialLinks.value.facebook = fbItem.subtitle
+    const igItem = allFooterItems.find(item => item.title === 'social_ig')
+    if (igItem?.subtitle) footerSocialLinks.value.instagram = igItem.subtitle
+    const twItem = allFooterItems.find(item => item.title === 'social_tw')
+    if (twItem?.subtitle) footerSocialLinks.value.twitter = twItem.subtitle
+    const ytItem = allFooterItems.find(item => item.title === 'social_yt')
+    if (ytItem?.subtitle) footerSocialLinks.value.youtube = ytItem.subtitle
+
+    // Columns
+    const colItems = allFooterItems
+      .filter(item => item.title?.startsWith('col_'))
+      .sort((a, b) => a.title.localeCompare(b.title))
+    if (colItems.length > 0) {
+      colItems.forEach((item, idx) => {
+        if (idx < footerColumnsForm.value.length) {
+          footerColumnsForm.value[idx].heading = item.subtitle || footerColumnsForm.value[idx].heading
+          footerColumnsForm.value[idx].linksText = item.description || footerColumnsForm.value[idx].linksText
+        }
+      })
+    }
+
+    // Copyright
+    const copyrightItem = allFooterItems.find(item => item.title === 'copyright')
+    if (copyrightItem?.description) {
+      footerCopyrightText.value = copyrightItem.description
+    }
+  } catch (err) {
+    console.error('Error fetching footer data:', err)
+  } finally {
+    loadingFooter.value = false
+  }
+}
+
+const triggerFooterLogoUpload = () => {
+  footerLogoFileInput.value?.click()
+}
+
+const handleFooterLogoImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  footerLogoSelectedFile.value = file
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    footerLogoImagePreview.value = e.target.result
+    uploading.value = false
+  }
+  reader.onerror = () => {
+    uploading.value = false
+    errorMessage.value = 'Failed to read footer logo file'
+    clearMessages()
+  }
+  reader.readAsDataURL(file)
+  event.target.value = ''
+}
+
+const saveFooter = async () => {
+  saving.value = true
+  try {
+    let sectionId = footerSectionId.value
+
+    if (!sectionId) {
+      const sectionRes = await pageSectionsAPI.createSection({
+        page_id: 1,
+        section_key: 'site-footer',
+        title: 'Site Footer',
+        status: 1
+      })
+      sectionId = sectionRes.data?.data?.id || sectionRes.data?.id
+      if (!sectionId) throw new Error('Failed to create site-footer section')
+      footerSectionId.value = sectionId
+    }
+
+    // Fetch existing items once
+    const itemsRes = await sectionItemsAPI.getItems()
+    const extractData = (res) => {
+      if (res.data && res.data.data) return res.data.data
+      if (Array.isArray(res.data)) return res.data
+      return []
+    }
+    const allFooterItems = extractData(itemsRes).filter(item => item.page_section_id === sectionId)
+
+    // Save footer logo
+    if (footerLogoSelectedFile.value || footerLogoForm.value.imageUrl) {
+      const logoFormData = new FormData()
+      logoFormData.append('page_section_id', sectionId)
+      logoFormData.append('title', 'footer_logo')
+      logoFormData.append('sort_order', 0)
+      logoFormData.append('status', 1)
+      if (footerLogoSelectedFile.value) {
+        logoFormData.append('image', footerLogoSelectedFile.value)
+      } else if (footerLogoForm.value.imageUrl) {
+        logoFormData.append('image', footerLogoForm.value.imageUrl)
+      }
+      if (footerLogoItemId.value) {
+        logoFormData.append('_method', 'PUT')
+        await apiClient.post(`/page-section-items/${footerLogoItemId.value}`, logoFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      } else {
+        const createRes = await apiClient.post('/page-section-items', logoFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        footerLogoItemId.value = createRes.data?.data?.id || createRes.data?.id
+      }
+    }
+
+    // Save social links
+    const socialItems = [
+      { title: 'social_fb', url: footerSocialLinks.value.facebook },
+      { title: 'social_ig', url: footerSocialLinks.value.instagram },
+      { title: 'social_tw', url: footerSocialLinks.value.twitter },
+      { title: 'social_yt', url: footerSocialLinks.value.youtube }
+    ]
+
+    for (const social of socialItems) {
+      const existingItem = allFooterItems.find(item => item.title === social.title)
+      const data = {
+        page_section_id: sectionId,
+        title: social.title,
+        subtitle: social.url,
+        sort_order: 1,
+        status: 1
+      }
+      if (existingItem) {
+        await sectionItemsAPI.updateItem(existingItem.id, data)
+      } else {
+        await sectionItemsAPI.createItem(data)
+      }
+    }
+
+    // Save columns
+    for (let i = 0; i < footerColumnsForm.value.length; i++) {
+      const col = footerColumnsForm.value[i]
+      const colTitle = `col_${i}`
+      const existingItem = allFooterItems.find(item => item.title === colTitle)
+      const data = {
+        page_section_id: sectionId,
+        title: colTitle,
+        subtitle: col.heading,
+        description: col.linksText,
+        sort_order: 2 + i,
+        status: 1
+      }
+      if (existingItem) {
+        await sectionItemsAPI.updateItem(existingItem.id, data)
+      } else {
+        await sectionItemsAPI.createItem(data)
+      }
+    }
+
+    // Save copyright
+    const copyrightExisting = allFooterItems.find(item => item.title === 'copyright')
+    const copyrightData = {
+      page_section_id: sectionId,
+      title: 'copyright',
+      description: footerCopyrightText.value,
+      sort_order: 99,
+      status: 1
+    }
+    if (copyrightExisting) {
+      await sectionItemsAPI.updateItem(copyrightExisting.id, copyrightData)
+    } else {
+      await sectionItemsAPI.createItem(copyrightData)
+    }
+
+    successMessage.value = 'Footer content saved successfully!'
+    clearMessages()
+    footerLogoImagePreview.value = ''
+    footerLogoSelectedFile.value = null
+    window.dispatchEvent(new CustomEvent('footerUpdated'))
+    await fetchFooterData()
+  } catch (err) {
+    console.error('Error saving footer:', err.response?.data || err)
+    errorMessage.value = err.response?.data?.message || 'Failed to save footer'
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
 // ── Tab watcher ──
 watch(activeTab, (newTab) => {
   if (newTab !== 'pages') {
@@ -2258,6 +2630,9 @@ watch(activeTab, (newTab) => {
   }
   if (newTab === 'logo') {
     fetchLogoData()
+  }
+  if (newTab === 'footer') {
+    fetchFooterData()
   }
 })
 
