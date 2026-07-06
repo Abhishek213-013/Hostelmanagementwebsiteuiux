@@ -1189,6 +1189,20 @@ import {
   CheckCircle2, AlertCircle, Loader2, X, Upload, FileEdit, Settings2,
   Building2, Image, Users, MessageSquare, Star
 } from 'lucide-vue-next'
+import { cropImageToAspectRatio } from '../utils/imageCropper'
+
+const SECTION_ASPECT_RATIOS = {
+  'hero-slider': 16 / 9,
+  'about': 5 / 4,
+}
+
+function getSectionAspectRatio(sectionId) {
+  const section = allSections.value.find(s => s.id === sectionId)
+  if (section && section.section_key && SECTION_ASPECT_RATIOS[section.section_key]) {
+    return SECTION_ASPECT_RATIOS[section.section_key]
+  }
+  return null
+}
 
 useHead({
   title: 'Update Content - SylhetStay Admin',
@@ -1679,24 +1693,49 @@ const triggerUpload = () => {
   fileInput.value?.click()
 }
 
-const handleImageUpload = (event) => {
+const handleImageUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
 
   uploading.value = true
-  selectedFile.value = file
 
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    imagePreview.value = e.target.result
-    uploading.value = false
+  try {
+    let processedFile = file
+    const targetRatio = getSectionAspectRatio(itemSectionId.value)
+
+    if (targetRatio) {
+      processedFile = await cropImageToAspectRatio(file, targetRatio)
+    }
+
+    selectedFile.value = processedFile
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(processedFile)
+  } catch (err) {
+    console.error('Image processing failed:', err)
+    selectedFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(file)
   }
-  reader.onerror = () => {
-    uploading.value = false
-    errorMessage.value = 'Failed to read image file'
-    clearMessages()
-  }
-  reader.readAsDataURL(file)
+
   event.target.value = ''
 }
 
@@ -1834,22 +1873,42 @@ const triggerGalleryUpload = () => {
   galleryFileInput.value?.click()
 }
 
-const handleGalleryImageUpload = (event) => {
+const handleGalleryImageUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
   uploading.value = true
-  gallerySelectedFile.value = file
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    galleryImagePreview.value = e.target.result
-    uploading.value = false
+
+  try {
+    const processedFile = await cropImageToAspectRatio(file, 4 / 3)
+    gallerySelectedFile.value = processedFile
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      galleryImagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(processedFile)
+  } catch (err) {
+    console.error('Gallery image processing failed:', err)
+    gallerySelectedFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      galleryImagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(file)
   }
-  reader.onerror = () => {
-    uploading.value = false
-    errorMessage.value = 'Failed to read image file'
-    clearMessages()
-  }
-  reader.readAsDataURL(file)
+
   event.target.value = ''
 }
 
@@ -2073,22 +2132,42 @@ const triggerMemberUpload = () => {
   memberFileInput.value?.click()
 }
 
-const handleMemberImageUpload = (event) => {
+const handleMemberImageUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
   uploading.value = true
-  memberSelectedFile.value = file
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    memberImagePreview.value = e.target.result
-    uploading.value = false
+
+  try {
+    const processedFile = await cropImageToAspectRatio(file, 1 / 1)
+    memberSelectedFile.value = processedFile
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      memberImagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(processedFile)
+  } catch (err) {
+    console.error('Member image processing failed:', err)
+    memberSelectedFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      memberImagePreview.value = e.target.result
+      uploading.value = false
+    }
+    reader.onerror = () => {
+      uploading.value = false
+      errorMessage.value = 'Failed to read image file'
+      clearMessages()
+    }
+    reader.readAsDataURL(file)
   }
-  reader.onerror = () => {
-    uploading.value = false
-    errorMessage.value = 'Failed to read image file'
-    clearMessages()
-  }
-  reader.readAsDataURL(file)
+
   event.target.value = ''
 }
 
