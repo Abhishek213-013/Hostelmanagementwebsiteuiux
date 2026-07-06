@@ -53,14 +53,24 @@
             </button>
           </div>
 
-          <!-- Gallery Grid -->
+          <!-- Replace the entire gallery grid section -->
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div v-for="(image, index) in filteredImages" :key="image.id"
-                 class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
-                 @click="openLightbox(index)"
-                 @mouseenter="hoveredImage = image.id"
-                 @mouseleave="hoveredImage = null">
-              <img :src="image.thumbnail || image.src" :alt="image.alt_text" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
+                @click="openLightbox(index)"
+                @mouseenter="hoveredImage = image.id"
+                @mouseleave="hoveredImage = null">
+              
+              <!-- In your template, change the img tag to: -->
+              <img 
+                :src="getFullImageUrl(image.src)" 
+                :alt="image.alt_text || image.title" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                loading="lazy"
+                @error="handleImageError($event, image)"
+              />
+              
+              <!-- Rest of your overlay content remains the same -->
               <div :class="['absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500', hoveredImage === image.id ? 'opacity-100' : 'opacity-0']">
                 <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
                   <div class="inline-block px-2 sm:px-4 py-1 sm:py-2 rounded-xl text-white font-bold shadow-lg text-xs sm:text-sm bg-teal-600 mb-1 sm:mb-2 capitalize whitespace-nowrap">
@@ -162,6 +172,9 @@ const hoveredImage = ref(null)
 const currentLightboxIndex = ref(0)
 const isLightboxOpen = ref(false)
 
+// Base URL for API
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
 // Dynamic categories from gallery data
 const categories = computed(() => {
   const cats = new Map()
@@ -232,6 +245,27 @@ const nextImage = () => {
     : 0
 }
 
+// Handle image loading errors
+const handleImageError = (event, image) => {
+  console.warn('Image failed to load:', event.target.src, 'for item:', image.title)
+  
+  // Set a placeholder
+  event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
+  
+  // Prevent infinite error loop
+  event.target.onerror = null
+}
+
+// Get full image URL helper
+const getFullImageUrl = (path) => {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path
+  }
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -274,6 +308,21 @@ const handleKeydown = (event) => {
 async function fetchGalleryData() {
   try {
     await fetchGallery()
+    
+    // Debug: Log what we got
+    console.log('=== GALLERY DATA LOADED ===')
+    console.log('Total items:', galleryItems.value?.length)
+    
+    if (galleryItems.value?.length > 0) {
+      console.log('First item example:', galleryItems.value[0])
+      console.log('Image src format:', galleryItems.value[0]?.src)
+      
+      // Show all categories
+      const cats = [...new Set(galleryItems.value.map(item => item.category))]
+      console.log('Available categories:', cats)
+    }
+    console.log('=== END GALLERY DEBUG ===')
+    
   } catch (err) {
     console.error('Error fetching gallery:', err)
   }

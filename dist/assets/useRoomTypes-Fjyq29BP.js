@@ -1,4 +1,4 @@
-import{c as a}from"./building-2-DTb8TBXR.js";import{r as e}from"./api-DIGMwO52.js";import{r as o}from"./vendor-BedMnJh6.js";
+import{c as a}from"./building-2-DTb8TBXR.js";import{r as e}from"./api-D12cCDfV.js";import{r as o}from"./vendor-BedMnJh6.js";
 /**
  * @license lucide-vue-next v0.487.0 - ISC
  *

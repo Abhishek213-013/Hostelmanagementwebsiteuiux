@@ -258,6 +258,14 @@ export const facilitiesAPI = {
     clearCacheForUrl('/facilities')
     return apiClient.post('/facilities', facilityData)
   },
+  updateFacility: (id, facilityData) => {
+    clearCacheForUrl('/facilities')
+    return apiClient.put(`/facilities/${id}`, facilityData)
+  },
+  deleteFacility: (id) => {
+    clearCacheForUrl('/facilities')
+    return apiClient.delete(`/facilities/${id}`)
+  },
 }
 
 // Gallery API

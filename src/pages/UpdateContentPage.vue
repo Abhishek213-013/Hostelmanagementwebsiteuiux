@@ -1,5 +1,4 @@
 <template>
-  <!-- 1. Removed background from here entirely. This is now just a transparent spacer -->
   <div class="min-h-screen flex flex-col">
     
     <!-- Loading State -->
@@ -26,12 +25,10 @@
 
     <!-- Main Content -->
     <main v-else class="flex-1 flex flex-col">
-      <!-- 2. Header gets its background -->
       <div class="bg-gray-50 dark:bg-gray-900">
         <Header />
       </div>
       
-      <!-- 3. Main wrapper gets the background, fills all empty space up to the footer -->
       <div class="flex-1 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-16">
           
@@ -42,7 +39,23 @@
               <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Content Management</span>
             </div>
             <h1 class="text-3xl lg:text-4xl font-black mb-3 text-teal-600">Update Content</h1>
-            <p class="text-lg text-gray-600 dark:text-gray-400">Manage pages, sections, and section items for your website</p>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Manage pages, facilities, gallery, and team for your website</p>
+          </div>
+
+          <!-- Tab Navigation -->
+          <div class="flex gap-2 mb-8 flex-wrap">
+            <button @click="activeTab = 'pages'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'pages' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <FileText class="w-4 h-4" /> Pages
+            </button>
+            <button @click="activeTab = 'facilities'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'facilities' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <Building2 class="w-4 h-4" /> Facilities
+            </button>
+            <button @click="activeTab = 'gallery'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'gallery' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <Image class="w-4 h-4" /> Gallery
+            </button>
+            <button @click="activeTab = 'team'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'team' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <Users class="w-4 h-4" /> Team
+            </button>
           </div>
 
           <!-- Success/Error Messages -->
@@ -55,152 +68,365 @@
             {{ errorMessage }}
           </div>
 
-          <!-- Page Selector -->
-          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 mb-8">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-              <div class="flex items-center gap-3">
-                <FileText class="w-5 h-5 text-teal-600" />
-                <h2 class="text-lg font-black text-teal-600">Select Page</h2>
+          <!-- ===== PAGES TAB ===== -->
+          <div v-if="activeTab === 'pages'">
+            <!-- Page Selector -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6 mb-8">
+              <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                  <FileText class="w-5 h-5 text-teal-600" />
+                  <h2 class="text-lg font-black text-teal-600">Select Page</h2>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                  <button
+                    v-for="pg in pages"
+                    :key="pg.id"
+                    @click="selectPage(pg)"
+                    class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+                    :class="selectedPage?.id === pg.id ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
+                  >
+                    {{ pg.name || pg.title || `Page ${pg.id}` }}
+                  </button>
+                </div>
               </div>
-              <div class="flex gap-3 flex-wrap">
-                <button
-                  v-for="pg in pages"
-                  :key="pg.id"
-                  @click="selectPage(pg)"
-                  class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
-                  :class="selectedPage?.id === pg.id ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-                >
-                  {{ pg.name || pg.title || `Page ${pg.id}` }}
+            </div>
+
+            <!-- Sections & Items for Selected Page -->
+            <div v-if="selectedPage">
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-black text-gray-800 dark:text-white">
+                    Sections for <span class="text-teal-600">{{ selectedPage.name || selectedPage.title || `Page ${selectedPage.id}` }}</span>
+                  </h2>
+                  <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ sections.length }} total</span>
+                </div>
+                <button @click="openSectionModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                  <Plus class="w-4 h-4" />
+                  Add Section
                 </button>
+              </div>
+
+              <div v-if="sections.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <FileText class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                <p class="text-gray-500 dark:text-gray-400 font-medium">No sections found for this page.</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Section" to create one.</p>
+              </div>
+
+              <div v-for="(section, sIdx) in sections" :key="section.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
+                <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-wrap gap-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center">
+                      <span class="text-sm font-bold text-teal-700 dark:text-teal-300">{{ sIdx + 1 }}</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-800 dark:text-white">{{ section.section_key || section.title || `Section #${section.id}` }}</h3>
+                      <p v-if="section.title" class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ section.section_key }}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="section.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                      {{ section.status == 1 ? 'Active' : 'Inactive' }}
+                    </span>
+                    <button @click="openSectionDataModal(section)" class="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-blue-500 hover:text-blue-600" title="Edit Section Content">
+                      <FileEdit class="w-4 h-4" />
+                    </button>
+                    <button @click="openSectionModal(section)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 hover:text-teal-600" title="Edit Section Settings">
+                      <Settings2 class="w-4 h-4" />
+                    </button>
+                    <button @click="deleteSection(section)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-500 hover:text-red-600">
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                    <button @click="toggleSectionExpanded(section.id)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
+                      <ChevronDown class="w-4 h-4 transition-transform" :class="expandedSections[section.id] ? 'rotate-180' : ''" />
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="expandedSections[section.id]" class="px-5 py-4 bg-blue-50/50 dark:bg-blue-900/10 border-b border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center justify-between mb-2">
+                    <h4 class="text-sm font-bold text-blue-700 dark:text-blue-300">Section Content</h4>
+                    <button @click="openSectionDataModal(section)" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+                      <Edit3 class="w-3 h-3" /> Edit
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                    <div v-if="section.title" class="flex gap-2">
+                      <span class="font-medium text-gray-600 dark:text-gray-400">Badge:</span>
+                      <span class="text-gray-800 dark:text-gray-200">{{ section.title }}</span>
+                    </div>
+                    <div v-if="section.subtitle" class="flex gap-2">
+                      <span class="font-medium text-gray-600 dark:text-gray-400">Subtitle:</span>
+                      <span class="text-gray-800 dark:text-gray-200">{{ section.subtitle }}</span>
+                    </div>
+                    <div v-if="section.subtitle" class="flex gap-2">
+                      <span class="font-medium text-gray-600 dark:text-gray-400">Headline 1:</span>
+                      <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part1 }}</span>
+                    </div>
+                    <div v-if="section.subtitle && getHeadlineParts(section).part2" class="flex gap-2">
+                      <span class="font-medium text-gray-600 dark:text-gray-400">Headline 2:</span>
+                      <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part2 }}</span>
+                    </div>
+                    <div v-if="section.description" class="flex gap-2 col-span-full">
+                      <span class="font-medium text-gray-600 dark:text-gray-400">Description:</span>
+                      <span class="text-gray-800 dark:text-gray-200 truncate">{{ section.description }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="expandedSections[section.id]" class="p-5 bg-gray-50 dark:bg-gray-900/50">
+                  <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2">
+                      <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300">Section Items</h4>
+                      <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium">{{ getSectionItems(section.id).length }}</span>
+                    </div>
+                    <button @click="openItemModal(null, section.id)" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-1.5">
+                      <Plus class="w-3.5 h-3.5" />
+                      Add Item
+                    </button>
+                  </div>
+
+                  <div v-if="getSectionItems(section.id).length === 0" class="text-center py-6">
+                    <p class="text-sm text-gray-400 dark:text-gray-500">No items in this section.</p>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div v-for="(item, iIdx) in getSectionItems(section.id)" :key="item.id" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-gray-400 dark:text-gray-500">#{{ iIdx + 1 }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="item.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                              {{ item.status == 1 ? 'Active' : 'Inactive' }}
+                            </span>
+                          </div>
+                          <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ item.title || item.badge || item.headline_part1 || `Item #${item.id}` }}</p>
+                          <p v-if="item.subtitle || item.description" class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ item.subtitle || item.description }}</p>
+                          <div v-if="item.headline_part2 || item.headline_part3 || item.description_part1" class="flex flex-wrap gap-1.5 mt-2">
+                            <span v-if="item.headline_part2" class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs">{{ item.headline_part2 }}</span>
+                            <span v-if="item.headline_part3" class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded text-xs">{{ item.headline_part3 }}</span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                          <button @click="openItemModal(item, section.id)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
+                            <Edit3 class="w-3.5 h-3.5" />
+                          </button>
+                          <button @click="deleteItem(item)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                            <Trash2 class="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Sections & Items for Selected Page -->
-          <div v-if="selectedPage">
-            <!-- Add New Section Button -->
+          <!-- ===== FACILITIES TAB ===== -->
+          <div v-if="activeTab === 'facilities'">
             <div class="flex justify-between items-center mb-6">
               <div class="flex items-center gap-2">
-                <h2 class="text-xl font-black text-gray-800 dark:text-white">
-                  Sections for <span class="text-teal-600">{{ selectedPage.name || selectedPage.title || `Page ${selectedPage.id}` }}</span>
-                </h2>
-                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ sections.length }} total</span>
+                <Building2 class="w-5 h-5 text-teal-600" />
+                <h2 class="text-xl font-black text-gray-800 dark:text-white">Manage Facilities</h2>
+                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ facilities.length }} total</span>
               </div>
-              <button @click="openSectionModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+              <button @click="openFacilityModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
                 <Plus class="w-4 h-4" />
-                Add Section
+                Add Facility
               </button>
             </div>
 
-            <!-- Sections List -->
-            <div v-if="sections.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
-              <FileText class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <p class="text-gray-500 dark:text-gray-400 font-medium">No sections found for this page.</p>
-              <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Section" to create one.</p>
+            <div v-if="facilities.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <Building2 class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p class="text-gray-500 dark:text-gray-400 font-medium">No facilities found.</p>
+              <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Facility" to create one.</p>
             </div>
 
-            <div v-for="(section, sIdx) in sections" :key="section.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
-              <!-- Section Header -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="facility in facilities" :key="facility.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center">
+                      <span class="text-lg font-bold text-teal-600">{{ (facility.icon || 'X').charAt(0).toUpperCase() }}</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-800 dark:text-white">{{ facility.title || `Facility #${facility.id}` }}</h3>
+                      <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="facility.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                        {{ facility.status == 1 ? 'Active' : 'Inactive' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button @click="openFacilityModal(facility)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
+                      <Edit3 class="w-4 h-4" />
+                    </button>
+                    <button @click="deleteFacility(facility)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                      <Trash2 class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <p v-if="facility.short_description" class="text-sm text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">{{ facility.short_description }}</p>
+                <p v-if="facility.description" class="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{{ facility.description }}</p>
+                <div v-if="facility.sort_order !== undefined" class="mt-2 text-xs text-gray-400">Sort: {{ facility.sort_order }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== GALLERY TAB ===== -->
+          <div v-if="activeTab === 'gallery'">
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex items-center gap-2">
+                <Image class="w-5 h-5 text-teal-600" />
+                <h2 class="text-xl font-black text-gray-800 dark:text-white">Manage Gallery</h2>
+                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ galleryItems.length }} total</span>
+              </div>
+              <button @click="openGalleryModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <Plus class="w-4 h-4" />
+                Add Gallery Item
+              </button>
+            </div>
+
+            <div v-if="galleryItems.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <Image class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p class="text-gray-500 dark:text-gray-400 font-medium">No gallery items found.</p>
+              <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Gallery Item" to create one.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="item in galleryItems" :key="item.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all">
+                <!-- Updated image display section -->
+                <div class="h-40 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                  <img 
+                    v-if="getGalleryImageUrl(item)" 
+                    :src="getGalleryImageUrl(item)" 
+                    :alt="item.title" 
+                    class="w-full h-full object-cover" 
+                    @error="handleGalleryImageError($event)"
+                  />
+                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                    <Image class="w-8 h-8" />
+                  </div>
+                </div>
+                <div class="p-4">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-bold text-gray-800 dark:text-white truncate">{{ item.title || `Item #${item.id}` }}</h3>
+                      <p v-if="item.caption" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ item.caption }}</p>
+                      <p v-if="item.category" class="text-xs text-teal-600 mt-1 font-medium">{{ item.category }}</p>
+                      <p v-else class="text-xs text-amber-600 mt-1 font-medium">Category not set</p>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                      <button @click="openGalleryModal(item)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
+                        <Edit3 class="w-3.5 h-3.5" />
+                      </button>
+                      <button @click="deleteGalleryItem(item)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                        <Trash2 class="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="item.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                      {{ item.status == 1 ? 'Active' : 'Inactive' }}
+                    </span>
+                    <span v-if="item.sort_order !== undefined" class="text-xs text-gray-400">Sort: {{ item.sort_order }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== TEAM TAB ===== -->
+          <div v-if="activeTab === 'team'">
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex items-center gap-2">
+                <Users class="w-5 h-5 text-teal-600" />
+                <h2 class="text-xl font-black text-gray-800 dark:text-white">Manage Teams</h2>
+                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ teams.length }} total</span>
+              </div>
+              <button @click="openTeamModal(null)" class="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <Plus class="w-4 h-4" />
+                Add Team
+              </button>
+            </div>
+
+            <div v-if="teams.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <Users class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p class="text-gray-500 dark:text-gray-400 font-medium">No teams found.</p>
+              <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Click "Add Team" to create one.</p>
+            </div>
+
+            <div v-for="(team, tIdx) in teams" :key="team.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
               <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-wrap gap-3">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center">
-                    <span class="text-sm font-bold text-teal-700 dark:text-teal-300">{{ sIdx + 1 }}</span>
+                    <span class="text-sm font-bold text-teal-700 dark:text-teal-300">{{ tIdx + 1 }}</span>
                   </div>
                   <div>
-                    <h3 class="font-bold text-gray-800 dark:text-white">{{ section.section_key || section.title || `Section #${section.id}` }}</h3>
-                    <p v-if="section.title" class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ section.section_key }}</p>
+                    <h3 class="font-bold text-gray-800 dark:text-white">{{ team.name || `Team #${team.id}` }}</h3>
+                    <p v-if="team.description" class="text-xs text-gray-500 dark:text-gray-400">{{ team.description }}</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="section.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
-                    {{ section.status == 1 ? 'Active' : 'Inactive' }}
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium" :class="team.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                    {{ team.status == 1 ? 'Active' : 'Inactive' }}
                   </span>
-                  <button @click="openSectionDataModal(section)" class="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-blue-500 hover:text-blue-600" title="Edit Section Content">
-                    <FileEdit class="w-4 h-4" />
+                  <button @click="openTeamModal(team)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 hover:text-teal-600">
+                    <Edit3 class="w-4 h-4" />
                   </button>
-                  <button @click="openSectionModal(section)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 hover:text-teal-600" title="Edit Section Settings">
-                    <Settings2 class="w-4 h-4" />
-                  </button>
-                  <button @click="deleteSection(section)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-500 hover:text-red-600">
+                  <button @click="deleteTeamItem(team)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-500 hover:text-red-600">
                     <Trash2 class="w-4 h-4" />
                   </button>
-                  <button @click="toggleSectionExpanded(section.id)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
-                    <ChevronDown class="w-4 h-4 transition-transform" :class="expandedSections[section.id] ? 'rotate-180' : ''" />
+                  <button @click="toggleTeamExpanded(team.id)" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
+                    <ChevronDown class="w-4 h-4 transition-transform" :class="expandedTeams[team.id] ? 'rotate-180' : ''" />
                   </button>
                 </div>
               </div>
 
-              <!-- Section Content Preview -->
-              <div v-if="expandedSections[section.id]" class="px-5 py-4 bg-blue-50/50 dark:bg-blue-900/10 border-b border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-2">
-                  <h4 class="text-sm font-bold text-blue-700 dark:text-blue-300">Section Content</h4>
-                  <button @click="openSectionDataModal(section)" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
-                    <Edit3 class="w-3 h-3" /> Edit
-                  </button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                  <div v-if="section.title" class="flex gap-2">
-                    <span class="font-medium text-gray-600 dark:text-gray-400">Badge:</span>
-                    <span class="text-gray-800 dark:text-gray-200">{{ section.title }}</span>
-                  </div>
-                  <div v-if="section.subtitle" class="flex gap-2">
-                    <span class="font-medium text-gray-600 dark:text-gray-400">Subtitle:</span>
-                    <span class="text-gray-800 dark:text-gray-200">{{ section.subtitle }}</span>
-                  </div>
-                  <div v-if="section.subtitle" class="flex gap-2">
-                    <span class="font-medium text-gray-600 dark:text-gray-400">Headline 1:</span>
-                    <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part1 }}</span>
-                  </div>
-                  <div v-if="section.subtitle && getHeadlineParts(section).part2" class="flex gap-2">
-                    <span class="font-medium text-gray-600 dark:text-gray-400">Headline 2:</span>
-                    <span class="text-gray-800 dark:text-gray-200">{{ getHeadlineParts(section).part2 }}</span>
-                  </div>
-                  <div v-if="section.description" class="flex gap-2 col-span-full">
-                    <span class="font-medium text-gray-600 dark:text-gray-400">Description:</span>
-                    <span class="text-gray-800 dark:text-gray-200 truncate">{{ section.description }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Section Items -->
-              <div v-if="expandedSections[section.id]" class="p-5 bg-gray-50 dark:bg-gray-900/50">
+              <!-- Members for this team -->
+              <div v-if="expandedTeams[team.id]" class="p-5 bg-gray-50 dark:bg-gray-900/50">
                 <div class="flex justify-between items-center mb-4">
                   <div class="flex items-center gap-2">
-                    <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300">Section Items</h4>
-                    <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium">{{ getSectionItems(section.id).length }}</span>
+                    <h4 class="font-bold text-sm text-gray-700 dark:text-gray-300">Team Members</h4>
+                    <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-xs font-medium">{{ getTeamMembers(team.id).length }}</span>
                   </div>
-                  <button @click="openItemModal(null, section.id)" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-1.5">
+                  <button @click="openMemberModal(null, team.id)" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-1.5">
                     <Plus class="w-3.5 h-3.5" />
-                    Add Item
+                    Add Member
                   </button>
                 </div>
 
-                <div v-if="getSectionItems(section.id).length === 0" class="text-center py-6">
-                  <p class="text-sm text-gray-400 dark:text-gray-500">No items in this section.</p>
+                <div v-if="getTeamMembers(team.id).length === 0" class="text-center py-6">
+                  <p class="text-sm text-gray-400 dark:text-gray-500">No members in this team.</p>
                 </div>
 
-                <div class="space-y-3">
-                  <div v-for="(item, iIdx) in getSectionItems(section.id)" :key="item.id" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div v-for="member in getTeamMembers(team.id)" :key="member.id" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
                     <div class="flex items-start justify-between gap-3">
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                          <span class="text-xs font-bold text-gray-400 dark:text-gray-500">#{{ iIdx + 1 }}</span>
-                          <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="item.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
-                            {{ item.status == 1 ? 'Active' : 'Inactive' }}
+                      <div class="flex items-center gap-3 min-w-0">
+                        <!-- Updated member avatar section -->
+                        <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          <img 
+                            v-if="getMemberImageUrl(member)" 
+                            :src="getMemberImageUrl(member)" 
+                            :alt="member.name" 
+                            class="w-full h-full object-cover" 
+                            @error="handleMemberImageError($event)"
+                          />
+                          <span v-else class="text-sm font-bold text-teal-600">{{ (member.name || 'M').charAt(0).toUpperCase() }}</span>
+                        </div>
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ member.name || `Member #${member.id}` }}</p>
+                          <p v-if="member.designation" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ member.designation }}</p>
+                          <span class="px-2 py-0.5 rounded-full text-xs font-medium" :class="member.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                            {{ member.status == 1 ? 'Active' : 'Inactive' }}
                           </span>
                         </div>
-                        <p class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ item.title || item.badge || item.headline_part1 || `Item #${item.id}` }}</p>
-                        <p v-if="item.subtitle || item.description" class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ item.subtitle || item.description }}</p>
-                        <div v-if="item.headline_part2 || item.headline_part3 || item.description_part1" class="flex flex-wrap gap-1.5 mt-2">
-                          <span v-if="item.headline_part2" class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs">{{ item.headline_part2 }}</span>
-                          <span v-if="item.headline_part3" class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded text-xs">{{ item.headline_part3 }}</span>
-                        </div>
                       </div>
-                      <div class="flex items-center gap-1.5 flex-shrink-0">
-                        <button @click="openItemModal(item, section.id)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
+                      <div class="flex items-center gap-1 flex-shrink-0">
+                        <button @click="openMemberModal(member, team.id)" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-teal-600">
                           <Edit3 class="w-3.5 h-3.5" />
                         </button>
-                        <button @click="deleteItem(item)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                        <button @click="deleteMember(member, team.id)" class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
                           <Trash2 class="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -210,12 +436,14 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </main>
 
-    <!-- 4. Footer sits outside all bg layers, becomes the absolute bottom -->
     <Footer />
+
+    <!-- ===== MODALS ===== -->
 
     <!-- Section Data Modal -->
     <div v-if="showSectionDataModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeSectionDataModal">
@@ -389,19 +617,307 @@
         </form>
       </div>
     </div>
+
+    <!-- Facility Modal -->
+    <div v-if="showFacilityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeFacilityModal">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-black text-teal-600">{{ editingFacility ? 'Edit Facility' : 'Add Facility' }}</h3>
+          <button @click="closeFacilityModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <form @submit.prevent="saveFacility" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
+            <input v-model="facilityForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., High-Speed WiFi" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Icon (Remix icon class)</label>
+            <input v-model="facilityForm.icon" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., ri-wifi-line" />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Remix icon class name (e.g., ri-wifi-line, ri-dumbbell-line)</p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Short Description</label>
+            <input v-model="facilityForm.short_description" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Brief description" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+            <textarea v-model="facilityForm.description" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Full description"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+            <input v-model.number="facilityForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+            <select v-model.number="facilityForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+              <option :value="1">Active</option>
+              <option :value="0">Inactive</option>
+            </select>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="closeFacilityModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
+              <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div v-if="showGalleryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeGalleryModal">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-black text-teal-600">{{ editingGalleryItem ? 'Edit Gallery Item' : 'Add Gallery Item' }}</h3>
+          <button @click="closeGalleryModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <form @submit.prevent="saveGalleryItem" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
+            <input v-model="galleryForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Common Room" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Caption / Description</label>
+            <textarea v-model="galleryForm.caption" rows="2" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image caption"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
+            <select v-model="galleryForm.category" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+              <option value="rooms">Rooms</option>
+              <option value="common">Common Areas</option>
+              <option value="dining">Dining</option>
+              <option value="facilities">Facilities</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">
+              Image {{ !editingGalleryItem ? '*' : '' }}
+            </label>
+            <div class="flex gap-2">
+              <input v-model="galleryForm.imageUrl" type="text" class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image URL or upload a file" />
+              <button type="button" @click="triggerGalleryUpload" :disabled="uploading" class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0">
+                <Loader2 v-if="uploading" class="w-4 h-4 animate-spin" />
+                <Upload v-else class="w-4 h-4" />
+                {{ uploading ? 'Uploading...' : 'Upload' }}
+              </button>
+            </div>
+            <input type="file" ref="galleryFileInput" @change="handleGalleryImageUpload" accept="image/*" class="hidden" />
+            
+            <!-- Show preview of newly selected image -->
+            <div v-if="galleryImagePreview" class="mt-2 relative inline-block">
+              <img :src="galleryImagePreview" class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-cover" alt="Preview" />
+              <button 
+                @click="galleryImagePreview = ''; gallerySelectedFile = null" 
+                class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <!-- Show existing image when editing -->
+            <div v-if="editingGalleryItem && !galleryImagePreview && getGalleryImageUrl(editingGalleryItem)" class="mt-2">
+              <p class="text-xs text-gray-500 mb-1">Current image:</p>
+              <img 
+                :src="getGalleryImageUrl(editingGalleryItem)" 
+                class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-cover" 
+                alt="Current image" 
+                @error="handleGalleryImageError($event)"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+            <input v-model.number="galleryForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+            <select v-model.number="galleryForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+              <option :value="1">Active</option>
+              <option :value="0">Inactive</option>
+            </select>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="closeGalleryModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
+              <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Team Modal -->
+    <div v-if="showTeamModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeTeamModal">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-black text-teal-600">{{ editingTeam ? 'Edit Team' : 'Add Team' }}</h3>
+          <button @click="closeTeamModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <form @submit.prevent="saveTeam" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Team Name *</label>
+            <input v-model="teamForm.name" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Management Team" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+            <textarea v-model="teamForm.description" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Team description"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+            <select v-model.number="teamForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+              <option :value="1">Active</option>
+              <option :value="0">Inactive</option>
+            </select>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="closeTeamModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
+              <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Member Modal -->
+    <div v-if="showMemberModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeMemberModal">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-black text-teal-600">{{ editingMember ? 'Edit Member' : 'Add Member' }}</h3>
+          <button @click="closeMemberModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <form @submit.prevent="saveMember" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Name *</label>
+              <input v-model="memberForm.name" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Full name" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Designation / Role</label>
+              <input v-model="memberForm.designation" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., General Manager" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Bio</label>
+            <textarea v-model="memberForm.bio" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Member biography"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+              <input v-model="memberForm.email" type="email" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="email@example.com" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Phone</label>
+              <input v-model="memberForm.phone" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="+880 1711-123456" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Facebook URL</label>
+              <input v-model="memberForm.facebook_url" type="url" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://facebook.com/..." />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">LinkedIn URL</label>
+              <input v-model="memberForm.linkedin_url" type="url" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="https://linkedin.com/..." />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Avatar</label>
+            <div class="flex gap-2">
+              <input 
+                v-model="memberForm.avatarUrl" 
+                type="text" 
+                class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" 
+                placeholder="Avatar URL or upload" 
+              />
+              <button 
+                type="button" 
+                @click="triggerMemberUpload" 
+                :disabled="uploading" 
+                class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+              >
+                <Loader2 v-if="uploading" class="w-4 h-4 animate-spin" />
+                <Upload v-else class="w-4 h-4" />
+                {{ uploading ? 'Uploading...' : 'Upload' }}
+              </button>
+            </div>
+            <input type="file" ref="memberFileInput" @change="handleMemberImageUpload" accept="image/*" class="hidden" />
+            
+            <!-- Show preview of newly selected image -->
+            <div v-if="memberImagePreview" class="mt-2 relative inline-block">
+              <img :src="memberImagePreview" class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-cover" alt="Preview" />
+              <button 
+                @click="memberImagePreview = ''; memberSelectedFile = null" 
+                class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <!-- Show existing avatar when editing -->
+            <div v-if="editingMember && !memberImagePreview && getMemberImageUrl(editingMember)" class="mt-2">
+              <p class="text-xs text-gray-500 mb-1">Current avatar:</p>
+              <img 
+                :src="getMemberImageUrl(editingMember)" 
+                class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-cover" 
+                alt="Current avatar" 
+                @error="handleMemberImageError($event)"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+              <input v-model.number="memberForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+              <select v-model.number="memberForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+                <option :value="1">Active</option>
+                <option :value="0">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="button" @click="closeMemberModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
+              <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { pagesAPI, pageSectionsAPI, sectionItemsAPI } from '../services/api'
+import { pagesAPI, pageSectionsAPI, sectionItemsAPI, facilitiesAPI, galleryAPI, teamAPI } from '../services/api'
 import apiClient from '../services/api'
 import {
   PenSquare, FileText, Plus, Edit3, Trash2, ChevronDown,
-  CheckCircle2, AlertCircle, Loader2, X, Upload, FileEdit, Settings2
+  CheckCircle2, AlertCircle, Loader2, X, Upload, FileEdit, Settings2,
+  Building2, Image, Users
 } from 'lucide-vue-next'
 
 useHead({
@@ -412,9 +928,15 @@ useHead({
   ]
 })
 
+// Base URL for storage
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
 const loading = ref(true)
 const saving = ref(false)
 const isAdmin = ref(false)
+const activeTab = ref('pages')
+
+// ── Pages State ──
 const pages = ref([])
 const allSections = ref([])
 const allItems = ref([])
@@ -452,6 +974,78 @@ const itemForm = ref({
   sort_order: 0, status: 1
 })
 
+// ── Facilities State ──
+const facilities = ref([])
+const showFacilityModal = ref(false)
+const editingFacility = ref(null)
+const facilityForm = ref({
+  title: '', icon: '', short_description: '', description: '',
+  sort_order: 0, status: 1
+})
+
+// ── Gallery State ──
+const galleryItems = ref([])
+const showGalleryModal = ref(false)
+const editingGalleryItem = ref(null)
+const galleryForm = ref({
+  title: '',
+  caption: '',
+  category: 'common',
+  imageUrl: '',
+  sort_order: 0,
+  status: 1
+})
+const validCategories = ['rooms', 'common', 'dining', 'facilities']
+const galleryFileInput = ref(null)
+const gallerySelectedFile = ref(null)
+const galleryImagePreview = ref('')
+
+// ── Team State ──
+const teams = ref([])
+const allMembers = ref([])
+const expandedTeams = ref({})
+const showTeamModal = ref(false)
+const editingTeam = ref(null)
+const teamForm = ref({
+  name: '', description: '', status: 1
+})
+const showMemberModal = ref(false)
+const editingMember = ref(null)
+const memberTeamId = ref(null)
+const memberForm = ref({
+  name: '', designation: '', bio: '', email: '', phone: '',
+  facebook_url: '', linkedin_url: '', avatarUrl: '',
+  sort_order: 0, status: 1
+})
+const memberFileInput = ref(null)
+const memberSelectedFile = ref(null)
+const memberImagePreview = ref('')
+
+// ── Helper Functions ──
+
+// Get full image URL for gallery items
+const getGalleryImageUrl = (item) => {
+  if (!item) return ''
+  
+  const imagePath = item.image_url || item.image || item.image_path || item.src || item.url
+  
+  if (!imagePath) return ''
+  
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
+// Handle gallery image loading errors
+const handleGalleryImageError = (event) => {
+  event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
+  event.target.onerror = null
+}
+
+// ── Computed ──
 const sections = computed(() => {
   if (!selectedPage.value) return []
   return allSections.value.filter(s => s.page_id === selectedPage.value.id)
@@ -461,6 +1055,11 @@ const getSectionItems = (sectionId) => {
   return allItems.value.filter(item => item.page_section_id === sectionId)
 }
 
+const getTeamMembers = (teamId) => {
+  return allMembers.value.filter(m => m.team_id === teamId)
+}
+
+// ── Helpers ──
 const clearMessages = () => {
   setTimeout(() => { successMessage.value = ''; errorMessage.value = '' }, 5000)
 }
@@ -502,6 +1101,56 @@ const fetchAllData = async () => {
   }
 }
 
+const fetchTabData = async (tab) => {
+  try {
+    if (tab === 'facilities') {
+      const res = await facilitiesAPI.getFacilities()
+      const extractData = (res) => {
+        if (res.data && res.data.data) return res.data.data
+        if (Array.isArray(res.data)) return res.data
+        return []
+      }
+      facilities.value = extractData(res)
+    } else if (tab === 'gallery') {
+      const res = await galleryAPI.getGallery()
+      const extractData = (res) => {
+        if (res.data && res.data.data) return res.data.data
+        if (Array.isArray(res.data)) return res.data
+        return []
+      }
+      galleryItems.value = extractData(res)
+    } else if (tab === 'team') {
+      const [teamsRes] = await Promise.all([
+        teamAPI.getTeams()
+      ])
+      const extractData = (res) => {
+        if (res.data && res.data.data) return res.data.data
+        if (Array.isArray(res.data)) return res.data
+        return []
+      }
+      teams.value = extractData(teamsRes)
+      const allMembersData = []
+      for (const team of teams.value) {
+        try {
+          const detailRes = await teamAPI.getTeamDetails(team.id)
+          const detail = detailRes.data?.data || detailRes.data
+          if (detail && detail.members) {
+            detail.members.forEach(m => {
+              allMembersData.push({ ...m, team_id: team.id })
+            })
+          }
+        } catch (e) {
+          console.warn(`Could not fetch members for team ${team.id}`)
+        }
+      }
+      allMembers.value = allMembersData
+    }
+  } catch (err) {
+    console.error(`Error fetching ${tab} data:`, err)
+  }
+}
+
+// ── Pages Functions ──
 const selectPage = (page) => {
   selectedPage.value = page
   expandedSections.value = {}
@@ -522,7 +1171,6 @@ const getHeadlineParts = (section) => {
   }
 }
 
-// Section Data Modal
 const openSectionDataModal = (section) => {
   currentSectionData.value = section
   const headlineParts = getHeadlineParts(section)
@@ -575,7 +1223,6 @@ const saveSectionData = async () => {
   }
 }
 
-// Section Settings CRUD
 const openSectionModal = (section) => {
   if (section) {
     editingSection.value = section
@@ -627,13 +1274,11 @@ const saveSection = async () => {
 const deleteSection = async (section) => {
   if (!confirm(`Delete section "${section.section_key || section.title || section.id}"?`)) return
   try {
-    // Try DELETE first
     await apiClient.delete(`/page-sections/${section.id}`)
     successMessage.value = 'Section deleted successfully!'
     clearMessages()
     await fetchAllData()
   } catch (err) {
-    // Fallback: update with status 0
     try {
       await pageSectionsAPI.updateSection(section.id, {
         page_id: section.page_id,
@@ -653,7 +1298,6 @@ const deleteSection = async (section) => {
   }
 }
 
-// Item CRUD
 const openItemModal = (item, sectionId) => {
   itemSectionId.value = sectionId
   selectedFile.value = null
@@ -752,7 +1396,6 @@ const saveItem = async () => {
 
     clearMessages()
     closeItemModal()
-    // ✅ REFRESH ALL DATA to show new items in the list
     await fetchAllData()
   } catch (err) {
     errorMessage.value = err.response?.data?.message || 'Failed to save item'
@@ -790,13 +1433,11 @@ const handleImageUpload = (event) => {
 const deleteItem = async (item) => {
   if (!confirm(`Delete item "${item.title || item.headline_part1 || item.id}"?`)) return
   try {
-    // Try DELETE method
     await apiClient.delete(`/page-section-items/${item.id}`)
     successMessage.value = 'Item deleted successfully!'
     clearMessages()
     await fetchAllData()
   } catch (err) {
-    // Fallback: update status to 0
     try {
       await sectionItemsAPI.updateItem(item.id, {
         page_section_id: item.page_section_id,
@@ -816,6 +1457,429 @@ const deleteItem = async (item) => {
     }
   }
 }
+
+// ── Facilities CRUD ──
+const openFacilityModal = (facility) => {
+  if (facility) {
+    editingFacility.value = facility
+    facilityForm.value = {
+      title: facility.title || '',
+      icon: facility.icon || '',
+      short_description: facility.short_description || '',
+      description: facility.description || '',
+      sort_order: facility.sort_order ?? 0,
+      status: facility.status ?? 1
+    }
+  } else {
+    editingFacility.value = null
+    facilityForm.value = {
+      title: '', icon: '', short_description: '', description: '',
+      sort_order: 0, status: 1
+    }
+  }
+  showFacilityModal.value = true
+}
+
+const closeFacilityModal = () => {
+  showFacilityModal.value = false
+  editingFacility.value = null
+}
+
+const saveFacility = async () => {
+  saving.value = true
+  try {
+    const data = {
+      title: facilityForm.value.title,
+      icon: facilityForm.value.icon || '',
+      short_description: facilityForm.value.short_description || '',
+      description: facilityForm.value.description || '',
+      sort_order: facilityForm.value.sort_order || 0,
+      status: facilityForm.value.status
+    }
+
+    if (editingFacility.value) {
+      await facilitiesAPI.updateFacility(editingFacility.value.id, data)
+      successMessage.value = 'Facility updated successfully!'
+    } else {
+      await facilitiesAPI.createFacility(data)
+      successMessage.value = 'Facility created successfully!'
+    }
+    clearMessages()
+    closeFacilityModal()
+    await fetchTabData('facilities')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to save facility'
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteFacility = async (facility) => {
+  if (!confirm(`Delete facility "${facility.title}"?`)) return
+  try {
+    await facilitiesAPI.deleteFacility(facility.id)
+    successMessage.value = 'Facility deleted successfully!'
+    clearMessages()
+    await fetchTabData('facilities')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to delete facility'
+    clearMessages()
+  }
+}
+
+// ── Gallery CRUD ──
+const openGalleryModal = (item) => {
+  if (item) {
+    editingGalleryItem.value = item
+    galleryForm.value = {
+      title: item.title || '',
+      caption: item.caption || '',
+      category: item.category || 'common',
+      imageUrl: item.image_url || item.image || '',
+      sort_order: item.sort_order ?? 0,
+      status: item.status ?? 1
+    }
+    galleryImagePreview.value = getGalleryImageUrl(item)
+  } else {
+    editingGalleryItem.value = null
+    galleryForm.value = {
+      title: '', caption: '', category: 'common', imageUrl: '',
+      sort_order: 0, status: 1
+    }
+    galleryImagePreview.value = ''
+  }
+  gallerySelectedFile.value = null
+  showGalleryModal.value = true
+}
+
+const closeGalleryModal = () => {
+  showGalleryModal.value = false
+  editingGalleryItem.value = null
+  gallerySelectedFile.value = null
+  galleryImagePreview.value = ''
+}
+
+const triggerGalleryUpload = () => {
+  galleryFileInput.value?.click()
+}
+
+const handleGalleryImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  gallerySelectedFile.value = file
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    galleryImagePreview.value = e.target.result
+    uploading.value = false
+  }
+  reader.onerror = () => {
+    uploading.value = false
+    errorMessage.value = 'Failed to read image file'
+    clearMessages()
+  }
+  reader.readAsDataURL(file)
+  event.target.value = ''
+}
+
+const saveGalleryItem = async () => {
+  saving.value = true
+  try {
+    if (!editingGalleryItem.value && !gallerySelectedFile.value) {
+      errorMessage.value = 'Please select an image to upload'
+      clearMessages()
+      saving.value = false
+      return
+    }
+
+    const category = galleryForm.value.category || 'common'
+    
+    const formData = new FormData()
+    formData.append('title', galleryForm.value.title)
+    formData.append('caption', galleryForm.value.caption || '')
+    formData.append('category', category)
+    formData.append('sort_order', galleryForm.value.sort_order || 0)
+    formData.append('status', galleryForm.value.status)
+    
+    if (gallerySelectedFile.value) {
+      formData.append('image', gallerySelectedFile.value)
+    }
+    
+    if (editingGalleryItem.value) {
+      formData.append('_method', 'PUT')
+      if (!gallerySelectedFile.value) {
+        formData.append('existing_image', editingGalleryItem.value.image || '')
+      }
+      await apiClient.post(`/gallery/${editingGalleryItem.value.id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      successMessage.value = 'Gallery item updated successfully!'
+    } else {
+      await apiClient.post('/gallery', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      successMessage.value = 'Gallery item created successfully!'
+    }
+    
+    clearMessages()
+    closeGalleryModal()
+    await fetchTabData('gallery')
+  } catch (err) {
+    console.error('Save error:', err.response?.data || err)
+    if (err.response?.data?.errors) {
+      const errorMessages = Object.values(err.response.data.errors).flat().join(', ')
+      errorMessage.value = errorMessages
+    } else {
+      errorMessage.value = err.response?.data?.message || 'Failed to save gallery item'
+    }
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteGalleryItem = async (item) => {
+  if (!confirm(`Delete gallery item "${item.title}"?`)) return
+  try {
+    await galleryAPI.deleteGalleryItem(item.id)
+    successMessage.value = 'Gallery item deleted successfully!'
+    clearMessages()
+    await fetchTabData('gallery')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to delete gallery item'
+    clearMessages()
+  }
+}
+
+// ── Team CRUD ──
+
+// Get full image URL for team members
+const getMemberImageUrl = (member) => {
+  if (!member) return ''
+  
+  const imagePath = member.image_url || member.image || member.image_path || member.avatar || member.avatarUrl
+  
+  if (!imagePath) return ''
+  
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
+
+// Handle member image loading errors
+const handleMemberImageError = (event) => {
+  // Hide the broken image
+  event.target.style.display = 'none'
+  // Prevent infinite error loop
+  event.target.onerror = null
+}
+
+const toggleTeamExpanded = async (teamId) => {
+  expandedTeams.value[teamId] = !expandedTeams.value[teamId]
+  if (expandedTeams.value[teamId]) {
+    try {
+      const res = await teamAPI.getTeamDetails(teamId)
+      const detail = res.data?.data || res.data
+      if (detail && detail.members) {
+        allMembers.value = allMembers.value.filter(m => m.team_id !== teamId)
+        detail.members.forEach(m => {
+          allMembers.value.push({ ...m, team_id: teamId })
+        })
+      }
+    } catch (e) {
+      console.warn(`Could not fetch members for team ${teamId}`)
+    }
+  }
+}
+
+const openTeamModal = (team) => {
+  if (team) {
+    editingTeam.value = team
+    teamForm.value = {
+      name: team.name || '',
+      description: team.description || '',
+      status: team.status ?? 1
+    }
+  } else {
+    editingTeam.value = null
+    teamForm.value = { name: '', description: '', status: 1 }
+  }
+  showTeamModal.value = true
+}
+
+const closeTeamModal = () => {
+  showTeamModal.value = false
+  editingTeam.value = null
+}
+
+const saveTeam = async () => {
+  saving.value = true
+  try {
+    const data = {
+      name: teamForm.value.name,
+      description: teamForm.value.description || '',
+      status: teamForm.value.status
+    }
+
+    if (editingTeam.value) {
+      await teamAPI.updateTeam(editingTeam.value.id, data)
+      successMessage.value = 'Team updated successfully!'
+    } else {
+      await teamAPI.createTeam(data)
+      successMessage.value = 'Team created successfully!'
+    }
+    clearMessages()
+    closeTeamModal()
+    await fetchTabData('team')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to save team'
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteTeamItem = async (team) => {
+  if (!confirm(`Delete team "${team.name}"?`)) return
+  try {
+    await teamAPI.deleteTeam(team.id)
+    successMessage.value = 'Team deleted successfully!'
+    clearMessages()
+    allMembers.value = allMembers.value.filter(m => m.team_id !== team.id)
+    await fetchTabData('team')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to delete team'
+    clearMessages()
+  }
+}
+
+// ── Member CRUD ──
+const openMemberModal = (member, teamId) => {
+  memberTeamId.value = teamId
+  memberSelectedFile.value = null
+  memberImagePreview.value = ''
+
+  if (member) {
+    editingMember.value = member
+    memberForm.value = {
+      name: member.name || '',
+      designation: member.designation || '',
+      bio: member.bio || '',
+      email: member.email || '',
+      phone: member.phone || '',
+      facebook_url: member.facebook_url || '',
+      linkedin_url: member.linkedin_url || '',
+      avatarUrl: member.image_url || member.image || '',
+      sort_order: member.sort_order ?? 0,
+      status: member.status ?? 1
+    }
+    // Show existing avatar as preview
+    memberImagePreview.value = getMemberImageUrl(member)
+  } else {
+    editingMember.value = null
+    memberForm.value = {
+      name: '', designation: '', bio: '', email: '', phone: '',
+      facebook_url: '', linkedin_url: '', avatarUrl: '',
+      sort_order: 0, status: 1
+    }
+    memberImagePreview.value = ''
+  }
+  showMemberModal.value = true
+}
+
+const closeMemberModal = () => {
+  showMemberModal.value = false
+  editingMember.value = null
+  memberTeamId.value = null
+  memberSelectedFile.value = null
+  memberImagePreview.value = ''
+}
+
+const triggerMemberUpload = () => {
+  memberFileInput.value?.click()
+}
+
+const handleMemberImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  memberSelectedFile.value = file
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    memberImagePreview.value = e.target.result
+    uploading.value = false
+  }
+  reader.onerror = () => {
+    uploading.value = false
+    errorMessage.value = 'Failed to read image file'
+    clearMessages()
+  }
+  reader.readAsDataURL(file)
+  event.target.value = ''
+}
+
+const saveMember = async () => {
+  saving.value = true
+  try {
+    const teamId = memberTeamId.value
+    const formData = new FormData()
+    formData.append('name', memberForm.value.name)
+    formData.append('designation', memberForm.value.designation || '')
+    formData.append('bio', memberForm.value.bio || '')
+    formData.append('email', memberForm.value.email || '')
+    formData.append('phone', memberForm.value.phone || '')
+    formData.append('facebook_url', memberForm.value.facebook_url || '')
+    formData.append('linkedin_url', memberForm.value.linkedin_url || '')
+    formData.append('sort_order', memberForm.value.sort_order || 0)
+    formData.append('status', memberForm.value.status)
+
+    if (memberSelectedFile.value) {
+      formData.append('image', memberSelectedFile.value)
+    }
+
+    if (editingMember.value) {
+      formData.append('_method', 'PUT')
+      await teamAPI.updateMember(teamId, editingMember.value.id, formData)
+      successMessage.value = 'Member updated successfully!'
+    } else {
+      await teamAPI.createMember(teamId, formData)
+      successMessage.value = 'Member created successfully!'
+    }
+
+    clearMessages()
+    closeMemberModal()
+    await fetchTabData('team')
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to save member'
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteMember = async (member, teamId) => {
+  if (!confirm(`Delete member "${member.name}"?`)) return
+  try {
+    await teamAPI.deleteMember(teamId, member.id)
+    successMessage.value = 'Member deleted successfully!'
+    clearMessages()
+    allMembers.value = allMembers.value.filter(m => !(m.id === member.id && m.team_id === teamId))
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Failed to delete member'
+    clearMessages()
+  }
+}
+
+// ── Tab watcher ──
+watch(activeTab, (newTab) => {
+  if (newTab !== 'pages') {
+    fetchTabData(newTab)
+  }
+})
 
 onMounted(() => {
   checkAdmin()
