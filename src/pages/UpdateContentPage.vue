@@ -759,11 +759,11 @@
             <input v-model="sectionDataForm.subtitle" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Section subtitle" />
           </div>
 
-          <div>
+          <!-- <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Additional Data (JSON)</label>
             <textarea v-model="sectionDataForm.additional_data" rows="4" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 font-mono" placeholder='{"custom_field": "value"}'></textarea>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">JSON format for any additional section data</p>
-          </div>
+          </div> -->
 
           <div class="flex gap-3 pt-2">
             <button type="button" @click="closeSectionDataModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>

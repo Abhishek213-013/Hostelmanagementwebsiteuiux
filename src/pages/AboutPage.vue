@@ -172,14 +172,14 @@
           </div>
         </div>
 
-        <!-- Nearby Universities -->
+        <!-- Nearby Institutions -->
         <div v-if="pageData.nearby_universities && pageData.nearby_universities.length > 0" class="mb-20">
           <div class="text-center mb-10">
             <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <MapPin class="w-5 h-5 text-teal-600" />
               <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">Prime Location</span>
             </div>
-            <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Nearby Universities</h2>
+            <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">Nearby Institutions</h2>
             <p class="text-lg text-gray-600 dark:text-gray-400">Located within minutes of major educational institutions</p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
