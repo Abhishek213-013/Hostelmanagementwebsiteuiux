@@ -4,7 +4,7 @@
       <div class="flex justify-between items-center h-16 lg:h-20">
         <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
           <img 
-            src="@/assets/logo/logo.png" 
+            :src="logoUrl || defaultLogo" 
             alt="Logo" 
             class="h-16 lg:h-28 w-auto object-contain transition-all duration-300" 
           />
@@ -181,7 +181,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { usePages } from '../../composables/usePages'
 import { Menu, X, Sun, Moon, User, LogOut, CreditCard, Building2, PenSquare } from 'lucide-vue-next'
+import defaultLogo from '@/assets/logo/logo.png'
 
 const route = useRoute()
 const router = useRouter()
@@ -202,6 +204,17 @@ const userData = ref({
 })
 const profileImage = ref('')
 const profileDropdownRef = ref(null)
+const logoUrl = ref('')
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
+const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
 
 let scrollHandler = null
 
@@ -342,9 +355,23 @@ const handleStorageChange = (event) => {
   }
 }
 
+const loadLogo = () => {
+  const { fetchHeaderLogo } = usePages()
+  fetchHeaderLogo(1).then(headerSection => {
+    if (headerSection?.items?.length > 0) {
+      const activeItem = headerSection.items.find(item => item.status == 1)
+      if (activeItem?.image) {
+        logoUrl.value = getFullImageUrl(activeItem.image)
+      }
+    }
+  }).catch(() => {})
+}
+
 onMounted(() => {
   checkAuth()
-  
+
+  loadLogo()
+
   // Theme initialization
   const savedTheme = localStorage.getItem('theme')
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -367,6 +394,19 @@ onMounted(() => {
   
   // Custom event listener for profile updates within same tab
   window.addEventListener('profileUpdated', checkAuth)
+  
+  // Custom event listener for logo updates from UpdateContentPage
+  window.addEventListener('logoUpdated', loadLogo)
+})
+
+onUnmounted(() => {
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler)
+  }
+  document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('storage', handleStorageChange)
+  window.removeEventListener('profileUpdated', checkAuth)
+  window.removeEventListener('logoUpdated', loadLogo)
 })
 
 onUnmounted(() => {

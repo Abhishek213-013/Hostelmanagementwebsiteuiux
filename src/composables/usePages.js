@@ -198,6 +198,48 @@ export function usePages() {
     }
   }
 
+  // Fetch header logo section (site-header) with its items
+  const fetchHeaderLogo = async (pageId = 1) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await pageSectionsAPI.getSections()
+
+      let allSections = []
+      if (response.data && response.data.data) {
+        allSections = response.data.data
+      } else if (Array.isArray(response.data)) {
+        allSections = response.data
+      }
+
+      const headerSection = allSections.find(
+        section => section.page_id === parseInt(pageId) && section.section_key === 'site-header'
+      )
+
+      if (!headerSection) {
+        return null
+      }
+
+      const items = await fetchSectionItems(headerSection.id)
+
+      const result = {
+        ...headerSection,
+        items: items
+      }
+
+      return result
+    } catch (err) {
+      if (err.response?.status === 404) {
+        return null
+      }
+      console.error('Error fetching header logo:', err)
+      error.value = err.response?.data?.message || 'Failed to fetch header logo'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   // Fetch complete page data (sections and items)
   const fetchPageData = async (pageId = 1) => {
     loading.value = true
@@ -240,6 +282,7 @@ export function usePages() {
     fetchSectionItems,
     fetchPageData,
     fetchHeroSection,
-    fetchAboutSection
+    fetchAboutSection,
+    fetchHeaderLogo
   }
 }

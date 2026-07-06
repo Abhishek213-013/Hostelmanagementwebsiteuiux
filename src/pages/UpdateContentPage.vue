@@ -59,6 +59,9 @@
             <button @click="activeTab = 'testimonials'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'testimonials' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
               <MessageSquare class="w-4 h-4" /> Testimonials
             </button>
+            <button @click="activeTab = 'logo'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'logo' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <Image class="w-4 h-4" /> Logo
+            </button>
           </div>
 
           <!-- Success/Error Messages -->
@@ -488,6 +491,95 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- ===== LOGO TAB ===== -->
+          <div v-if="activeTab === 'logo'">
+            <div class="flex items-center gap-2 mb-6">
+              <Image class="w-5 h-5 text-teal-600" />
+              <h2 class="text-xl font-black text-gray-800 dark:text-white">Update Site Logo</h2>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
+              <div v-if="loadingLogo" class="flex items-center justify-center py-12">
+                <Loader2 class="w-8 h-8 animate-spin text-teal-600" />
+              </div>
+
+              <template v-else>
+                <!-- Current Logo Preview -->
+                <div class="mb-6">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Current Logo</label>
+                  <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <img 
+                      v-if="currentLogoUrl" 
+                      :src="currentLogoUrl" 
+                      alt="Current Logo" 
+                      class="h-20 lg:h-28 w-auto object-contain rounded-lg border border-gray-200 dark:border-gray-700 p-2 bg-white dark:bg-gray-800" 
+                      @error="currentLogoUrl = ''"
+                    />
+                    <div v-else class="w-32 h-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                      <Image class="w-8 h-8" />
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                      <p v-if="logoSectionId">Section: <span class="font-mono text-teal-600">site-header</span> (ID: {{ logoSectionId }})</p>
+                      <p v-if="logoItemId">Item ID: {{ logoItemId }}</p>
+                      <p v-if="!currentLogoUrl" class="text-amber-600 font-medium mt-1">No logo set yet</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Upload New Logo -->
+                <div class="mb-6">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Upload New Logo</label>
+                  <div class="flex gap-2">
+                    <input 
+                      v-model="logoForm.imageUrl" 
+                      type="text" 
+                      class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" 
+                      placeholder="Logo URL or upload a file" 
+                    />
+                    <button 
+                      type="button" 
+                      @click="triggerLogoUpload" 
+                      :disabled="uploading" 
+                      class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                    >
+                      <Loader2 v-if="uploading" class="w-4 h-4 animate-spin" />
+                      <Upload v-else class="w-4 h-4" />
+                      {{ uploading ? 'Uploading...' : 'Upload' }}
+                    </button>
+                  </div>
+                  <input type="file" ref="logoFileInput" @change="handleLogoImageUpload" accept="image/*" class="hidden" />
+                  <div v-if="logoImagePreview" class="mt-3 relative inline-block">
+                    <img :src="logoImagePreview" class="h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-contain bg-white dark:bg-gray-800 p-2" alt="New Logo Preview" />
+                    <button 
+                      @click="logoImagePreview = ''; logoSelectedFile = null" 
+                      class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Create section info -->
+                <div v-if="!logoSectionId" class="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <p class="text-sm text-amber-700 dark:text-amber-300 font-medium">
+                    No site-header section found. The logo will be created as a new item in a new section.
+                  </p>
+                </div>
+
+                <div class="flex gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+                  <button 
+                    @click="saveLogo" 
+                    :disabled="saving || !logoForm.imageUrl && !logoSelectedFile" 
+                    class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
+                    {{ saving ? 'Saving...' : 'Update Logo' }}
+                  </button>
+                </div>
+              </template>
             </div>
           </div>
 
@@ -966,7 +1058,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { pagesAPI, pageSectionsAPI, sectionItemsAPI, facilitiesAPI, galleryAPI, teamAPI } from '../services/api'
+import { pagesAPI, pageSectionsAPI, sectionItemsAPI, facilitiesAPI, galleryAPI, teamAPI, uploadAPI } from '../services/api'
 import apiClient from '../services/api'
 import { useTestimonials } from '../composables/useTestimonials'
 import {
@@ -1929,6 +2021,16 @@ const deleteMember = async (member, teamId) => {
   }
 }
 
+// ── Logo State ──
+const loadingLogo = ref(false)
+const logoSectionId = ref(null)
+const logoItemId = ref(null)
+const currentLogoUrl = ref('')
+const logoForm = ref({ imageUrl: '' })
+const logoFileInput = ref(null)
+const logoSelectedFile = ref(null)
+const logoImagePreview = ref('')
+
 // ── Testimonials ──
 const testimonialsList = ref([])
 const {
@@ -2003,6 +2105,149 @@ const deleteAdminTestimonial = async (testimonial) => {
   }
 }
 
+// ── Logo Functions ──
+const fetchLogoData = async () => {
+  loadingLogo.value = true
+  try {
+    const res = await pageSectionsAPI.getSections()
+    const extractData = (res) => {
+      if (res.data && res.data.data) return res.data.data
+      if (Array.isArray(res.data)) return res.data
+      return []
+    }
+    const allSections = extractData(res)
+    const headerSection = allSections.find(
+      section => section.page_id === 1 && section.section_key === 'site-header'
+    )
+
+    if (!headerSection) {
+      logoSectionId.value = null
+      logoItemId.value = null
+      currentLogoUrl.value = ''
+      return
+    }
+
+    logoSectionId.value = headerSection.id
+
+    const itemsRes = await sectionItemsAPI.getItems()
+    const allItems = extractData(itemsRes)
+    const headerItems = allItems.filter(item => item.page_section_id === headerSection.id)
+    const activeItem = headerItems.find(item => item.status == 1) || headerItems[0]
+
+    if (activeItem?.image) {
+      logoItemId.value = activeItem.id
+      const imgPath = activeItem.image
+      if (imgPath.startsWith('http://') || imgPath.startsWith('https://') || imgPath.startsWith('data:')) {
+        currentLogoUrl.value = imgPath
+      } else {
+        const cleanPath = imgPath.startsWith('/') ? imgPath.slice(1) : imgPath
+        currentLogoUrl.value = `${API_BASE_URL}/storage/${cleanPath}`
+      }
+      logoForm.value.imageUrl = activeItem.image || ''
+    } else {
+      logoItemId.value = activeItem?.id || null
+      currentLogoUrl.value = ''
+      logoForm.value.imageUrl = ''
+    }
+  } catch (err) {
+    console.error('Error fetching logo data:', err)
+  } finally {
+    loadingLogo.value = false
+  }
+}
+
+const triggerLogoUpload = () => {
+  logoFileInput.value?.click()
+}
+
+const handleLogoImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  logoSelectedFile.value = file
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    logoImagePreview.value = e.target.result
+    uploading.value = false
+  }
+  reader.onerror = () => {
+    uploading.value = false
+    errorMessage.value = 'Failed to read logo file'
+    clearMessages()
+  }
+  reader.readAsDataURL(file)
+  event.target.value = ''
+}
+
+const saveLogo = async () => {
+  saving.value = true
+  try {
+    let sectionId = logoSectionId.value
+
+    // Create site-header section if it doesn't exist
+    if (!sectionId) {
+      const sectionRes = await pageSectionsAPI.createSection({
+        page_id: 1,
+        section_key: 'site-header',
+        title: 'Site Header',
+        status: 1
+      })
+      sectionId = sectionRes.data?.data?.id || sectionRes.data?.id
+      if (!sectionId) throw new Error('Failed to create site-header section')
+      logoSectionId.value = sectionId
+    }
+
+    if (!logoSelectedFile.value && !logoForm.value.imageUrl) {
+      errorMessage.value = 'Please provide a logo image URL or upload a file'
+      clearMessages()
+      saving.value = false
+      return
+    }
+
+    // Use FormData to send image directly (same as gallery/member upload)
+    const formData = new FormData()
+    formData.append('page_section_id', sectionId)
+    formData.append('title', 'Site Logo')
+    formData.append('sort_order', 0)
+    formData.append('status', 1)
+
+    if (logoSelectedFile.value) {
+      formData.append('image', logoSelectedFile.value)
+    } else if (logoForm.value.imageUrl) {
+      formData.append('image', logoForm.value.imageUrl)
+    }
+
+    if (logoItemId.value) {
+      // Update existing logo item
+      formData.append('_method', 'PUT')
+      await apiClient.post(`/page-section-items/${logoItemId.value}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      successMessage.value = 'Logo updated successfully!'
+    } else {
+      // Create new logo item
+      const createRes = await apiClient.post('/page-section-items', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      logoItemId.value = createRes.data?.data?.id || createRes.data?.id
+      successMessage.value = 'Logo created successfully!'
+    }
+
+    clearMessages()
+    logoImagePreview.value = ''
+    logoSelectedFile.value = null
+    logoForm.value.imageUrl = ''
+    window.dispatchEvent(new CustomEvent('logoUpdated'))
+    await fetchLogoData()
+  } catch (err) {
+    console.error('Error saving logo:', err.response?.data || err)
+    errorMessage.value = err.response?.data?.message || 'Failed to save logo'
+    clearMessages()
+  } finally {
+    saving.value = false
+  }
+}
+
 // ── Tab watcher ──
 watch(activeTab, (newTab) => {
   if (newTab !== 'pages') {
@@ -2010,6 +2255,9 @@ watch(activeTab, (newTab) => {
   }
   if (newTab === 'testimonials') {
     fetchTestimonialsData()
+  }
+  if (newTab === 'logo') {
+    fetchLogoData()
   }
 })
 
