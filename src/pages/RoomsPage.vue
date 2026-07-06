@@ -342,11 +342,11 @@ import { useRoomTypes } from '../composables/useRoomTypes'
 import { useLazyLoader } from '../composables/useLazyLoader'
 
 useHead({
-  title: 'Rooms - SylhetStay | Student Accommodation in Sylhet',
+  title: 'Rooms - City Hostel | Student Accommodation in Sylhet',
   meta: [
     { name: 'description', content: 'Browse our range of premium student rooms in Sylhet. Choose from shared, semi-private, premium, and standard rooms with modern amenities. Find your perfect space today!' },
-    { name: 'keywords', content: 'student rooms Sylhet, accommodation rooms, shared rooms, private rooms, premium student rooms, SylhetStay rooms' },
-    { property: 'og:title', content: 'Rooms - SylhetStay | Student Accommodation' },
+    { name: 'keywords', content: 'student rooms Sylhet, accommodation rooms, shared rooms, private rooms, premium student rooms, City Hostel rooms' },
+    { property: 'og:title', content: 'Rooms - City Hostel | Student Accommodation' },
     { property: 'og:description', content: 'Explore our range of thoughtfully designed student rooms in Sylhet with modern amenities and flexible options.' },
     { property: 'og:type', content: 'website' },
   ]

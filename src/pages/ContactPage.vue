@@ -458,12 +458,12 @@ import {
 } from 'lucide-vue-next'
 
 useHead({
-  title: 'Contact Us - SylhetStay | Premium Student Accommodation',
+  title: 'Contact Us - City Hostel | Premium Student Accommodation',
   meta: [
-    { name: 'description', content: 'Get in touch with SylhetStay. Contact us for inquiries, bookings, or to schedule a visit of our premium student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'contact SylhetStay, student accommodation inquiry, Sylhet student housing, book a visit, SylhetStay contact' },
-    { property: 'og:title', content: 'Contact Us - SylhetStay' },
-    { property: 'og:description', content: 'Reach out to SylhetStay for any inquiries about our premium student accommodation in Sylhet.' },
+    { name: 'description', content: 'Get in touch with City Hostel. Contact us for inquiries, bookings, or to schedule a visit of our premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'contact City Hostel, student accommodation inquiry, Sylhet student housing, book a visit, City Hostel contact' },
+    { property: 'og:title', content: 'Contact Us - City Hostel' },
+    { property: 'og:description', content: 'Reach out to City Hostel for any inquiries about our premium student accommodation in Sylhet.' },
     { property: 'og:type', content: 'website' },
   ]
 })

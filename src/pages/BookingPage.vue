@@ -605,11 +605,11 @@ import { useBookings } from '../composables/useBookings'
 import { useLocations } from '../composables/useLocations'
 
 useHead({
-  title: 'Book a Room - SylhetStay | Student Accommodation Booking',
+  title: 'Book a Room - City Hostel | Student Accommodation Booking',
   meta: [
-    { name: 'description', content: 'Book your premium student accommodation at SylhetStay in Sylhet, Bangladesh. Easy online booking process with PayStation payment.' },
-    { name: 'keywords', content: 'book room Sylhet, student accommodation booking, SylhetStay booking, reserve room, student housing' },
-    { property: 'og:title', content: 'Book a Room - SylhetStay' },
+    { name: 'description', content: 'Book your premium student accommodation at City Hostel in Sylhet, Bangladesh. Easy online booking process with PayStation payment.' },
+    { name: 'keywords', content: 'book room Sylhet, student accommodation booking, City Hostel booking, reserve room, student housing' },
+    { property: 'og:title', content: 'Book a Room - City Hostel' },
     { property: 'og:description', content: 'Complete your booking for premium student accommodation in Sylhet. Secure payment via PayStation.' },
     { property: 'og:type', content: 'website' },
   ]

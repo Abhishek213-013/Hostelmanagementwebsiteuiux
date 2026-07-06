@@ -38,17 +38,17 @@ import Footer from '../components/layout/Footer.vue'
 import { Shield } from 'lucide-vue-next'
 
 useHead({
-  title: 'Terms & Conditions - SylhetStay | Premium Student Accommodation',
+  title: 'Terms & Conditions - City Hostel | Premium Student Accommodation',
   meta: [
-    { name: 'description', content: 'Terms and conditions for booking and using SylhetStay student accommodation services.' },
-    { name: 'keywords', content: 'terms and conditions, student accommodation terms, SylhetStay policies' },
+    { name: 'description', content: 'Terms and conditions for booking and using City Hostel student accommodation services.' },
+    { name: 'keywords', content: 'terms and conditions, student accommodation terms, City Hostel policies' },
   ]
 })
 
 const sections = [
   {
     title: '1. Booking and Reservation',
-    content: 'By booking a room through SylhetStay, you agree to provide accurate and complete information. All bookings are subject to availability and confirmation. We reserve the right to cancel or modify bookings under extraordinary circumstances with appropriate notice.'
+    content: 'By booking a room through City Hostel, you agree to provide accurate and complete information. All bookings are subject to availability and confirmation. We reserve the right to cancel or modify bookings under extraordinary circumstances with appropriate notice.'
   },
   {
     title: '2. Payment Terms',
@@ -68,7 +68,7 @@ const sections = [
   },
   {
     title: '6. Liability and Indemnification',
-    content: 'SylhetStay shall not be liable for any loss, damage, or injury sustained during your stay, except where caused by our negligence. Guests agree to indemnify SylhetStay against any claims arising from their breach of these terms or violation of applicable laws.'
+    content: 'City Hostel shall not be liable for any loss, damage, or injury sustained during your stay, except where caused by our negligence. Guests agree to indemnify City Hostel against any claims arising from their breach of these terms or violation of applicable laws.'
   },
   {
     title: '7. Modifications to Terms',

@@ -432,11 +432,11 @@ const getFullImageUrl = (imagePath) => {
 }
 
 useHead({
-  title: 'SylhetStay - Premium Student Accommodation in Sylhet',
+  title: 'City Hostel - Premium Student Accommodation in Sylhet',
   meta: [
     { name: 'description', content: 'Find premium student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'student accommodation Sylhet, student housing, SylhetStay' },
-    { property: 'og:title', content: 'SylhetStay - Premium Student Accommodation in Sylhet' },
+    { name: 'keywords', content: 'student accommodation Sylhet, student housing, City Hostel' },
+    { property: 'og:title', content: 'City Hostel - Premium Student Accommodation in Sylhet' },
     { property: 'og:description', content: 'Find your perfect student living space in Sylhet.' },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
@@ -512,7 +512,7 @@ const getHeroSlides = () => {
       }))
   }
   return [
-    { id: 1, badge: 'Welcome to SylhetStay', image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920', headline_part1: 'Premium Student', headline_part2: 'Accommodation', headline_part3: 'in Sylhet', description_part1: 'modern amenities', description_part2: 'comfortable spaces', sort_order: 1 },
+    { id: 1, badge: 'Welcome to City Hostel', image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1920', headline_part1: 'Premium Student', headline_part2: 'Accommodation', headline_part3: 'in Sylhet', description_part1: 'modern amenities', description_part2: 'comfortable spaces', sort_order: 1 },
     { id: 2, badge: 'Safe & Secure', image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1920', headline_part1: 'Your Home', headline_part2: 'Away from Home', headline_part3: 'Safe & Secure', description_part1: '24/7 security', description_part2: 'a supportive community', sort_order: 2 },
     { id: 3, badge: 'Book Now', image: 'https://images.unsplash.com/photo-1522771739015-7c3b617de5ed?w=1920', headline_part1: 'Modern Living', headline_part2: 'Spaces', headline_part3: 'Designed for You', description_part1: 'fully furnished rooms', description_part2: 'premium facilities', sort_order: 3 }
   ]

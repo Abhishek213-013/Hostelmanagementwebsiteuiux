@@ -38,10 +38,10 @@ import Footer from '../components/layout/Footer.vue'
 import { Lock } from 'lucide-vue-next'
 
 useHead({
-  title: 'Privacy Policy - SylhetStay | Premium Student Accommodation',
+  title: 'Privacy Policy - City Hostel | Premium Student Accommodation',
   meta: [
-    { name: 'description', content: 'Privacy policy for SylhetStay student accommodation. Learn how we collect, use, and protect your personal information.' },
-    { name: 'keywords', content: 'privacy policy, data protection, SylhetStay privacy, student accommodation privacy' },
+    { name: 'description', content: 'Privacy policy for City Hostel student accommodation. Learn how we collect, use, and protect your personal information.' },
+    { name: 'keywords', content: 'privacy policy, data protection, City Hostel privacy, student accommodation privacy' },
   ]
 })
 

@@ -12,7 +12,7 @@
           <div class="absolute inset-0 bg-black/20"></div>
           <div class="relative z-10 text-center text-white">
             <Building2 class="w-24 h-24 mx-auto mb-6 text-white/90" />
-            <h2 class="text-4xl font-black mb-4">SylhetStay</h2>
+            <h2 class="text-4xl font-black mb-4">City Hostel</h2>
             <p class="text-xl text-white/80">Find your perfect student accommodation</p>
           </div>
         </div>
@@ -101,12 +101,12 @@ import { authAPI } from '../services/api'
 import { Building2, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, ChevronRight, Sparkles, AlertCircle, CheckCircle2, Loader2 } from 'lucide-vue-next'
 
 useHead({
-  title: 'Sign In - SylhetStay | Student Accommodation',
+  title: 'Sign In - City Hostel | Student Accommodation',
   meta: [
-    { name: 'description', content: 'Sign in to your SylhetStay account to manage bookings, payments, and profile. Premium student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'sign in, login, SylhetStay account, student accommodation login' },
-    { property: 'og:title', content: 'Sign In - SylhetStay' },
-    { property: 'og:description', content: 'Access your SylhetStay account to manage your student accommodation bookings.' },
+    { name: 'description', content: 'Sign in to your City Hostel account to manage bookings, payments, and profile. Premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'sign in, login, City Hostel account, student accommodation login' },
+    { property: 'og:title', content: 'Sign In - City Hostel' },
+    { property: 'og:description', content: 'Access your City Hostel account to manage your student accommodation bookings.' },
     { property: 'og:type', content: 'website' },
   ]
 })

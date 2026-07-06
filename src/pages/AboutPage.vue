@@ -382,12 +382,12 @@ import {
 } from 'lucide-vue-next'
 
 useHead({
-  title: 'About Us - SylhetStay | Premium Student Accommodation',
+  title: 'About Us - City Hostel | Premium Student Accommodation',
   meta: [
-    { name: 'description', content: 'Learn about SylhetStay - our mission, vision, and journey in providing premium student accommodation in Sylhet, Bangladesh. Meet our team and discover our core values.' },
-    { name: 'keywords', content: 'about SylhetStay, student accommodation Sylhet, our mission, team, student housing Bangladesh' },
-    { property: 'og:title', content: 'About Us - SylhetStay | Premium Student Accommodation' },
-    { property: 'og:description', content: 'Discover the story behind SylhetStay and our commitment to providing the best student living experience in Sylhet.' },
+    { name: 'description', content: 'Learn about City Hostel - our mission, vision, and journey in providing premium student accommodation in Sylhet, Bangladesh. Meet our team and discover our core values.' },
+    { name: 'keywords', content: 'about City Hostel, student accommodation Sylhet, our mission, team, student housing Bangladesh' },
+    { property: 'og:title', content: 'About Us - City Hostel | Premium Student Accommodation' },
+    { property: 'og:description', content: 'Discover the story behind City Hostel and our commitment to providing the best student living experience in Sylhet.' },
     { property: 'og:type', content: 'website' },
   ]
 })

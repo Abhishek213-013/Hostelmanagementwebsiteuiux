@@ -688,7 +688,7 @@
                 <!-- Copyright -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-6">
                   <h3 class="font-black text-gray-800 dark:text-white mb-4">Copyright Text</h3>
-                  <input v-model="footerCopyrightText" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="&copy; 2026 SylhetStay Hostel. All rights reserved." />
+                  <input v-model="footerCopyrightText" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="&copy; 2026 City Hostel Hostel. All rights reserved." />
                 </div>
 
                 <!-- Save Button -->
@@ -1219,9 +1219,9 @@ function sectionNeedsImage(sectionId) {
 }
 
 useHead({
-  title: 'Update Content - SylhetStay Admin',
+  title: 'Update Content - City Hostel Admin',
   meta: [
-    { name: 'description', content: 'Admin content management for SylhetStay pages.' },
+    { name: 'description', content: 'Admin content management for City Hostel pages.' },
     { name: 'robots', content: 'noindex, nofollow' }
   ]
 })
@@ -2270,7 +2270,7 @@ const footerColumnsForm = ref([
   { heading: 'Information', linksText: 'Admission|/rooms\nPayment|/rooms\nFAQs|/about\nTerms|/about' },
   { heading: 'Contact', linksText: '123 Akhalia Road|/contact\n+880 1711-123456|tel:+8801711123456\ninfo@sylhetstay.com|mailto:info@sylhetstay.com' }
 ])
-const footerCopyrightText = ref('\u00a9 2026 SylhetStay Hostel. All rights reserved.')
+const footerCopyrightText = ref('\u00a9 2026 City Hostel Hostel. All rights reserved.')
 
 // ── Testimonials ──
 const testimonialsList = ref([])

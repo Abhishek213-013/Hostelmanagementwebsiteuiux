@@ -29,7 +29,7 @@
 
 # 1. Introduction
 
-SylhetStay is a modern student hostel management platform designed to simplify room booking, payment management, and hostel services for students in Sylhet, Bangladesh.
+City Hostel is a modern student hostel management platform designed to simplify room booking, payment management, and hostel services for students in Sylhet, Bangladesh.
 
 The system allows users to:
 
@@ -523,7 +523,7 @@ Use the **Forgot Password** option on the login page.
 
 # 13. Support & Contact
 
-## SylhetStay Hostel Management
+## City Hostel Hostel Management
 
 ### Support Services
 
@@ -551,6 +551,6 @@ When contacting support, provide:
 
 # Thank You
 
-Thank you for using **SylhetStay Hostel Management System**.
+Thank you for using **City Hostel Hostel Management System**.
 
 We are committed to providing a comfortable, secure, and modern accommodation experience for students in Sylhet, Bangladesh.

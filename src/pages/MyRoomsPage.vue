@@ -354,12 +354,12 @@ import TourBookingModal from '../components/TourBookingModal.vue'
 import { Building2, Calendar, Clock, Phone, User, Bed, CreditCard, MapPin, Mail, X } from 'lucide-vue-next'
 
 useHead({
-  title: 'My Rooms - SylhetStay | Manage Bookings',
+  title: 'My Rooms - City Hostel | Manage Bookings',
   meta: [
-    { name: 'description', content: 'View and manage your booked rooms and scheduled visits at SylhetStay premium student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'my bookings, my rooms, manage bookings, SylhetStay bookings, student accommodation' },
-    { property: 'og:title', content: 'My Rooms - SylhetStay' },
-    { property: 'og:description', content: 'Manage your room bookings and visits at SylhetStay student accommodation.' },
+    { name: 'description', content: 'View and manage your booked rooms and scheduled visits at City Hostel premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'my bookings, my rooms, manage bookings, City Hostel bookings, student accommodation' },
+    { property: 'og:title', content: 'My Rooms - City Hostel' },
+    { property: 'og:description', content: 'Manage your room bookings and visits at City Hostel student accommodation.' },
     { property: 'og:type', content: 'website' },
     { name: 'robots', content: 'noindex, nofollow' },
   ]

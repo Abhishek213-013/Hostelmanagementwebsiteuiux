@@ -210,12 +210,12 @@ import { Camera, ChevronRight, ChevronLeft, X } from 'lucide-vue-next'
 import { useGallery } from '../composables/useGallery'
 
 useHead({
-  title: 'Gallery - SylhetStay | Photo Tour of Student Accommodation',
+  title: 'Gallery - City Hostel | Photo Tour of Student Accommodation',
   meta: [
-    { name: 'description', content: 'Take a visual tour of SylhetStay premium student accommodation. Browse photos of rooms, common areas, dining facilities, and more in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'SylhetStay gallery, student accommodation photos, room images, facilities photos, Sylhet student housing tour' },
-    { property: 'og:title', content: 'Gallery - SylhetStay | Photo Tour' },
-    { property: 'og:description', content: 'Explore our beautiful student living spaces through our photo gallery. See what awaits you at SylhetStay.' },
+    { name: 'description', content: 'Take a visual tour of City Hostel premium student accommodation. Browse photos of rooms, common areas, dining facilities, and more in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'City Hostel gallery, student accommodation photos, room images, facilities photos, Sylhet student housing tour' },
+    { property: 'og:title', content: 'Gallery - City Hostel | Photo Tour' },
+    { property: 'og:description', content: 'Explore our beautiful student living spaces through our photo gallery. See what awaits you at City Hostel.' },
     { property: 'og:type', content: 'website' },
   ]
 })

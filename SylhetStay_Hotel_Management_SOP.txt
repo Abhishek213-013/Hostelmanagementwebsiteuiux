@@ -29,7 +29,7 @@
 
 ## System Overview
 
-SylhetStay is a modern web-based hostel booking and management platform designed for students in Sylhet, Bangladesh.
+City Hostel is a modern web-based hostel booking and management platform designed for students in Sylhet, Bangladesh.
 
 The platform allows users to:
 
@@ -48,7 +48,7 @@ The application is responsive and optimized for desktop, tablet, and mobile devi
 
 ## Purpose
 
-This SOP provides operational and technical documentation for the SylhetStay Hostel Management System.
+This SOP provides operational and technical documentation for the City Hostel Hostel Management System.
 
 It is intended for:
 
@@ -728,6 +728,6 @@ npm run build
 
 # Conclusion
 
-This SOP provides the operational and technical foundation of the SylhetStay Hostel Management System.
+This SOP provides the operational and technical foundation of the City Hostel Hostel Management System.
 
 The current implementation serves as a modern prototype system and can be expanded into a production-ready hostel management platform with backend database integration, secure authentication, and advanced administrative functionality.

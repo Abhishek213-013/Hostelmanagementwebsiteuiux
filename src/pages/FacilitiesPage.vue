@@ -157,12 +157,12 @@ import Footer from '../components/layout/Footer.vue'
 import { useFacilities } from '../composables/useFacilities'
 
 useHead({
-  title: 'Facilities - SylhetStay | Premium Student Amenities',
+  title: 'Facilities - City Hostel | Premium Student Amenities',
   meta: [
-    { name: 'description', content: 'Explore world-class facilities at SylhetStay - high-speed WiFi, gym, dining hall, study lounge, 24/7 security, and more. Premium student amenities in Sylhet.' },
-    { name: 'keywords', content: 'student facilities Sylhet, amenities, WiFi, gym, dining hall, study lounge, security, SylhetStay facilities' },
-    { property: 'og:title', content: 'Facilities - SylhetStay | Premium Student Amenities' },
-    { property: 'og:description', content: 'Everything you need for success - world-class student facilities all under one roof at SylhetStay.' },
+    { name: 'description', content: 'Explore world-class facilities at City Hostel - high-speed WiFi, gym, dining hall, study lounge, 24/7 security, and more. Premium student amenities in Sylhet.' },
+    { name: 'keywords', content: 'student facilities Sylhet, amenities, WiFi, gym, dining hall, study lounge, security, City Hostel facilities' },
+    { property: 'og:title', content: 'Facilities - City Hostel | Premium Student Amenities' },
+    { property: 'og:description', content: 'Everything you need for success - world-class student facilities all under one roof at City Hostel.' },
     { property: 'og:type', content: 'website' },
   ]
 })

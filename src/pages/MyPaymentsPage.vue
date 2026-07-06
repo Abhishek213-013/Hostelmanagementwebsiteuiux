@@ -281,7 +281,7 @@
                   <div class="flex items-center gap-2">
                     <img 
                       :src="logoUrl || defaultLogo" 
-                      alt="SylhetStay Logo" 
+                      alt="City Hostel Logo" 
                       class="h-12 w-auto object-contain"
                       @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
                     />
@@ -290,7 +290,7 @@
                         <Sparkles class="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <p class="text-sm font-black text-purple-600">SylhetStay</p>
+                        <p class="text-sm font-black text-purple-600">City Hostel</p>
                         <p class="text-2xs text-gray-500">Service Subscription</p>
                       </div>
                     </div>
@@ -386,14 +386,14 @@
                       <text x="100" y="55" text-anchor="middle" fill="#7c3aed" font-size="10" font-weight="bold">Authorized Signature</text>
                     </svg>
                     <div class="w-20 border-t-2 border-purple-600 mx-auto"></div>
-                    <p class="text-2xs font-bold text-purple-600 mt-0.5">SylhetStay Management</p>
+                    <p class="text-2xs font-bold text-purple-600 mt-0.5">City Hostel Management</p>
                   </div>
                 </div>
 
                 <!-- Footer -->
                 <div class="text-center mt-3 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for subscribing!</p>
-                  <p class="text-2xs text-gray-400 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
                   <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated receipt</p>
                 </div>
               </div>
@@ -405,12 +405,12 @@
                   <div class="flex items-center gap-2">
                     <img 
                       :src="logoUrl || defaultLogo" 
-                      alt="SylhetStay Logo" 
+                      alt="City Hostel Logo" 
                       class="h-12 w-auto object-contain"
                       @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
                     />
                     <div v-if="!logoUrl" class="flex items-center">
-                      <span class="text-lg font-black text-teal-600">SylhetStay</span>
+                      <span class="text-lg font-black text-teal-600">City Hostel</span>
                     </div>
                   </div>
                   <div class="text-right">
@@ -490,14 +490,14 @@
                       <text x="100" y="55" text-anchor="middle" fill="#0d9488" font-size="10" font-weight="bold">Authorized Signature</text>
                     </svg>
                     <div class="w-20 border-t-2 border-teal-600 mx-auto"></div>
-                    <p class="text-2xs font-bold text-teal-600 mt-0.5">SylhetStay Management</p>
+                    <p class="text-2xs font-bold text-teal-600 mt-0.5">City Hostel Management</p>
                   </div>
                 </div>
 
                 <!-- Footer -->
                 <div class="text-center mt-2 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for your payment!</p>
-                  <p class="text-2xs text-gray-400 mt-0.5">SylhetStay • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
                   <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated receipt</p>
                 </div>
               </div>
@@ -534,12 +534,12 @@ import { usePages } from '../composables/usePages'
 import { CreditCard, X, Printer, Building2, Calendar, Clock, Sparkles, Home, CheckCircle2 } from 'lucide-vue-next'
 
 useHead({
-  title: 'My Payments - SylhetStay | Payment History',
+  title: 'My Payments - City Hostel | Payment History',
   meta: [
-    { name: 'description', content: 'Track your payment history and manage bills for your SylhetStay student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'payment history, my payments, SylhetStay payments, student accommodation bills' },
-    { property: 'og:title', content: 'My Payments - SylhetStay' },
-    { property: 'og:description', content: 'View your payment history and manage bills at SylhetStay.' },
+    { name: 'description', content: 'Track your payment history and manage bills for your City Hostel student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'payment history, my payments, City Hostel payments, student accommodation bills' },
+    { property: 'og:title', content: 'My Payments - City Hostel' },
+    { property: 'og:description', content: 'View your payment history and manage bills at City Hostel.' },
     { property: 'og:type', content: 'website' },
     { name: 'robots', content: 'noindex, nofollow' },
   ]
@@ -829,7 +829,7 @@ const printReceipt = () => {
     '<!DOCTYPE html>',
     '<html>',
     '<head>',
-    '<title>Receipt - SylhetStay</title>',
+    '<title>Receipt - City Hostel</title>',
     '<script src="https://cdn.tailwindcss.com"><' + '/script>',
     '<style>',
     '@media print {',

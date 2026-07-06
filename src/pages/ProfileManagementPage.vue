@@ -209,12 +209,12 @@ import { authAPI } from '../services/api'
 import { User, CheckCircle2, AlertCircle, Clock, Eye, EyeOff } from 'lucide-vue-next'
 
 useHead({
-  title: 'Profile Management - SylhetStay',
+  title: 'Profile Management - City Hostel',
   meta: [
-    { name: 'description', content: 'Manage your SylhetStay account profile, update personal information, change password, and upload profile photo.' },
-    { name: 'keywords', content: 'profile management, SylhetStay account, update profile, change password' },
-    { property: 'og:title', content: 'Profile Management - SylhetStay' },
-    { property: 'og:description', content: 'Manage your SylhetStay student accommodation account settings.' },
+    { name: 'description', content: 'Manage your City Hostel account profile, update personal information, change password, and upload profile photo.' },
+    { name: 'keywords', content: 'profile management, City Hostel account, update profile, change password' },
+    { property: 'og:title', content: 'Profile Management - City Hostel' },
+    { property: 'og:description', content: 'Manage your City Hostel student accommodation account settings.' },
     { property: 'og:type', content: 'website' },
     { name: 'robots', content: 'noindex, nofollow' },
   ]

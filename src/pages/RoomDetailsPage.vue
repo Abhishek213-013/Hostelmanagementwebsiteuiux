@@ -582,11 +582,11 @@ const router = useRouter()
 const { fetchRoomDetails, loading: roomsLoading, error: roomsError, currentRoom } = useRooms()
 
 useHead({
-  title: () => currentRoom.value ? `Room ${currentRoom.value.room_number || currentRoom.value.id} - SylhetStay` : 'Room Details - SylhetStay',
+  title: () => currentRoom.value ? `Room ${currentRoom.value.room_number || currentRoom.value.id} - City Hostel` : 'Room Details - City Hostel',
   meta: () => currentRoom.value ? [
-    { name: 'description', content: `Book ${currentRoom.value.room_number || 'this room'} at SylhetStay. ${currentRoom.value.room_description || 'Premium student accommodation in Sylhet, Bangladesh.'} ৳${(currentRoom.value.room_price || 0).toLocaleString()}/month.` },
+    { name: 'description', content: `Book ${currentRoom.value.room_number || 'this room'} at City Hostel. ${currentRoom.value.room_description || 'Premium student accommodation in Sylhet, Bangladesh.'} ৳${(currentRoom.value.room_price || 0).toLocaleString()}/month.` },
     { name: 'keywords', content: `room ${currentRoom.value.room_number}, student room Sylhet, accommodation, ${currentRoom.value.room_type?.room_type_title || 'student housing'}` },
-    { property: 'og:title', content: `Room ${currentRoom.value.room_number || currentRoom.value.id} - SylhetStay` },
+    { property: 'og:title', content: `Room ${currentRoom.value.room_number || currentRoom.value.id} - City Hostel` },
     { property: 'og:description', content: `${currentRoom.value.room_description || 'Premium student accommodation in Sylhet.'} Starting at ৳${(currentRoom.value.room_price || 0).toLocaleString()}/month.` },
     { property: 'og:type', content: 'website' },
   ] : []

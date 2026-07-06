@@ -54,7 +54,7 @@ import defaultLogo from '@/assets/logo/logo.png'
 
 const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
 const logoUrl = ref('')
-const copyrightText = ref('\u00a9 2026 SylhetStay Hostel. All rights reserved.')
+const copyrightText = ref('\u00a9 2026 City Hostel Hostel. All rights reserved.')
 const socialLinks = ref({
   facebook: '',
   instagram: '',
