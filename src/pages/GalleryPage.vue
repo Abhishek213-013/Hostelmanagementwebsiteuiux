@@ -53,7 +53,7 @@
             </button>
           </div>
 
-          <!-- Replace the entire gallery grid section -->
+          <!-- Gallery Grid -->
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div v-for="(image, index) in filteredImages" :key="image.id"
                 class="group relative aspect-square overflow-hidden rounded-2xl cursor-pointer shadow hover:shadow-xl transition-all duration-500"
@@ -61,7 +61,6 @@
                 @mouseenter="hoveredImage = image.id"
                 @mouseleave="hoveredImage = null">
               
-              <!-- In your template, change the img tag to: -->
               <img 
                 :src="getFullImageUrl(image.src)" 
                 :alt="image.alt_text || image.title" 
@@ -70,14 +69,12 @@
                 @error="handleImageError($event, image)"
               />
               
-              <!-- Rest of your overlay content remains the same -->
               <div :class="['absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent transition-opacity duration-500', hoveredImage === image.id ? 'opacity-100' : 'opacity-0']">
                 <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
                   <div class="inline-block px-2 sm:px-4 py-1 sm:py-2 rounded-xl text-white font-bold shadow-lg text-xs sm:text-sm bg-teal-600 mb-1 sm:mb-2 capitalize whitespace-nowrap">
                     {{ getCategoryLabel(image.category) }}
                   </div>
                   <h4 class="text-white font-bold text-sm sm:text-lg break-words">{{ image.title }}</h4>
-                  <!-- Status Badge -->
                   <div v-if="image.status !== undefined" class="mt-1">
                     <span :class="['px-1.5 py-0.5 rounded text-xs', 
                       image.status == 1 ? 'bg-green-500/80' : 'bg-red-500/80']">
@@ -101,8 +98,6 @@
             <p class="text-gray-500">Try selecting a different category</p>
           </div>
 
-          
-
           <p class="text-center text-gray-600 dark:text-gray-400 mt-8 sm:mt-12 font-medium text-sm sm:text-base break-words">
             {{ filteredImages.length }} photo{{ filteredImages.length !== 1 ? 's' : '' }} {{ selectedCategory !== 'all' ? 'in ' + getCategoryLabel(selectedCategory) : 'total' }}
             <span v-if="latestPhoto" class="block text-xs mt-1 text-gray-400">
@@ -111,35 +106,95 @@
           </p>
         </div>
 
-        <!-- Lightbox Modal -->
-        <div v-if="lightboxImage" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/95 backdrop-blur-xl" @click="closeLightbox">
-          <button class="absolute top-4 sm:top-8 right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group" @click="closeLightbox">
-            <X class="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform" />
-          </button>
-          <button class="absolute left-4 sm:left-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="prevImage">
-            <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
-          </button>
-          <button class="absolute right-4 sm:right-8 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white group hover:scale-110" @click.stop="nextImage">
-            <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
-          </button>
-          <div class="max-w-5xl max-h-[80vh] mx-4 sm:mx-6" @click.stop>
-            <img :src="getFullImageUrl(lightboxImage.src)" :alt="lightboxImage.alt_text" class="w-full h-full object-contain rounded-2xl shadow-2xl" @error="handleLightboxImageError" />
-            <div class="text-center mt-4 sm:mt-6">
-              <div class="flex flex-wrap justify-center gap-2 mb-2">
-                <span class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 text-white rounded-xl font-bold shadow-xl text-sm sm:text-base bg-teal-600 capitalize">
-                  {{ getCategoryLabel(lightboxImage.category) }}
-                </span>
-                <span v-if="lightboxImage.status !== undefined" :class="['px-2 py-1 rounded-lg text-xs', 
-                  lightboxImage.status == 1 ? 'bg-green-500/80' : 'bg-red-500/80']">
-                  {{ lightboxImage.status == 1 ? 'Active' : 'Inactive' }}
-                </span>
+        <!-- Zoomable Lightbox Modal -->
+        <Teleport to="body">
+          <Transition name="lightbox-fade">
+            <div v-if="isLightboxOpen" class="lightbox-overlay" @click.self="closeLightbox">
+              <!-- Top Controls -->
+              <div class="lightbox-controls-top">
+                <button class="lightbox-close" @click="closeLightbox" aria-label="Close lightbox">
+                  <X class="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
               </div>
-              <p class="text-white text-center mt-3 sm:mt-4 font-bold text-base sm:text-xl break-words">{{ lightboxImage.title }}</p>
-              <p class="text-white/70 text-center mt-2 text-sm max-w-lg mx-auto">{{ lightboxImage.description }}</p>
-              <p class="text-white/50 text-xs mt-2">{{ currentLightboxIndex + 1 }} / {{ filteredImages.length }}</p>
+
+              <!-- Navigation Arrows -->
+              <button 
+                class="lightbox-nav left-4 sm:left-8" 
+                @click.stop="prevImage"
+                aria-label="Previous image">
+                <ChevronLeft class="w-6 h-6 sm:w-8 sm:h-8" />
+              </button>
+              <button 
+                class="lightbox-nav right-4 sm:right-8" 
+                @click.stop="nextImage"
+                aria-label="Next image">
+                <ChevronRight class="w-6 h-6 sm:w-8 sm:h-8" />
+              </button>
+
+              <!-- Bottom Controls -->
+              <div class="lightbox-controls-bottom">
+                <button @click="zoomOut" :disabled="zoomLevel <= 0.5" class="lightbox-zoom-btn" aria-label="Zoom out">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                </button>
+                
+                <button @click="resetZoom" class="lightbox-zoom-btn" aria-label="Reset zoom">
+                  <span class="zoom-percentage">{{ Math.round(zoomLevel * 100) }}%</span>
+                </button>
+                
+                <button @click="zoomIn" :disabled="zoomLevel >= 3" class="lightbox-zoom-btn" aria-label="Zoom in">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Image Container -->
+              <div 
+                class="lightbox-content"
+                @wheel.prevent="handleWheel"
+                @mousedown.prevent="startDrag"
+                @mousemove.prevent="onDrag"
+                @mouseup.prevent="endDrag"
+                @mouseleave="handleLightboxMouseLeave"
+                @mouseenter="lightboxHovered = true"
+              >
+                <div 
+                  class="lightbox-image-wrapper"
+                  :style="imageTransformStyle"
+                >
+                  <img 
+                    :src="getFullImageUrl(lightboxImage.src)" 
+                    :alt="lightboxImage.alt_text || lightboxImage.title" 
+                    class="lightbox-image"
+                    :class="{ 'is-dragging': isDragging }"
+                    :style="imageTransformStyle"
+                    draggable="false"
+                    @error="handleLightboxImageError"
+                  />
+                </div>
+              </div>
+
+              <!-- Image Info -->
+              <div :class="['lightbox-info transition-opacity duration-500', lightboxHovered ? 'opacity-100' : 'opacity-0']">
+                <p class="text-white text-center font-bold text-base sm:text-xl break-words">{{ lightboxImage.title }}</p>
+                <p class="text-white/70 text-center text-sm max-w-lg mx-auto">{{ lightboxImage.description }}</p>
+                <p class="text-white/50 text-xs mt-2">{{ currentLightboxIndex + 1 }} / {{ filteredImages.length }}</p>
+              </div>
+
+              <!-- Instructions -->
+              <div class="lightbox-instructions" v-if="zoomLevel > 1">
+                <span>Drag to pan • Scroll to zoom</span>
+              </div>
             </div>
-          </div>
-        </div>
+          </Transition>
+        </Teleport>
       </main>
       <Footer />
     </div>
@@ -151,7 +206,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { Camera, ChevronRight, ChevronLeft, Utensils, Dumbbell, Wifi, Car, BookOpen, X, MapPin, Phone, Mail, Wind, Coffee, Shield } from 'lucide-vue-next'
+import { Camera, ChevronRight, ChevronLeft, X } from 'lucide-vue-next'
 import { useGallery } from '../composables/useGallery'
 
 useHead({
@@ -169,11 +224,26 @@ const { galleryItems, loading, error, fetchGallery } = useGallery()
 
 const selectedCategory = ref('all')
 const hoveredImage = ref(null)
+const lightboxHovered = ref(false)
 const currentLightboxIndex = ref(0)
 const isLightboxOpen = ref(false)
 
+// Zoom and pan state
+const zoomLevel = ref(1)
+const panX = ref(0)
+const panY = ref(0)
+const isDragging = ref(false)
+const dragStartX = ref(0)
+const dragStartY = ref(0)
+
 // Base URL for API
 const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
+// Computed transform style
+const imageTransformStyle = computed(() => ({
+  transform: `translate(${panX.value}px, ${panY.value}px) scale(${zoomLevel.value})`,
+  transition: isDragging.value ? 'none' : 'transform 0.3s ease',
+}))
 
 // Dynamic categories from gallery data
 const categories = computed(() => {
@@ -225,21 +295,81 @@ const latestPhoto = computed(() => {
 const openLightbox = (index) => {
   currentLightboxIndex.value = index
   isLightboxOpen.value = true
+  resetZoom()
+  document.body.style.overflow = 'hidden'
 }
 
 const closeLightbox = () => {
   isLightboxOpen.value = false
+  document.body.style.overflow = ''
+  resetZoom()
 }
-// Handle lightbox image loading errors
-const handleLightboxImageError = (event) => {
-  event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
-  event.target.onerror = null
+
+const resetZoom = () => {
+  zoomLevel.value = 1
+  panX.value = 0
+  panY.value = 0
 }
+
+const zoomIn = () => {
+  if (zoomLevel.value < 3) {
+    zoomLevel.value = Math.min(3, zoomLevel.value + 0.25)
+  }
+}
+
+const zoomOut = () => {
+  if (zoomLevel.value > 0.5) {
+    zoomLevel.value = Math.max(0.5, zoomLevel.value - 0.25)
+    if (zoomLevel.value <= 1) {
+      panX.value = 0
+      panY.value = 0
+    }
+  }
+}
+
+const handleWheel = (e) => {
+  const delta = e.deltaY > 0 ? -0.25 : 0.25
+  const newZoom = Math.max(0.5, Math.min(3, zoomLevel.value + delta))
+  
+  if (newZoom !== zoomLevel.value) {
+    zoomLevel.value = newZoom
+    if (newZoom <= 1) {
+      panX.value = 0
+      panY.value = 0
+    }
+  }
+}
+
+const startDrag = (e) => {
+  if (zoomLevel.value > 1) {
+    isDragging.value = true
+    dragStartX.value = e.clientX - panX.value
+    dragStartY.value = e.clientY - panY.value
+  }
+}
+
+const onDrag = (e) => {
+  if (isDragging.value && zoomLevel.value > 1) {
+    panX.value = e.clientX - dragStartX.value
+    panY.value = e.clientY - dragStartY.value
+  }
+}
+
+const endDrag = () => {
+  isDragging.value = false
+}
+
+const handleLightboxMouseLeave = () => {
+  endDrag()
+  lightboxHovered.value = false
+}
+
 const prevImage = () => {
   if (filteredImages.value.length === 0) return
   currentLightboxIndex.value = currentLightboxIndex.value > 0 
     ? currentLightboxIndex.value - 1 
     : filteredImages.value.length - 1
+  resetZoom()
 }
 
 const nextImage = () => {
@@ -247,20 +377,20 @@ const nextImage = () => {
   currentLightboxIndex.value = currentLightboxIndex.value < filteredImages.value.length - 1 
     ? currentLightboxIndex.value + 1 
     : 0
+  resetZoom()
 }
 
-// Handle image loading errors
 const handleImageError = (event, image) => {
   console.warn('Image failed to load:', event.target.src, 'for item:', image.title)
-  
-  // Set a placeholder
   event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
-  
-  // Prevent infinite error loop
   event.target.onerror = null
 }
 
-// Get full image URL helper
+const handleLightboxImageError = (event) => {
+  event.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" fill="%23e2e8f0"%3E%3Crect width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E'
+  event.target.onerror = null
+}
+
 const getFullImageUrl = (path) => {
   if (!path) return ''
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
@@ -276,23 +406,6 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-const visitInfo = [
-  { icon: MapPin, label: 'Location', value: '123 Akhalia Road, Sylhet 3100, Bangladesh' },
-  { icon: Phone, label: 'Phone', value: '+880 1711-123456' },
-  { icon: Mail, label: 'Email', value: 'info@sylhetstay.com' }
-]
-
-const amenities = [
-  { icon: Wifi, label: '1 Gbps WiFi' },
-  { icon: Wind, label: 'AC Available' },
-  { icon: Utensils, label: 'Meal Plans' },
-  { icon: Coffee, label: 'Common Room' },
-  { icon: BookOpen, label: 'Study Rooms' },
-  { icon: Shield, label: '24/7 Security' },
-  { icon: Car, label: 'Parking' },
-  { icon: Dumbbell, label: 'Gym' }
-]
-
 const handleKeydown = (event) => {
   if (!isLightboxOpen.value) return
   
@@ -306,27 +419,29 @@ const handleKeydown = (event) => {
     case 'ArrowRight':
       nextImage()
       break
+    case '+':
+    case '=':
+      zoomIn()
+      break
+    case '-':
+      zoomOut()
+      break
+    case '0':
+      resetZoom()
+      break
   }
 }
 
 async function fetchGalleryData() {
   try {
     await fetchGallery()
-    
-    // Debug: Log what we got
     console.log('=== GALLERY DATA LOADED ===')
     console.log('Total items:', galleryItems.value?.length)
-    
     if (galleryItems.value?.length > 0) {
       console.log('First item example:', galleryItems.value[0])
-      console.log('Image src format:', galleryItems.value[0]?.src)
-      
-      // Show all categories
       const cats = [...new Set(galleryItems.value.map(item => item.category))]
       console.log('Available categories:', cats)
     }
-    console.log('=== END GALLERY DEBUG ===')
-    
   } catch (err) {
     console.error('Error fetching gallery:', err)
   }
@@ -339,5 +454,266 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
+  document.body.style.overflow = ''
 })
 </script>
+
+<style scoped>
+/* ========== Lightbox Styles ========== */
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.lightbox-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  pointer-events: none;
+}
+
+.lightbox-image.is-dragging {
+  cursor: grabbing;
+}
+
+/* Top Controls */
+.lightbox-controls-top {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10000;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.lightbox-close {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+/* Navigation Arrows */
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10000;
+  padding: 0.75rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Bottom Controls */
+.lightbox-controls-bottom {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 0.5rem 0.75rem;
+}
+
+.lightbox-zoom-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.lightbox-zoom-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.lightbox-zoom-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lightbox-zoom-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.zoom-percentage {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Image Info */
+.lightbox-info {
+  position: fixed;
+  bottom: 7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Instructions */
+.lightbox-instructions {
+  position: fixed;
+  bottom: 8.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  pointer-events: none;
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Lightbox Transition */
+.lightbox-fade-enter-active {
+  transition: opacity 0.3s ease;
+}
+.lightbox-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.lightbox-fade-enter-from,
+.lightbox-fade-leave-to {
+  opacity: 0;
+}
+
+.lightbox-fade-enter-active .lightbox-image {
+  transition: transform 0.3s ease;
+}
+.lightbox-fade-enter-from .lightbox-image {
+  transform: scale(0.9);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .lightbox-overlay {
+    padding: 1rem;
+  }
+  
+  .lightbox-controls-top {
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .lightbox-close {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .lightbox-nav {
+    padding: 0.5rem;
+  }
+  
+  .lightbox-controls-bottom {
+    bottom: 1.5rem;
+    padding: 0.4rem 0.6rem;
+    gap: 0.5rem;
+  }
+  
+  .lightbox-zoom-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .lightbox-zoom-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .lightbox-info {
+    bottom: 5.5rem;
+  }
+  
+  .lightbox-instructions {
+    bottom: 7rem;
+    font-size: 0.7rem;
+  }
+}
+</style>
