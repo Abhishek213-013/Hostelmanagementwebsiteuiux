@@ -139,17 +139,17 @@
         <div class="mb-12 pt-8 border-t-2 border-gray-200 dark:border-gray-700">
           <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <MapPin class="w-5 h-5 text-teal-600" />
-            <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">My Tours</span>
+            <span class="text-sm font-bold tracking-wide text-teal-600 uppercase">My Visits</span>
           </div>
-          <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">My Tours</h2>
-          <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">View your scheduled property tours and their status</p>
+          <h2 class="text-3xl lg:text-4xl font-black mb-6 text-teal-600">My Visits</h2>
+          <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">View your scheduled property visits and their status</p>
         </div>
 
         <!-- Tour Stats -->
         <div v-if="myTours.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-teal-600">{{ myTours.length }}</div>
-            <div class="text-xs text-gray-500">Total Tours</div>
+            <div class="text-xs text-gray-500">Total Visits</div>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-yellow-600">{{ pendingTours }}</div>
@@ -172,7 +172,7 @@
             
             <div class="p-6">
               <div class="flex items-center justify-between mb-2">
-                <h4 class="text-xl font-black text-teal-600">Tour #{{ tour.id }}</h4>
+                <h4 class="text-xl font-black text-teal-600">Visit #{{ tour.id }}</h4>
                 <span :class="['text-xs font-bold px-2 py-1 rounded-full', getTourStatusClass(tour.status)]">
                   {{ formatTourStatus(tour.status) }}
                 </span>
@@ -232,11 +232,11 @@
         <!-- Empty State for Tours -->
         <div v-if="myTours.length === 0 && !loading" class="text-center py-12">
           <MapPin class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-          <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Tours Scheduled</h3>
-          <p class="text-gray-500 dark:text-gray-400 mb-6">Schedule a tour to visit our property and see the rooms in person!</p>
+          <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No Visits Scheduled</h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-6">Schedule a visit to visit our property and see the rooms in person!</p>
           <button @click="openTourModal" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
             <MapPin class="w-5 h-5" />
-            Book a Tour
+            Book a Visit
           </button>
         </div>
 
@@ -262,9 +262,9 @@
               <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
                 <MapPin class="w-5 h-5 text-teal-600 dark:text-teal-300" />
               </div>
-              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Tour Details</h3>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Visit Details</h3>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 pl-13">Tour #{{ selectedTour.id }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 pl-13">Visit #{{ selectedTour.id }}</p>
           </div>
           
           <!-- Content -->
@@ -299,7 +299,7 @@
               
               <!-- Tour Details -->
               <div class="space-y-2">
-                <h4 class="text-xs font-bold text-teal-600 uppercase tracking-wider">Tour Details</h4>
+                <h4 class="text-xs font-bold text-teal-600 uppercase tracking-wider">Visit Details</h4>
                 <div class="grid grid-cols-2 gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
                   <div>
                     <p class="text-xs text-gray-500 dark:text-gray-400">Date</p>
@@ -356,10 +356,10 @@ import { Building2, Calendar, Clock, Phone, User, Bed, CreditCard, MapPin, Mail,
 useHead({
   title: 'My Rooms - SylhetStay | Manage Bookings',
   meta: [
-    { name: 'description', content: 'View and manage your booked rooms and scheduled tours at SylhetStay premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'description', content: 'View and manage your booked rooms and scheduled visits at SylhetStay premium student accommodation in Sylhet, Bangladesh.' },
     { name: 'keywords', content: 'my bookings, my rooms, manage bookings, SylhetStay bookings, student accommodation' },
     { property: 'og:title', content: 'My Rooms - SylhetStay' },
-    { property: 'og:description', content: 'Manage your room bookings and tours at SylhetStay student accommodation.' },
+    { property: 'og:description', content: 'Manage your room bookings and visits at SylhetStay student accommodation.' },
     { property: 'og:type', content: 'website' },
     { name: 'robots', content: 'noindex, nofollow' },
   ]
@@ -427,7 +427,7 @@ async function fetchAllData() {
     await fetchUserTourBookings()
     
     console.log('All bookings from composable:', bookings.value)
-    console.log('User tour bookings:', tourBookings.value)
+    console.log('User visit bookings:', tourBookings.value)
     
     // Get current user email from localStorage
     const storedUser = localStorage.getItem('user')
@@ -492,7 +492,7 @@ const cancelBooking = async (bookingId) => {
 
 // Cancel tour
 const cancelTour = async (tourId) => {
-  if (!confirm('Are you sure you want to cancel this tour?')) return
+  if (!confirm('Are you sure you want to cancel this visit?')) return
   
   cancellingTourId.value = tourId
   try {
@@ -500,10 +500,10 @@ const cancelTour = async (tourId) => {
     // You would need an API endpoint for this
     // For now, just refresh the data
     await fetchAllData()
-    alert('Tour cancellation request submitted successfully!')
+    alert('Visit cancellation request submitted successfully!')
   } catch (err) {
-    console.error('Error cancelling tour:', err)
-    alert('Failed to cancel tour. Please try again.')
+    console.error('Error cancelling visit:', err)
+    alert('Failed to cancel visit. Please try again.')
   } finally {
     cancellingTourId.value = null
   }
@@ -519,8 +519,8 @@ const viewTourDetails = async (tourId) => {
       selectedTour.value = tour
     }
   } catch (err) {
-    console.error('Error fetching tour details:', err)
-    alert('Failed to load tour details. Please try again.')
+    console.error('Error fetching visit details:', err)
+    alert('Failed to load visit details. Please try again.')
   } finally {
     loadingTourDetails.value = false
   }

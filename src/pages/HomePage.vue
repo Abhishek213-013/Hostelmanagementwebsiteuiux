@@ -233,9 +233,9 @@
                     <img :src="getRoomImage(room.room_type?.name)" :alt="room.room_number" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
                     <div class="absolute bottom-4 left-4 flex items-center gap-2">
-                      <div :class="['w-2 h-2 rounded-full', room.status === 'available' ? 'bg-green-400' : 'bg-red-400']"></div>
+                      <div :class="['w-2 h-2 rounded-full', hasAvailableSeats(room) ? 'bg-green-400' : 'bg-red-400']"></div>
                       <span class="text-white text-xs font-medium">
-                        {{ room.status === 'available' ? `${room.available_seats || 1} seat(s) left` : 'Fully booked' }}
+                        {{ hasAvailableSeats(room) ? `${room.available_seats || 1} seat(s) left` : 'Not Available' }}
                       </span>
                     </div>
                   </div>
@@ -554,6 +554,10 @@ const getRoomTypeIcon = (title) => {
   if (t.includes('premium')) return Star
   if (t.includes('single')) return Bed
   return Home
+}
+
+const hasAvailableSeats = (room) => {
+  return room.status === 'available' && (room.available_seats === undefined || room.available_seats === null || room.available_seats > 0)
 }
 
 const getRoomImage = (name) => {

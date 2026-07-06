@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <!-- Error State (rooms-specific) -->
+        <!-- Error State -->
         <div v-if="error" class="text-center py-20">
           <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 max-w-md mx-auto">
             <p class="text-red-600 dark:text-red-400 mb-4">{{ error }}</p>
@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <!-- Loading State (rooms-specific) -->
+        <!-- Loading State -->
         <div v-else-if="loading" class="flex items-center justify-center py-20">
           <div class="text-center">
             <div class="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -85,10 +85,12 @@
                   <img :src="room.image || getRoomImage(room.room_type?.name)" :alt="'Room ' + room.room_number" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
                   
-                  <!-- Capacity Badge -->
+                  <!-- Seats Badge -->
                   <div class="absolute bottom-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
                     <Users class="w-4 h-4 text-white" />
-                    <span class="text-white font-bold text-sm">Up to {{ room.capacity || getCapacityFromType(room.room_type?.name) }}</span>
+                    <span class="text-white font-bold text-sm">
+                      {{ room.total_seats > 0 ? `${room.total_seats} ${room.total_seats === 1 ? 'Seat' : 'Seats'}` : 'No Seats' }}
+                    </span>
                   </div>
                   
                   <!-- Size Badge -->
@@ -136,8 +138,13 @@
                     <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
                       Floor {{ room.floor_id || 'N/A' }}
                     </span>
-                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 capitalize">
-                      {{ room.status || 'Available' }}
+                    <span :class="[
+                      'px-3 py-1 rounded-full text-xs font-semibold capitalize',
+                      hasAvailableSeats(room) 
+                        ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300' 
+                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                    ]">
+                      {{ getStatusLabel(room) }}
                     </span>
                   </div>
                   
@@ -153,7 +160,7 @@
                     </div>
                   </div>
                   
-                  <!-- Fallback to hardcoded features if no services available -->
+                  <!-- Fallback to hardcoded features -->
                   <div v-else class="space-y-3 mb-8 flex-grow">
                     <div v-for="(feature, i) in getRoomFeatures(room.room_type?.name).slice(0, 5)" :key="i" class="flex items-center gap-3">
                       <div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-700/30 flex items-center justify-center flex-shrink-0">
@@ -164,10 +171,12 @@
                   </div>
                   
                   <!-- Availability & Actions -->
-                  <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <div class="pt-6 border-t border-gray-200 dark:border-gray-700 mt-auto">
+                    <!-- Status Indicator -->
                     <div class="flex items-center gap-3 mb-4">
                       <div v-if="room.status === 'checking'" class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
-                      <div v-else :class="['w-3 h-3 rounded-full', room.status === 'available' ? 'bg-teal-500' : 'bg-red-500']"></div>
+                      <div v-else :class="['w-3 h-3 rounded-full', hasAvailableSeats(room) ? 'bg-teal-500' : 'bg-red-500']"></div>
+                      
                       <span v-if="room.status === 'checking'" class="text-sm font-bold inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg">
                         <svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -175,36 +184,46 @@
                         </svg>
                         Checking availability...
                       </span>
-                      <span v-else class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                        <span v-if="room.status === 'available'">Available</span>
-                        <span v-else-if="room.status === 'booked'">Booked</span>
-                        <span v-else>Unknown</span>
+                      <span v-else class="text-sm font-bold" :class="hasAvailableSeats(room) ? 'text-teal-600 dark:text-teal-400' : 'text-red-600 dark:text-red-400'">
+                        <span v-if="hasAvailableSeats(room)">
+                          ✓ {{ room.available_seats }} of {{ room.total_seats }} {{ room.total_seats === 1 ? 'seat' : 'seats' }} available
+                        </span>
+                        <span v-else>
+                          ✗ {{ room.total_seats === 0 ? 'No seats configured' : 'Fully Booked' }}
+                        </span>
                       </span>
-                      <span v-if="room.status === 'booked'" class="text-xs text-red-500 font-medium ml-1">No seat is available for Booked Room</span>
                     </div>
                     
                     <!-- Floor & Wing Info -->
-                    <div class="flex gap-4 mb-4 text-xs text-gray-500 dark:text-gray-400">
-                      <span>Building: {{ room.building_id || 'N/A' }}</span>
-                      <span>Floor: {{ room.floor_id || 'N/A' }}</span>
-                      <span>Branch: {{ room.branch_id || 'N/A' }}</span>
+                    <div class="flex flex-wrap gap-3 mb-4 text-xs text-gray-500 dark:text-gray-400">
+                      <span v-if="room.building_id" class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md">🏢 Building: {{ room.building_id }}</span>
+                      <span v-if="room.floor_id" class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md">📍 Floor: {{ room.floor_id }}</span>
+                      <span v-if="room.branch_id" class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md">🏠 Branch: {{ room.branch_id }}</span>
                     </div>
                     
+                    <!-- Action Buttons -->
                     <div class="flex items-center gap-3">
-                      <router-link :to="`/rooms/${room.id}`" 
-                                   class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 border-2 border-gray-200 dark:border-gray-700">
-                        See Details
-                        <ArrowRight class="w-4 h-4" />
+                      <router-link 
+                        :to="`/rooms/${room.id}`" 
+                        class="flex-1 px-5 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 dark:hover:border-teal-500 group">
+                        <span>See Details</span>
+                        <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </router-link>
+                      
                       <button 
                         @click="handleBookNow(room)"
-                        :disabled="room.status !== 'available'"
-                        :class="['px-5 py-2.5 text-white rounded-xl font-bold shadow hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2',
-                          room.status !== 'available' 
-                            ? 'bg-gray-400 cursor-not-allowed' 
-                            : 'bg-teal-600 hover:bg-teal-700']">
-                        {{ room.status !== 'available' ? 'Booked' : 'Book Now' }}
-                        <ArrowRight class="w-4 h-4" />
+                        :disabled="!hasAvailableSeats(room)"
+                        :class="[
+                          'flex-1 px-5 py-3 rounded-xl font-bold shadow transition-all flex items-center justify-center gap-2',
+                          hasAvailableSeats(room)
+                            ? 'bg-teal-600 text-white hover:bg-teal-700 hover:shadow-lg hover:scale-105' 
+                            : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                        ]"
+                        :title="!hasAvailableSeats(room) ? 'No seats available for booking' : 'Book this room now'">
+                        <span v-if="hasAvailableSeats(room)">Book Now</span>
+                        <span v-else>Sold Out</span>
+                        <ArrowRight v-if="hasAvailableSeats(room)" class="w-4 h-4" />
+                        <XCircle v-else class="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -222,7 +241,6 @@
 
           <!-- Infinite Scroll Sentinel -->
           <div ref="sentinelRef" class="w-full">
-            <!-- Loading More -->
             <div v-if="loadingMore" class="flex items-center justify-center py-8">
               <div class="flex items-center gap-3">
                 <div class="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
@@ -230,12 +248,10 @@
               </div>
             </div>
 
-            <!-- All rooms loaded -->
             <div v-else-if="!hasMore && filteredRooms.length > 0" class="text-center py-8">
               <p class="text-gray-500 text-sm">You've viewed all {{ filteredRooms.length }} rooms</p>
             </div>
 
-            <!-- Load More Button (fallback for older browsers) -->
             <div v-else-if="hasMore && !observerSupported" class="text-center py-8">
               <button @click="loadMore" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all">
                 Load More Rooms
@@ -243,7 +259,6 @@
             </div>
           </div>
 
-          <!-- Results count -->
           <div class="text-center text-sm text-gray-500 mb-8">
             Showing {{ visibleRooms.length }} of {{ filteredRooms.length }} rooms
           </div>
@@ -271,7 +286,7 @@
           </div>
         </div>
 
-        <!-- Fallback Amenities Section (if no services from API) -->
+        <!-- Fallback Amenities Section -->
         <div v-else class="mb-12">
           <div class="text-center mb-12">
             <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -321,7 +336,7 @@ import { useHead } from '@vueuse/head'
 import { useRoute, useRouter } from 'vue-router'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
-import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath, Search } from 'lucide-vue-next'
+import { Building2, Star, CheckCircle2, Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield, Users, Calendar, Bed, Maximize2, Sparkles, ArrowRight, ChevronRight, Info, Tv, Gamepad2, Refrigerator, WashingMachine, Music, Zap, Bath, Search, XCircle } from 'lucide-vue-next'
 import { useRooms } from '../composables/useRooms'
 import { useRoomTypes } from '../composables/useRoomTypes'
 import { useLazyLoader } from '../composables/useLazyLoader'
@@ -349,7 +364,6 @@ const route = useRoute()
 const router = useRouter()
 const isLoggedIn = ref(false)
 
-// Use composables
 const { rooms, loading: roomsLoading, error: roomsError, fetchRoomsFast, loadRoomLazy } = useRooms()
 const { roomTypes: apiRoomTypes, loading: roomTypesLoading, fetchRoomTypes } = useRoomTypes()
 const lazyLoader = useLazyLoader()
@@ -361,7 +375,6 @@ const debouncedSearchQuery = ref('')
 const priceRange = ref([0, 100000])
 const hoveredRoom = ref(null)
 
-// Infinite scroll state
 const BATCH_SIZE = 9
 const visibleCount = ref(BATCH_SIZE)
 const sentinelRef = ref(null)
@@ -417,7 +430,6 @@ function teardownIntersectionObserver() {
   }
 }
 
-// Reset infinite scroll when filters change
 function resetVisibleCount() {
   visibleCount.value = BATCH_SIZE
   nextTick(() => {
@@ -454,9 +466,27 @@ const getCapacityFromType = (roomTypeName) => {
   return capacities[roomTypeName?.toLowerCase()] || 2
 }
 
-const getDefaultSize = () => {
-  return 250
+const hasAvailableSeats = (room) => {
+  // If status is 'checking', not yet determined
+  if (room.status === 'checking') return false
+  
+  // If room has total_seats > 0, use seat-based logic
+  if (room.total_seats && room.total_seats > 0) {
+    return room.status === 'available' && room.available_seats > 0
+  }
+  
+  // No seats configured - unavailable
+  return false
 }
+
+const getStatusLabel = (room) => {
+  if (room.status === 'checking') return 'Checking...'
+  if (hasAvailableSeats(room)) return 'Available'
+  if (room.total_seats === 0) return 'No Seats'
+  return 'Booked'
+}
+
+const getDefaultSize = () => 250
 
 const getDefaultDescription = (roomTypeName) => {
   const descriptions = {
@@ -484,10 +514,7 @@ const getRoomServices = (room) => {
   if (room?.room_type?.service_on_room_type) {
     room.room_type.service_on_room_type.forEach(item => {
       if (item.service) {
-        services.push({
-          ...item.service,
-          source: 'room_type'
-        })
+        services.push({ ...item.service, source: 'room_type' })
       }
     })
   }
@@ -497,10 +524,7 @@ const getRoomServices = (room) => {
       if (item.service) {
         const exists = services.some(s => s.id === item.service.id)
         if (!exists) {
-          services.push({
-            ...item.service,
-            source: 'room'
-          })
+          services.push({ ...item.service, source: 'room' })
         }
       }
     })
@@ -690,7 +714,6 @@ watch(() => route.query.type, (newType) => {
   if (newType) selectedType.value = newType
 }, { immediate: true })
 
-// Reset infinite scroll when filters change
 watch([selectedType, selectedStatus, debouncedSearchQuery, priceRange], () => {
   resetVisibleCount()
   lazyLoader.cleanup()

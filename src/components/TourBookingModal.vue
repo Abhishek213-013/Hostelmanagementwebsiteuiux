@@ -24,7 +24,7 @@
             <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
               <Calendar class="w-5 h-5 text-teal-600 dark:text-teal-300" />
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Book a Tour</h3>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Book a Visit</h3>
           </div>
           <p class="text-sm text-gray-500 dark:text-gray-400 pl-13">Fill in your details and we'll confirm your appointment</p>
         </div>
@@ -330,7 +330,7 @@ const handleSubmit = async () => {
     Swal.fire({
       icon: 'success',
       title: 'Booking Submitted!',
-      text: 'Your tour booking request has been received. We will confirm your appointment via email and WhatsApp.',
+      text: 'Your visit booking request has been received. We will confirm your appointment via email and WhatsApp.',
       confirmButtonColor: '#0d9488',
       confirmButtonText: 'OK',
       timer: 3000,
@@ -338,7 +338,7 @@ const handleSubmit = async () => {
     })
     
   } catch (err) {
-    console.error('Failed to submit tour booking:', err)
+    console.error('Failed to submit visit booking:', err)
     Swal.fire({
       icon: 'error',
       title: 'Submission Failed',

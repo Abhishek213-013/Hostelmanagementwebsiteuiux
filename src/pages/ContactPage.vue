@@ -156,7 +156,7 @@
                   <div class="p-2 rounded-xl bg-teal-600 group-hover:scale-110 transition-transform">
                     <Calendar class="w-5 h-5 text-white" />
                   </div>
-                  <span class="font-semibold text-gray-800 dark:text-gray-200">Schedule a Tour</span>
+                  <span class="font-semibold text-gray-800 dark:text-gray-200">Schedule a Visit</span>
                 </button>
                 <router-link to="/rooms"
                              class="group flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:scale-105">
@@ -460,8 +460,8 @@ import {
 useHead({
   title: 'Contact Us - SylhetStay | Premium Student Accommodation',
   meta: [
-    { name: 'description', content: 'Get in touch with SylhetStay. Contact us for inquiries, bookings, or to schedule a tour of our premium student accommodation in Sylhet, Bangladesh.' },
-    { name: 'keywords', content: 'contact SylhetStay, student accommodation inquiry, Sylhet student housing, book a tour, SylhetStay contact' },
+    { name: 'description', content: 'Get in touch with SylhetStay. Contact us for inquiries, bookings, or to schedule a visit of our premium student accommodation in Sylhet, Bangladesh.' },
+    { name: 'keywords', content: 'contact SylhetStay, student accommodation inquiry, Sylhet student housing, book a visit, SylhetStay contact' },
     { property: 'og:title', content: 'Contact Us - SylhetStay' },
     { property: 'og:description', content: 'Reach out to SylhetStay for any inquiries about our premium student accommodation in Sylhet.' },
     { property: 'og:type', content: 'website' },

@@ -19,10 +19,6 @@ export function useRooms() {
   // CLIENT-SIDE BOOKED SEATS TRACKING
   // ============================================
   
-  /**
-   * Get all booked seats from sessionStorage
-   * Structure: [{ seat_id, room_id, booking_id, booked_at }]
-   */
   const getBookedSeats = () => {
     try {
       const stored = sessionStorage.getItem('booked_seats')
@@ -33,9 +29,6 @@ export function useRooms() {
     }
   }
 
-  /**
-   * Save booked seats to sessionStorage
-   */
   const saveBookedSeats = (bookedSeats) => {
     try {
       sessionStorage.setItem('booked_seats', JSON.stringify(bookedSeats))
@@ -44,20 +37,14 @@ export function useRooms() {
     }
   }
 
-  /**
-   * Add a newly booked seat to the tracking
-   */
   const addBookedSeat = (seatId, roomId, bookingId) => {
     try {
       const bookedSeats = getBookedSeats()
-      
-      // Check if already tracked
       const existingIndex = bookedSeats.findIndex(
         bs => bs.seat_id == seatId && bs.room_id == roomId
       )
       
       if (existingIndex >= 0) {
-        // Update existing entry
         bookedSeats[existingIndex] = {
           seat_id: seatId,
           room_id: roomId,
@@ -65,7 +52,6 @@ export function useRooms() {
           booked_at: new Date().toISOString()
         }
       } else {
-        // Add new entry
         bookedSeats.push({
           seat_id: seatId,
           room_id: roomId,
@@ -75,18 +61,12 @@ export function useRooms() {
       }
       
       saveBookedSeats(bookedSeats)
-      console.log(`✅ Seat ${seatId} marked as booked for room ${roomId}`)
-      
-      // Immediately update rooms list if available
       updateRoomAvailabilityInList(roomId)
     } catch (e) {
       console.error('Failed to save booked seat:', e)
     }
   }
 
-  /**
-   * Remove a booked seat (e.g., when booking is cancelled)
-   */
   const removeBookedSeat = (seatId, roomId) => {
     try {
       let bookedSeats = getBookedSeats()
@@ -94,18 +74,12 @@ export function useRooms() {
         bs => !(bs.seat_id == seatId && bs.room_id == roomId)
       )
       saveBookedSeats(bookedSeats)
-      console.log(`🗑️ Seat ${seatId} removed from booked tracking for room ${roomId}`)
-      
-      // Update rooms list
       updateRoomAvailabilityInList(roomId)
     } catch (e) {
       console.error('Failed to remove booked seat:', e)
     }
   }
 
-  /**
-   * Get booked seat IDs for a specific room (combines client + API data)
-   */
   const getBookedSeatIdsForRoom = (roomId) => {
     const bookedSeats = getBookedSeats()
     return bookedSeats
@@ -113,15 +87,10 @@ export function useRooms() {
       .map(bs => bs.seat_id)
   }
 
-  /**
-   * Fetch booked seat IDs from both API bookings and client tracking
-   */
   const fetchBookedSeatIds = async (roomId) => {
     try {
-      // Get client-side tracked bookings
       const clientBooked = getBookedSeatIdsForRoom(roomId)
       
-      // Also try to fetch from API
       try {
         const response = await bookingAPI.getAllBookings()
         let bookings = []
@@ -134,40 +103,30 @@ export function useRooms() {
           bookings = response.data
         }
 
-        // Filter active bookings for this room
         const roomBookings = bookings.filter(b => 
           (b.room_id == roomId || b.room?.id == roomId) && 
           b.status !== 'cancelled' &&
-          b.status !== 0 // Assuming 0 is cancelled
+          b.status !== 0
         )
 
-        // Get seat IDs from API bookings
         const apiBookedSeatIds = roomBookings
           .filter(b => b.seat_id)
           .map(b => parseInt(b.seat_id))
 
-        // Merge with client-side, remove duplicates
         const allBookedSeatIds = [...new Set([...clientBooked, ...apiBookedSeatIds])]
-        
-        console.log(`📊 Room ${roomId} booked seats:`, {
-          clientTracked: clientBooked,
-          apiBookings: apiBookedSeatIds,
-          merged: allBookedSeatIds
-        })
 
         return allBookedSeatIds
       } catch (apiErr) {
-        console.warn('⚠️ Could not fetch bookings from API, using client-side only:', apiErr.message)
         return clientBooked
       }
     } catch (err) {
-      console.error('❌ Error fetching booked seats:', err)
       return getBookedSeatIdsForRoom(roomId)
     }
   }
 
   /**
-   * Sync booked seats from API bookings (useful on app init)
+   * FIXED: Sync booked seats from API - REPLACE sessionStorage completely
+   * instead of merging, to avoid stale/wrong data accumulation
    */
   const syncBookedSeatsFromAPI = async () => {
     try {
@@ -182,7 +141,16 @@ export function useRooms() {
         bookings = response.data
       }
 
-      // Filter active bookings with seats
+      console.log('📋 ALL BOOKINGS from API:', bookings.map(b => ({
+        id: b.id,
+        room_id: b.room_id,
+        room_obj_id: b.room?.id,
+        seat_id: b.seat_id,
+        status: b.status,
+        party_name: b.party?.party_name || b.party?.name
+      })))
+
+      // Filter active bookings that have BOTH seat_id AND room_id
       const activeBookings = bookings.filter(b => 
         b.seat_id && 
         b.room_id && 
@@ -190,7 +158,13 @@ export function useRooms() {
         b.status !== 0
       )
 
-      // Convert to booked seats format
+      console.log('📋 ACTIVE BOOKINGS:', activeBookings.map(b => ({
+        id: b.id,
+        room_id: b.room_id,
+        seat_id: b.seat_id
+      })))
+
+      // COMPLETELY REPLACE sessionStorage with fresh API data
       const bookedSeats = activeBookings.map(b => ({
         seat_id: parseInt(b.seat_id),
         room_id: parseInt(b.room_id),
@@ -198,19 +172,17 @@ export function useRooms() {
         booked_at: b.created_at || new Date().toISOString()
       }))
 
-      // Also keep existing client-side bookings that might not be in API yet
-      const existingBooked = getBookedSeats()
-      const existingIds = new Set(bookedSeats.map(bs => `${bs.seat_id}_${bs.room_id}`))
-      
-      existingBooked.forEach(bs => {
-        const key = `${bs.seat_id}_${bs.room_id}`
-        if (!existingIds.has(key)) {
-          bookedSeats.push(bs)
-        }
+      // Group by room for debugging
+      const byRoom = {}
+      bookedSeats.forEach(bs => {
+        if (!byRoom[bs.room_id]) byRoom[bs.room_id] = []
+        byRoom[bs.room_id].push(bs)
       })
+      console.log('📊 Booked seats by room_id:', byRoom)
 
+      // Replace entirely - don't merge with old data
       saveBookedSeats(bookedSeats)
-      console.log(`🔄 Synced ${bookedSeats.length} booked seats from API`)
+      console.log(`🔄 Synced ${bookedSeats.length} booked seats from API (sessionStorage replaced)`)
       
       return bookedSeats
     } catch (err) {
@@ -219,47 +191,26 @@ export function useRooms() {
     }
   }
 
-  /**
-   * Update a specific room's availability in the rooms list
-   */
   const updateRoomAvailabilityInList = (roomId) => {
     const roomIndex = rooms.value.findIndex(r => r.id == roomId)
     if (roomIndex === -1) return
 
     const room = rooms.value[roomIndex]
     const bookedSeatIds = getBookedSeatIdsForRoom(roomId)
-    
-    // Get total seats for this room
-    const totalSeats = room.total_seats || room.seats_count || 0
-    
-    // If we don't know total seats, try to get from seats list
-    let totalFromSeats = 0
-    if (totalSeats === 0 && seats.value.length > 0) {
-      totalFromSeats = seats.value.filter(s => s.room_id == roomId).length
-    }
-
-    const actualTotal = totalSeats || totalFromSeats || room.available_seats || 4
-    const availableSeats = Math.max(0, actualTotal - bookedSeatIds.length)
+    const actualTotal = room.total_seats || 0
+    const availableSeats = actualTotal > 0 ? Math.max(0, actualTotal - bookedSeatIds.length) : 0
 
     rooms.value[roomIndex] = {
       ...room,
-      total_seats: actualTotal,
       available_seats: availableSeats,
-      status: availableSeats > 0 ? 'available' : 'booked'
+      status: actualTotal > 0 ? (availableSeats > 0 ? 'available' : 'booked') : 'booked'
     }
   }
 
-  /**
-   * Refresh room availability after booking
-   */
   const refreshRoomAvailability = async (roomId) => {
     if (!roomId) return
-    
     try {
-      // Re-fetch room details
       const roomData = await fetchRoomDetails(roomId)
-      
-      // Also update in rooms list
       if (roomData && rooms.value.length > 0) {
         const roomIndex = rooms.value.findIndex(r => r.id == roomId)
         if (roomIndex !== -1) {
@@ -272,7 +223,6 @@ export function useRooms() {
           }
         }
       }
-      
       return roomData
     } catch (err) {
       console.error('Failed to refresh room availability:', err)
@@ -285,7 +235,6 @@ export function useRooms() {
   // ============================================
 
   const fetchRoomReviews = async (roomId) => {
-    // Check cache first
     const cacheKey = `room_${roomId}_reviews`
     if (reviewCache.has(cacheKey)) {
       const cached = reviewCache.get(cacheKey)
@@ -328,6 +277,35 @@ export function useRooms() {
   }
 
   // ============================================
+  // HELPER: Parse seats from various API response formats
+  // ============================================
+  const parseSeatsFromResponse = (responseData) => {
+    if (!responseData) return []
+    
+    let seatsArray = []
+    
+    if (responseData.seats && typeof responseData.seats === 'object' && !Array.isArray(responseData.seats)) {
+      if (Array.isArray(responseData.seats.data)) {
+        seatsArray = responseData.seats.data
+      }
+    } else if (responseData.data && responseData.data.seats && typeof responseData.data.seats === 'object' && !Array.isArray(responseData.data.seats)) {
+      if (Array.isArray(responseData.data.seats.data)) {
+        seatsArray = responseData.data.seats.data
+      }
+    } else if (responseData.seats && Array.isArray(responseData.seats)) {
+      seatsArray = responseData.seats
+    } else if (responseData.data && responseData.data.seats && Array.isArray(responseData.data.seats)) {
+      seatsArray = responseData.data.seats
+    } else if (responseData.data && Array.isArray(responseData.data)) {
+      seatsArray = responseData.data
+    } else if (Array.isArray(responseData)) {
+      seatsArray = responseData
+    }
+    
+    return seatsArray
+  }
+
+  // ============================================
   // ROOM FETCHING FUNCTIONS
   // ============================================
 
@@ -335,9 +313,7 @@ export function useRooms() {
     loading.value = true
     error.value = null
     try {
-      console.log('🚀 Fetching rooms from API...')
       const response = await roomAPI.getRooms(all)
-      console.log('📦 Rooms received:', response.data)
       
       let roomsData = []
       if (response.data && response.data.data) {
@@ -346,7 +322,6 @@ export function useRooms() {
         roomsData = response.data
       }
       
-      // Set rooms immediately without availability (faster initial load)
       rooms.value = roomsData.map(room => ({ 
         ...room, 
         status: 'checking', 
@@ -356,40 +331,26 @@ export function useRooms() {
         review_count: 0
       }))
       
-      // Fetch seats first (needed for total seat count)
-      try {
-        await fetchSeats()
-      } catch (err) {
-        console.warn('Could not fetch seats:', err.message)
-      }
+      try { await fetchSeats() } catch (err) { console.warn('Could not fetch seats:', err.message) }
       
-      // Sync booked seats from API
       await syncBookedSeatsFromAPI()
       
-      // Batch availability and review API calls
       const [availResults, reviewResults] = await Promise.all([
-        Promise.allSettled(
-          roomsData.map(room => {
-            const timeoutPromise = new Promise((_, reject) => {
-              setTimeout(() => reject(new Error('Timeout')), 10000)
-            })
-            return Promise.race([
-              roomAPI.getRoomAvailability(room.id),
-              timeoutPromise
-            ])
-          })
-        ),
-        Promise.allSettled(
-          roomsData.map(room => fetchRoomReviews(room.id))
-        )
+        Promise.allSettled(roomsData.map(room => {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
+          return Promise.race([roomAPI.getRoomAvailability(room.id), timeoutPromise])
+        })),
+        Promise.allSettled(roomsData.map(room => fetchRoomReviews(room.id)))
       ])
 
-      // Process all rooms at once using batched results
       const bookedSeatsData = getBookedSeats()
 
       rooms.value = roomsData.map((room, i) => {
-        const roomSeats = seats.value.filter(s => s.room_id == room.id)
-        const total_seats = roomSeats.length || 4
+        const roomSeats = seats.value.filter(s => {
+          const seatRoomId = s.room_id || s.room?.id || s.roomId
+          return seatRoomId == room.id
+        })
+        const total_seats = roomSeats.length
         const bookedSeatIds = bookedSeatsData
           .filter(bs => bs.room_id == room.id)
           .map(bs => bs.seat_id)
@@ -399,21 +360,28 @@ export function useRooms() {
         let rating = 0
         let reviewCount = 0
 
-        // Process availability from batched results
         const availResult = availResults[i]
         if (availResult.status === 'fulfilled' && availResult.value?.data) {
           let availData = availResult.value.data
           if (availData.data) availData = availData.data
           
           const apiAvailableCount = availData.available_count || 0
-          available_seats = Math.max(0, apiAvailableCount - bookedSeatIds.length)
-          status = available_seats > 0 ? 'available' : 'booked'
+          available_seats = total_seats > 0 
+            ? Math.max(0, apiAvailableCount - bookedSeatIds.length)
+            : 0
+          status = total_seats > 0 
+            ? (available_seats > 0 ? 'available' : 'booked')
+            : 'booked'
         } else {
-          available_seats = Math.max(0, total_seats - bookedSeatIds.length)
-          status = available_seats > 0 ? 'available' : 'booked'
+          if (total_seats > 0) {
+            available_seats = Math.max(0, total_seats - bookedSeatIds.length)
+            status = available_seats > 0 ? 'available' : 'booked'
+          } else {
+            available_seats = 0
+            status = 'booked'
+          }
         }
 
-        // Process reviews from batched results
         const reviewResult = reviewResults[i]
         if (reviewResult.status === 'fulfilled' && reviewResult.value) {
           rating = reviewResult.value.averageRating
@@ -430,22 +398,12 @@ export function useRooms() {
         }
       })
       
-      console.log('✅ Rooms with accurate availability:', rooms.value.map(r => ({
-        id: r.id,
-        number: r.room_number,
-        total: r.total_seats,
-        available: r.available_seats,
-        status: r.status
-      })))
-      
       return response.data
     } catch (err) {
       if (err.response?.status === 404) {
-        console.warn('Rooms API not available (404), using empty state')
         rooms.value = []
         return []
       }
-      console.error('❌ Error fetching rooms:', err)
       error.value = err.message || 'Failed to fetch rooms'
       throw err
     } finally {
@@ -454,13 +412,8 @@ export function useRooms() {
   }
 
   const fetchRoomTypes = async (all = 1) => {
-    loading.value = true
-    error.value = null
     try {
-      console.log('Fetching room types from API...')
       const response = await roomAPI.getRoomTypes(all)
-      console.log('Room types received:', response.data)
-      
       if (response.data && response.data.data) {
         roomTypes.value = response.data.data
       } else if (Array.isArray(response.data)) {
@@ -468,14 +421,10 @@ export function useRooms() {
       } else {
         roomTypes.value = []
       }
-      
       return response.data
     } catch (err) {
-      console.error('Error fetching room types:', err)
       error.value = err.message || 'Failed to fetch room types'
       throw err
-    } finally {
-      loading.value = false
     }
   }
 
@@ -490,77 +439,64 @@ export function useRooms() {
     try {
       console.log(`🔍 Fetching room details for ID: ${id}`)
       
-      // Fetch room data, availability, booked seats, and seats in parallel
       const [roomResponse, availabilityResponse, bookedSeatIds, seatsResponse] = await Promise.allSettled([
         roomAPI.getRoomDetails(id),
         roomAPI.getRoomAvailability(id).catch(() => null),
         fetchBookedSeatIds(id),
-        roomAPI.getSeats().catch(() => ({ data: { data: [] } }))
+        roomAPI.getSeats().catch(() => ({ data: { seats: { data: [] } } }))
       ])
-      
-      console.log('Room details response:', roomResponse.value?.data)
       
       let roomData = null
       if (roomResponse.status === 'fulfilled' && roomResponse.value?.data) {
-        if (roomResponse.value.data.data) {
-          roomData = roomResponse.value.data.data
-        } else {
-          roomData = roomResponse.value.data
-        }
+        roomData = roomResponse.value.data.data || roomResponse.value.data
       }
       
-      // Process seat availability
       if (roomData) {
-        // Get total seats for this room
         let roomSeats = []
         if (seatsResponse.status === 'fulfilled' && seatsResponse.value?.data) {
-          if (seatsResponse.value.data.data) {
-            roomSeats = seatsResponse.value.data.data.filter(s => s.room_id == id)
-          } else if (Array.isArray(seatsResponse.value.data)) {
-            roomSeats = seatsResponse.value.data.filter(s => s.room_id == id)
+          const seatsArray = parseSeatsFromResponse(seatsResponse.value.data)
+          if (seatsArray.length > 0) {
+            roomSeats = seatsArray.filter(s => {
+              const seatRoomId = s.room_id || s.room?.id || s.roomId
+              return seatRoomId == id
+            })
           }
         }
         
-        roomData.total_seats = roomSeats.length || 4
-        
-        // Get booked seat IDs
+        roomData.total_seats = roomSeats.length
         const bookedIds = bookedSeatIds.status === 'fulfilled' ? bookedSeatIds.value : []
         
-        // Process availability
+        console.log(`🪑 Room ${id}: seats=${roomSeats.length}, booked=${bookedIds.length}`)
+        
         if (availabilityResponse.status === 'fulfilled' && availabilityResponse.value?.data) {
           let availData = availabilityResponse.value.data
           if (availData.data) availData = availData.data
           
-          const apiAvailableSeats = availData.available_seats || []
-          const apiAvailableCount = availData.available_count || apiAvailableSeats.length
+          const apiAvailableSeats = Array.isArray(availData.available_seats) ? availData.available_seats : []
           
-          // Filter out booked seats
-          const actuallyAvailable = apiAvailableSeats.filter(
-            seat => {
+          if (roomSeats.length > 0) {
+            const actuallyAvailable = apiAvailableSeats.filter(seat => {
               const seatId = seat.id || seat.seat_id || seat
               return !bookedIds.includes(parseInt(seatId))
-            }
-          )
+            })
+            roomData.available_seats = actuallyAvailable.length
+            roomData.available_seats_list = actuallyAvailable
+          } else {
+            roomData.available_seats = 0
+            roomData.available_seats_list = []
+          }
           
-          roomData.available_seats = actuallyAvailable.length
-          roomData.available_seats_list = actuallyAvailable
-          roomData.status = actuallyAvailable.length > 0 ? 'available' : 'booked'
+          roomData.status = roomData.available_seats > 0 ? 'available' : 'booked'
         } else {
-          // Calculate manually
-          roomData.available_seats = Math.max(0, roomData.total_seats - bookedIds.length)
-          roomData.available_seats_list = roomSeats.filter(s => !bookedIds.includes(s.id))
+          if (roomSeats.length > 0) {
+            roomData.available_seats = Math.max(0, roomSeats.length - bookedIds.length)
+          } else {
+            roomData.available_seats = 0
+          }
           roomData.status = roomData.available_seats > 0 ? 'available' : 'booked'
         }
-        
-        console.log(`📊 Room ${id} details:`, {
-          total: roomData.total_seats,
-          booked: bookedIds,
-          available: roomData.available_seats,
-          status: roomData.status
-        })
       }
       
-      // Fetch reviews for this room
       if (roomData) {
         const reviews = await fetchRoomReviews(id)
         roomData.rating = reviews.averageRating
@@ -571,11 +507,7 @@ export function useRooms() {
       return roomData
     } catch (err) {
       console.error('❌ Error fetching room details:', err)
-      if (err.message === 'Timeout' || err.message === 'Request timeout') {
-        error.value = 'Request timed out. Please check your connection and try again.'
-      } else {
-        error.value = err.message || 'Failed to fetch room details'
-      }
+      error.value = err.message || 'Failed to fetch room details'
       throw err
     } finally {
       loading.value = false
@@ -584,10 +516,7 @@ export function useRooms() {
 
   const checkRoomAvailability = async (roomId) => {
     try {
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout')), 10000)
-      })
-      
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
       const availabilityPromise = roomAPI.getRoomAvailability(roomId)
       const response = await Promise.race([availabilityPromise, timeoutPromise])
       return response.data
@@ -599,51 +528,60 @@ export function useRooms() {
 
   const fetchSeats = async () => {
     try {
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout')), 10000)
-      })
-      
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
       const seatsPromise = roomAPI.getSeats()
       const response = await Promise.race([seatsPromise, timeoutPromise])
       
-      if (response.data && response.data.data) {
-        seats.value = response.data.data
-      } else if (Array.isArray(response.data)) {
-        seats.value = response.data
+      const seatsData = parseSeatsFromResponse(response.data)
+      
+      console.log('📦 Processed seats count:', seatsData.length)
+      
+      if (seatsData.length > 0) {
+        seats.value = seatsData
+        
+        // Group by room_id for debugging
+        const byRoom = {}
+        seatsData.forEach(s => {
+          const rid = s.room_id || s.room?.id
+          if (!byRoom[rid]) byRoom[rid] = []
+          byRoom[rid].push(s)
+        })
+        console.log('🏠 Seats by room:', Object.entries(byRoom).map(([rid, seats]) => ({
+          roomId: rid,
+          count: seats.length,
+          seatIds: seats.map(s => s.id)
+        })))
+        
+        // Update rooms with correct total_seats
+        if (rooms.value.length > 0) {
+          rooms.value = rooms.value.map(room => {
+            const roomSeats = seatsData.filter(s => {
+              const seatRoomId = s.room_id || s.room?.id || s.roomId
+              return seatRoomId == room.id
+            })
+            return { ...room, total_seats: roomSeats.length }
+          })
+        }
       } else {
         seats.value = []
       }
       
-      // Update total_seats for rooms in the list
-      rooms.value = rooms.value.map(room => {
-        const roomSeats = seats.value.filter(s => s.room_id == room.id)
-        return {
-          ...room,
-          total_seats: roomSeats.length || room.total_seats || 4
-        }
-      })
-      
       return response.data
     } catch (err) {
-      console.error('Error fetching seats:', err)
+      console.error('❌ Error fetching seats:', err)
+      seats.value = []
       return { data: [] }
     }
   }
 
   // ============================================
-  // LAZY LOADING - Fast initial fetch + lazy availability/reviews
+  // LAZY LOADING
   // ============================================
 
-  /**
-   * Fast initial fetch: loads rooms, seats, and syncs bookings
-   * but skips batch availability/reviews. Rooms get 'checking' status.
-   * Use loadRoomLazy(roomId) to lazily fetch availability per room.
-   */
   const fetchRoomsFast = async (all = 1) => {
     loading.value = true
     error.value = null
     try {
-      console.log('🚀 Fast-fetching rooms...')
       const response = await roomAPI.getRooms(all)
 
       let roomsData = []
@@ -675,17 +613,38 @@ export function useRooms() {
       }
 
       const bookedSeatsData = getBookedSeats()
+      
+      console.log('📊 Total booked seats in sessionStorage:', bookedSeatsData.length)
+      
       rooms.value = roomsData.map(room => {
-        const roomSeats = seats.value.filter(s => s.room_id == room.id)
-        const total_seats = roomSeats.length || 4
+        const roomSeats = seats.value.filter(s => {
+          const seatRoomId = s.room_id || s.room?.id || s.roomId
+          return seatRoomId == room.id
+        })
+        
+        const total_seats = roomSeats.length
+        
+        if (total_seats === 0) {
+          return {
+            ...room,
+            status: 'booked',
+            available_seats: 0,
+            total_seats: 0,
+            rating: 0,
+            review_count: 0
+          }
+        }
+        
         const bookedSeatIds = bookedSeatsData
           .filter(bs => bs.room_id == room.id)
           .map(bs => bs.seat_id)
+        
         const available_seats = Math.max(0, total_seats - bookedSeatIds.length)
+        const status = available_seats > 0 ? 'available' : 'booked'
 
         return {
           ...room,
-          status: available_seats > 0 ? 'available' : 'booked',
+          status,
           available_seats,
           total_seats,
           rating: 0,
@@ -693,7 +652,14 @@ export function useRooms() {
         }
       })
 
-      console.log(`✅ Fast-loaded ${rooms.value.length} rooms (availability computed, reviews lazy)`)
+      console.log('📋 Final rooms:', rooms.value.map(r => ({ 
+        id: r.id, 
+        number: r.room_number, 
+        total: r.total_seats, 
+        available: r.available_seats, 
+        status: r.status 
+      })))
+      
       return response.data
     } catch (err) {
       if (err.response?.status === 404) {
@@ -707,10 +673,6 @@ export function useRooms() {
     }
   }
 
-  /**
-   * Lazy-load reviews for a single room (availability computed upfront in fetchRoomsFast).
-   * Updates the room in the rooms array reactively.
-   */
   const loadRoomLazy = async (roomId) => {
     const index = rooms.value.findIndex(r => r.id == roomId)
     if (index === -1) return
@@ -718,11 +680,8 @@ export function useRooms() {
     const room = rooms.value[index]
     if (room.review_count > 0) return
 
-    console.log(`🔍 Lazy-loading reviews for room ${roomId}...`)
-
     try {
       const reviewResult = await fetchRoomReviews(roomId)
-
       let rating = 0
       let reviewCount = 0
       if (reviewResult) {
@@ -735,8 +694,6 @@ export function useRooms() {
         rating,
         review_count: reviewCount
       }
-
-      console.log(`✅ Room ${roomId} reviews loaded: ${rating} stars (${reviewCount} reviews)`)
     } catch (err) {
       console.error(`❌ Failed lazy load reviews for room ${roomId}:`, err)
     }
@@ -747,7 +704,6 @@ export function useRooms() {
   // ============================================
 
   return {
-    // State
     rooms,
     roomTypes,
     seats,
@@ -755,7 +711,6 @@ export function useRooms() {
     error,
     currentRoom,
 
-    // Room fetching
     fetchRooms,
     fetchRoomsFast,
     fetchRoomTypes,
@@ -763,10 +718,8 @@ export function useRooms() {
     fetchSeats,
     checkRoomAvailability,
 
-    // Lazy loading
     loadRoomLazy,
 
-    // Seat tracking
     addBookedSeat,
     removeBookedSeat,
     getBookedSeats,
