@@ -18,61 +18,54 @@ export function useTestimonials() {
     loading.value = true
     error.value = null
     try {
-      console.log('Fetching testimonials from API...')
-      const response = await testimonialsAPI.getTestimonials(all)
-      console.log('Testimonials response:', response.data)
+      console.log('Fetching ALL testimonials from API (including pending)...')
+      
+      // Make sure we're sending all=1 to get all testimonials including pending
+      const response = await testimonialsAPI.getTestimonials(1)
+      console.log('Testimonials raw response:', response.data)
       
       let testimonialsData = []
-      if (response.data && response.data.data) {
+      
+      if (response.data && Array.isArray(response.data.data)) {
         testimonialsData = response.data.data
-        pagination.value = {
-          current_page: response.data.current_page || 1,
-          last_page: response.data.last_page || 1,
-          per_page: response.data.per_page || 15,
-          total: response.data.total || 0
-        }
+        console.log('Found testimonials in response.data.data:', testimonialsData.length)
       } else if (Array.isArray(response.data)) {
         testimonialsData = response.data
       }
       
-      // Transform data to match frontend expected structure
+      console.log('Extracted testimonials data:', testimonialsData.length, 'items')
+      console.log('Statuses from API:', testimonialsData.map(t => ({ id: t.id, status: t.status })))
+      
+      // Transform data - DON'T filter by status, show all
       testimonials.value = testimonialsData.map(item => ({
         id: item.id,
         rating: item.rating || 5,
-        content: item.message,
+        content: item.message || item.content,
         tags: item.tags || [],
         user: {
-          name: item.name,
-          avatar: item.avatar_url || item.image_path || (item.avatar ? `/storage/${item.avatar}` : 'https://ui-avatars.com/api/?background=0d9488&color=fff&name=' + encodeURIComponent(item.name)),
-          email: item.email
+          name: item.border_user?.name || item.name,
+          avatar: item.avatar_url || item.avatar_path || (item.avatar ? `/storage/${item.avatar}` : 'https://ui-avatars.com/api/?background=0d9488&color=fff&name=' + encodeURIComponent(item.border_user?.name || item.name || 'User')),
+          email: item.border_user?.email || item.email
         },
+        name: item.border_user?.name || item.name,
+        email: item.border_user?.email || item.email,
+        message: item.message || item.content,
         university: item.designation || item.university || 'Student',
         department: item.department || '',
+        status: item.status !== undefined ? item.status : 0, // Keep original status
         is_featured: item.status == 1,
         stay_duration: item.stay_duration || '',
         room_name: item.room_name || '',
         created_at: item.created_at
       }))
       
-      // Sort: featured first, then by rating, then by date
-      testimonials.value.sort((a, b) => {
-        if (a.is_featured && !b.is_featured) return -1
-        if (!a.is_featured && b.is_featured) return 1
-        if (a.rating !== b.rating) return b.rating - a.rating
-        return new Date(b.created_at) - new Date(a.created_at)
-      })
+      console.log('Processed testimonials (all):', testimonials.value.length, 'found')
       
-      console.log('Processed testimonials:', testimonials.value.length, 'testimonials found')
       return testimonialsData
     } catch (err) {
-      if (err.response?.status === 404) {
-        console.warn('Testimonials API not available (404), using empty state')
-        testimonials.value = []
-        return []
-      }
-      error.value = err.response?.data?.message || 'Failed to fetch testimonials'
       console.error('Error fetching testimonials:', err)
-      throw err
+      testimonials.value = []
+      return []
     } finally {
       loading.value = false
     }
@@ -107,6 +100,68 @@ export function useTestimonials() {
     }
   }
 
+  const submitTestimonial = async (formData) => {
+    loading.value = true
+    error.value = null
+    try {
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        content: formData.message,
+        rating: formData.rating || 5,
+        status: 0  // Create as pending (inactive) - requires admin approval
+      }
+      
+      if (formData.stay_duration) payload.stay_duration = formData.stay_duration
+      if (formData.department) payload.department = formData.department
+      if (formData.designation) payload.designation = formData.designation
+
+      console.log('Submitting testimonial (pending):', payload)
+      
+      const response = await testimonialsAPI.createTestimonial(payload)
+      console.log('Testimonial submit response:', response.data)
+      
+      return response.data
+    } catch (err) {
+      console.error('Testimonial submit error:', err.response?.data || err)
+      error.value = err.response?.data?.message || 'Failed to submit testimonial'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateTestimonialStatus = async (id, status) => {
+    loading.value = true
+    error.value = null
+    try {
+      const formData = new FormData()
+      formData.append('_method', 'PUT')
+      formData.append('status', status)
+      const response = await testimonialsAPI.updateTestimonial(id, formData)
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to update testimonial status'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteTestimonial = async (id) => {
+    loading.value = true
+    error.value = null
+    try {
+      await testimonialsAPI.deleteTestimonial(id)
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to delete testimonial'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     testimonials,
     currentTestimonial,
@@ -114,6 +169,9 @@ export function useTestimonials() {
     error,
     pagination,
     fetchTestimonials,
-    fetchTestimonialDetails
+    fetchTestimonialDetails,
+    submitTestimonial,
+    updateTestimonialStatus,
+    deleteTestimonial
   }
 }

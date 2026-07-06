@@ -577,7 +577,7 @@ async function fetchPageData() {
     try { await fetchAboutSection(1); pageData.value.about = getAboutData() } catch (e) {}
     try { await fetchFacilities() } catch (e) {}
     try { await fetchGallery() } catch (e) {}
-    try { await fetchTestimonials(); testimonials.value = apiTestimonials.value.slice(0, 6) } catch (e) {}
+    try { await fetchTestimonials(); testimonials.value = apiTestimonials.value.filter(t => t.is_featured).slice(0, 6) } catch (e) {}
     try { await fetchRoomTypes(); roomTypesList.value = apiRoomTypes.value } catch (e) {}
     try { await fetchRooms(); homepageRooms.value = rooms.value.slice(0, 3) } catch (e) {}
 
@@ -590,7 +590,10 @@ async function fetchPageData() {
     loading.value = false
   }
 }
-
+// Only show active/approved testimonials on the frontend
+const activeTestimonials = computed(() => {
+  return testimonials.value.filter(t => t.is_featured || t.status == 1)
+})
 const goToSlide = (index) => { currentSlide.value = index }
 const nextSlide = () => { if (heroSlides.value.length > 0) currentSlide.value = (currentSlide.value + 1) % heroSlides.value.length }
 

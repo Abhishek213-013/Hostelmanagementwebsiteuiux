@@ -203,6 +203,85 @@
           </div>
         </div>
 
+        <!-- Testimonial Form (Borders only) -->
+        <div v-if="isBorder" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-10 mb-12">
+          <div v-if="testimonialSubmitted" class="text-center py-12">
+            <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-teal-600 flex items-center justify-center shadow-2xl">
+              <CheckCircle2 class="w-12 h-12 text-white" />
+            </div>
+            <h2 class="text-3xl font-black mb-4 text-teal-600">Testimonial Submitted!</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 text-lg">Thank you for sharing your experience. It will be visible after admin approval.</p>
+            <button @click="resetTestimonialForm" class="px-8 py-4 text-white rounded-2xl font-bold hover:shadow-xl hover:scale-105 transition-all mx-auto inline-flex items-center gap-2" :style="{ background: '#0d9488' }">
+              Submit Another
+              <ChevronRight class="w-5 h-5" />
+            </button>
+          </div>
+          <div v-else>
+            <div class="flex items-center gap-3 mb-6">
+              <div class="p-2 bg-teal-600 rounded-xl">
+                <Star class="w-5 h-5 text-white" />
+              </div>
+              <h2 class="text-2xl font-black text-teal-600">Share Your Experience</h2>
+            </div>
+            <form @submit.prevent="handleTestimonialSubmit" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-teal-600 mb-3">Your Name</label>
+                  <input type="text" v-model="testimonialForm.name" readonly
+                         class="w-full px-5 py-4 rounded-2xl bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-semibold cursor-not-allowed" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-teal-600 mb-3">Email</label>
+                  <input type="email" v-model="testimonialForm.email" readonly
+                         class="w-full px-5 py-4 rounded-2xl bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-semibold cursor-not-allowed" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-teal-600 mb-3">Rating</label>
+                <div class="flex gap-2">
+                  <button type="button" v-for="n in 5" :key="n" @click="testimonialForm.rating = n"
+                          class="transition-all duration-150">
+                    <Star :class="['w-10 h-10', n <= testimonialForm.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600 hover:text-amber-300']" />
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-teal-600 mb-3">Your Message</label>
+                <textarea v-model="testimonialForm.message" placeholder="Share your experience living here..."
+                          class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400 resize-none h-32" required></textarea>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-teal-600 mb-3">Stay Duration</label>
+                  <input type="text" v-model="testimonialForm.stay_duration" placeholder="e.g. 6 months"
+                         class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-teal-600 mb-3">Department / Designation</label>
+                  <input type="text" v-model="testimonialForm.department" placeholder="e.g. CSE Student"
+                         class="w-full px-5 py-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
+                </div>
+              </div>
+              <button type="submit" :disabled="testimonialSending"
+                      class="w-full group py-5 rounded-2xl font-bold text-white shadow hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      :style="{ background: '#0d9488' }">
+                <span v-if="testimonialSending" class="flex items-center gap-3">
+                  <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Submitting...
+                </span>
+                <span v-else class="flex items-center gap-3">
+                  <Star class="w-6 h-6" />
+                  Submit Testimonial
+                  <ChevronRight class="w-6 h-6" />
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+
         <!-- Map -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
           <iframe 
@@ -370,6 +449,8 @@ import TourBookingModal from '../components/TourBookingModal.vue'
 import { useContact } from '../composables/useContact'
 import { useNewsletter } from '../composables/useNewsletter'
 import { usePages } from '../composables/usePages'
+import { useTestimonials } from '../composables/useTestimonials'
+import { borderAPI } from '../services/api'
 import { 
   Building2, MapPin, Phone, Mail, Send, Clock, Facebook, Instagram, 
   Twitter, Youtube, MessageCircle, Calendar, CheckCircle2, ChevronRight, 
@@ -458,6 +539,91 @@ const formData = ref({
   subject: '', 
   message: '' 
 })
+
+// Testimonial form state
+const { submitTestimonial, loading: testimonialSending } = useTestimonials()
+const testimonialSubmitted = ref(false)
+const borderData = ref(null)
+const testimonialForm = ref({
+  name: '',
+  email: '',
+  message: '',
+  rating: 5,
+  stay_duration: '',
+  department: ''
+})
+
+const fetchBorderData = async () => {
+  try {
+    const response = await borderAPI.getCurrentBorder()
+    let data = null
+    if (response.data && response.data.data) {
+      data = response.data.data
+    } else if (response.data) {
+      data = response.data
+    }
+    if (data) {
+      borderData.value = data
+      testimonialForm.value.name = data.name || ''
+      testimonialForm.value.email = data.email || ''
+    }
+  } catch (err) {
+    console.error('Error fetching border data:', err)
+  }
+}
+
+const isBorder = computed(() => {
+  const storedUser = localStorage.getItem('user')
+  if (!storedUser) return false
+  try {
+    const user = JSON.parse(storedUser)
+    return user.email !== 'admin@gmail.com'
+  } catch {
+    return false
+  }
+})
+
+const resetTestimonialForm = () => {
+  testimonialSubmitted.value = false
+  testimonialForm.value = {
+    name: borderData.value?.name || '',
+    email: borderData.value?.email || '',
+    message: '',
+    rating: 5,
+    stay_duration: '',
+    department: ''
+  }
+}
+
+const handleTestimonialSubmit = async () => {
+  if (!testimonialForm.value.message) return
+  if (borderData.value) {
+    testimonialForm.value.name = borderData.value.name || testimonialForm.value.name
+    testimonialForm.value.email = borderData.value.email || testimonialForm.value.email
+  } else {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        testimonialForm.value.name = user.name || ''
+        testimonialForm.value.email = user.email || ''
+      } catch {}
+    }
+  }
+  try {
+    await submitTestimonial({
+      name: testimonialForm.value.name,
+      email: testimonialForm.value.email,
+      message: testimonialForm.value.message,
+      rating: testimonialForm.value.rating,
+      stay_duration: testimonialForm.value.stay_duration,
+      department: testimonialForm.value.department
+    })
+    testimonialSubmitted.value = true
+  } catch (err) {
+    console.error('Error submitting testimonial:', err)
+  }
+}
 
 // Parse contact section
 const parseContactSection = () => {
@@ -654,7 +820,10 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   fetchContactData()
+  if (isBorder.value) {
+    await fetchBorderData()
+  }
 })
 </script>

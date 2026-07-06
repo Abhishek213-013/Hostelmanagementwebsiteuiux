@@ -56,6 +56,9 @@
             <button @click="activeTab = 'team'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'team' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
               <Users class="w-4 h-4" /> Team
             </button>
+            <button @click="activeTab = 'testimonials'" class="px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2" :class="activeTab === 'testimonials' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'">
+              <MessageSquare class="w-4 h-4" /> Testimonials
+            </button>
           </div>
 
           <!-- Success/Error Messages -->
@@ -430,6 +433,57 @@
                           <Trash2 class="w-3.5 h-3.5" />
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== TESTIMONIALS TAB ===== -->
+          <div v-if="activeTab === 'testimonials'">
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex items-center gap-2">
+                <MessageSquare class="w-5 h-5 text-teal-600" />
+                <h2 class="text-xl font-black text-gray-800 dark:text-white">Manage Testimonials</h2>
+                <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium">{{ testimonialsList.length }} total</span>
+              </div>
+            </div>
+
+            <div v-if="testimonialsList.length === 0" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <MessageSquare class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p class="text-gray-500 dark:text-gray-400 font-medium">No testimonials found.</p>
+            </div>
+
+            <div class="space-y-4">
+              <div v-for="testimonial in testimonialsList" :key="testimonial.id" class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                      <span class="font-bold text-gray-800 dark:text-white">{{ testimonial.name }}</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400">{{ testimonial.email }}</span>
+                    </div>
+                    <div class="flex gap-1 mb-2">
+                      <Star v-for="n in 5" :key="n" :class="['w-4 h-4', n <= (testimonial.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-gray-600']" />
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words line-clamp-3">{{ testimonial.message || testimonial.content }}</p>
+                    <div class="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      <span v-if="testimonial.stay_duration">Stay: {{ testimonial.stay_duration }}</span>
+                      <span v-if="testimonial.department">{{ testimonial.department }}</span>
+                      <span>Submitted: {{ formatDate(testimonial.created_at) }}</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap" :class="testimonial.status == 1 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                      {{ testimonial.status == 1 ? 'Active' : 'Inactive' }}
+                    </span>
+                    <div class="flex items-center gap-1">
+                      <button @click="toggleTestimonialStatus(testimonial)" class="px-3 py-1.5 rounded-lg font-bold text-xs transition-all" :class="testimonial.status == 1 ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-300' : 'bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-900/20 dark:text-teal-300'">
+                        {{ testimonial.status == 1 ? 'Deactivate' : 'Activate' }}
+                      </button>
+                      <button @click="deleteAdminTestimonial(testimonial)" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-gray-400 hover:text-red-600">
+                        <Trash2 class="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -914,10 +968,11 @@ import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
 import { pagesAPI, pageSectionsAPI, sectionItemsAPI, facilitiesAPI, galleryAPI, teamAPI } from '../services/api'
 import apiClient from '../services/api'
+import { useTestimonials } from '../composables/useTestimonials'
 import {
   PenSquare, FileText, Plus, Edit3, Trash2, ChevronDown,
   CheckCircle2, AlertCircle, Loader2, X, Upload, FileEdit, Settings2,
-  Building2, Image, Users
+  Building2, Image, Users, MessageSquare, Star
 } from 'lucide-vue-next'
 
 useHead({
@@ -1874,10 +1929,87 @@ const deleteMember = async (member, teamId) => {
   }
 }
 
+// ── Testimonials ──
+const testimonialsList = ref([])
+const {
+  testimonials,
+  fetchTestimonials,
+  updateTestimonialStatus,
+  deleteTestimonial
+} = useTestimonials()
+
+const fetchTestimonialsData = async () => {
+  try {
+    await fetchTestimonials()
+    console.log('Raw testimonials for admin:', JSON.parse(JSON.stringify(testimonials.value)))
+    
+    // Show ALL testimonials - both active and inactive
+    testimonialsList.value = testimonials.value.map(t => {
+      return {
+        id: t.id,
+        name: t.name || t.user?.name || '',
+        email: t.email || t.user?.email || '',
+        message: t.message || t.content || '',
+        rating: t.rating || 5,
+        status: t.status !== undefined ? t.status : (t.is_featured ? 1 : 0),
+        stay_duration: t.stay_duration || '',
+        department: t.department || '',
+        created_at: t.created_at
+      }
+    })
+    
+    console.log('Processed testimonials list (all):', testimonialsList.value.length, 'items')
+    console.log('Statuses:', testimonialsList.value.map(t => ({ id: t.id, name: t.name, status: t.status })))
+  } catch (err) {
+    console.error('Error fetching testimonials:', err)
+    errorMessage.value = 'Failed to load testimonials. Check console for details.'
+    clearMessages()
+  }
+}
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+const toggleTestimonialStatus = async (testimonial) => {
+  const newStatus = testimonial.status == 1 ? 0 : 1
+  try {
+    // Try sending as JSON
+    await apiClient.put(`/testimonials/${testimonial.id}`, { status: newStatus })
+    testimonial.status = newStatus
+    successMessage.value = `Testimonial ${newStatus == 1 ? 'activated' : 'deactivated'} successfully!`
+    clearMessages()
+    await fetchTestimonialsData()
+  } catch (err) {
+    console.error('Status update error:', err.response?.data || err)
+    errorMessage.value = err.response?.data?.message || 'Failed to update testimonial status'
+    clearMessages()
+  }
+}
+
+const deleteAdminTestimonial = async (testimonial) => {
+  if (!confirm(`Delete testimonial from "${testimonial.name}"?`)) return
+  try {
+    await testimonialsAPI.deleteTestimonial(testimonial.id)
+    testimonialsList.value = testimonialsList.value.filter(t => t.id !== testimonial.id)
+    successMessage.value = 'Testimonial deleted successfully!'
+    clearMessages()
+  } catch (err) {
+    console.error('Delete error:', err.response?.data || err)
+    errorMessage.value = err.response?.data?.message || 'Failed to delete testimonial'
+    clearMessages()
+  }
+}
+
 // ── Tab watcher ──
 watch(activeTab, (newTab) => {
   if (newTab !== 'pages') {
     fetchTabData(newTab)
+  }
+  if (newTab === 'testimonials') {
+    fetchTestimonialsData()
   }
 })
 

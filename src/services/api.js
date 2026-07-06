@@ -327,19 +327,36 @@ export const teamAPI = {
 
 // Testimonials API
 export const testimonialsAPI = {
-  getTestimonials: (all = 1) => apiClient.get('/testimonials', { params: { all } }),
-  getTestimonialDetails: (id) => apiClient.get(`/testimonials/${id}`),
-  createTestimonial: (formData) => {
+  getTestimonials: (all = 1) => {
+    // Clear cache first to ensure fresh data
     clearCacheForUrl('/testimonials')
-    return apiClient.post('/testimonials', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    return apiClient.get('/testimonials', { 
+      params: { 
+        all: all,
+        status: 'all', // Fetch all statuses
+        _t: Date.now(),
+        noCache: true  // Skip caching
+      } 
     })
   },
-  updateTestimonial: (id, formData) => {
+  getTestimonialDetails: (id) => apiClient.get(`/testimonials/${id}`),
+  createTestimonial: (data) => {
     clearCacheForUrl('/testimonials')
-    return apiClient.post(`/testimonials/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    if (data instanceof FormData) {
+      return apiClient.post('/testimonials', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+    }
+    return apiClient.post('/testimonials', data)
+  },
+  updateTestimonial: (id, data) => {
+    clearCacheForUrl('/testimonials')
+    if (data instanceof FormData) {
+      return apiClient.post(`/testimonials/${id}`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+    }
+    return apiClient.put(`/testimonials/${id}`, data)
   },
   deleteTestimonial: (id) => {
     clearCacheForUrl('/testimonials')
