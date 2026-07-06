@@ -194,8 +194,8 @@
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <AnimatedSection v-for="(item, i) in facilitiesList.slice(0, 8)" :key="i">
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+            <AnimatedSection v-for="(item, i) in facilitiesList.slice(0, 8)" :key="i" class="h-full">
+              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group h-full">
                 <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
                   <component :is="getFacilityIcon(item.icon)" class="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-teal-600" />
                 </div>
@@ -301,14 +301,13 @@
               :key="i"
               @click="openLightbox(i)"
               class="relative rounded-2xl overflow-hidden shadow group hover:opacity-80 transition-all duration-300 cursor-pointer"
-              :class="i % 2 === 1 ? 'mt-8' : ''"
             >
               <img :src="getFullImageUrl(item.src)" :alt="item.title" class="w-full h-40 sm:h-60 object-cover brightness-110 group-hover:scale-110 transition-transform duration-300" />
               <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
                 <span class="px-2 sm:px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.title }}</span>
               </div>
             </div>
-            <div v-if="galleryItems.length > 7" class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer" @click="openLightbox(0)">
+            <div v-if="galleryItems.length > 7" class="relative rounded-2xl overflow-hidden flex items-center justify-center bg-gray-700 cursor-pointer h-40 sm:h-60" @click="openLightbox(0)">
               <div class="text-center text-white">
                 <div class="text-4xl sm:text-5xl font-black mb-2">+{{ galleryItems.length - 7 }}</div>
                 <div class="font-bold text-sm sm:text-base">More Photos</div>
