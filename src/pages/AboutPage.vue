@@ -374,11 +374,14 @@ import TourBookingModal from '../components/TourBookingModal.vue'
 import { useTeam } from '../composables/useTeam'
 import { useLazyLoader } from '../composables/useLazyLoader'
 import { usePages } from '../composables/usePages'
+import { useTestimonials } from '../composables/useTestimonials'
+import { useRoomTypes } from '../composables/useRoomTypes'
+import { useFacilities } from '../composables/useFacilities'
 import { 
   Building2, Award, Sparkles, Users, Star, BookOpen, Shield, Wifi, Wind, 
   Utensils, Coffee, Dumbbell, Car, Calendar, MapPin, Phone, TrendingUp, 
   Heart, Clock, Target, CheckCircle2, ArrowRight, ChevronRight, ChevronDown,
-  Eye, Mail, Globe, Facebook, Linkedin
+  Eye, Mail, Globe, Facebook, Linkedin, Home
 } from 'lucide-vue-next'
 
 useHead({
@@ -395,6 +398,9 @@ useHead({
 // Use composables
 const { teamMembers, loading: teamLoading, error: teamError, fetchFirstTeamMembers } = useTeam()
 const { pageSections, fetchPageData: fetchPageSectionsData, loading: pagesLoading } = usePages()
+const { testimonials, fetchTestimonials } = useTestimonials()
+const { roomTypes, fetchRoomTypes } = useRoomTypes()
+const { facilities, fetchFacilities } = useFacilities()
 const lazyLoader = useLazyLoader()
 
 const activeMilestone = ref(null)
@@ -417,6 +423,10 @@ const getIconComponent = (iconString) => {
     'elemplus-location': MapPin,
   }
   return iconMap[iconString] || Award
+}
+
+const statIconMap = {
+  Users, Star, Shield, Home, Building2
 }
 
 // Parse about section data
@@ -449,13 +459,19 @@ const parseAboutSection = () => {
   }
 }
 
-// Parse stats
+// Parse stats (dynamic, computed from actual data like HomePage)
 const parseStats = () => {
+  const totalStudents = testimonials.value?.length || 0
+  const avgRating = testimonials.value?.length > 0
+    ? (testimonials.value.reduce((sum, t) => sum + (t.rating || 0), 0) / testimonials.value.length).toFixed(1)
+    : '0'
+  const totalRoomTypes = roomTypes.value?.length || 0
+  const totalFacilities = facilities.value?.length || 0
   return [
-    { num: '150+', label: 'Happy Students', icon: Users },
-    { num: '4.8', label: 'Rating', icon: Star, suffix: '/5' },
-    { num: '50+', label: 'Room Options', icon: Building2 },
-    { num: '24/7', label: 'Security', icon: Shield }
+    // { num: totalStudents > 0 ? `${totalStudents}+` : '0', label: 'Happy Students', icon: statIconMap['Users'] },
+    { num: avgRating !== '0' ? avgRating : '3', label: 'Rating', icon: statIconMap['Star'], suffix: '/5' },
+    { num: totalRoomTypes > 0 ? `${totalRoomTypes}+` : '0', label: 'Room Options', icon: statIconMap['Building2'] },
+    { num: totalFacilities > 0 ? `${totalFacilities}+` : '0', label: 'Facilities', icon: statIconMap['Home'] }
   ]
 }
 
@@ -570,7 +586,12 @@ async function fetchAllData() {
       console.log('✅ About section loaded')
     }
     
-    // STEP 3: Parse and show stats
+    // STEP 3: Fetch data for dynamic stats (testimonials, room types, facilities)
+    try { await fetchTestimonials() } catch (e) { console.warn('Testimonials unavailable:', e) }
+    try { await fetchRoomTypes() } catch (e) { console.warn('Room types unavailable:', e) }
+    try { await fetchFacilities() } catch (e) { console.warn('Facilities unavailable:', e) }
+    
+    // STEP 3b: Parse and show stats
     pageData.value.stats = parseStats()
     console.log('✅ Stats loaded')
     

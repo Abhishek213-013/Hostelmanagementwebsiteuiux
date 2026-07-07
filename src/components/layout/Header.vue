@@ -4,7 +4,7 @@
       <div class="flex justify-between items-center h-16 lg:h-20">
         <router-link to="/" class="flex items-center gap-4 group cursor-pointer">
           <img 
-            :src="logoUrl || defaultLogo" 
+            :src="logoUrl" 
             alt="Logo" 
             class="h-16 lg:h-28 w-auto object-contain transition-all duration-300" 
           />

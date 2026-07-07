@@ -537,14 +537,24 @@ const getAboutData = () => {
     badge: aboutSection.title || '',
     headline_part1, headline_part2,
     description: aboutSection.description || '',
-    stats: [
-      { icon: 'Users', value: '150+', label: 'Happy Students' },
-      { icon: 'Star', value: '4.8/5', label: 'Rating' },
-      { icon: 'Shield', value: '50+', label: 'Room Options' },
-      { icon: 'Home', value: '24/7', label: 'Security' }
-    ],
+    stats: [],
     images
   }
+}
+
+const computeAboutStats = () => {
+  const totalStudents = apiTestimonials.value?.length || 0
+  const avgRating = apiTestimonials.value?.length > 0
+    ? (apiTestimonials.value.reduce((sum, t) => sum + (t.rating || 0), 0) / apiTestimonials.value.length).toFixed(1)
+    : '0'
+  const totalRoomTypes = apiRoomTypes.value?.length || 0
+  const totalFacilities = facilitiesList.value?.length || 0
+  return [
+    // { icon: 'Users', value: totalStudents > 0 ? `${totalStudents}+` : '0', label: 'Happy Students' },
+    { icon: 'Star', value: avgRating !== '0' ? `${avgRating}/5` : '3/5', label: 'Rating' },
+    { icon: 'Shield', value: totalRoomTypes > 0 ? `${totalRoomTypes}+` : '0', label: 'Room Options' },
+    { icon: 'Home', value: totalFacilities > 0 ? `${totalFacilities}+` : '0', label: 'Facilities' }
+  ]
 }
 
 const getRoomTypeIcon = (title) => {
@@ -655,6 +665,10 @@ async function fetchPageData() {
     try { await fetchTestimonials(); testimonials.value = apiTestimonials.value.filter(t => t.is_featured).slice(0, 6) } catch (e) {}
     try { await fetchRoomTypes(); roomTypesList.value = apiRoomTypes.value } catch (e) {}
     try { await fetchRooms(); homepageRooms.value = rooms.value.slice(0, 3) } catch (e) {}
+
+    if (pageData.value.about) {
+      pageData.value.about.stats = computeAboutStats()
+    }
 
     if (heroSlides.value.length > 0) {
       if (autoplayInterval.value) clearInterval(autoplayInterval.value)
