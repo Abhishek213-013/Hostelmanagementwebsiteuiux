@@ -4,6 +4,8 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 
+import { saveAssetPlugin } from './vite-plugin-save-asset.js'
+
 function figmaAssetResolver() {
   return {
     name: 'figma-asset-resolver',
@@ -21,6 +23,7 @@ export default defineConfig({
     figmaAssetResolver(),
     vue(),
     tailwindcss(),
+    saveAssetPlugin(),
   ],
   resolve: {
     alias: {

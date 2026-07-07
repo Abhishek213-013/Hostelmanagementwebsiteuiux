@@ -2429,6 +2429,27 @@ const handleLogoImageUpload = (event) => {
   event.target.value = ''
 }
 
+const saveLogoLocaally = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        await fetch('/__save-asset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: e.target.result, filename: 'logo.png' })
+        })
+        resolve()
+      } catch (err) {
+        console.warn('Failed to save logo locally:', err)
+        resolve()
+      }
+    }
+    reader.onerror = () => resolve()
+    reader.readAsDataURL(file)
+  })
+}
+
 const saveLogo = async () => {
   saving.value = true
   try {
@@ -2481,6 +2502,11 @@ const saveLogo = async () => {
       })
       logoItemId.value = createRes.data?.data?.id || createRes.data?.id
       successMessage.value = 'Logo created successfully!'
+    }
+
+    // Save logo locally to src/assets/logo/logo.png
+    if (logoSelectedFile.value) {
+      await saveLogoLocaally(logoSelectedFile.value)
     }
 
     clearMessages()
