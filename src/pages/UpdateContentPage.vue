@@ -956,9 +956,13 @@
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Caption / Description</label>
             <textarea v-model="galleryForm.caption" rows="2" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image caption"></textarea>
           </div>
+          <!-- In the Gallery Modal, ensure this exists: -->
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
-            <select v-model="galleryForm.category" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+            <select 
+              v-model="galleryForm.category" 
+              class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700"
+            >
               <option value="rooms">Rooms</option>
               <option value="common">Common Areas</option>
               <option value="dining">Dining</option>
@@ -1929,6 +1933,7 @@ const handleGalleryImageUpload = async (event) => {
   event.target.value = ''
 }
 
+// In your saveGalleryItem function (around line 1000+), ensure it looks like this:
 const saveGalleryItem = async () => {
   saving.value = true
   try {
@@ -1953,15 +1958,19 @@ const saveGalleryItem = async () => {
     }
     
     if (editingGalleryItem.value) {
-      formData.append('_method', 'PUT')
+      // UPDATE: Remove _method=PUT, just use POST directly
+      // The backend supports POST for updates
       if (!gallerySelectedFile.value) {
-        formData.append('existing_image', editingGalleryItem.value.image || '')
+        // If no new image, send the existing image path
+        formData.append('image', editingGalleryItem.value.image || '')
       }
+      
       await apiClient.post(`/gallery/${editingGalleryItem.value.id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       successMessage.value = 'Gallery item updated successfully!'
     } else {
+      // CREATE
       await apiClient.post('/gallery', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })

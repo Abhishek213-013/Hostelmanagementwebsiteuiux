@@ -280,6 +280,7 @@ export const galleryAPI = {
   },
   updateGalleryItem: (id, formData) => {
     clearCacheForUrl('/gallery')
+    // ✅ POST to /gallery/{id} with FormData (for file upload support)
     return apiClient.post(`/gallery/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
