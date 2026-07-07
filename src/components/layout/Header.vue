@@ -204,7 +204,7 @@ const userData = ref({
 })
 const profileImage = ref('')
 const profileDropdownRef = ref(null)
-const logoUrl = ref('')
+const logoUrl = ref(defaultLogo)
 const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
 
 const getFullImageUrl = (imagePath) => {
