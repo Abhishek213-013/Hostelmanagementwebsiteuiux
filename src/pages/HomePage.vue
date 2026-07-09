@@ -346,12 +346,19 @@
                 </span>
               </div>
               <div class="flex items-center gap-3 sm:gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <img :src="getFullImageUrl(testimonial.user.avatar)" :alt="testimonial.user.name" 
-                     class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-teal-600 flex-shrink-0" />
+                <img :src="getFullImageUrl(testimonial.user?.avatar || testimonial.avatar)" :alt="testimonial.user?.name || testimonial.name" 
+                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-teal-600 flex-shrink-0"
+                    @error="handleAvatarError($event)" />
                 <div class="flex-1 min-w-0">
-                  <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white truncate">{{ testimonial.user.name }}</div>
-                  <div class="text-xs text-teal-600 font-medium">{{ testimonial.university }}</div>
-                  <div class="text-xs text-gray-400">{{ testimonial.department }}</div>
+                  <div class="font-black text-sm sm:text-base text-gray-800 dark:text-white truncate">
+                    {{ testimonial.user?.name || testimonial.name || 'Anonymous' }}
+                  </div>
+                  <div class="text-xs text-teal-600 font-medium">
+                    {{ testimonial.user?.university || testimonial.university || 'Student' }}
+                  </div>
+                  <div class="text-xs text-gray-400">
+                    {{ testimonial.user?.department || testimonial.department || '' }}
+                  </div>
                 </div>
                 <div v-if="testimonial.is_featured" class="flex-shrink-0">
                   <span class="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
@@ -645,7 +652,14 @@ const getServiceIcon = (service) => {
 
   return CheckCircle2
 }
-
+// In your HomePage.vue script setup
+const handleAvatarError = (event) => {
+  // Generate initials avatar as fallback
+  const name = event.target.alt || 'User'
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  event.target.src = `https://ui-avatars.com/api/?background=0d9488&color=fff&name=${encodeURIComponent(name)}`
+  event.target.onerror = null
+}
 const getFacilityIcon = (iconName) => {
   const icons = { 'ri-wifi-line': Wifi, 'ri-dumbbell-line': Dumbbell, 'ri-restaurant-line': Utensils, 'ri-book-open-line': BookOpen, 'ri-shield-line': Shield, 'ri-car-line': Car, 'ri-coffee-line': Coffee }
   return icons[iconName] || Sparkles

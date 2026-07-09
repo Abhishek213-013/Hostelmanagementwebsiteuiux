@@ -21,7 +21,7 @@ const apiClient = axios.create({
   maxContentLength: 10 * 1024 * 1024, // 10MB limit
 })
 
-// Request interceptor - Optimized
+// In api.js request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token')
@@ -29,17 +29,14 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`
     }
     
-    // Add timestamp to prevent caching issues
-    if (config.method === 'get' && !config.params?.noCache) {
-      config.params = {
-        ...config.params,
-        _t: Date.now()
-      }
+    // For testimonials update, remove X-API-KEY
+    if (config.url.includes('/testimonials/') && config.method === 'post') {
+      delete config.headers['X-API-KEY']
     }
     
-    // Log only in development
-    if (import.meta.env.DEV) {
-      console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`)
+    // If sending FormData, remove Content-Type to let browser set it
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
     }
     
     return config
@@ -326,17 +323,14 @@ export const teamAPI = {
   }
 }
 
-// Testimonials API
+
 export const testimonialsAPI = {
   getTestimonials: (all = 1) => {
-    // Clear cache first to ensure fresh data
     clearCacheForUrl('/testimonials')
     return apiClient.get('/testimonials', { 
       params: { 
-        all: all,
-        status: 'all', // Fetch all statuses
         _t: Date.now(),
-        noCache: true  // Skip caching
+        noCache: true
       } 
     })
   },
@@ -352,12 +346,18 @@ export const testimonialsAPI = {
   },
   updateTestimonial: (id, data) => {
     clearCacheForUrl('/testimonials')
-    if (data instanceof FormData) {
-      return apiClient.post(`/testimonials/${id}`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+    const formData = data instanceof FormData ? data : new FormData()
+    
+    if (!(data instanceof FormData)) {
+      Object.keys(data).forEach(key => {
+        formData.append(key, data[key])
       })
     }
-    return apiClient.put(`/testimonials/${id}`, data)
+    
+    // POST to /testimonials/{id} (not query parameter)
+    return apiClient.post(`/testimonials/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
   },
   deleteTestimonial: (id) => {
     clearCacheForUrl('/testimonials')

@@ -1181,7 +1181,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useHead } from '@vueuse/head'
 import Header from '../components/layout/Header.vue'
 import Footer from '../components/layout/Footer.vue'
@@ -2286,35 +2286,87 @@ const testimonialsList = ref([])
 const {
   testimonials,
   fetchTestimonials,
-  updateTestimonialStatus,
+  updateTestimonialStatus,  // <-- ADD THIS
   deleteTestimonial
 } = useTestimonials()
 
+// Cache for original names only
+const originalTestimonialNames = ref({})
+
+// Save original names to localStorage
+const saveOriginalNames = () => {
+  try {
+    const namesOnly = {}
+    Object.keys(originalTestimonialNames.value).forEach(id => {
+      if (originalTestimonialNames.value[id]) {
+        namesOnly[id] = originalTestimonialNames.value[id]
+      }
+    })
+    localStorage.setItem('testimonialOriginalNames', JSON.stringify(namesOnly))
+  } catch (e) {
+    // ignore
+  }
+}
+
+// Load original names from localStorage
+const loadOriginalNames = () => {
+  try {
+    const saved = localStorage.getItem('testimonialOriginalNames')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+        originalTestimonialNames.value = parsed
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+
+// In UpdateContentPage.vue - update fetchTestimonialsData
 const fetchTestimonialsData = async () => {
   try {
     await fetchTestimonials()
-    console.log('Raw testimonials for admin:', JSON.parse(JSON.stringify(testimonials.value)))
     
-    // Show ALL testimonials - both active and inactive
+    // Load saved original names
+    loadOriginalNames()
+    
+    // Map testimonials
     testimonialsList.value = testimonials.value.map(t => {
+      const cachedName = originalTestimonialNames.value[t.id]
+      
+      let displayName = t.user?.name || t.name || 'Anonymous'
+      
+      // If name is "Admin" and we have a cached name, use cache
+      if (displayName === 'Admin' && cachedName) {
+        displayName = cachedName
+      }
+      // If name is not "Admin" and not cached, cache it
+      else if (displayName !== 'Admin' && displayName !== 'Anonymous' && !cachedName) {
+        originalTestimonialNames.value[t.id] = displayName
+        saveOriginalNames()
+      }
+      
       return {
         id: t.id,
-        name: t.name || t.user?.name || '',
-        email: t.email || t.user?.email || '',
+        name: displayName,
+        email: t.user?.email || t.email || '',
         message: t.message || t.content || '',
         rating: t.rating || 5,
-        status: t.status !== undefined ? t.status : (t.is_featured ? 1 : 0),
+        status: t.status !== undefined ? Number(t.status) : 0,
         stay_duration: t.stay_duration || '',
-        department: t.department || '',
-        created_at: t.created_at
+        department: t.department || t.designation || '',
+        created_at: t.created_at,
+        originalName: displayName,
+        originalEmail: t.user?.email || t.email || ''
       }
     })
     
-    console.log('Processed testimonials list (all):', testimonialsList.value.length, 'items')
-    console.log('Statuses:', testimonialsList.value.map(t => ({ id: t.id, name: t.name, status: t.status })))
+    console.log('Testimonials loaded:', testimonialsList.value.map(t => ({ id: t.id, name: t.name, status: t.status })))
   } catch (err) {
     console.error('Error fetching testimonials:', err)
-    errorMessage.value = 'Failed to load testimonials. Check console for details.'
+    errorMessage.value = 'Failed to load testimonials.'
     clearMessages()
   }
 }
@@ -2327,16 +2379,25 @@ const formatDate = (dateStr) => {
 
 const toggleTestimonialStatus = async (testimonial) => {
   const newStatus = testimonial.status == 1 ? 0 : 1
+  
   try {
-    // Try sending as JSON
-    await apiClient.put(`/testimonials/${testimonial.id}`, { status: newStatus })
-    testimonial.status = newStatus
+    console.log(`🔄 Toggling testimonial ${testimonial.id} to status ${newStatus}`)
+    
+    // Use the composable's update function
+    await updateTestimonialStatus(testimonial.id, newStatus)
+    
+    // Update local state
+    const index = testimonialsList.value.findIndex(t => t.id === testimonial.id)
+    if (index !== -1) {
+      testimonialsList.value[index].status = newStatus
+    }
+    
     successMessage.value = `Testimonial ${newStatus == 1 ? 'activated' : 'deactivated'} successfully!`
     clearMessages()
-    await fetchTestimonialsData()
+    
   } catch (err) {
-    console.error('Status update error:', err.response?.data || err)
-    errorMessage.value = err.response?.data?.message || 'Failed to update testimonial status'
+    console.error('❌ Status update error:', err)
+    errorMessage.value = err.message || 'Failed to update status'
     clearMessages()
   }
 }
@@ -2344,17 +2405,20 @@ const toggleTestimonialStatus = async (testimonial) => {
 const deleteAdminTestimonial = async (testimonial) => {
   if (!confirm(`Delete testimonial from "${testimonial.name}"?`)) return
   try {
-    await testimonialsAPI.deleteTestimonial(testimonial.id)
+    await apiClient.delete(`/testimonials/${testimonial.id}`)
+    
     testimonialsList.value = testimonialsList.value.filter(t => t.id !== testimonial.id)
+    delete originalTestimonialNames.value[testimonial.id]
+    saveOriginalNames()
+    
     successMessage.value = 'Testimonial deleted successfully!'
     clearMessages()
   } catch (err) {
-    console.error('Delete error:', err.response?.data || err)
+    console.error('Delete error:', err)
     errorMessage.value = err.response?.data?.message || 'Failed to delete testimonial'
     clearMessages()
   }
 }
-
 // ── Logo Functions ──
 const fetchLogoData = async () => {
   loadingLogo.value = true
@@ -2756,7 +2820,7 @@ watch(activeTab, (newTab) => {
   if (newTab !== 'pages') {
     fetchTabData(newTab)
   }
-  if (newTab === 'testimonials') {
+  if (newTab === 'testimonials' && testimonialsList.value.length === 0) {
     fetchTestimonialsData()
   }
   if (newTab === 'logo') {
@@ -2768,10 +2832,14 @@ watch(activeTab, (newTab) => {
 })
 
 onMounted(() => {
+  loadOriginalNames()
   checkAdmin()
   if (isAdmin.value) {
     loading.value = true
     fetchAllData().finally(() => { loading.value = false })
   }
+})
+onUnmounted(() => {
+  saveOriginalNames()
 })
 </script>
