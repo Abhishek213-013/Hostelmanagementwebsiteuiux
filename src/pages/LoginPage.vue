@@ -61,7 +61,7 @@
 
             <div class="flex items-center justify-between">
               <label class="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" class="w-5 h-5 rounded border-emerald-300 dark:border-emerald-600 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0" />
+                <input type="checkbox" v-model="rememberMe" class="w-5 h-5 rounded border-emerald-300 dark:border-emerald-600 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0" />
                 <span class="text-sm text-emerald-700 dark:text-emerald-300 font-medium group-hover:text-emerald-500 dark:group-hover:text-emerald-200 transition-colors">Remember me</span>
               </label>
               <a href="#" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">Forgot password?</a>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRouter, useRoute } from 'vue-router'
 import { authAPI } from '../services/api'
@@ -117,10 +117,21 @@ const showPassword = ref(false)
 const loginError = ref('')
 const loginSuccess = ref('')
 const isLoading = ref(false)
+const rememberMe = ref(false)
 
 const formData = ref({
   email: '',
   password: ''
+})
+
+onMounted(() => {
+  const savedEmail = localStorage.getItem('remembered_email')
+  const savedPassword = localStorage.getItem('remembered_password')
+  if (savedEmail && savedPassword) {
+    formData.value.email = savedEmail
+    formData.value.password = savedPassword
+    rememberMe.value = true
+  }
 })
 
 const handleLogin = async () => {
@@ -152,6 +163,14 @@ const handleLogin = async () => {
       }
       
       loginSuccess.value = 'Login successful! Redirecting...'
+
+      if (rememberMe.value) {
+        localStorage.setItem('remembered_email', formData.value.email)
+        localStorage.setItem('remembered_password', formData.value.password)
+      } else {
+        localStorage.removeItem('remembered_email')
+        localStorage.removeItem('remembered_password')
+      }
       
       // Dispatch event for Header to update
       window.dispatchEvent(new Event('profileUpdated'))
