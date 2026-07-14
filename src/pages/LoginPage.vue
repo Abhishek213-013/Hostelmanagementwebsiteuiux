@@ -64,7 +64,7 @@
                 <input type="checkbox" v-model="rememberMe" class="w-5 h-5 rounded border-emerald-300 dark:border-emerald-600 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0" />
                 <span class="text-sm text-emerald-700 dark:text-emerald-300 font-medium group-hover:text-emerald-500 dark:group-hover:text-emerald-200 transition-colors">Remember me</span>
               </label>
-              <a href="#" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">Forgot password?</a>
+              <!-- <a href="#" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">Forgot password?</a> -->
             </div>
 
             <button type="submit"

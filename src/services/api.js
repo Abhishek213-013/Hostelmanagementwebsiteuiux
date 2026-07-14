@@ -75,9 +75,12 @@ apiClient.interceptors.response.use(
     
     // Handle 401 Unauthorized
     if (error.response?.status === 401) {
+      const wasAuthenticated = localStorage.getItem('isAuthenticated')
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('auth_token')
-      if (!window.location.pathname.includes('/login')) {
+      // Only redirect to login if the user was previously authenticated
+      // (i.e. their session expired). Guests should stay on the page.
+      if (wasAuthenticated && !window.location.pathname.includes('/login')) {
         window.location.href = '/login'
       }
     }
