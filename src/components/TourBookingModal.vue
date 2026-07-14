@@ -32,86 +32,88 @@
         <!-- Form -->
         <div class="px-6 pb-6">
           
-          <form @submit.prevent="handleSubmit" class="space-y-4">
-            <!-- Name -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-              <input 
-                type="text" 
-                v-model="form.name" 
-                placeholder="John Doe"
-                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none', 
-                  formErrors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
-                required 
-              />
-              <p v-if="formErrors.name" class="text-red-500 text-xs mt-1">{{ formErrors.name }}</p>
+          <form @submit.prevent="handleSubmit" class="space-y-3">
+            <!-- Row 1: Name + Email -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                <input 
+                  type="text" 
+                  v-model="form.name" 
+                  placeholder="John Doe"
+                  :class="['w-full px-3 py-2.5 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none text-sm', 
+                    formErrors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                  required 
+                />
+                <p v-if="formErrors.name" class="text-red-500 text-xs mt-1">{{ formErrors.name }}</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  v-model="form.email" 
+                  placeholder="john@example.com"
+                  :class="['w-full px-3 py-2.5 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none text-sm',
+                    formErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                  required 
+                />
+                <p v-if="formErrors.email" class="text-red-500 text-xs mt-1">{{ formErrors.email }}</p>
+              </div>
             </div>
             
-            <!-- Email -->
+            <!-- Row 2: Phone -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-              <input 
-                type="email" 
-                v-model="form.email" 
-                placeholder="john@example.com"
-                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none',
-                  formErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
-                required 
-              />
-              <p v-if="formErrors.email" class="text-red-500 text-xs mt-1">{{ formErrors.email }}</p>
-            </div>
-            
-            <!-- Phone -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
               <input 
                 type="tel" 
                 v-model="form.phone" 
                 placeholder="+880 1711-123456"
-                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none',
+                :class="['w-full px-3 py-2.5 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none text-sm',
                   formErrors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
                 required 
               />
               <p v-if="formErrors.phone" class="text-red-500 text-xs mt-1">{{ formErrors.phone }}</p>
             </div>
 
-            <!-- Preferred Date -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Date</label>
-              <input 
-                type="date" 
-                v-model="form.preferred_date" 
-                :min="minDate"
-                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer',
-                  formErrors.preferred_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
-                required 
-              />
-              <p v-if="formErrors.preferred_date" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_date }}</p>
-            </div>
+            <!-- Row 3: Date + Time -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preferred Date</label>
+                <input 
+                  type="date" 
+                  v-model="form.preferred_date" 
+                  :min="minDate"
+                  :class="['w-full px-3 py-2.5 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer text-sm',
+                    formErrors.preferred_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                  required 
+                />
+                <p v-if="formErrors.preferred_date" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_date }}</p>
+              </div>
 
-            <!-- Preferred Time -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preferred Time</label>
-              <select 
-                v-model="form.preferred_time"
-                :class="['w-full px-4 py-3 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer',
-                  formErrors.preferred_time ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
-                required
-              >
-                <option value="">Select a time</option>
-                <option v-for="time in timeSlots" :key="time" :value="time">{{ time }}</option>
-              </select>
-              <p v-if="formErrors.preferred_time" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_time }}</p>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preferred Time</label>
+                <select 
+                  v-model="form.preferred_time"
+                  :class="['w-full px-3 py-2.5 rounded-xl border focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 outline-none cursor-pointer text-sm',
+                    formErrors.preferred_time ? 'border-red-500' : 'border-gray-300 dark:border-gray-600']"
+                  required
+                >
+                  <option value="">Select a time</option>
+                  <option v-for="time in timeSlots" :key="time" :value="time">{{ time }}</option>
+                </select>
+                <p v-if="formErrors.preferred_time" class="text-red-500 text-xs mt-1">{{ formErrors.preferred_time }}</p>
+              </div>
             </div>
             
-            <!-- Message -->
+            <!-- Row 4: Message -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message (Optional)</label>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message (Optional)</label>
               <textarea 
                 v-model="form.message" 
                 placeholder="Any special requests or questions..."
-                rows="3"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none resize-none"
+                rows="2"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700 outline-none resize-none text-sm"
               ></textarea>
             </div>
             
@@ -119,7 +121,7 @@
             <button 
               type="submit" 
               :disabled="isSubmitting"
-              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all hover:shadow-lg hover:shadow-teal-500/25 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="isSubmitting" class="flex items-center gap-2">
                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -135,7 +137,7 @@
             </button>
             
             <!-- Footer Text -->
-            <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-4">
+            <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-2">
               We'll send you a confirmation via email and WhatsApp
             </p>
           </form>
