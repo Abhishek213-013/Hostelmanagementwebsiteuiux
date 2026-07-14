@@ -787,13 +787,15 @@
           </button>
         </div>
         <form @submit.prevent="saveSection" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Section Key</label>
-            <input v-model="sectionForm.section_key" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g. hero-slider, about, mission" required />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title (optional)</label>
-            <input v-model="sectionForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Section display name" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Section Key</label>
+              <input v-model="sectionForm.section_key" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g. hero-slider, about, mission" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title (optional)</label>
+              <input v-model="sectionForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Section display name" />
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
@@ -816,41 +818,47 @@
     <!-- Add/Edit Item Modal -->
     <div v-if="showItemModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeItemModal">
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-black text-teal-600">{{ editingItem ? 'Edit Item' : 'Add Item' }}</h3>
           <button @click="closeItemModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
             <X class="w-5 h-5" />
           </button>
         </div>
-        <form @submit.prevent="saveItem" class="space-y-3">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title / Badge</label>
-            <input v-model="itemForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Title or badge text" />
+        <form @submit.prevent="saveItem" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title / Badge</label>
+              <input v-model="itemForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Title or badge text" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Subtitle</label>
+              <input v-model="itemForm.subtitle" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Subtitle text" />
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 1</label>
-            <input v-model="itemForm.headline_part1" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="First part of headline" />
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 1</label>
+              <input v-model="itemForm.headline_part1" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="First part of headline" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 2</label>
+              <input v-model="itemForm.headline_part2" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Second part of headline" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 3</label>
+              <input v-model="itemForm.headline_part3" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Third part of headline" />
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 2</label>
-            <input v-model="itemForm.headline_part2" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Second part of headline" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Headline Part 3</label>
-            <input v-model="itemForm.headline_part3" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Third part of headline" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description Part 1</label>
-            <input v-model="itemForm.description_part1" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="First part of description" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
-            <textarea v-model="itemForm.description" rows="2" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 resize-none" placeholder="Full description text"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Subtitle</label>
-            <input v-model="itemForm.subtitle" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Subtitle text" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description Part 1</label>
+              <input v-model="itemForm.description_part1" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="First part of description" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+              <textarea v-model="itemForm.description" rows="1" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 resize-none" placeholder="Full description text"></textarea>
+            </div>
           </div>
           <div v-if="sectionNeedsImage(itemSectionId)">
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Image</label>
@@ -865,16 +873,18 @@
             <input type="file" ref="fileInput" @change="handleImageUpload" accept="image/*" class="hidden" />
             <img v-if="imagePreview" :src="imagePreview" class="mt-2 h-24 w-auto rounded-lg border border-gray-200 dark:border-gray-700 object-cover" alt="Preview" />
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
-            <input v-model.number="itemForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-            <select v-model.number="itemForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
-              <option :value="1">Active</option>
-              <option :value="0">Inactive</option>
-            </select>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+              <input v-model.number="itemForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+              <select v-model.number="itemForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+                <option :value="1">Active</option>
+                <option :value="0">Inactive</option>
+              </select>
+            </div>
           </div>
           <div class="flex gap-3 pt-2">
             <button type="button" @click="closeItemModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
@@ -890,7 +900,7 @@
     <!-- Facility Modal -->
     <div v-if="showFacilityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeFacilityModal">
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-black text-teal-600">{{ editingFacility ? 'Edit Facility' : 'Add Facility' }}</h3>
           <button @click="closeFacilityModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -898,14 +908,16 @@
           </button>
         </div>
         <form @submit.prevent="saveFacility" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
-            <input v-model="facilityForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., High-Speed WiFi" required />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Icon (Remix icon class)</label>
-            <input v-model="facilityForm.icon" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., ri-wifi-line" />
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Remix icon class name (e.g., ri-wifi-line, ri-dumbbell-line)</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
+              <input v-model="facilityForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., High-Speed WiFi" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Icon (Remix icon class)</label>
+              <input v-model="facilityForm.icon" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., ri-wifi-line" />
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Remix icon class name (e.g., ri-wifi-line, ri-dumbbell-line)</p>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Short Description</label>
@@ -915,16 +927,18 @@
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
             <textarea v-model="facilityForm.description" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Full description"></textarea>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
-            <input v-model.number="facilityForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-            <select v-model.number="facilityForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
-              <option :value="1">Active</option>
-              <option :value="0">Inactive</option>
-            </select>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+              <input v-model.number="facilityForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+              <select v-model.number="facilityForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+                <option :value="1">Active</option>
+                <option :value="0">Inactive</option>
+              </select>
+            </div>
           </div>
           <div class="flex gap-3 pt-2">
             <button type="button" @click="closeFacilityModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
@@ -940,7 +954,7 @@
     <!-- Gallery Modal -->
     <div v-if="showGalleryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeGalleryModal">
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-black text-teal-600">{{ editingGalleryItem ? 'Edit Gallery Item' : 'Add Gallery Item' }}</h3>
           <button @click="closeGalleryModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -948,27 +962,29 @@
           </button>
         </div>
         <form @submit.prevent="saveGalleryItem" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
-            <input v-model="galleryForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Common Room" required />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
+              <input v-model="galleryForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Common Room" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
+              <select 
+                v-model="galleryForm.category" 
+                class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700"
+              >
+                <option value="rooms">Rooms</option>
+                <option value="common">Common Areas</option>
+                <option value="dining">Dining</option>
+                <option value="facilities">Facilities</option>
+              </select>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Caption / Description</label>
             <textarea v-model="galleryForm.caption" rows="2" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image caption"></textarea>
           </div>
           <!-- In the Gallery Modal, ensure this exists: -->
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
-            <select 
-              v-model="galleryForm.category" 
-              class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700"
-            >
-              <option value="rooms">Rooms</option>
-              <option value="common">Common Areas</option>
-              <option value="dining">Dining</option>
-              <option value="facilities">Facilities</option>
-            </select>
-          </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">
               Image {{ !editingGalleryItem ? '*' : '' }}
@@ -1005,16 +1021,18 @@
               />
             </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
-            <input v-model.number="galleryForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-            <select v-model.number="galleryForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
-              <option :value="1">Active</option>
-              <option :value="0">Inactive</option>
-            </select>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
+              <input v-model.number="galleryForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+              <select v-model.number="galleryForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+                <option :value="1">Active</option>
+                <option :value="0">Inactive</option>
+              </select>
+            </div>
           </div>
           <div class="flex gap-3 pt-2">
             <button type="button" @click="closeGalleryModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
@@ -1038,20 +1056,22 @@
           </button>
         </div>
         <form @submit.prevent="saveTeam" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Team Name *</label>
-            <input v-model="teamForm.name" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Management Team" required />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Team Name *</label>
+              <input v-model="teamForm.name" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., Management Team" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+              <select v-model.number="teamForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+                <option :value="1">Active</option>
+                <option :value="0">Inactive</option>
+              </select>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
             <textarea v-model="teamForm.description" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Team description"></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-            <select v-model.number="teamForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
-              <option :value="1">Active</option>
-              <option :value="0">Inactive</option>
-            </select>
           </div>
           <div class="flex gap-3 pt-2">
             <button type="button" @click="closeTeamModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
