@@ -34,7 +34,7 @@
         </div>
 
         <!-- Payment Stats -->
-        <div v-if="allPayments.length > 0" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div v-if="allPayments.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-teal-600">{{ allPayments.length }}</div>
             <div class="text-xs text-gray-500">Total Records</div>
@@ -48,6 +48,14 @@
             <div class="text-xs text-gray-500">Extra Services</div>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-orange-600">{{ bills.length }}</div>
+            <div class="text-xs text-gray-500">Bills</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-green-600">{{ billPayments.length }}</div>
+            <div class="text-xs text-gray-500">Payments Made</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-yellow-600">{{ pendingPayments }}</div>
             <div class="text-xs text-gray-500">Pending</div>
           </div>
@@ -58,7 +66,7 @@
         </div>
 
         <!-- Tabs -->
-        <div v-if="allPayments.length > 0" class="flex gap-2 mb-6">
+        <div v-if="allPayments.length > 0" class="flex gap-2 mb-6 flex-wrap">
           <button 
             @click="activeTab = 'all'"
             :class="['px-4 py-2 rounded-xl font-bold text-sm transition-all',
@@ -85,6 +93,15 @@
             <Sparkles class="w-4 h-4 inline mr-1" />
             Extra Services ({{ serviceSubscriptions.length }})
           </button>
+          <button 
+            @click="activeTab = 'bills'"
+            :class="['px-4 py-2 rounded-xl font-bold text-sm transition-all',
+              activeTab === 'bills' 
+                ? 'bg-teal-600 text-white' 
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700']">
+            <FileText class="w-4 h-4 inline mr-1" />
+            Bills & Payments ({{ bills.length + billPayments.length }})
+          </button>
         </div>
 
         <!-- Payment Cards Grid -->
@@ -95,15 +112,27 @@
                class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
             
             <!-- Payment Header -->
-            <div :class="['relative h-48 overflow-hidden', payment.type === 'service' ? 'bg-purple-600' : getStatusBgClass(payment.status)]">
+            <div :class="['relative h-48 overflow-hidden', 
+              payment.type === 'service' ? 'bg-purple-600' : 
+              payment.type === 'bill' ? 'bg-orange-600' : 
+              payment.type === 'bill_payment' ? 'bg-green-600' : 
+              getStatusBgClass(payment.status)]">
               <div class="absolute inset-0 flex items-center justify-center">
-                <component :is="payment.type === 'service' ? Sparkles : CreditCard" class="w-20 h-20 text-white/30" />
+                <component :is="
+                  payment.type === 'service' ? Sparkles : 
+                  payment.type === 'bill' ? FileText : 
+                  payment.type === 'bill_payment' ? Receipt : 
+                  CreditCard" 
+                  class="w-20 h-20 text-white/30" />
               </div>
               
               <!-- Status Badge -->
               <div class="absolute top-4 right-4">
                 <span :class="['px-3 py-1 rounded-full text-xs font-bold shadow', 
-                  payment.type === 'service' ? 'bg-purple-400 text-white' : getStatusClass(payment.status)]">
+                  payment.type === 'service' ? 'bg-purple-400 text-white' : 
+                  payment.type === 'bill' ? getStatusClass(payment.status) :
+                  payment.type === 'bill_payment' ? 'bg-green-500 text-white' :
+                  getStatusClass(payment.status)]">
                   {{ payment.type === 'service' ? 'Subscribed' : formatStatus(payment.status) }}
                 </span>
               </div>
@@ -111,14 +140,119 @@
               <!-- Transaction ID -->
               <div class="absolute bottom-4 left-4">
                 <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold text-white border border-white/30">
-                  {{ payment.type === 'service' ? 'SRV' : 'BOK' }}-{{ payment.type === 'service' ? payment.id.substring(0, 8) : payment.id }}
+                  {{ payment.type === 'service' ? 'SRV' : payment.type === 'bill' ? 'BILL' : payment.type === 'bill_payment' ? 'PAY' : 'BOK' }}-{{ payment.type === 'service' ? payment.id.substring(0, 8) : payment.id }}
                 </span>
               </div>
             </div>
             
             <div class="p-6">
+              <!-- Bill Card (from API) -->
+              <template v-if="payment.type === 'bill'">
+                <div class="mb-3">
+                  <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                      <FileText class="w-4 h-4 text-orange-600" />
+                    </div>
+                    <h4 class="text-lg font-black text-orange-600">Monthly Bill</h4>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Bill Period: {{ formatBillPeriod(payment) }}
+                  </p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span :class="['px-2 py-0.5 rounded-full text-xs', 
+                      payment.status === 'paid' || payment.status === 'completed' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
+                      'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300']">
+                      {{ formatStatus(payment.status) }}
+                    </span>
+                    <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-400">
+                      Monthly
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="space-y-2 mb-3">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Total Amount</span>
+                    <span class="font-bold text-orange-600">৳{{ (payment.total_amount || payment.amount || 0).toLocaleString() }}</span>
+                  </div>
+                  <div v-if="payment.due_amount" class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Due Amount</span>
+                    <span class="font-bold text-red-600">৳{{ (payment.due_amount || 0).toLocaleString() }}</span>
+                  </div>
+                  <div v-if="payment.due_date" class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Due Date</span>
+                    <span class="font-bold text-gray-700 dark:text-gray-300">{{ formatDate(payment.due_date) }}</span>
+                  </div>
+                </div>
+                
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2 mb-4">
+                  <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <Calendar class="w-3 h-3 text-orange-600" />
+                    <span>Billing Date: {{ formatDate(payment.created_at || payment.billing_date) }}</span>
+                  </div>
+                  <div v-if="payment.room_number" class="flex items-center gap-2 text-xs text-gray-500">
+                    <Home class="w-3 h-3 text-orange-600" />
+                    <span>Room: {{ payment.room_number }}</span>
+                  </div>
+                </div>
+                
+                <div v-if="payment.description" class="mb-4 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                  <p class="text-xs text-gray-600 dark:text-gray-400">{{ payment.description }}</p>
+                </div>
+                
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                  <CreditCard class="w-3 h-3" />
+                  <span>Payment Method: {{ payment.payment_method || 'Online' }}</span>
+                </div>
+              </template>
+
+              <!-- Bill Payment Card (from API) -->
+              <template v-else-if="payment.type === 'bill_payment'">
+                <div class="mb-3">
+                  <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                      <Receipt class="w-4 h-4 text-green-600" />
+                    </div>
+                    <h4 class="text-lg font-black text-green-600">Bill Payment</h4>
+                  </div>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Transaction: {{ payment.transaction_id || 'N/A' }}
+                  </p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs">
+                      Completed
+                    </span>
+                    <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full text-xs text-gray-600 dark:text-gray-400">
+                      {{ payment.payment_method || 'Online' }}
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="space-y-2 mb-3">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Amount Paid</span>
+                    <span class="font-bold text-green-600">৳{{ (payment.amount_paid || payment.amount || 0).toLocaleString() }}</span>
+                  </div>
+                  <div v-if="payment.bill_id" class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Bill ID</span>
+                    <span class="font-bold text-gray-700 dark:text-gray-300">#{{ payment.bill_id }}</span>
+                  </div>
+                </div>
+                
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2 mb-4">
+                  <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <Calendar class="w-3 h-3 text-green-600" />
+                    <span>Payment Date: {{ formatDate(payment.payment_date || payment.created_at) }}</span>
+                  </div>
+                  <div v-if="payment.notes" class="flex items-center gap-2 text-xs text-gray-500">
+                    <FileText class="w-3 h-3 text-green-600" />
+                    <span>{{ payment.notes }}</span>
+                  </div>
+                </div>
+              </template>
+
               <!-- Service Subscription Card -->
-              <template v-if="payment.type === 'service'">
+              <template v-else-if="payment.type === 'service'">
                 <div class="mb-3">
                   <div class="flex items-center gap-2 mb-2">
                     <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
@@ -245,10 +379,10 @@
         <div v-if="filteredPayments.length === 0 && !loading" class="text-center py-20">
           <CreditCard class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">
-            {{ activeTab === 'services' ? 'No Service Subscriptions' : activeTab === 'bookings' ? 'No Booking Payments' : 'No Payment History' }}
+            {{ activeTab === 'services' ? 'No Service Subscriptions' : activeTab === 'bookings' ? 'No Booking Payments' : activeTab === 'bills' ? 'No Bills or Payments' : 'No Payment History' }}
           </h3>
           <p class="text-gray-500 dark:text-gray-400 mb-6">
-            {{ activeTab === 'services' ? 'Your extra service subscriptions will appear here.' : activeTab === 'bookings' ? 'Your booking payment records will appear here once you make a booking.' : 'Your payment records will appear here once you make a booking or subscribe to services.' }}
+            {{ activeTab === 'services' ? 'Your extra service subscriptions will appear here.' : activeTab === 'bookings' ? 'Your booking payment records will appear here once you make a booking.' : activeTab === 'bills' ? 'Your bills and payment records will appear here.' : 'Your payment records will appear here once you make a booking or subscribe to services.' }}
           </p>
           <router-link to="/rooms" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-colors">
             <Building2 class="w-5 h-5" />
@@ -262,8 +396,17 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
           <!-- Modal Header -->
           <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-            <h3 class="text-lg font-black" :class="selectedPayment.type === 'service' ? 'text-purple-600' : 'text-teal-600'">
-              {{ selectedPayment.type === 'service' ? 'Service Subscription Receipt' : 'Payment Receipt' }}
+            <h3 class="text-lg font-black" :class="
+              selectedPayment.type === 'service' ? 'text-purple-600' : 
+              selectedPayment.type === 'bill' ? 'text-orange-600' : 
+              selectedPayment.type === 'bill_payment' ? 'text-green-600' : 
+              'text-teal-600'">
+              {{ 
+                selectedPayment.type === 'service' ? 'Service Subscription Receipt' : 
+                selectedPayment.type === 'bill' ? 'Bill Details' : 
+                selectedPayment.type === 'bill_payment' ? 'Payment Receipt' : 
+                'Payment Receipt' 
+              }}
             </h3>
             <button @click="closeReceipt" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
               <X class="w-5 h-5" />
@@ -274,9 +417,205 @@
           <div class="overflow-y-auto flex-1 p-4">
             <div id="receipt-content">
               
+              <!-- Bill Receipt -->
+              <div v-if="selectedPayment.type === 'bill'" class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #ea580c; padding: 20px; background: white;">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b-2 border-orange-600">
+                  <div class="flex items-center gap-2">
+                    <img 
+                      :src="logoUrl || defaultLogo" 
+                      alt="City Hostel Logo" 
+                      class="h-12 w-auto object-contain"
+                      @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
+                    />
+                    <div v-if="!logoUrl" class="flex items-center gap-2">
+                      <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
+                        <FileText class="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-black text-orange-600">City Hostel</p>
+                        <p class="text-2xs text-gray-500">Monthly Bill</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xs font-bold text-gray-500 uppercase">Bill #</p>
+                    <p class="text-xs font-black text-orange-600">BILL-{{ selectedPayment.id }}</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Bill To</p>
+                    <p class="text-xs font-bold text-gray-800">{{ selectedPayment.border_name || 'N/A' }}</p>
+                    <p class="text-2xs text-gray-600">{{ selectedPayment.border_email || '' }}</p>
+                    <p v-if="selectedPayment.room_number" class="text-2xs text-gray-600 mt-1">Room {{ selectedPayment.room_number }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Bill Details</p>
+                    <p class="text-2xs text-gray-600">Period: <span class="font-bold text-gray-800">{{ formatBillPeriod(selectedPayment) }}</span></p>
+                    <p class="text-2xs text-gray-600">Date: <span class="font-bold text-gray-800">{{ formatDate(selectedPayment.created_at || selectedPayment.billing_date) }}</span></p>
+                    <p class="text-2xs text-gray-600">Status: 
+                      <span :class="['font-bold', getStatusTextClass(selectedPayment.status)]">
+                        {{ formatStatus(selectedPayment.status) }}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <table class="w-full text-2xs">
+                    <thead>
+                      <tr class="border-b-2 border-orange-600">
+                        <th class="text-left py-1.5 font-bold text-gray-500 uppercase">Description</th>
+                        <th class="text-right py-1.5 font-bold text-gray-500 uppercase">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="border-b border-gray-200">
+                        <td class="py-1.5">
+                          <p class="font-bold text-gray-800 text-xs">Monthly Bill</p>
+                          <p class="text-gray-500 text-2xs">{{ formatBillPeriod(selectedPayment) }}</p>
+                          <p v-if="selectedPayment.description" class="text-gray-500 text-2xs">{{ selectedPayment.description }}</p>
+                        </td>
+                        <td class="text-right py-1.5">
+                          <p class="font-black text-orange-600 text-sm">৳{{ (selectedPayment.total_amount || selectedPayment.amount || 0).toLocaleString() }}</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr class="border-t-2 border-orange-600">
+                        <td class="py-1.5 font-black text-gray-800 text-xs">Total Amount</td>
+                        <td class="text-right py-1.5 font-black text-orange-600 text-sm">৳{{ (selectedPayment.total_amount || selectedPayment.amount || 0).toLocaleString() }}</td>
+                      </tr>
+                      <tr v-if="selectedPayment.due_amount">
+                        <td class="py-1.5 font-black text-red-600 text-xs">Due Amount</td>
+                        <td class="text-right py-1.5 font-black text-red-600 text-sm">৳{{ (selectedPayment.due_amount || 0).toLocaleString() }}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div v-if="selectedPayment.due_date" class="mb-3 p-2 bg-gray-50 rounded-lg">
+                  <p class="text-2xs text-gray-600">
+                    <span class="font-bold">Due Date:</span> {{ formatDate(selectedPayment.due_date) }}
+                  </p>
+                </div>
+
+                <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
+                  <div class="text-2xs text-gray-500">
+                    <p><span class="font-bold">Bill ID:</span> {{ selectedPayment.id }}</p>
+                    <p><span class="font-bold">Period:</span> {{ formatBillPeriod(selectedPayment) }}</p>
+                  </div>
+                  <div class="text-center">
+                    <svg class="w-20 h-10 mx-auto mb-0.5" viewBox="0 0 200 60">
+                      <path d="M20 40 Q 60 20, 100 40 T 180 30" stroke="#ea580c" stroke-width="2" fill="none" />
+                      <text x="100" y="55" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="bold">Authorized Signature</text>
+                    </svg>
+                    <div class="w-20 border-t-2 border-orange-600 mx-auto"></div>
+                    <p class="text-2xs font-bold text-orange-600 mt-0.5">City Hostel Management</p>
+                  </div>
+                </div>
+
+                <div class="text-center mt-3 pt-2 border-t border-gray-200">
+                  <p class="text-2xs text-gray-500">Please pay by the due date to avoid late fees</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated bill</p>
+                </div>
+              </div>
+
+              <!-- Bill Payment Receipt -->
+              <div v-else-if="selectedPayment.type === 'bill_payment'" class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #16a34a; padding: 20px; background: white;">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b-2 border-green-600">
+                  <div class="flex items-center gap-2">
+                    <img 
+                      :src="logoUrl || defaultLogo" 
+                      alt="City Hostel Logo" 
+                      class="h-12 w-auto object-contain"
+                      @error="(e) => { e.target.style.display = 'none'; logoLoaded = false; }"
+                    />
+                    <div v-if="!logoUrl" class="flex items-center gap-2">
+                      <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                        <Receipt class="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-black text-green-600">City Hostel</p>
+                        <p class="text-2xs text-gray-500">Payment Receipt</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xs font-bold text-gray-500 uppercase">Receipt #</p>
+                    <p class="text-xs font-black text-green-600">PAY-{{ selectedPayment.id }}</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Paid By</p>
+                    <p class="text-xs font-bold text-gray-800">{{ selectedPayment.border_name || 'N/A' }}</p>
+                    <p v-if="selectedPayment.bill_id" class="text-2xs text-gray-600">Bill: #{{ selectedPayment.bill_id }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Payment Details</p>
+                    <p class="text-2xs text-gray-600">Date: <span class="font-bold text-gray-800">{{ formatDate(selectedPayment.payment_date || selectedPayment.created_at) }}</span></p>
+                    <p class="text-2xs text-gray-600">Method: <span class="font-bold text-gray-800">{{ selectedPayment.payment_method || 'Online' }}</span></p>
+                    <p v-if="selectedPayment.transaction_id" class="text-2xs text-gray-600">Txn: <span class="font-bold text-gray-800">{{ selectedPayment.transaction_id }}</span></p>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <table class="w-full text-2xs">
+                    <thead>
+                      <tr class="border-b-2 border-green-600">
+                        <th class="text-left py-1.5 font-bold text-gray-500 uppercase">Description</th>
+                        <th class="text-right py-1.5 font-bold text-gray-500 uppercase">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="border-b border-gray-200">
+                        <td class="py-1.5">
+                          <p class="font-bold text-gray-800 text-xs">Bill Payment</p>
+                          <p v-if="selectedPayment.bill_id" class="text-gray-500 text-2xs">Bill #{{ selectedPayment.bill_id }}</p>
+                          <p v-if="selectedPayment.notes" class="text-gray-500 text-2xs">{{ selectedPayment.notes }}</p>
+                        </td>
+                        <td class="text-right py-1.5">
+                          <p class="font-black text-green-600 text-sm">৳{{ (selectedPayment.amount_paid || selectedPayment.amount || 0).toLocaleString() }}</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr class="border-t-2 border-green-600">
+                        <td class="py-1.5 font-black text-gray-800 text-xs">Total Paid</td>
+                        <td class="text-right py-1.5 font-black text-green-600 text-sm">৳{{ (selectedPayment.amount_paid || selectedPayment.amount || 0).toLocaleString() }}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
+                  <div class="text-2xs text-gray-500">
+                    <p><span class="font-bold">Status:</span> Completed</p>
+                    <p><span class="font-bold">Date:</span> {{ formatDate(selectedPayment.payment_date || selectedPayment.created_at) }}</p>
+                  </div>
+                  <div class="text-center">
+                    <svg class="w-20 h-10 mx-auto mb-0.5" viewBox="0 0 200 60">
+                      <path d="M20 40 Q 60 20, 100 40 T 180 30" stroke="#16a34a" stroke-width="2" fill="none" />
+                      <text x="100" y="55" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">Authorized Signature</text>
+                    </svg>
+                    <div class="w-20 border-t-2 border-green-600 mx-auto"></div>
+                    <p class="text-2xs font-bold text-green-600 mt-0.5">City Hostel Management</p>
+                  </div>
+                </div>
+
+                <div class="text-center mt-3 pt-2 border-t border-gray-200">
+                  <p class="text-2xs text-gray-500">Thank you for your payment!</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
+                  <p class="text-2xs text-gray-400 mt-0.5">This is a computer-generated receipt</p>
+                </div>
+              </div>
+
               <!-- Service Subscription Receipt -->
-              <div v-if="selectedPayment.type === 'service'" class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #7c3aed; padding: 20px; background: white;">
-                <!-- Receipt Header with Logo -->
+              <div v-else-if="selectedPayment.type === 'service'" class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #7c3aed; padding: 20px; background: white;">
                 <div class="flex items-center justify-between mb-3 pb-3 border-b-2 border-purple-600">
                   <div class="flex items-center gap-2">
                     <img 
@@ -301,7 +640,6 @@
                   </div>
                 </div>
 
-                <!-- Subscriber & Subscription Details -->
                 <div class="grid grid-cols-2 gap-3 mb-3">
                   <div>
                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Subscriber</p>
@@ -317,7 +655,6 @@
                   </div>
                 </div>
 
-                <!-- Service Information -->
                 <div class="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
                   <p class="text-2xs font-bold text-purple-600 uppercase mb-1">Service Information</p>
                   <div class="flex items-center gap-2">
@@ -331,7 +668,6 @@
                   </div>
                 </div>
 
-                <!-- Pricing Table -->
                 <div class="mb-3">
                   <table class="w-full text-2xs">
                     <thead>
@@ -361,7 +697,6 @@
                   </table>
                 </div>
 
-                <!-- Billing Cycle -->
                 <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                   <p class="text-2xs text-gray-600">
                     <span class="font-bold">Billing Cycle:</span> Monthly
@@ -374,7 +709,6 @@
                   </p>
                 </div>
 
-                <!-- Signature Area -->
                 <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
                   <div class="text-2xs text-gray-500">
                     <p class="mb-0.5"><span class="font-bold">Subscribed:</span> {{ formatDate(selectedPayment.subscription_date) }}</p>
@@ -390,7 +724,6 @@
                   </div>
                 </div>
 
-                <!-- Footer -->
                 <div class="text-center mt-3 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for subscribing!</p>
                   <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
@@ -400,7 +733,6 @@
 
               <!-- Booking Payment Receipt -->
               <div v-else class="receipt-container mx-auto" style="width: 100%; max-width: 480px; border: 2px solid #0d9488; padding: 20px; background: white;">
-                <!-- Receipt Header with Logo -->
                 <div class="flex items-center justify-between mb-2 pb-2 border-b-2 border-teal-600">
                   <div class="flex items-center gap-2">
                     <img 
@@ -419,7 +751,6 @@
                   </div>
                 </div>
 
-                <!-- Bill To & Payment Details -->
                 <div class="grid grid-cols-2 gap-3 mb-3">
                   <div>
                     <p class="text-2xs font-bold text-gray-500 uppercase mb-0.5">Bill To</p>
@@ -441,7 +772,6 @@
                   </div>
                 </div>
 
-                <!-- Booking Details -->
                 <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                   <p class="text-2xs font-bold text-gray-500 uppercase mb-1">Booking Details</p>
                   <p class="text-2xs text-gray-600">Check-in: {{ formatDate(selectedPayment.check_in_date) }}</p>
@@ -449,7 +779,6 @@
                   <p class="text-2xs text-gray-600">Room Type: {{ selectedPayment.room?.room_type?.room_type_title || 'Standard' }}</p>
                 </div>
 
-                <!-- Pricing Table -->
                 <div class="mb-3">
                   <table class="w-full text-2xs">
                     <thead>
@@ -478,7 +807,6 @@
                   </table>
                 </div>
 
-                <!-- Signature Area -->
                 <div class="flex justify-between items-end mt-3 pt-2 border-t border-gray-200">
                   <div class="text-2xs text-gray-500">
                     <p class="mb-0.5"><span class="font-bold">Paid:</span> {{ formatDate(selectedPayment.created_at) }}</p>
@@ -494,7 +822,6 @@
                   </div>
                 </div>
 
-                <!-- Footer -->
                 <div class="text-center mt-2 pt-2 border-t border-gray-200">
                   <p class="text-2xs text-gray-500">Thank you for your payment!</p>
                   <p class="text-2xs text-gray-400 mt-0.5">City Hostel • 123 Akhalia Road, Sylhet • +880 1711-123456</p>
@@ -531,7 +858,8 @@ import Footer from '../components/layout/Footer.vue'
 import { useBookings } from '../composables/useBookings'
 import defaultLogo from '@/assets/logo/logo.png'
 import { usePages } from '../composables/usePages'
-import { CreditCard, X, Printer, Building2, Calendar, Clock, Sparkles, Home, CheckCircle2 } from 'lucide-vue-next'
+import { billingAPI, billPaymentsAPI } from '../services/api'
+import { CreditCard, X, Printer, Building2, Calendar, Clock, Sparkles, Home, CheckCircle2, FileText, Receipt } from 'lucide-vue-next'
 
 useHead({
   title: 'My Payments - City Hostel | Payment History',
@@ -548,8 +876,11 @@ useHead({
 const router = useRouter()
 const { bookings, fetchAllBookings, loading: bookingsLoading, error: bookingsError } = useBookings()
 
+// State
 const bookingPayments = ref([])
 const serviceSubscriptions = ref([])
+const bills = ref([])
+const billPayments = ref([])
 const loading = ref(true)
 const error = ref('')
 const selectedPayment = ref(null)
@@ -558,6 +889,17 @@ const logoLoaded = ref(true)
 const logoUrl = ref('')
 const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
 const activeTab = ref('all')
+
+// Get current user ID
+const getCurrentUserId = () => {
+  try {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}')
+    return userData.id || userData.user_id || userData.border_id || null
+  } catch (e) {
+    console.error('Error getting user ID:', e)
+    return null
+  }
+}
 
 const getFullImageUrl = (imagePath) => {
   if (!imagePath) return ''
@@ -576,12 +918,46 @@ const loadLogo = async () => {
       const activeItem = headerSection.items.find(item => item.status == 1)
       if (activeItem?.image) {
         logoUrl.value = getFullImageUrl(activeItem.image)
-        console.log('Logo loaded successfully:', logoUrl.value)
       }
     }
   } catch (error) {
     console.error('Error loading logo:', error)
-    // Fallback to default logo is handled in template
+  }
+}
+
+// Fetch bills from API
+const fetchBills = async () => {
+  try {
+    const userId = getCurrentUserId()
+    if (!userId) {
+      console.warn('No user ID found, skipping bills fetch')
+      return []
+    }
+    
+    const response = await billingAPI.getAllBills(userId)
+    console.log('Bills response:', response.data)
+    return response.data?.data || response.data || []
+  } catch (err) {
+    console.error('Error fetching bills:', err)
+    return []
+  }
+}
+
+// Fetch bill payments from API
+const fetchBillPayments = async () => {
+  try {
+    const userId = getCurrentUserId()
+    if (!userId) {
+      console.warn('No user ID found, skipping bill payments fetch')
+      return []
+    }
+    
+    const response = await billPaymentsAPI.getAllPayments(userId)
+    console.log('Bill payments response:', response.data)
+    return response.data?.data || response.data || []
+  } catch (err) {
+    console.error('Error fetching bill payments:', err)
+    return []
   }
 }
 
@@ -607,10 +983,34 @@ const allPayments = computed(() => {
     })
   })
   
+  // Add bills from API
+  bills.value.forEach(bill => {
+    combined.push({
+      ...bill,
+      type: 'bill',
+      uniqueKey: `bill-${bill.id}`,
+      billing_amount: bill.total_amount || bill.amount || 0,
+      status: bill.status || 'pending',
+      created_at: bill.billing_date || bill.created_at,
+    })
+  })
+  
+  // Add bill payments from API
+  billPayments.value.forEach(payment => {
+    combined.push({
+      ...payment,
+      type: 'bill_payment',
+      uniqueKey: `bill_payment-${payment.id}`,
+      billing_amount: payment.amount_paid || payment.amount || 0,
+      status: payment.status || 'completed',
+      created_at: payment.payment_date || payment.created_at,
+    })
+  })
+  
   // Sort by date (newest first)
   combined.sort((a, b) => {
-    const dateA = new Date(a.type === 'service' ? a.subscription_date : a.created_at)
-    const dateB = new Date(b.type === 'service' ? b.subscription_date : b.created_at)
+    const dateA = new Date(a.created_at || a.subscription_date || 0)
+    const dateB = new Date(b.created_at || b.subscription_date || 0)
     return dateB - dateA
   })
   
@@ -619,19 +1019,25 @@ const allPayments = computed(() => {
 
 // Filtered payments based on active tab
 const filteredPayments = computed(() => {
-  if (activeTab.value === 'bookings') {
-    return bookingPayments.value.map(p => ({ ...p, type: 'booking', uniqueKey: `booking-${p.id}` }))
+  switch (activeTab.value) {
+    case 'bookings':
+      return allPayments.value.filter(p => p.type === 'booking')
+    case 'services':
+      return allPayments.value.filter(p => p.type === 'service')
+    case 'bills':
+      return allPayments.value.filter(p => p.type === 'bill' || p.type === 'bill_payment')
+    case 'all':
+    default:
+      return allPayments.value
   }
-  if (activeTab.value === 'services') {
-    return serviceSubscriptions.value.map(s => ({ ...s, type: 'service', uniqueKey: `service-${s.id}` }))
-  }
-  return allPayments.value
 })
 
 // Computed stats
-const pendingPayments = computed(() => 
-  bookingPayments.value.filter(p => p.status === 0).length
-)
+const pendingPayments = computed(() => {
+  const bookingPending = bookingPayments.value.filter(p => p.status === 0).length
+  const billPending = bills.value.filter(b => b.status === 'pending' || b.status === 'unpaid').length
+  return bookingPending + billPending
+})
 
 const totalPaid = computed(() => {
   const bookingTotal = bookingPayments.value
@@ -641,28 +1047,25 @@ const totalPaid = computed(() => {
   const serviceTotal = serviceSubscriptions.value
     .reduce((sum, s) => sum + (s.service_price || 0), 0)
   
-  return bookingTotal + serviceTotal
+  const billPaymentsTotal = billPayments.value
+    .reduce((sum, p) => sum + (p.amount_paid || p.amount || 0), 0)
+  
+  return bookingTotal + serviceTotal + billPaymentsTotal
 })
 
 // Load service subscriptions from localStorage
 const loadServiceSubscriptions = () => {
   try {
-    // Get current user data
     const userData = JSON.parse(localStorage.getItem('user') || '{}')
     const userId = userData.id || userData.user_id || userData.border_id || 'anonymous'
     const userEmail = userData.email || ''
     
-    // Use the SAME user-specific key pattern as RoomDetailsPage
     const storageKey = `serviceReceipts_${userId}`
     const receipts = JSON.parse(localStorage.getItem(storageKey) || '[]')
-    
-    // Also check the old non-user-specific key for backward compatibility
     const oldReceipts = JSON.parse(localStorage.getItem('serviceReceipts') || '[]')
     
-    // Merge receipts (user-specific takes priority)
     const allReceipts = [...receipts]
     
-    // Add old receipts that belong to this user
     oldReceipts.forEach(oldReceipt => {
       const isDuplicate = allReceipts.some(r => r.id === oldReceipt.id)
       const belongsToUser = 
@@ -675,23 +1078,18 @@ const loadServiceSubscriptions = () => {
       }
     })
     
-    // Filter receipts for current user (safety check)
     serviceSubscriptions.value = allReceipts.filter(receipt => {
       return receipt.border_email === userEmail || 
              receipt.border_id == userId ||
              receipt.user_id == userId
     })
-    
-    console.log('Loaded service subscriptions:', serviceSubscriptions.value)
-    console.log('Storage key used:', storageKey)
-    console.log('User ID:', userId, 'Email:', userEmail)
   } catch (e) {
     console.error('Error loading service subscriptions:', e)
     serviceSubscriptions.value = []
   }
 }
 
-// Add this function to migrate old receipts to the new user-specific format
+// Migrate old receipts
 const migrateOldReceipts = () => {
   try {
     const userData = JSON.parse(localStorage.getItem('user') || '{}')
@@ -704,7 +1102,6 @@ const migrateOldReceipts = () => {
       const storageKey = `serviceReceipts_${userId}`
       const existingReceipts = JSON.parse(localStorage.getItem(storageKey) || '[]')
       
-      // Find receipts that belong to this user but aren't in the new storage
       const userReceipts = oldReceipts.filter(receipt => {
         const belongsToUser = 
           receipt.border_email === userEmail || 
@@ -715,17 +1112,13 @@ const migrateOldReceipts = () => {
       })
       
       if (userReceipts.length > 0) {
-        // Merge and save to user-specific key
         const merged = [...existingReceipts, ...userReceipts]
         localStorage.setItem(storageKey, JSON.stringify(merged))
         
-        // Remove migrated receipts from old key
         const remainingOld = oldReceipts.filter(receipt => {
           return !userReceipts.some(r => r.id === receipt.id)
         })
         localStorage.setItem('serviceReceipts', JSON.stringify(remainingOld))
-        
-        console.log(`Migrated ${userReceipts.length} receipts to ${storageKey}`)
       }
     }
   } catch (e) {
@@ -738,8 +1131,6 @@ async function fetchBookingPayments() {
   try {
     await fetchAllBookings()
     
-    console.log('All bookings for payments:', bookings.value)
-    
     const storedUser = localStorage.getItem('user')
     let currentUserEmail = ''
     
@@ -747,7 +1138,6 @@ async function fetchBookingPayments() {
       try {
         const user = JSON.parse(storedUser)
         currentUserEmail = user.email
-        console.log('Current user email:', currentUserEmail)
       } catch (e) {
         console.error('Error parsing user data:', e)
       }
@@ -760,16 +1150,12 @@ async function fetchBookingPayments() {
       allBookingsArray = bookings.value.data
     }
     
-    console.log('All bookings array:', allBookingsArray)
-    
     if (currentUserEmail && allBookingsArray.length > 0) {
       bookingPayments.value = allBookingsArray.filter(b => {
         return b.party?.contact?.email_number === currentUserEmail
       })
-      console.log('Filtered payments for user:', bookingPayments.value)
     } else {
       bookingPayments.value = allBookingsArray
-      console.log('Showing all payments:', bookingPayments.value)
     }
     
     bookingPayments.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -786,8 +1172,26 @@ async function fetchAllData() {
   error.value = ''
   
   try {
+    // Fetch booking payments and new APIs in parallel
+    const [billsData, billPaymentsData] = await Promise.all([
+      fetchBills(),
+      fetchBillPayments(),
+    ])
+    
+    bills.value = billsData
+    billPayments.value = billPaymentsData
+    
     await fetchBookingPayments()
     loadServiceSubscriptions()
+    
+    console.log('All data loaded:', {
+      bills: bills.value.length,
+      billPayments: billPayments.value.length,
+      bookingPayments: bookingPayments.value.length,
+      serviceSubscriptions: serviceSubscriptions.value.length,
+      total: allPayments.value.length
+    })
+    
   } catch (err) {
     console.error('Error fetching data:', err)
     error.value = bookingsError.value || 'Failed to load payments. Please check your connection and try again.'
@@ -811,7 +1215,6 @@ const printReceipt = () => {
   if (!receiptContent) return
   
   const printWindow = window.open('', '_blank', 'width=1000,height=800')
-
   const clonedReceipt = receiptContent.cloneNode(true)
   const receiptContainer = clonedReceipt.querySelector('.receipt-container')
 
@@ -867,12 +1270,37 @@ const getNextBillingDate = (subscriptionDate) => {
   })
 }
 
+function formatBillPeriod(bill) {
+  if (bill.billing_month && bill.billing_year) {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December']
+    const monthIndex = parseInt(bill.billing_month) - 1
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return `${monthNames[monthIndex]} ${bill.billing_year}`
+    }
+  }
+  if (bill.bill_month && bill.bill_year) {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December']
+    const monthIndex = parseInt(bill.bill_month) - 1
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return `${monthNames[monthIndex]} ${bill.bill_year}`
+    }
+  }
+  return formatDate(bill.created_at)
+}
+
 function getStatusBgClass(status) {
   const classes = {
     0: 'bg-yellow-500',
     1: 'bg-teal-600',
     2: 'bg-gray-500',
-    3: 'bg-red-500'
+    3: 'bg-red-500',
+    'pending': 'bg-yellow-500',
+    'unpaid': 'bg-yellow-500',
+    'paid': 'bg-teal-600',
+    'completed': 'bg-teal-600',
+    'cancelled': 'bg-red-500',
   }
   return classes[status] || 'bg-teal-600'
 }
@@ -882,7 +1310,12 @@ function getStatusClass(status) {
     0: 'bg-yellow-500 text-white',
     1: 'bg-green-500 text-white',
     2: 'bg-gray-500 text-white',
-    3: 'bg-red-500 text-white'
+    3: 'bg-red-500 text-white',
+    'pending': 'bg-yellow-500 text-white',
+    'unpaid': 'bg-yellow-500 text-white',
+    'paid': 'bg-green-500 text-white',
+    'completed': 'bg-green-500 text-white',
+    'cancelled': 'bg-red-500 text-white',
   }
   return classes[status] || 'bg-gray-500 text-white'
 }
@@ -892,12 +1325,20 @@ function getStatusTextClass(status) {
     0: 'text-yellow-600',
     1: 'text-green-600',
     2: 'text-gray-600',
-    3: 'text-red-600'
+    3: 'text-red-600',
+    'pending': 'text-yellow-600',
+    'unpaid': 'text-yellow-600',
+    'paid': 'text-green-600',
+    'completed': 'text-green-600',
+    'cancelled': 'text-red-600',
   }
   return classes[status] || 'text-gray-600'
 }
 
 function formatStatus(status) {
+  if (typeof status === 'string') {
+    return status.charAt(0).toUpperCase() + status.slice(1)
+  }
   const labels = {
     0: 'Pending',
     1: 'Confirmed',

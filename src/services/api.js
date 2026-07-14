@@ -510,4 +510,24 @@ export const uploadAPI = {
   })
 }
 
+// Billing APIs
+export const billingAPI = {
+  getAllBills: (userId) => apiClient.get('/portal/billings', { 
+    params: { user_id: userId } 
+  }),
+  getBillDetails: (billId, userId) => apiClient.get(`/portal/billings/${billId}`, { 
+    params: { user_id: userId } 
+  }),
+}
+
+// Bill Payments APIs
+export const billPaymentsAPI = {
+  getAllPayments: (userId) => apiClient.get('/portal/bill-payments', { 
+    params: { user_id: userId } 
+  }),
+  getPaymentDetails: (paymentId, userId) => apiClient.get(`/portal/bill-payments/${paymentId}`, { 
+    params: { user_id: userId } 
+  }),
+}
+
 export default apiClient
