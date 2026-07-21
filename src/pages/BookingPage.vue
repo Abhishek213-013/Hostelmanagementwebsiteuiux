@@ -1,39 +1,39 @@
 <template>
-  <!-- Step 4: Booking Confirmed -->
+  <!-- Step 4: Booking Pending Confirmation -->
   <div v-if="step === 4" class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-20 px-6">
     <AnimatedSection>
       <div class="relative text-center max-w-lg">
         <div class="inline-block mb-8">
-          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-green-500">
-            <CheckCircle2 class="w-16 h-16 text-white drop-shadow-lg" />
+          <div class="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl bg-amber-500">
+            <Clock class="w-16 h-16 text-white drop-shadow-lg" />
           </div>
         </div>
-        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-green-600">Booking Confirmed!</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your booking has been confirmed successfully.</p>
+        <h1 class="text-5xl lg:text-6xl font-black mb-4 text-amber-600">Booking Pending!</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-2">Your booking is awaiting admin confirmation.</p>
         <p class="text-gray-700 dark:text-gray-300 mb-4">
           A confirmation email will be sent to <span class="font-semibold text-gray-800 dark:text-gray-200">{{ bookingData.email_number }}</span>
         </p>
 
         <div v-if="currentBooking?.id" class="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow border border-gray-200 dark:border-gray-700">
-          <p class="text-sm text-green-600 mb-1">Booking ID</p>
+          <p class="text-sm text-amber-600 mb-1">Booking ID</p>
           <p class="font-mono font-bold text-gray-800 dark:text-white text-lg">{{ currentBooking.id }}</p>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Transaction ID: {{ paymentTransactionId }}</p>
           <div class="mt-4 flex items-center justify-center gap-2">
-            <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
-            <span class="text-green-600 font-semibold">Status: Confirmed</span>
+            <span class="inline-block w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="text-amber-600 font-semibold">Status: Pending Confirmation</span>
           </div>
         </div>
 
-        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6 mb-8">
-          <h3 class="text-lg font-bold text-green-800 dark:text-green-200 mb-2">What's Next?</h3>
-          <ul class="text-sm text-green-700 dark:text-green-300 space-y-2 text-left">
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 mb-8">
+          <h3 class="text-lg font-bold text-amber-800 dark:text-amber-200 mb-2">What's Next?</h3>
+          <ul class="text-sm text-amber-700 dark:text-amber-300 space-y-2 text-left">
             <li class="flex items-center gap-2">
-              <CheckCircle2 class="w-4 h-4 flex-shrink-0" />
-              Your booking has been confirmed
+              <Clock class="w-4 h-4 flex-shrink-0" />
+              Your booking is pending admin confirmation
             </li>
             <li class="flex items-center gap-2">
               <Phone class="w-4 h-4 flex-shrink-0" />
-              We'll contact you with move-in details
+              We'll contact you once your booking is confirmed
             </li>
             <li class="flex items-center gap-2">
               <Clock class="w-4 h-4 flex-shrink-0" />
@@ -328,7 +328,7 @@
                       </div>
                       <h3 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Payment Successful!</h3>
                       <p class="text-gray-600 dark:text-gray-400 mb-2">Transaction ID: {{ paymentTransactionId }}</p>
-                      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Your booking has been confirmed</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Your booking is pending admin confirmation</p>
                       <button @click="completePayment" :disabled="submittingBooking"
                         class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                         <span v-if="submittingBooking" class="flex items-center gap-2">
@@ -694,9 +694,10 @@ const bookingData = ref({
   youtube: '',
   check_in_date: '',
   billing_amount: 0,
-  status: 1, // Auto-approved
-  notes: ''
-})
+    status: 0, // Pending admin confirmation
+    notes: ''
+  }
+)
 
 const getRoomImage = (roomTypeName) => {
   const images = {
@@ -1041,7 +1042,7 @@ const confirmBooking = async () => {
     youtube: bookingData.value.youtube || "",
     check_in_date: bookingData.value.check_in_date,
     billing_amount: parseFloat(bookingData.value.billing_amount),
-    status: 1,
+    status: 0,
     notes: bookingData.value.notes || ""
   }
   
@@ -1082,7 +1083,7 @@ const resetBooking = () => {
     youtube: '',
     check_in_date: '',
     billing_amount: selectedRoom.value?.room_price || 0,
-    status: 1,
+    status: 0,
     notes: ''
   }
   pendingBookingPayload.value = null

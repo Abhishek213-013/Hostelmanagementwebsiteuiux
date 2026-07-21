@@ -36,10 +36,14 @@
         </div>
 
         <!-- Booking Stats -->
-        <div v-if="myBookings.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div v-if="myBookings.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-teal-600">{{ myBookings.length }}</div>
             <div class="text-xs text-gray-500">Total Bookings</div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
+            <div class="text-2xl font-black text-yellow-600">{{ pendingBookings }}</div>
+            <div class="text-xs text-gray-500">Pending</div>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow border border-gray-200 dark:border-gray-700 text-center">
             <div class="text-2xl font-black text-green-600">{{ activeBookings }}</div>
@@ -106,6 +110,14 @@
                 <p class="text-xs text-gray-600 dark:text-gray-400">
                   <span class="font-bold">Note:</span> {{ booking.border_note }}
                 </p>
+              </div>
+              
+              <div v-if="booking.status === 0 || booking.status === 'pending'" class="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <div class="flex items-center gap-2">
+                  <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                  <p class="text-xs font-bold text-yellow-700 dark:text-yellow-300">Awaiting Approval</p>
+                </div>
+                <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">Your booking is pending admin approval. You will be notified once confirmed.</p>
               </div>
               
               <div class="flex gap-2">
@@ -380,6 +392,8 @@ const selectedTour = ref(null)
 const loadingTourDetails = ref(false)
 
 // Computed stats for bookings
+const pendingBookings = computed(() => myBookings.value.filter(b => b.status === 0 || b.status === 'pending').length)
+
 const activeBookings = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
