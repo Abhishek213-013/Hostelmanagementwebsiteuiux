@@ -2299,7 +2299,13 @@ const footerColumnsForm = ref([
   { heading: 'Information', linksText: 'Admission|/rooms\nPayment|/rooms\nFAQs|/about\nTerms|/about' },
   { heading: 'Contact', linksText: '123 Akhalia Road|/contact\n+880 1711-123456|tel:+8801711123456\ninfo@sylhetstay.com|mailto:info@sylhetstay.com' }
 ])
-const footerCopyrightText = ref('\u00a9 2026 City Hostel Hostel. All rights reserved.')
+const footerCopyrightText = ref(`\u00a9 ${new Date().getFullYear()} City Hostel Hostel. All rights reserved.`)
+
+const updateCopyrightYear = (text) => {
+  if (!text) return text
+  const currentYear = new Date().getFullYear()
+  return text.replace(/\d{4}/, currentYear)
+}
 
 // ── Testimonials ──
 const testimonialsList = ref([])
@@ -2678,7 +2684,7 @@ const fetchFooterData = async () => {
     // Copyright
     const copyrightItem = allFooterItems.find(item => item.title === 'copyright')
     if (copyrightItem?.description) {
-      footerCopyrightText.value = copyrightItem.description
+      footerCopyrightText.value = updateCopyrightYear(copyrightItem.description)
     }
   } catch (err) {
     console.error('Error fetching footer data:', err)

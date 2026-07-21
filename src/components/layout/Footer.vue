@@ -54,7 +54,13 @@ import defaultLogo from '@/assets/logo/logo.png'
 
 const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
 const logoUrl = ref('')
-const copyrightText = ref('\u00a9 2026 City Hostel Hostel. All rights reserved.')
+const copyrightText = ref(`\u00a9 ${new Date().getFullYear()} City Hostel Hostel. All rights reserved.`)
+
+const updateCopyrightYear = (text) => {
+  if (!text) return text
+  const currentYear = new Date().getFullYear()
+  return text.replace(/\d{4}/, currentYear)
+}
 const socialLinks = ref({
   facebook: '',
   instagram: '',
@@ -147,7 +153,7 @@ const loadFooter = () => {
     // Copyright
     const copyrightItem = items.find(item => item.title === 'copyright' && item.status == 1)
     if (copyrightItem?.description) {
-      copyrightText.value = copyrightItem.description
+      copyrightText.value = updateCopyrightYear(copyrightItem.description)
     }
   }).catch(() => {})
 }
