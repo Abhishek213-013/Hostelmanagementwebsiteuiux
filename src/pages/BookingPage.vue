@@ -384,21 +384,9 @@
                         formErrors.check_in_date ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']" />
                     <p v-if="formErrors.check_in_date" class="text-red-500 text-sm mt-1">{{ formErrors.check_in_date }}</p>
                   </div>
-                  <div>
-                    <label class="block text-sm font-bold text-teal-600 mb-2">Select Seat <span class="text-red-500">*</span></label>
-                    <select v-model="selectedSeatId" @change="bookingData.seat_id = selectedSeatId"
-                      :class="['w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 transition-all font-semibold text-gray-800 dark:text-gray-200',
-                        formErrors.seat ? 'border-red-500 focus:ring-red-500/20' : 'border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500/20']">
-                      <option value="">Select a seat</option>
-                      <option v-for="seat in availableSeats" :key="seat.id" :value="seat.id">
-                        Seat {{ seat.id }} - {{ seat.seat_description || 'Available' }}
-                      </option>
-                    </select>
-                    <p v-if="availableSeats.length === 0 && selectedRoom" class="text-red-500 text-sm mt-1">
-                      No seats available for this room
-                    </p>
-                    <p v-if="formErrors.seat" class="text-red-500 text-sm mt-1">{{ formErrors.seat }}</p>
-                  </div>
+                  <!-- <div v-if="availableSeats.length === 0 && selectedRoom" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4">
+                    <p class="text-red-600 dark:text-red-400 text-sm font-semibold">No seats available for this room. Please choose a different room.</p>
+                  </div> -->
                 </div>
 
                 <!-- Tab 2: Boarder Info -->
@@ -902,13 +890,14 @@ const fetchAvailableSeats = async (roomId) => {
     availableSeats.value = actuallyAvailable
     
     if (availableSeats.value.length > 0) {
-      selectedSeatId.value = availableSeats.value[0].id || availableSeats.value[0].seat_id
+      const randomIndex = Math.floor(Math.random() * availableSeats.value.length)
+      const randomSeat = availableSeats.value[randomIndex]
+      selectedSeatId.value = randomSeat.id || randomSeat.seat_id
       bookingData.value.seat_id = selectedSeatId.value
     } else {
-      // No seats available
       selectedSeatId.value = null
       bookingData.value.seat_id = null
-      console.warn('⚠️ No available seats for room', roomId)
+      // console.warn('⚠️ No available seats for room', roomId)
     }
     
     console.log(`🪑 Available seats for room ${roomId}:`, availableSeats.value.length)
@@ -977,7 +966,7 @@ const validateCurrentTab = () => {
   const errors = {}
   if (currentTab.value === 0) {
     if (!bookingData.value.check_in_date) errors.check_in_date = 'Check-in date is required'
-    if (!selectedSeatId.value) errors.seat = 'Please select a seat'
+    if (!bookingData.value.seat_id) errors.seat = 'No seats available for this room'
   } else if (currentTab.value === 1) {
     if (!bookingData.value.party_name.trim()) errors.party_name = 'Boarder name is required'
     if (!bookingData.value.mobile_number.trim()) errors.mobile_number = 'Mobile number is required'
@@ -993,7 +982,7 @@ const validateCurrentTab = () => {
 const validateAllTabs = () => {
   const errors = {}
   if (!bookingData.value.check_in_date) errors.check_in_date = 'Check-in date is required'
-  if (!selectedSeatId.value) errors.seat = 'Please select a seat'
+  if (!bookingData.value.seat_id) errors.seat = 'No seats available for this room'
   if (!bookingData.value.party_name.trim()) errors.party_name = 'Boarder name is required'
   if (!bookingData.value.mobile_number.trim()) errors.mobile_number = 'Mobile number is required'
   if (!bookingData.value.email_number.trim()) errors.email_number = 'Email is required'
