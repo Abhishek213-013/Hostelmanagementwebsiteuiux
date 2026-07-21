@@ -222,19 +222,19 @@
             </div>
             
             <!-- Team Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
               <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
                 <div class="text-2xl font-black text-teal-600">{{ teamMembers.length }}</div>
                 <div class="text-sm text-gray-500">Total Team</div>
               </div>
-              <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
+              <!-- <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
                 <div class="text-2xl font-black text-teal-600">{{ teamDepartments }}</div>
                 <div class="text-sm text-gray-500">Departments</div>
               </div>
               <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
                 <div class="text-2xl font-black text-teal-600">{{ teamExperience }}</div>
                 <div class="text-sm text-gray-500">Avg. Experience</div>
-              </div>
+              </div> -->
               <div class="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow border border-gray-200 dark:border-gray-700">
                 <div class="text-2xl font-black text-teal-600">{{ activeMembers }}</div>
                 <div class="text-sm text-gray-500">Active Members</div>
