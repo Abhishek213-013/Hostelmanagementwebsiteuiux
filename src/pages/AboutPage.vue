@@ -57,7 +57,7 @@
             <div class="relative grid grid-cols-2 gap-4">
               <div v-for="(item, i) in pageData.about.images" :key="i" :class="['group relative rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 border-2 border-gray-200 dark:border-gray-700', i % 2 === 1 ? 'mt-8' : '']">
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                <img :src="item.src" :alt="item.label" class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-700" />
+                <img :src="getFullImageUrl(item.src)" :alt="item.label" class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-700" />
                 <div class="absolute bottom-4 left-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                   <span class="px-3 py-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full text-sm font-bold text-gray-800 dark:text-gray-200">{{ item.label }}</span>
                 </div>
@@ -412,6 +412,17 @@ const { testimonials, fetchTestimonials } = useTestimonials()
 const { roomTypes, fetchRoomTypes } = useRoomTypes()
 const { facilities, fetchFacilities } = useFacilities()
 const lazyLoader = useLazyLoader()
+
+const API_BASE_URL = 'https://dev.hostel.accounting.itlab.solutions'
+
+const getFullImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
+    return imagePath
+  }
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+  return `${API_BASE_URL}/storage/${cleanPath}`
+}
 
 const activeMilestone = ref(null)
 const isTourModalOpen = ref(false)
