@@ -900,49 +900,73 @@
     <!-- Facility Modal -->
     <div v-if="showFacilityModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeFacilityModal">
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl font-black text-teal-600">{{ editingFacility ? 'Edit Facility' : 'Add Facility' }}</h3>
-          <button @click="closeFacilityModal" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-            <X class="w-5 h-5" />
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] overflow-y-auto p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-black text-teal-600">{{ editingFacility ? 'Edit Facility' : 'Add Facility' }}</h3>
+          <button @click="closeFacilityModal" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X class="w-4 h-4" />
           </button>
         </div>
-        <form @submit.prevent="saveFacility" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form @submit.prevent="saveFacility" class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Title *</label>
-              <input v-model="facilityForm.title" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., High-Speed WiFi" required />
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+              <input v-model="facilityForm.title" type="text" class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., High-Speed WiFi" required />
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Icon (Remix icon class)</label>
-              <input v-model="facilityForm.icon" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="e.g., ri-wifi-line" />
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Remix icon class name (e.g., ri-wifi-line, ri-dumbbell-line)</p>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Short Description</label>
-            <input v-model="facilityForm.short_description" type="text" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Brief description" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
-            <textarea v-model="facilityForm.description" rows="3" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Full description"></textarea>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Sort Order</label>
-              <input v-model.number="facilityForm.sort_order" type="number" min="0" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-              <select v-model.number="facilityForm.status" class="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Status</label>
+              <select v-model.number="facilityForm.status" class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700">
                 <option :value="1">Active</option>
                 <option :value="0">Inactive</option>
               </select>
             </div>
           </div>
-          <div class="flex gap-3 pt-2">
-            <button type="button" @click="closeFacilityModal" class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
-            <button type="submit" class="flex-1 py-2.5 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Icon</label>
+            <div class="grid grid-cols-9 sm:grid-cols-9 md:grid-cols-9 gap-1.5 p-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl">
+              <button
+                v-for="icon in facilityIcons"
+                :key="icon.remix"
+                type="button"
+                @click="facilityForm.icon = icon.remix"
+                :class="[
+                  'relative group flex flex-col items-center gap-0.5 p-1.5 rounded-lg border transition-all duration-200 cursor-pointer',
+                  facilityForm.icon === icon.remix
+                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/30 shadow-sm'
+                    : 'border-transparent bg-white dark:bg-gray-800 hover:border-teal-300 dark:hover:border-teal-600 hover:bg-teal-50/50 dark:hover:bg-teal-900/20'
+                ]"
+                :title="icon.label"
+              >
+                <component :is="icon.component" :class="['w-4 h-4 transition-colors', facilityForm.icon === icon.remix ? 'text-teal-600' : 'text-gray-500 dark:text-gray-400 group-hover:text-teal-500']" />
+                <span :class="['text-[8px] font-semibold leading-none truncate w-full text-center transition-colors', facilityForm.icon === icon.remix ? 'text-teal-600' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-500']">{{ icon.label }}</span>
+                <span v-if="facilityForm.icon === icon.remix" class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-teal-500 rounded-full flex items-center justify-center">
+                  <CheckCircle2 class="w-2 h-2 text-white" />
+                </span>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <input v-model="facilityForm.icon" type="text" class="flex-1 px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Or type icon class, e.g. ri-wifi-line" />
+              <div v-if="facilityForm.icon" class="w-7 h-7 flex items-center justify-center bg-teal-50 dark:bg-teal-900/30 rounded-lg border border-teal-200 dark:border-teal-700">
+                <component :is="getIconFromRemix(facilityForm.icon)" class="w-4 h-4 text-teal-600" />
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Click an icon above or type a Remix icon class (e.g., ri-wifi-line)</p>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Short Description</label>
+            <input v-model="facilityForm.short_description" type="text" class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Brief description" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Description</label>
+            <textarea v-model="facilityForm.description" rows="2" class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 resize-none" placeholder="Full description"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Sort Order</label>
+            <input v-model.number="facilityForm.sort_order" type="number" min="0" class="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="0" />
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="button" @click="closeFacilityModal" class="flex-1 py-2 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">Cancel</button>
+            <button type="submit" class="flex-1 py-2 px-4 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all shadow-md flex items-center justify-center gap-2" :disabled="saving">
               <Loader2 v-if="saving" class="w-4 h-4 animate-spin" />
               {{ saving ? 'Saving...' : 'Save' }}
             </button>
@@ -1211,7 +1235,10 @@ import { useTestimonials } from '../composables/useTestimonials'
 import {
   PenSquare, FileText, Plus, Edit3, Trash2, ChevronDown,
   CheckCircle2, AlertCircle, Loader2, X, Upload, FileEdit, Settings2,
-  Building2, Image, Users, MessageSquare, Star
+  Building2, Image, Users, MessageSquare, Star,
+  Wifi, Wind, Utensils, Coffee, Dumbbell, Car, BookOpen, Shield,
+  Home, Tv, Gamepad2, Droplets, ShoppingBag, Clock, Phone, MapPin, Zap, Mic,
+  Camera, Sun, Trees, Bed, Bath, WashingMachine, Refrigerator, Sparkles
 } from 'lucide-vue-next'
 import { cropImageToAspectRatio } from '../utils/imageCropper'
 
@@ -1304,6 +1331,68 @@ const facilityForm = ref({
   title: '', icon: '', short_description: '', description: '',
   sort_order: 0, status: 1
 })
+
+const facilityIcons = [
+  { remix: 'ri-wifi-line', component: Wifi, label: 'WiFi' },
+  { remix: 'ri-restaurant-line', component: Utensils, label: 'Dining' },
+  { remix: 'ri-dumbbell-line', component: Dumbbell, label: 'Gym' },
+  { remix: 'ri-book-open-line', component: BookOpen, label: 'Study' },
+  { remix: 'ri-shield-line', component: Shield, label: 'Security' },
+  { remix: 'ri-car-line', component: Car, label: 'Parking' },
+  { remix: 'ri-home-line', component: Home, label: 'Home' },
+  { remix: 'ri-tv-line', component: Tv, label: 'TV Room' },
+  { remix: 'ri-gamepad-line', component: Gamepad2, label: 'Gaming' },
+  { remix: 'ri-drop-line', component: Droplets, label: 'Water' },
+  { remix: 'ri-shopping-bag-line', component: ShoppingBag, label: 'Shop' },
+  { remix: 'ri-cup-line', component: Coffee, label: 'Cafe' },
+  { remix: 'ri-wind-line', component: Wind, label: 'AC/Air' },
+  { remix: 'ri-flashlight-line', component: Zap, label: 'Power' },
+  { remix: 'ri-mic-line', component: Mic, label: 'Mic' },
+  { remix: 'ri-camera-line', component: Camera, label: 'Camera' },
+  { remix: 'ri-sun-line', component: Sun, label: 'Laundry' },
+  { remix: 'ri-plant-line', component: Trees, label: 'Garden' },
+  { remix: 'ri-hotel-bed-line', component: Bed, label: 'Bed' },
+  { remix: 'ri-ruler-line', component: Bath, label: 'Bath' },
+  { remix: 'ri-phone-line', component: Phone, label: 'Phone' },
+  { remix: 'ri-map-pin-line', component: MapPin, label: 'Location' },
+  { remix: 'ri-time-line', component: Clock, label: '24/7' },
+  { remix: 'ri-user-line', component: Users, label: 'Community' },
+  { remix: 'ri-washing-machine-line', component: WashingMachine, label: 'Washer' },
+  { remix: 'ri-temp-cold-line', component: Refrigerator, label: 'Fridge' },
+]
+
+const getIconFromRemix = (remixIconName) => {
+  if (!remixIconName) return Sparkles
+  const iconMap = {
+    'ri-wifi-line': Wifi, 'ri-wifi-fill': Wifi,
+    'ri-dumbbell-line': Dumbbell, 'ri-dumbbell-fill': Dumbbell,
+    'ri-restaurant-line': Utensils, 'ri-restaurant-fill': Utensils,
+    'ri-cup-line': Coffee, 'ri-cup-fill': Coffee,
+    'ri-car-line': Car, 'ri-car-fill': Car,
+    'ri-book-open-line': BookOpen, 'ri-book-open-fill': BookOpen,
+    'ri-shield-line': Shield, 'ri-shield-fill': Shield,
+    'ri-user-line': Users, 'ri-user-fill': Users,
+    'ri-home-line': Home, 'ri-home-fill': Home,
+    'ri-tv-line': Tv, 'ri-tv-fill': Tv,
+    'ri-gamepad-line': Gamepad2, 'ri-gamepad-fill': Gamepad2,
+    'ri-drop-line': Droplets, 'ri-drop-fill': Droplets,
+    'ri-shopping-bag-line': ShoppingBag, 'ri-shopping-bag-fill': ShoppingBag,
+    'ri-wind-line': Wind, 'ri-wind-fill': Wind,
+    'ri-flashlight-line': Zap, 'ri-flashlight-fill': Zap,
+    'ri-mic-line': Mic, 'ri-mic-fill': Mic,
+    'ri-camera-line': Camera, 'ri-camera-fill': Camera,
+    'ri-sun-line': Sun, 'ri-sun-fill': Sun,
+    'ri-plant-line': Trees, 'ri-plant-fill': Trees,
+    'ri-hotel-bed-line': Bed, 'ri-hotel-bed-fill': Bed,
+    'ri-ruler-line': Bath, 'ri-ruler-fill': Bath,
+    'ri-phone-line': Phone, 'ri-phone-fill': Phone,
+    'ri-map-pin-line': MapPin, 'ri-map-pin-fill': MapPin,
+    'ri-time-line': Clock, 'ri-time-fill': Clock,
+    'ri-washing-machine-line': WashingMachine, 'ri-washing-machine-fill': WashingMachine,
+    'ri-temp-cold-line': Refrigerator, 'ri-temp-cold-fill': Refrigerator,
+  }
+  return iconMap[remixIconName] || Sparkles
+}
 
 // ── Gallery State ──
 const galleryItems = ref([])
