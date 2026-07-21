@@ -221,7 +221,7 @@
                         ]"
                         :title="!hasAvailableSeats(room) ? 'No seats available for booking' : 'Book this room now'">
                         <span v-if="hasAvailableSeats(room)">Book Now</span>
-                        <span v-else>Sold Out</span>
+                        <span v-else>Booked</span>
                         <ArrowRight v-if="hasAvailableSeats(room)" class="w-4 h-4" />
                         <XCircle v-else class="w-4 h-4" />
                       </button>

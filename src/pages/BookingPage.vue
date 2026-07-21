@@ -451,19 +451,19 @@
                       <p v-if="formErrors.phone_number" class="text-red-500 text-sm mt-1">{{ formErrors.phone_number }}</p>
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">House</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">House <span class="text-red-500">*</span></label>
                       <input type="text" placeholder="House number/name" v-model="bookingData.house"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
                     </div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">Street</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Street <span class="text-red-500">*</span></label>
                       <input type="text" placeholder="Street name" v-model="bookingData.street"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200 placeholder:text-gray-400" />
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">Division</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Division <span class="text-red-500">*</span></label>
                       <select v-model="selectedDivisionId" @change="onDivisionChange"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
                         <option value="">Select Division</option>
@@ -473,7 +473,7 @@
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">District</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">District <span class="text-red-500">*</span></label>
                       <select v-model="bookingData.district_id" @change="onDistrictChange"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
                         <option value="">Select District</option>
@@ -481,7 +481,7 @@
                       </select>
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">Upazila</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Upazila <span class="text-red-500">*</span></label>
                       <select v-model="bookingData.upazila_id" @change="onUpazilaChange"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
                         <option value="">Select Upazila</option>
@@ -491,7 +491,7 @@
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label class="block text-sm font-bold text-teal-600 mb-2">Union</label>
+                      <label class="block text-sm font-bold text-teal-600 mb-2">Union <span class="text-red-500">*</span></label>
                       <select v-model="bookingData.union_id"
                         class="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/20 transition-all font-semibold text-gray-800 dark:text-gray-200">
                         <option value="">Select Union</option>
