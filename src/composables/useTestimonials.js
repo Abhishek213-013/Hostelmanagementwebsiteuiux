@@ -166,6 +166,20 @@ export function useTestimonials() {
     }
   }
 
+  const submitTestimonial = async (data) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await testimonialsAPI.createTestimonial(data)
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to submit testimonial'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     testimonials,
     currentTestimonial,
@@ -173,6 +187,7 @@ export function useTestimonials() {
     error,
     pagination,
     fetchTestimonials,
+    submitTestimonial,
     updateTestimonialStatus,
     deleteTestimonial
   }
