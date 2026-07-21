@@ -245,95 +245,105 @@
               </div>
             </div>
 
-            <!-- Team Members Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="member in teamMembers" :key="member.id" 
-                   class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
-                   @click="selectedMember = selectedMember?.id === member.id ? null : member">
-                <div class="relative h-72 overflow-hidden">
-                  <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                  
-                  <!-- Active/Inactive Badge -->
-                  <div class="absolute top-4 right-4">
-                    <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
-                      member.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
-                      {{ member.is_active ? 'Active' : 'Inactive' }}
-                    </span>
-                  </div>
-                  
-                  <!-- Contact Info Overlay -->
-                  <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div class="flex gap-2">
-                      <a v-if="member.email" :href="`mailto:${member.email}`" 
-                         class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
-                         @click.stop>
-                        <Mail class="w-4 h-4 text-white" />
-                      </a>
-                      <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
-                         class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
-                         @click.stop>
-                        <Phone class="w-4 h-4 text-white" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="p-6">
-                  <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
-                  <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
-                  
-                  <!-- Short Bio -->
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
-                  
-                  <!-- Joined Date -->
-                  <div class="flex items-center gap-1 text-xs text-gray-400">
-                    <Calendar class="w-3 h-3" />
-                    <span>Joined {{ formatDate(member.joining_date) }}</span>
-                  </div>
+            <!-- Teams -->
+            <div v-for="team in teams" :key="team.id" class="mb-20 last:mb-0">
+              <!-- Team Header -->
+              <div v-if="teams.length > 1" class="mb-6">
+                <h3 class="text-2xl font-black text-teal-600 mb-1">{{ team.name }}</h3>
+                <p v-if="team.description" class="text-gray-600 dark:text-gray-400">{{ team.description }}</p>
+                <div class="w-16 h-1 bg-teal-600 rounded-full mt-3"></div>
+              </div>
 
-                  <!-- Expand Indicator -->
-                  <div class="text-center mt-3">
-                    <ChevronDown :class="['w-5 h-5 text-teal-600 transition-transform mx-auto', 
-                      selectedMember?.id === member.id ? 'rotate-180' : '']" />
+              <!-- Team Members Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div v-for="member in team.members" :key="member.id" 
+                     class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer"
+                     @click="selectedMember = selectedMember?.id === member.id ? null : member">
+                  <div class="relative h-72 overflow-hidden">
+                    <img :src="member.avatar" :alt="member.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                    
+                    <!-- Active/Inactive Badge -->
+                    <div class="absolute top-4 right-4">
+                      <span :class="['px-2 py-1 rounded-full text-xs font-bold shadow', 
+                        member.is_active ? 'bg-teal-600 text-white' : 'bg-red-500 text-white']">
+                        {{ member.is_active ? 'Active' : 'Inactive' }}
+                      </span>
+                    </div>
+                    
+                    <!-- Contact Info Overlay -->
+                    <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div class="flex gap-2">
+                        <a v-if="member.email" :href="`mailto:${member.email}`" 
+                           class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                           @click.stop>
+                          <Mail class="w-4 h-4 text-white" />
+                        </a>
+                        <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                           class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-teal-600 transition-colors"
+                           @click.stop>
+                          <Phone class="w-4 h-4 text-white" />
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                <!-- Expanded Details -->
-                <div v-if="selectedMember?.id === member.id" 
-                     class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
-                  <!-- Full Bio -->
-                  <div>
-                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">About</h5>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
-                  </div>
-                  
-                  <!-- Contact Info -->
-                  <div>
-                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
-                    <div class="space-y-1">
-                      <a v-if="member.email" :href="`mailto:${member.email}`" 
-                         class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
-                        <Mail class="w-4 h-4" /> {{ member.email }}
-                      </a>
-                      <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
-                         class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
-                        <Phone class="w-4 h-4" /> {{ member.phone }}
-                      </a>
+                  <div class="p-6">
+                    <h4 class="text-xl font-black mb-1 text-teal-600">{{ member.name }}</h4>
+                    <p class="text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">{{ member.role }}</p>
+                    
+                    <!-- Short Bio -->
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ member.short_bio }}</p>
+                    
+                    <!-- Joined Date -->
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                      <Calendar class="w-3 h-3" />
+                      <span>Joined {{ formatDate(member.joining_date) }}</span>
+                    </div>
+
+                    <!-- Expand Indicator -->
+                    <div class="text-center mt-3">
+                      <ChevronDown :class="['w-5 h-5 text-teal-600 transition-transform mx-auto', 
+                        selectedMember?.id === member.id ? 'rotate-180' : '']" />
                     </div>
                   </div>
                   
-                  <!-- Social Links -->
-                  <div v-if="member.social_links && Object.keys(member.social_links).filter(k => member.social_links[k]).length > 0">
-                    <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
-                    <div class="flex gap-2">
-                      <a v-if="member.social_links.facebook" :href="member.social_links.facebook" target="_blank" rel="noopener noreferrer"
-                         class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
-                        <Facebook class="w-4 h-4" />
-                      </a>
-                      <a v-if="member.social_links.linkedin" :href="member.social_links.linkedin" target="_blank" rel="noopener noreferrer"
-                         class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
-                        <Linkedin class="w-4 h-4" />
-                      </a>
+                  <!-- Expanded Details -->
+                  <div v-if="selectedMember?.id === member.id" 
+                       class="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+                    <!-- Full Bio -->
+                    <div>
+                      <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">About</h5>
+                      <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ member.bio }}</p>
+                    </div>
+                    
+                    <!-- Contact Info -->
+                    <div>
+                      <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Contact</h5>
+                      <div class="space-y-1">
+                        <a v-if="member.email" :href="`mailto:${member.email}`" 
+                           class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                          <Mail class="w-4 h-4" /> {{ member.email }}
+                        </a>
+                        <a v-if="member.phone" :href="`tel:${member.phone.replace(/\s/g, '')}`"
+                           class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 transition-colors">
+                          <Phone class="w-4 h-4" /> {{ member.phone }}
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div v-if="member.social_links && Object.keys(member.social_links).filter(k => member.social_links[k]).length > 0">
+                      <h5 class="text-xs font-bold text-teal-600 mb-2 uppercase">Social</h5>
+                      <div class="flex gap-2">
+                        <a v-if="member.social_links.facebook" :href="member.social_links.facebook" target="_blank" rel="noopener noreferrer"
+                           class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                          <Facebook class="w-4 h-4" />
+                        </a>
+                        <a v-if="member.social_links.linkedin" :href="member.social_links.linkedin" target="_blank" rel="noopener noreferrer"
+                           class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-teal-600 hover:text-white transition-colors">
+                          <Linkedin class="w-4 h-4" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -396,7 +406,7 @@ useHead({
 })
 
 // Use composables
-const { teamMembers, loading: teamLoading, error: teamError, fetchFirstTeamMembers } = useTeam()
+const { teams, teamMembers, loading: teamLoading, error: teamError, fetchAllTeamsWithMembers } = useTeam()
 const { pageSections, fetchPageData: fetchPageSectionsData, loading: pagesLoading } = usePages()
 const { testimonials, fetchTestimonials } = useTestimonials()
 const { roomTypes, fetchRoomTypes } = useRoomTypes()
@@ -557,7 +567,7 @@ function setupLazyTeamLoading() {
     if (el) {
       lazyLoader.observe(el, 'team-section', async () => {
         try {
-          await fetchFirstTeamMembers()
+          await fetchAllTeamsWithMembers()
           console.log('✅ Team members lazily loaded:', teamMembers.value.length)
         } catch (err) {
           console.warn('Team data unavailable:', err)

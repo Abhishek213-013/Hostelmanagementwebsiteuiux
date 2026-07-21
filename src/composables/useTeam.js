@@ -234,6 +234,61 @@ export function useTeam() {
     }
   }
 
+  // Fetch all teams with their members
+  const fetchAllTeamsWithMembers = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const teamsData = await fetchTeams()
+      
+      if (!teamsData || teamsData.length === 0) {
+        console.warn('No teams found')
+        teams.value = []
+        teamMembers.value = []
+        return []
+      }
+
+      const allMembers = []
+      const teamsWithMembers = []
+
+      for (const team of teamsData) {
+        try {
+          const teamDetail = await fetchTeamDetails(team.id)
+          const members = [...teamMembers.value]
+          teamsWithMembers.push({
+            id: team.id,
+            name: team.name || team.title,
+            description: team.description,
+            status: team.status,
+            members
+          })
+          allMembers.push(...members)
+        } catch (err) {
+          console.warn(`Failed to fetch members for team ${team.id}:`, err)
+          teamsWithMembers.push({
+            id: team.id,
+            name: team.name || team.title,
+            description: team.description,
+            status: team.status,
+            members: []
+          })
+        }
+      }
+
+      teams.value = teamsWithMembers
+      teamMembers.value = allMembers
+
+      return teamsWithMembers
+    } catch (err) {
+      console.error('Error fetching all teams with members:', err)
+      teams.value = []
+      teamMembers.value = []
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     teams,
     teamMembers,
@@ -246,6 +301,7 @@ export function useTeam() {
     fetchTeamDetails,
     fetchMemberDetails,
     fetchTeamMembersDirect,
-    fetchFirstTeamMembers
+    fetchFirstTeamMembers,
+    fetchAllTeamsWithMembers
   }
 }
