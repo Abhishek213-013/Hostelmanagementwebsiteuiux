@@ -535,6 +535,10 @@
                 <!-- Upload New Logo -->
                 <div class="mb-6">
                   <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Upload New Logo</label>
+                  <div class="mb-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg flex items-center gap-2">
+                    <AlertCircle class="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">Logo is displayed with preserved aspect ratio (w-auto). Use a wide/landscape logo image for best results.</p>
+                  </div>
                   <div class="flex gap-2">
                     <input 
                       v-model="logoForm.imageUrl" 
@@ -615,6 +619,10 @@
                         <Image class="w-8 h-8" />
                       </div>
                     </div>
+                  </div>
+                  <div class="mb-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg flex items-center gap-2">
+                    <AlertCircle class="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <p class="text-xs font-semibold text-blue-700 dark:text-blue-300">Footer logo is displayed with preserved aspect ratio (w-auto). Use a wide/landscape logo image for best results.</p>
                   </div>
                   <div class="flex gap-2">
                     <input 
@@ -862,6 +870,10 @@
           </div>
           <div v-if="sectionNeedsImage(itemSectionId)">
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Image</label>
+            <div v-if="getSectionRatioLabel(itemSectionId)" class="mb-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg flex items-center gap-2">
+              <AlertCircle class="w-4 h-4 text-amber-500 flex-shrink-0" />
+              <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">Required ratio: {{ getSectionRatioLabel(itemSectionId) }} — Image will be auto-cropped to match the section display</p>
+            </div>
             <div class="flex gap-2">
               <input v-model="itemForm.imageUrl" type="text" class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image URL or upload a file" />
               <button type="button" @click="triggerUpload" :disabled="uploading" class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0">
@@ -1013,6 +1025,10 @@
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">
               Image {{ !editingGalleryItem ? '*' : '' }}
             </label>
+            <div class="mb-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg flex items-center gap-2">
+              <AlertCircle class="w-4 h-4 text-amber-500 flex-shrink-0" />
+              <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">Required ratio: {{ RATIO_LABELS.gallery }} — Image will be auto-cropped to square to match gallery display</p>
+            </div>
             <div class="flex gap-2">
               <input v-model="galleryForm.imageUrl" type="text" class="flex-1 px-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 placeholder-gray-400" placeholder="Image URL or upload a file" />
               <button type="button" @click="triggerGalleryUpload" :disabled="uploading" class="px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-sm hover:bg-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0">
@@ -1155,6 +1171,10 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">Avatar</label>
+            <div class="mb-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg flex items-center gap-2">
+              <AlertCircle class="w-4 h-4 text-amber-500 flex-shrink-0" />
+              <p class="text-xs font-semibold text-amber-700 dark:text-amber-300">Required ratio: {{ RATIO_LABELS.member }} — Image will be auto-cropped to square for the circular avatar</p>
+            </div>
             <div class="flex gap-2">
               <input 
                 v-model="memberForm.avatarUrl" 
@@ -1249,13 +1269,28 @@ const SECTIONS_WITHOUT_IMAGE = [
 
 const SECTION_ASPECT_RATIOS = {
   'hero-slider': 16 / 9,
-  'about': 5 / 4,
+  'about': 2 / 1,
+}
+
+const RATIO_LABELS = {
+  'hero-slider': '16:9 (1920×1080)',
+  'about': '2:1 (1200×600)',
+  'gallery': '1:1 (800×800)',
+  'member': '1:1 (400×400)',
 }
 
 function getSectionAspectRatio(sectionId) {
   const section = allSections.value.find(s => s.id === sectionId)
   if (section && section.section_key && SECTION_ASPECT_RATIOS[section.section_key]) {
     return SECTION_ASPECT_RATIOS[section.section_key]
+  }
+  return null
+}
+
+function getSectionRatioLabel(sectionId) {
+  const section = allSections.value.find(s => s.id === sectionId)
+  if (section && section.section_key && RATIO_LABELS[section.section_key]) {
+    return RATIO_LABELS[section.section_key]
   }
   return null
 }
@@ -2009,7 +2044,7 @@ const handleGalleryImageUpload = async (event) => {
   uploading.value = true
 
   try {
-    const processedFile = await cropImageToAspectRatio(file, 4 / 3)
+    const processedFile = await cropImageToAspectRatio(file, 1 / 1)
     gallerySelectedFile.value = processedFile
 
     const reader = new FileReader()
