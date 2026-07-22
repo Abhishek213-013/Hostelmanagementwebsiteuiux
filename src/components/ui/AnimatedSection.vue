@@ -2,11 +2,11 @@
   <div
     ref="sectionRef"
     :class="[
-      'transition-all duration-500 ease-out',
+      'transition-all ease-out',
       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6',
       className
     ]"
-    :style="{ transitionDelay: `${delay}ms` }"
+    :style="{ transitionDelay: `${delay}ms`, transitionDuration: `${duration}ms` }"
   >
     <slot />
   </div>
@@ -18,6 +18,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const props = defineProps({
   className: { type: String, default: '' },
   delay: { type: Number, default: 0 },
+  duration: { type: Number, default: 500 },
   threshold: { type: Number, default: 0.05 }
 })
 

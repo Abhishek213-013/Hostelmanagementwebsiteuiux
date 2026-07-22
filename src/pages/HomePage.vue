@@ -26,7 +26,7 @@
 
       <!-- Vibrant Hero Section -->
       <section class="relative min-h-screen flex items-center justify-center pt-16 lg:pt-20">
-        <div class="relative w-full">
+        <AnimatedSection :delay="50" :duration="50" class="relative w-full">
           <!-- Carousel -->
           <div class="relative w-full overflow-hidden" ref="carouselRef">
             <div class="flex transition-transform duration-500 ease-out" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
@@ -96,7 +96,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       <!-- Availability Cards -->
