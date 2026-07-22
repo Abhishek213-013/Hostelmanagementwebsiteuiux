@@ -103,7 +103,7 @@
       <section v-if="roomTypesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(roomType, i) in roomTypesList.slice(0, 3)" :key="i" class="h-full">
+            <AnimatedSection v-for="(roomType, i) in roomTypesList.slice(0, 3)" :key="i" :delay="i * 100" class="h-full">
               <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col">
                 <div class="flex items-start justify-between mb-6">
                   <div class="p-4 rounded-2xl bg-teal-600">
@@ -134,7 +134,7 @@
       <section v-if="pageData.about" id="about" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <AnimatedSection>
+            <AnimatedSection :delay="50">
               <div class="space-y-6">
                 <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700">
                   <div class="p-2 bg-teal-600 rounded-xl">
@@ -167,7 +167,7 @@
                 </div>
               </div>
             </AnimatedSection>
-            <AnimatedSection>
+            <AnimatedSection :delay="150">
               <div class="grid grid-cols-2 gap-4">
                 <div v-for="(item, i) in pageData.about.images" :key="i" class="relative rounded-2xl overflow-hidden shadow" :class="i % 2 === 1 ? 'mt-8' : ''">
                   <img :src="getFullImageUrl(item.src)" :alt="item.label" class="w-full h-40 sm:h-60 object-cover" />
@@ -184,7 +184,7 @@
       <!-- Facilities -->
       <section id="facilities-section" v-if="facilitiesList.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <AnimatedSection>
+          <AnimatedSection :delay="0">
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <span class="text-xs sm:text-sm font-bold tracking-wide text-teal-600">Premium Amenities</span>
@@ -194,7 +194,7 @@
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <AnimatedSection v-for="(item, i) in facilitiesList.slice(0, 8)" :key="i" class="h-full">
+            <AnimatedSection v-for="(item, i) in facilitiesList.slice(0, 8)" :key="i" :delay="(i + 1) * 80" class="h-full">
               <div class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow border border-gray-200 dark:border-gray-700 text-center hover:bg-teal-600 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group h-full">
                 <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-600 group-hover:bg-white rounded-xl flex items-center justify-center transition-all duration-500">
                   <component :is="getFacilityIcon(item.icon)" class="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-teal-600" />
@@ -210,7 +210,7 @@
       <!-- Rooms Section -->
       <section v-if="homepageRooms.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <AnimatedSection>
+          <AnimatedSection :delay="0">
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                 <div class="p-2 bg-teal-600 rounded-xl">
@@ -222,7 +222,7 @@
             </div>
           </AnimatedSection>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatedSection v-for="(room, i) in homepageRooms" :key="room.id" className="h-full">
+            <AnimatedSection v-for="(room, i) in homepageRooms" :key="room.id" :delay="(i + 1) * 100" className="h-full">
               <div class="relative h-full">
                 <div v-if="room.is_popular" class="absolute -top-5 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-2 sm:py-2.5 text-white rounded-full text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 bg-teal-600 whitespace-nowrap">
                   <Star class="w-4 h-4 fill-current" />
@@ -283,7 +283,7 @@
       <!-- Gallery -->
       <section id="gallery-section" v-if="galleryItems.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <AnimatedSection>
+          <AnimatedSection :delay="0">
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow border border-gray-200 dark:border-gray-700 mb-8">
                 <div class="p-2 bg-teal-600 rounded-xl">
@@ -320,7 +320,7 @@
       <!-- Testimonials -->
       <section id="testimonials-section" v-if="testimonials.length > 0" class="py-12">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <AnimatedSection>
+          <AnimatedSection :delay="0">
             <div class="text-center mb-10">
               <div class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <Users class="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" />
@@ -673,12 +673,14 @@ async function fetchPageData() {
     heroSlides.value = getHeroSlides()
     loading.value = false
 
-    try { await fetchAboutSection(1); pageData.value.about = getAboutData() } catch (e) {}
-    try { await fetchFacilities() } catch (e) {}
-    try { await fetchGallery() } catch (e) {}
-    try { await fetchTestimonials(); testimonials.value = apiTestimonials.value.filter(t => t.is_featured).slice(0, 6) } catch (e) {}
-    try { await fetchRoomTypes(); roomTypesList.value = apiRoomTypes.value } catch (e) {}
-    try { await fetchRooms(); homepageRooms.value = rooms.value.slice(0, 3) } catch (e) {}
+    await Promise.allSettled([
+      fetchAboutSection(1).then(() => { pageData.value.about = getAboutData() }),
+      fetchFacilities(),
+      fetchGallery(),
+      fetchTestimonials().then(() => { testimonials.value = apiTestimonials.value.filter(t => t.is_featured).slice(0, 6) }),
+      fetchRoomTypes().then(() => { roomTypesList.value = apiRoomTypes.value }),
+      fetchRooms().then(() => { homepageRooms.value = rooms.value.slice(0, 3) }),
+    ])
 
     if (pageData.value.about) {
       pageData.value.about.stats = computeAboutStats()

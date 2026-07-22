@@ -1,5 +1,13 @@
 <template>
-  <div ref="sectionRef" :class="['transition-opacity duration-300 ease-out', isVisible ? 'opacity-100' : 'opacity-0', className]">
+  <div
+    ref="sectionRef"
+    :class="[
+      'transition-all duration-500 ease-out',
+      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6',
+      className
+    ]"
+    :style="{ transitionDelay: `${delay}ms` }"
+  >
     <slot />
   </div>
 </template>
@@ -8,7 +16,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
-  className: { type: String, default: '' }
+  className: { type: String, default: '' },
+  delay: { type: Number, default: 0 },
+  threshold: { type: Number, default: 0.05 }
 })
 
 const sectionRef = ref(null)
@@ -23,7 +33,7 @@ onMounted(() => {
         observer.disconnect()
       }
     },
-    { threshold: 0.1 }
+    { threshold: props.threshold, rootMargin: '50px 0px' }
   )
   if (sectionRef.value) observer.observe(sectionRef.value)
 })
